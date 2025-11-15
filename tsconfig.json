@@ -5,6 +5,7 @@
     "outDir": "./dist/out-tsc",
     "module": "es2022",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",

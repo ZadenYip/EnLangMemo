@@ -39,6 +39,7 @@ npm-debug.log
 testem.log
 /typings
 .nx
+*.db
 
 # e2e
 /e2e/*.js
