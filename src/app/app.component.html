@@ -1,1 +1,18 @@
-<router-outlet></router-outlet>
+<div class="app-container">
+  <mat-toolbar class="main-toolbar">
+    @for (t of tabs; track t.path) {
+      <button mat-button 
+        [routerLink]="t.path"
+        routerLinkActive="active"
+        >
+        {{ t.label | translate }}
+      </button>
+    }
+
+    <button mat-button (click)="onSync()"> {{ 'HEADER.SYNC' | translate }}</button>
+  </mat-toolbar>
+
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

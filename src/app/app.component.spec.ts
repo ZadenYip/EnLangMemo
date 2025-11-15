@@ -1,7 +1,6 @@
 import {TestBed, waitForAsync} from '@angular/core/testing';
 import {AppComponent} from './app.component';
 import {TranslateModule} from '@ngx-translate/core';
-import {ElectronService} from './core/services';
 import {provideRouter} from '@angular/router';
 
 describe('AppComponent', () => {
@@ -9,7 +8,7 @@ describe('AppComponent', () => {
     void TestBed.configureTestingModule({
       declarations: [],
       imports: [AppComponent, TranslateModule.forRoot()],
-      providers: [provideRouter([]), ElectronService]
+      providers: [provideRouter([])]
     }).compileComponents();
   }));
 
