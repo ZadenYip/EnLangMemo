@@ -1,12 +1,24 @@
 {
   "PAGES": {
-      "HOME": {
-          "TITLE": "App works !",
-          "GO_TO_DETAIL": "Go to Detail"
-      },
-      "DETAIL": {
-        "TITLE": "Detail page !",
-        "BACK_TO_HOME": "Back to Home"
+    "HOME": {
+      "DECKS": {
+        "ID": "ID",
+        "NAME": "Name",
+        "NEW_PER_DAY": "New Cards Per Day",
+        "NEW_LEARNED": "New Cards Learned Today"
+      }
+    },
+    "DETAIL": {
+      "TITLE": "Detail page !",
+      "BACK_TO_HOME": "Back to Home"
     }
+  },
+  "HEADER": {
+    "DECKS": "Decks",
+    "IMMERSE": "Immerse",
+    "ADD": "Add",
+    "BROWSE": "Browse",
+    "STATS": "Stats",
+    "SYNC": "Sync"
   }
 }

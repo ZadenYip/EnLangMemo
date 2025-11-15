@@ -1,0 +1,24 @@
+{
+  "PAGES": {
+    "HOME": {
+      "DECKS": {
+        "ID": "ID",
+        "NAME": "名称",
+        "NEW_PER_DAY": "新学卡片上限",
+        "NEW_LEARNED": "今日已学新卡片"
+      }
+    },
+    "DETAIL": {
+      "TITLE": "Detail page !",
+      "BACK_TO_HOME": "Back to Home"
+    }
+  },
+  "HEADER": {
+    "DECKS": "牌组",
+    "IMMERSE": "沉浸",
+    "ADD": "添加",
+    "BROWSE": "浏览",
+    "STATS": "统计",
+    "SYNC": "同步"
+  }
+}
