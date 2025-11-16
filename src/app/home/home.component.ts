@@ -3,11 +3,10 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HomeService } from './home.service';
 import { Observable, of } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
 import {MatTableModule} from '@angular/material/table';
 import { DataSource } from '@angular/cdk/table';
-import { C } from '@angular/cdk/data-source.d-Bblv7Zvh';
 import { DeckListItem } from './deck-list-item.model';
+import log from 'electron-log/renderer';
 
 @Component({
     selector: 'app-home',
@@ -20,23 +19,22 @@ export class HomeComponent implements OnInit {
     private homeService: HomeService = inject(HomeService);
     deckListSrc: DeckListDataSource = new DeckListDataSource(of([]));
     displayedColumns: string[] = ['id', 'name', 'newCardsPerDay', 'newCardsLearned'];
-    
-    // TODO 模板处理异步数据流
+    // TODO 调整css样式
     deckList$: Observable<DeckListItem[]> | null = null;   
     constructor(private router: Router) {}
 
     ngOnInit(): void {
-        console.log('HomeComponent INIT');
+        log.info('HomeComponent INIT');
         this.reloadDecks();
     }
 
     reloadDecks() {
-        console.log('Reloading decks...');
+        log.info('Reloading decks...');
         this.deckListSrc = new DeckListDataSource(this.homeService.queryDeckList());
     }
 
     clickDeckRow(deck: DeckListItem) {
-        console.log('Clicked deck row:', deck);
+        log.info('Clicked deck row:', deck);
     }
 }
 

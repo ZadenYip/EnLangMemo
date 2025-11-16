@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { from, map, Observable } from 'rxjs';
 import { DeckListItem } from './deck-list-item.model';
 import { ipcRunSQL } from '../core/ipc';
+import log from 'electron-log/renderer';
 
 @Injectable({
     providedIn: 'root',
@@ -22,7 +23,7 @@ export class HomeService {
                     newCardsPerDay: item.new_cards_per_day,
                     newCardsLearned: item.new_cards_learned,
                 }));
-                console.log('Mapped deck list:', deckList);
+                log.info('Mapped deck list:', deckList);
                 return deckList;
             })
         );

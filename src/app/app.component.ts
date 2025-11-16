@@ -1,6 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { APP_CONFIG } from '../environments/environment';
 import {
     Router,
     RouterOutlet,
@@ -9,6 +8,7 @@ import {
 } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import log from 'electron-log/renderer';
 
 @Component({
     selector: 'app-root',
@@ -47,14 +47,13 @@ export class AppComponent {
     };
 
     onSync() {
-        console.log('Sync triggered');
+        log.info('Sync triggered');
     }
 
     constructor(private router: Router, private translate: TranslateService) {
         this.translate.setDefaultLang('en');
         // Use browser language
         this.translate.use(navigator.language);
-
-        console.log('APP_CONFIG', APP_CONFIG);
+        log.info('language set to', navigator.language);
     }
 }

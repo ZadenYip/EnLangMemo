@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain, screen } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import { initDatabase } from './database/database';
 import { registerAllIPCHandlers } from './ipc';
+import { logSetUp } from './log';
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
@@ -63,6 +64,7 @@ function createWindow(): BrowserWindow {
 
 try {
     app.whenReady().then(() => {
+        logSetUp();
         initDatabase();
         createWindow();
         registerAllIPCHandlers();
