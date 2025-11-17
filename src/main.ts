@@ -11,6 +11,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 import { PageNotFoundComponent } from './app/shared/components';
 import { HomeComponent } from './app/home/home.component';
+import { ImmerseComponent } from './app/immerse/immerse.component';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -33,7 +34,7 @@ bootstrapApplication(AppComponent, {
       },
       {
         path: 'immerse',
-        component: PageNotFoundComponent
+        component: ImmerseComponent
       },
       {
         path: 'browse',
