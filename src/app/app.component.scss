@@ -14,6 +14,7 @@
 
 mat-toolbar {
   @include theme;
+  height: 56px;
   justify-content: center;
   background-color: #d7e3ff;
   position: sticky;
