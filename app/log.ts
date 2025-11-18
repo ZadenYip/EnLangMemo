@@ -2,7 +2,7 @@ import { app } from 'electron';
 import log from 'electron-log/main';
 import * as path from 'path';
 
-export function logSetUp() {
+export function loggerSetUp(serve: boolean): void {
     // Initialize Electron Log
     const logDir = path.join(
         path.dirname(app.getPath('exe')),
