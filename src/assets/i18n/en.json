@@ -10,7 +10,9 @@
     },
     "IMMERSE": {
       "SUBTITLE": {
-        "HEADER": "Subtitle Content"
+        "HEADER": "Subtitle Content",
+        "VIDEO_SELECTION": "Select Video File",
+        "SUBTITLE_SELECTION": "Select Subtitle File"
       }
     },
     "DETAIL": {

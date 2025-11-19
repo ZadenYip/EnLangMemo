@@ -10,7 +10,9 @@
     },
     "IMMERSE": {
       "SUBTITLE": {
-        "HEADER": "字幕内容"
+        "HEADER": "字幕内容",
+        "VIDEO_SELECTION": "选择视频文件",
+        "SUBTITLE_SELECTION": "选择字幕文件"
       }
     },
     "DETAIL": {
