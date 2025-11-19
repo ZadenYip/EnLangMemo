@@ -1,17 +1,35 @@
-<div class="video-container">
+<div class="immerse-container">
+  <div class="video-panel">
+    <!-- 视频播放器  -->
+    <video #videoPlayer [src]="videoSrc" controls width="640" (loadedmetadata)="onVideoLoaded()" (timeupdate)="onVideoPlaying($event)"></video>
 
-  <!-- 视频播放器  -->
-  <video #videoPlayer [src]="videoSrc" controls width="640" (loadedmetadata)="onVideoLoaded()"></video>
+    <!-- 视频文件选择按钮  -->
+    <div class="video-overlay">
+      <input #fileInput type="file" (change)="onFileSelected($event)" accept="video/*" style="display: none">
 
-  <!-- 视频文件选择按钮  -->
-  <div class="video-overlay">
+      <!-- 点击触发#fileInput -->
+      <button mat-icon-button class="change-video-btn" (click)="fileInput.click()" matTooltip="选择视频文件">
+        <mat-icon>folder_open</mat-icon>
+      </button>
 
-    <input #fileInput type="file" (change)="onFileSelected($event)" accept="video/*" style="display: none">
-    <!-- 点击触发#fileInput -->
-    <button mat-icon-button class="change-video-btn" (click)="fileInput.click()" matTooltip="选择视频文件">
-      <mat-icon>folder_open</mat-icon>
-    </button>
+    </div>
   </div>
 
+  <div class="subtitle-panel">
+    <h2 class="subtitle-header">{{ 'PAGES.IMMERSE.SUBTITLE.HEADER' | translate }}</h2>
+
+    <cdk-virtual-scroll-viewport itemSize="32" class="subtitle-viewport">
+      <ul class="subtitle-list">
+        <li *cdkVirtualFor="let sub of subtitles" class="subtitle-item">
+          <!-- 2. 主字幕始终显示 -->
+          <p class="primary-text">{{ sub.primaryText }}</p>
+          <!-- 3. 副字幕：只有当 sub.secondaryText 存在时才渲染这个 <p> 标签 -->
+          @if (sub.secondaryText) {
+          <p class="secondary-text">{{ sub.secondaryText }}</p>
+          }
+        </li>
+      </ul>
+    </cdk-virtual-scroll-viewport>
+  </div>
 
 </div>
