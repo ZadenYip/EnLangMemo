@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { from, map, Observable } from 'rxjs';
-import { DeckListItem } from './deck-list-item.model';
-import { ipcRunSQL } from '../core/ipc';
+import { DeckListItem } from '../deck-list-item.model';
+import { ipcRunSQL } from '../../core/ipc';
 import log from 'electron-log/renderer';
 
 @Injectable({
