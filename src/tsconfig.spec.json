@@ -9,7 +9,8 @@
     ]
   },
   "files": [
-    "polyfills-test.ts"
+    "polyfills-test.ts",
+    "setup-jest.ts"
   ],
   "include": [
     "**/*.spec.ts",
