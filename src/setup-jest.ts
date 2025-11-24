@@ -1,4 +1,5 @@
-import { error } from 'console';
+import Database from 'better-sqlite3';
+import { createDeckSQL } from '../app/database/database';
 
 /**
  * 防止 ng test 下因为没初始化 log 而报错的问题
@@ -24,3 +25,15 @@ jest.mock(
         debug: jest.fn(),
     })
 )
+
+export let db: Database.Database | null = null;
+beforeAll(() => {
+    db = new Database(':memory:');
+    db.exec(createDeckSQL);
+});
+
+afterAll(() => {
+    if (db !== null) {
+        db.close();
+    }
+});
