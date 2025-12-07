@@ -1,7 +1,8 @@
 const esModules = [].join('|');
 
 module.exports = {
-  rootDir : './src',
+  roots: ['<rootDir>/src', '<rootDir>/app'],
+
   transformIgnorePatterns: [`<rootDir>/node_modules/(?!${esModules})`],
   transform: {
     '^.+\\.tsx?$': [
@@ -13,6 +14,6 @@ module.exports = {
     '^.+\\.js$': 'babel-jest',
   },
   setupFilesAfterEnv: [
-    '<rootDir>/setup-jest.ts'
+    '<rootDir>/src/setup-jest.ts'
   ]
 };

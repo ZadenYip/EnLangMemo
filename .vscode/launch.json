@@ -35,6 +35,21 @@
                 "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
             },
             "preLaunchTask": "Build.Main"
+        },
+        {
+            "name": "Debug Current Test File",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/node_modules/@angular/cli/bin/ng",
+            "args": [
+                "test",
+                "--watch=false",
+                "--run-in-band",
+                "--test-path-pattern",
+                "${fileBasename}"
+            ],
+            "console": "integratedTerminal"
         }
     ],
     "compounds": [
