@@ -1,0 +1,286 @@
+[
+  {
+    "sequence": 1,
+    "startTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 20,
+      "milliseconds": 700
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 23,
+      "milliseconds": 230
+    },
+    "textLines": ["难以与他人共情  无法成为任何人"]
+  },
+  {
+    "sequence": 2,
+    "startTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 23,
+      "milliseconds": 780
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 26,
+      "milliseconds": 300
+    },
+    "textLines": ["想着不过是梦想  陪出一个笑脸"]
+  },
+  {
+    "sequence": 3,
+    "startTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 27,
+      "milliseconds": 70
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 29,
+      "milliseconds": 470
+    },
+    "textLines": ["已忘却的软弱  逐渐僵硬衰败"]
+  },
+  {
+    "sequence": 4,
+    "startTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 30,
+      "milliseconds": 180
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 32,
+      "milliseconds": 660
+    },
+    "textLines": ["想要人陪这种话  根本说不出口"]
+  },
+  {
+    "sequence": 5,
+    "startTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 33,
+      "milliseconds": 100
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 38,
+      "milliseconds": 280
+    },
+    "textLines": ["就连无心之语  都会伤到的心"]
+  },
+  {
+    "sequence": 6,
+    "startTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 39,
+      "milliseconds": 630
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 44,
+      "milliseconds": 590
+    },
+    "textLines": ["一定  一定不会让任何人幸福"]
+  },
+  {
+    "sequence": 7,
+    "startTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 45,
+      "milliseconds": 980
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 51,
+      "milliseconds": 820
+    },
+    "textLines": ["可即便如此  依然不禁期待"]
+  },
+  {
+    "sequence": 8,
+    "startTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 52,
+      "milliseconds": 160
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 57,
+      "milliseconds": 810
+    },
+    "textLines": ["擦身而过的谎言  全都丢掉吧"]
+  },
+  {
+    "sequence": 9,
+    "startTime": {
+      "hours": 0,
+      "minutes": 22,
+      "seconds": 58,
+      "milliseconds": 40
+    },
+    "endTime": { "hours": 0, "minutes": 23, "seconds": 1, "milliseconds": 290 },
+    "textLines": ["只想听一句安慰  说那并不是空想"]
+  },
+  {
+    "sequence": 10,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 1,
+      "milliseconds": 290
+    },
+    "endTime": { "hours": 0, "minutes": 23, "seconds": 4, "milliseconds": 640 },
+    "textLines": ["就算幼稚到满脑子梦想"]
+  },
+  {
+    "sequence": 11,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 4,
+      "milliseconds": 640
+    },
+    "endTime": { "hours": 0, "minutes": 23, "seconds": 8, "milliseconds": 250 },
+    "textLines": ["依然做不出改变也没关系"]
+  },
+  {
+    "sequence": 12,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 8,
+      "milliseconds": 250
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 10,
+      "milliseconds": 780
+    },
+    "textLines": ["想与你一同歌唱"]
+  },
+  {
+    "sequence": 13,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 10,
+      "milliseconds": 780
+    },
+    "endTime": { "hours": 0, "minutes": 23, "seconds": 14, "milliseconds": 90 },
+    "textLines": ["不论多少次  总是跟随感性行动"]
+  },
+  {
+    "sequence": 14,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 14,
+      "milliseconds": 90
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 16,
+      "milliseconds": 850
+    },
+    "textLines": ["不断招人嫌弃"]
+  },
+  {
+    "sequence": 15,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 17,
+      "milliseconds": 430
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 20,
+      "milliseconds": 670
+    },
+    "textLines": ["即便如此也要走下去"]
+  },
+  {
+    "sequence": 16,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 20,
+      "milliseconds": 670
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 26,
+      "milliseconds": 490
+    },
+    "textLines": ["不会成为任何人的我  要挺着胸膛"]
+  },
+  {
+    "sequence": 17,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 27,
+      "milliseconds": 380
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 29,
+      "milliseconds": 980
+    },
+    "textLines": ["就算独自一人"]
+  },
+  {
+    "sequence": 18,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 30,
+      "milliseconds": 220
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 33,
+      "milliseconds": 180
+    },
+    "textLines": ["也要相信最纯粹的自己"]
+  },
+  {
+    "sequence": 19,
+    "startTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 33,
+      "milliseconds": 420
+    },
+    "endTime": {
+      "hours": 0,
+      "minutes": 23,
+      "seconds": 40,
+      "milliseconds": 270
+    },
+    "textLines": ["每当受伤失落  只要歌唱便好"]
+  }
+]
