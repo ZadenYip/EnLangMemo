@@ -39,11 +39,8 @@
       <ul class="subtitle-list">
         <li *cdkVirtualFor="let sub of subtitles" class="subtitle-item">
           <!-- 2. 主字幕始终显示 -->
-          <p class="primary-text">{{ sub.primaryText }}</p>
-          <!-- 3. 副字幕：只有当 sub.secondaryText 存在时才渲染这个 <p> 标签 -->
-          @if (sub.secondaryText) {
-          <p class="secondary-text">{{ sub.secondaryText }}</p>
-          }
+          <p class="primary-text">{{ sub.text }}</p>
+          
         </li>
       </ul>
     </cdk-virtual-scroll-viewport>

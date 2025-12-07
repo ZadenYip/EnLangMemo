@@ -43,10 +43,6 @@ bootstrapApplication(AppComponent, {
       {
         path: 'stats',
         component: PageNotFoundComponent
-      },
-      {
-        path: '**',
-        component: PageNotFoundComponent
       }
     ]),
     importProvidersFrom(

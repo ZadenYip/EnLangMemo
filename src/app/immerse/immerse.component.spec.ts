@@ -10,8 +10,7 @@ describe('ImmerseComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [TranslateModule.forRoot()],
-            declarations: [ImmerseComponent],
+            imports: [ImmerseComponent, TranslateModule.forRoot()],
             providers: [provideRouter([])]
         }).compileComponents();
     }));

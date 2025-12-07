@@ -10,8 +10,7 @@ describe('HomeComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [TranslateModule.forRoot()],
-            declarations: [HomeComponent],
+            imports: [HomeComponent, TranslateModule.forRoot()],
             providers: [provideRouter([])]
         }).compileComponents();
     }));
@@ -19,7 +18,7 @@ describe('HomeComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(HomeComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
+        // fixture.detectChanges();
     });
 
     it('should create', () => {

@@ -26,6 +26,16 @@ jest.mock(
     })
 )
 
+Object.defineProperty(window, 'bridge', {
+  value: {
+    database: {
+      ipcRunSQL: jest.fn()
+    },
+  },
+  writable: true,
+});
+
+
 export let db: Database.Database | null = null;
 beforeAll(() => {
     db = new Database(':memory:');

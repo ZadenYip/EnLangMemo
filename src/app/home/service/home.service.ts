@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { from, map, Observable } from 'rxjs';
 import { DeckListItem } from '../deck-list-item.model';
-import { ipcRunSQL } from '../../core/ipc';
 import log from 'electron-log/renderer';
 
 @Injectable({
@@ -15,7 +14,7 @@ export class HomeService {
             SELECT deck_id, name, new_cards_per_day, new_cards_learned FROM decks
         `;
 
-        return from(ipcRunSQL(sql)).pipe(
+        return from(window.bridge.database.ipcRunSQL(sql)).pipe(
             map((rawDecks: any[]) => {
                 const deckList: DeckListItem[] = rawDecks.map((item) => ({
                     deckId: item.deck_id,

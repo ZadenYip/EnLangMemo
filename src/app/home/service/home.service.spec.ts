@@ -1,12 +1,7 @@
 import { firstValueFrom } from 'rxjs';
-import { ipcRunSQL } from '../../core/ipc';
 import { HomeService } from './home.service';
 import { TestBed } from '@angular/core/testing';
 import { db } from '../../../setup-jest';
-
-jest.mock('../../core/ipc', () => ({
-    ipcRunSQL: jest.fn(),
-}));
 
 const MOCK_RAW_DECKS = [
     {
@@ -49,7 +44,7 @@ describe('DatabaseService', () => {
             );
         });
 
-        (ipcRunSQL as jest.Mock).mockImplementationOnce(
+        (window.bridge.database.ipcRunSQL as jest.Mock).mockImplementationOnce(
             (sql: string, params: any[] = []) => {
                 const stmt = db!.prepare(sql);
                 const result: any[] = stmt.all(...params);

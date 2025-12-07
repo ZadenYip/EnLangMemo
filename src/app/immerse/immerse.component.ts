@@ -5,7 +5,6 @@ import {
     viewChild,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -16,13 +15,14 @@ import {
     ScrollingModule,
 } from '@angular/cdk/scrolling';
 import { TranslatePipe } from '@ngx-translate/core';
+import { parse, resync } from 'subtitle';
+import { from, take } from 'rxjs';
 
 export interface BilingualSubtitle {
     id: number;
     startTime: number;
     endTime: number;
-    primaryText: string; // 主字幕 (原文)
-    secondaryText?: string; // 副字幕 (译文)
+    text: string;
 }
 
 @Component({
@@ -57,13 +57,18 @@ export class ImmerseComponent {
         this.videoSrc = this.getURLFromInputElem(event, this.videoSrc, (file: File) => {
             console.log('Selected video file:', file);
         });
+        this.videoPlayer().nativeElement.volume = 0.5;
     }
 
     onSubtitleSelected(event: Event): void {
         this.subtitleSrc = this.getURLFromInputElem(event, this.subtitleSrc, (file: File) => {
-            // TODO 加载字幕
             console.log('Selected subtitle file:', file);
+            this.loadSubtitleFile(file);
         });
+    }
+
+    private loadSubtitleFile(file: File): void {
+        // TODO IPC 调用 以流形式获取字幕内容 使用ipc sender?
     }
 
     getURLFromInputElem(event: Event, safeUrl: SafeUrl, handle?: (file: File) => void): SafeUrl {
@@ -85,7 +90,7 @@ export class ImmerseComponent {
 
             handle?.(file);
 
-            log.info('Created object URL for subtitle file:', objectUrl);
+            log.info('Created object URL for file:', objectUrl);
             return this.sanitizer.bypassSecurityTrustUrl(objectUrl);
         }
 
@@ -104,8 +109,14 @@ export class ImmerseComponent {
     }
 
     onVideoPlaying(event: Event): void {
-        const currentTime = this.videoPlayer().nativeElement.currentTime;
-        log.info('Current video time:', currentTime);
+        const currentTimeInSeconds = this.videoPlayer().nativeElement.currentTime;
+        log.info('Current video time:', currentTimeInSeconds);
+        this.updateCurrentSubtitle(currentTimeInSeconds);
+    }
+
+    private updateCurrentSubtitle(currentTimeInSeconds: number): void {
+        const ms = Math.ceil(currentTimeInSeconds * 1000);
+
     }
 
     // TODO 准备用ffmpeg 提取视频里面的ass字幕为srt字幕 或者可手动上传字幕，加载进subtitles
@@ -114,65 +125,13 @@ export class ImmerseComponent {
             id: 1,
             startTime: 0,
             endTime: 2.5,
-            primaryText: 'This is the first line of the subtitle.',
-            secondaryText: '这是字幕的第一行。',
+            text: 'This is the first line of the subtitle.',
         },
         {
             id: 2,
             startTime: 2.6,
             endTime: 5.0,
-            primaryText: 'This is the current, active subtitle line.',
-            secondaryText: '这是当前高亮的字幕行。',
-        },
-        {
-            id: 3,
-            startTime: 5.1,
-            endTime: 7.0,
-            primaryText: 'This line only has primary text.', // 只有主字幕的情况
-        },
-        {
-            id: 4,
-            startTime: 5.1,
-            endTime: 7.0,
-            primaryText: 'This line only has primary text.', // 只有主字幕的情况
-        },
-        {
-            id: 5,
-            startTime: 5.1,
-            endTime: 7.0,
-            primaryText: 'This line only has primary text.', // 只有主字幕的情况
-        },
-        {
-            id: 6,
-            startTime: 5.1,
-            endTime: 7.0,
-            primaryText: 'This line only has primary text.', // 只有主字幕的情况
-        },
-        {
-            id: 7,
-            startTime: 5.1,
-            endTime: 7.0,
-            primaryText: 'This line only has primary text.', // 只有主字幕的情况
-        },
-        {
-            id: 8,
-            startTime: 5.1,
-            endTime: 7.0,
-            primaryText: 'This line only has primary text.', // 只有主字幕的情况
-        },
-        {
-            id: 9,
-            startTime: 5.1,
-            endTime: 7.0,
-            primaryText: 'This line only has primary text.', // 只有主字幕的情况
-            secondaryText:
-                '这是一行只有主字幕的字幕，但我加了一个副字幕以测试显示效果。',
-        },
-        {
-            id: 10,
-            startTime: 5.1,
-            endTime: 7.0,
-            primaryText: 'This line only has primary text.', // 只有主字幕的情况
-        },
+            text: 'This is the current, active subtitle line.',
+        }
     ];
 }
