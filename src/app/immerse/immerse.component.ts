@@ -15,8 +15,6 @@ import {
     ScrollingModule,
 } from '@angular/cdk/scrolling';
 import { TranslatePipe } from '@ngx-translate/core';
-import { parse, resync } from 'subtitle';
-import { from, take } from 'rxjs';
 
 export interface BilingualSubtitle {
     id: number;
