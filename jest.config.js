@@ -1,3 +1,4 @@
+const { createCjsPreset } = require('jest-preset-angular/presets');
 const esModules = [].join('|');
 
 module.exports = {

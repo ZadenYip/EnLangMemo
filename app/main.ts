@@ -32,19 +32,19 @@ function createWindow(): BrowserWindow {
             debug.default({ isEnabled: true, showDevTools: true });
         });
 
-        import('electron-reloader').then((reloader) => {
-            const reloaderFn = (reloader as any).default || reloader;
-            reloaderFn(module);
-        });
-        win.loadURL('http://localhost:4200');
-    } else {
-        // Path when running electron executable
-        let pathIndex = './index.html';
+    import('electron-reloader').then(reloader => {
+      const reloaderFn = (reloader as any).default || reloader;
+      reloaderFn(module);
+    });
+    win.loadURL('http://localhost:4200');
+  } else {
+    // Path when running electron executable
+    let pathIndex = './browser/index.html';
 
-        if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-            // Path when running electron in local folder
-            pathIndex = '../dist/index.html';
-        }
+    if (fs.existsSync(path.join(__dirname, '../dist/browser/index.html'))) {
+       // Path when running electron in local folder
+      pathIndex = '../dist/browser/index.html';
+    }
 
         const fullPath = path.join(__dirname, pathIndex);
         const url = `file://${path.resolve(fullPath).replace(/\\/g, '/')}`;
