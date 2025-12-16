@@ -1,10 +1,9 @@
 import { ipcMain, IpcMainInvokeEvent, webUtils } from "electron";
 import { runSQL } from "../database/database";
-import { parseSubtitle } from "../subtitle-handler/subtitle-handler";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
-    registerSubtitleLibHandlers();
+    // registerSubtitleLibHandlers(); TODO
 }
 
 function registerDatabaseHandlers() {
@@ -15,8 +14,8 @@ function registerDatabaseHandlers() {
     );
 }
 
-function registerSubtitleLibHandlers() {
-    ipcMain.handle(
-        'subtitleLib:parseSubtitle', parseSubtitle
-    )
-}
+// function registerSubtitleLibHandlers() {
+//     ipcMain.handle(
+//         'subtitleLib:parseSubtitle', parseSubtitle
+//     )
+// }
