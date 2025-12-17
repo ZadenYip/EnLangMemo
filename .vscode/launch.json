@@ -37,18 +37,27 @@
             "preLaunchTask": "Build.Main"
         },
         {
-            "name": "Debug Current Test File",
-            "type": "node",
+            "name": "Debug Current Angular Test File",
             "request": "launch",
+            "type": "node",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/node_modules/@angular/cli/bin/ng",
             "args": [
                 "test",
-                "--watch=false",
-                "--run-in-band",
-                "--test-path-pattern",
-                "${fileBasename}"
+                "--include",
+                "**/${fileBasename}"
             ],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Current Main Process Test File",
+            "autoAttachChildProcesses": true,
+            "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+            "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+            "args": ["run", "${relativeFile}"],
+            "smartStep": true,
             "console": "integratedTerminal"
         }
     ],

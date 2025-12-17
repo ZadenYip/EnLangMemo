@@ -1,7 +1,7 @@
 import { firstValueFrom } from 'rxjs';
 import { HomeService } from './home.service';
 import { TestBed } from '@angular/core/testing';
-import { db } from '../../../setup-jest';
+import { Mock } from 'vitest';
 
 const MOCK_RAW_DECKS = [
     {
@@ -10,59 +10,56 @@ const MOCK_RAW_DECKS = [
         new_cards_per_day: 10,
         new_cards_learned: 50,
     },
-    { deck_id: 2, name: 'Deck 2', new_cards_per_day: 5, new_cards_learned: 20 },
-    {
-        deck_id: 3,
-        name: 'Deck 3',
-        new_cards_per_day: 15,
-        new_cards_learned: 75,
+    { 
+        deck_id: 2, 
+        name: 'Deck 2', 
+        new_cards_per_day: 5, 
+        new_cards_learned: 20 
     },
 ];
 
-describe('DatabaseService', () => {
+describe('HomeService (Renderer Unit Test)', () => {
     let service: HomeService;
+    let ipcRunSQLMock: Mock = vi.spyOn(window.bridge.database, 'ipcRunSQL');
 
     beforeEach(() => {
         TestBed.configureTestingModule({ providers: [HomeService] });
         service = TestBed.inject(HomeService);
     });
 
+    afterEach(() => {
+        ipcRunSQLMock.mockReset();
+    });
+
     it('should create the service', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should query and map the deck list correctly', async () => {
-        const stmt = db!.prepare(`
-            INSERT INTO decks (deck_id, name, new_cards_per_day, new_cards_learned) VALUES (?, ?, ?, ?)
-        `);
-        MOCK_RAW_DECKS.forEach((deck) => {
-            stmt.run(
-                deck.deck_id,
-                deck.name,
-                deck.new_cards_per_day,
-                deck.new_cards_learned
-            );
-        });
+    it('should query and correctly map the deck list from a mocked IPC call', async () => {
+        // 告诉被 mock 的 ipcRunSQL：当它被调用时，我们希望它返回什么假数据。
+        // 对应service.queryDeckList()内部调用的ipcRunSQL
+       ipcRunSQLMock.mockResolvedValue(MOCK_RAW_DECKS);
+        const decks = await firstValueFrom(service.queryDeckList());
 
-        (window.bridge.database.ipcRunSQL as jest.Mock).mockImplementationOnce(
-            (sql: string, params: any[] = []) => {
-                const stmt = db!.prepare(sql);
-                const result: any[] = stmt.all(...params);
-                return Promise.resolve(result);
-            }
-        );
+        expect(ipcRunSQLMock).toHaveBeenCalledTimes(1);
 
-        const decks = await firstValueFrom(service.queryDeckList().pipe());
         expect(decks.length).toBe(MOCK_RAW_DECKS.length);
-        decks.forEach((deck, index) => {
-            expect(deck.deckId).toBe(MOCK_RAW_DECKS[index].deck_id);
-            expect(deck.name).toBe(MOCK_RAW_DECKS[index].name);
-            expect(deck.newCardsPerDay).toBe(
-                MOCK_RAW_DECKS[index].new_cards_per_day
-            );
-            expect(deck.newCardsLearned).toBe(
-                MOCK_RAW_DECKS[index].new_cards_learned
-            );
-        });
+        expect(decks[0].deckId).toBe(MOCK_RAW_DECKS[0].deck_id);
+        expect(decks[0].name).toBe(MOCK_RAW_DECKS[0].name);
+        expect(decks[0].newCardsLearned).toBe(MOCK_RAW_DECKS[0].new_cards_learned);
+        expect(decks[0].newCardsPerDay).toBe(MOCK_RAW_DECKS[0].new_cards_per_day);
+        expect(decks[1].deckId).toBe(MOCK_RAW_DECKS[1].deck_id);
+        expect(decks[1].name).toBe(MOCK_RAW_DECKS[1].name);
+        expect(decks[1].newCardsPerDay).toBe(MOCK_RAW_DECKS[1].new_cards_per_day);
+        expect(decks[1].newCardsLearned).toBe(MOCK_RAW_DECKS[1].new_cards_learned);
+    });
+
+    it('should handle an empty response from the main process', async () => {
+        ipcRunSQLMock.mockResolvedValue([]);
+        const decks = await firstValueFrom(service.queryDeckList());
+
+        // 断言
+        expect(ipcRunSQLMock).toHaveBeenCalledTimes(1);
+        expect(decks).toEqual([]); // 期望得到一个空数组
     });
 });

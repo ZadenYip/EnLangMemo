@@ -8,10 +8,6 @@
       "node"
     ]
   },
-  "files": [
-    "polyfills-test.ts",
-    "setup-jest.ts"
-  ],
   "include": [
     "**/*.spec.ts",
     "**/*.d.ts"

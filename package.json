@@ -38,6 +38,7 @@
     "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && electron . --serve",
     "electron:local": "npm run web:dev && electron .",
     "electron:build": "npm run web:prod && electron-builder build --publish=never",
+    "electron:test": "npm run electron:rebuild && vitest --config app/vitest-electron.config.ts",
     "test": "npm rebuild better-sqlite3 && ng test --watch=false",
     "test:watch": "npm rebuild better-sqlite3 && ng test",
     "e2e": "npm run web:prod && playwright test -c e2e/playwright.config.ts e2e/",
@@ -75,6 +76,7 @@
     "@ngx-translate/core": "17.0.0",
     "@ngx-translate/http-loader": "17.0.0",
     "@playwright/test": "1.57.0",
+    "@types/better-sqlite3": "7.6.13",
     "@types/node": "22.19.1",
     "@typescript-eslint/eslint-plugin": "8.48.1",
     "@typescript-eslint/parser": "8.48.1",
@@ -105,10 +107,5 @@
   },
   "browserslist": [
     "chrome 140"
-  ],
-  "jest": {
-    "testMatch": [
-      "**/app/**/*.spec.ts"
-    ]
-  }
+  ]
 }

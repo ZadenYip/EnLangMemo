@@ -10,7 +10,8 @@
     "module": "commonjs",
     "target": "es2015",
     "types": [
-      "node"
+      "node",
+      "vitest/globals"
     ],
     "lib": [
       "es2017",

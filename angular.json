@@ -74,7 +74,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
-            }
+            },
             "testing": {
               "polyfills": [
                 "zone.js",
@@ -125,7 +125,8 @@
                   "outputFile": "test-results/vitest/index.html"
                 }
               ]
-            ]
+            ],
+            "runnerConfig": "./vitest.config.ts"
           }
         },
         "lint": {

@@ -3,9 +3,7 @@
   "compilerOptions": {
     "outDir": "../out-tsc/app",
     "baseUrl": "",
-    "types": [
-      "node"
-    ]
+    "types": []
   },
   "files": [
     "main.ts"
@@ -16,7 +14,7 @@
   ],
   "exclude": [
     "**/*.spec.ts",
-    "setup-jest.ts",
+    "setup-vitest.ts",
     "**/*.test.ts",
     "**/vitest.d.ts",
     "**/vitest.config.*",
