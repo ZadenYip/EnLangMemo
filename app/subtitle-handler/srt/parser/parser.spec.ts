@@ -77,6 +77,18 @@ describe('Subtitle Parser', () => {
 
         await expectCueASTEqual(subtitleData, expectedCues);
     });
+
+    it('should handle special token in text lines', async () => {
+        let subtitleData:string = '1\r\n00:00:01,000 --> 00:00:04,000\r\nHello World!;,.-->\r\n';
+        subtitleData += '\r\n';
+        const expectedCues: CueAST[] = [
+            new CueAST(1, 
+                new TimestampAST(0, 0, 1, 0), 
+                new TimestampAST(0, 0, 4, 0),   
+                ['Hello World!;,.-->'])
+        ];
+        await expectCueASTEqual(subtitleData, expectedCues);
+    });
 });
 
 async function expectCueASTEqual(subtitleData: string, expected: CueAST[]) {

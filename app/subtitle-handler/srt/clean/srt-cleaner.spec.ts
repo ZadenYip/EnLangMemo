@@ -37,5 +37,34 @@ describe('SRT Cleaner Tests', () => {
         expect(outputChunks[2]).toBe(cue5.replace('5\r\n', '3\r\n'));
     });
 
-    // TODO 更多测试用例，如格式错误的SRT文件等
+    it('should handle empty SRT files', async () => {
+        const inputStream = Readable.from([]);
+        const outputChunks: string[] = [];
+        const cleanerGenerator = removeDuplicateCue(inputStream);
+        for await (const chunk of cleanerGenerator) {
+            outputChunks.push(chunk);
+        }
+        expect(outputChunks.length).toBe(0);
+    });
+
+    it('should not remove non-duplicate cues', async () => {
+        let cue1 = '1\r\n';
+        cue1 += '00:00:01,000 --> 00:00:04,000\r\n';
+        cue1 += 'Hello World\r\n';
+        cue1 += '\r\n';
+        let cue2 = '2\r\n';
+        cue2 += '00:00:05,000 --> 00:00:07,000\r\n';
+        cue2 += 'Different Cue\r\n';
+        cue2 += '\r\n';
+        const inputStream = Readable.from([cue1, cue2]);
+        const outputChunks: string[] = [];
+        const cleanerGenerator = removeDuplicateCue(inputStream);
+        for await (const chunk of cleanerGenerator) {
+            outputChunks.push(chunk);
+        }
+        expect(outputChunks.length).toBe(2);
+        expect(outputChunks[0]).toBe(cue1);
+        expect(outputChunks[1]).toBe(cue2);
+    });
+    
 });

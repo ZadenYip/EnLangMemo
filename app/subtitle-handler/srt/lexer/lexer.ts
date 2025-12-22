@@ -19,9 +19,27 @@ export class Token {
     public type: TokenType;
     public value: string | null = null;
 
+    /**
+     * 
+     * @param type - token type
+     * @param value - if token has fixed value (like COLON, TIME_ARROW), value should be omitted
+     * DOT_OR_COMMA, NEW
+     */
     constructor(type: TokenType, value: string | null = null) {
         this.type = type;
-        this.value = value;
+        switch (type) {
+            case TokenType.COLON:
+                this.value = ':';
+                break;
+            case TokenType.TIME_ARROW:
+                this.value = '-->';
+                break;
+            case TokenType.NEWLINE:
+                this.value = '\r\n';
+                break;
+            default:
+                this.value = value;
+        }
     }
 }
 
@@ -68,7 +86,7 @@ export class Lexer {
 
         if (this.isColon(lastChar)) {
             await this.charReader.next();
-            return new Token(TokenType.COLON, ':');
+            return new Token(TokenType.COLON);
         }
         
         if (this.isDotOrComma(lastChar)) {

@@ -83,13 +83,17 @@ export class Parser {
             await this.tokenStream.start();
             let currentToken = this.tokenStream.peek();
             while (true) {
+                // skip tokens until we find a NUMBER token (cue sequence) or EOF
                 while (currentToken.type !== TokenType.NUMBER && currentToken.type !== TokenType.EOF) {
                     currentToken = await this.tokenStream.consume();
                     currentToken = this.tokenStream.peek();
                 }
+
+                // if EOF, end parsing
                 if (currentToken.type === TokenType.EOF) {
                     break;
                 } else {
+                    // NUMBER token found, try to parse cue
                     const cue = await this.parseCue();
                     yield cue;
                     currentToken = this.tokenStream.peek();
