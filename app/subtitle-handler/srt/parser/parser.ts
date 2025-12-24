@@ -22,6 +22,15 @@ export class TimestampAST extends ASTNode {
     ) {
         super();
     }
+
+    get totalMilliseconds(): number {
+        return (
+            this.hours * 3600000 +
+            this.minutes * 60000 +
+            this.seconds * 1000 +
+            this.milliseconds
+        );
+    }
 }
 
 class TokenStream {
