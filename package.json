@@ -38,7 +38,7 @@
     "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && electron . --serve",
     "electron:local": "npm run web:dev && electron .",
     "electron:build": "npm run web:prod && electron-builder build --publish=never",
-    "electron:test": "npm run electron:rebuild && vitest --config app/vitest-electron.config.ts",
+    "electron:test": "npm run electron:rebuild && vitest run --config app/vitest-electron.config.ts",
     "test": "npm rebuild better-sqlite3 && ng test --watch=false",
     "test:watch": "npm rebuild better-sqlite3 && ng test",
     "e2e": "npm run web:prod && playwright test -c e2e/playwright.config.ts e2e/",
