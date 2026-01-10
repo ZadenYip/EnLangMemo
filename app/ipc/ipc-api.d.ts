@@ -1,9 +1,9 @@
 import { IServicesWithOnlyObservables, IServicesWithoutObservables } from "electron-ipc-cat/common";
-import * as services from "./ipc-services";
+import * as service from "./ipc-service";
 
 declare global {
   interface Window {
-    observables: IServicesWithOnlyObservables<typeof services>;
-    services: IServicesWithoutObservables<typeof services>;
+    observables: IServicesWithOnlyObservables<typeof service>;
+    service: IServicesWithoutObservables<typeof service>;
   }
 }

@@ -1,3 +1,5 @@
+import 'electron-ipc-cat/fixContextIsolation'; // Ensure ipc works in context-isolated environments
+
 import { enableProdMode, provideZoneChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';

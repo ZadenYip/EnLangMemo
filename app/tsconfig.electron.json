@@ -14,9 +14,8 @@
       "node"
     ]
   },
-  "files": [
-    "main.ts",
-    "preload.ts"
+  "include": [
+    "**/*.ts"
   ],
   "exclude": [
     "node_modules",

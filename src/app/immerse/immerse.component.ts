@@ -52,23 +52,42 @@ export class ImmerseComponent {
      * @param event - File selection event
      */
     onVideoSelected(event: Event): void {
-        this.videoSrc = this.getURLFromInputElem(event, this.videoSrc, (file: File) => {
+        const handler = (file: File) => {
             console.log('Selected video file:', file);
-        });
-        this.videoPlayer().nativeElement.volume = 0.5;
+        }
+        this.videoSrc = this.getURLFromInputElem(event, this.videoSrc, handler);
     }
 
     onSubtitleSelected(event: Event): void {
-        this.subtitleSrc = this.getURLFromInputElem(event, this.subtitleSrc, (file: File) => {
+        const handler = (file: File) => {
             console.log('Selected subtitle file:', file);
             this.loadSubtitleFile(file);
-        });
+        };
+        this.subtitleSrc = this.getURLFromInputElem(event, this.subtitleSrc, handler);
     }
 
     private loadSubtitleFile(file: File): void {
-        // TODO IPC 调用 以流形式获取字幕内容 使用ipc sender?
+        const filePath = window.electron.webUtils.getPathForFile(file);
+        window.observables.subtitleService.fetchSubtitles$(filePath).subscribe({
+            next: (cue) => {
+                console.log('Received subtitle cue:', cue);
+            },
+            error: (err) => {
+                console.error('Error fetching subtitles:', err);
+            },
+            complete: () => {
+                console.log('Completed fetching subtitles.');
+            },
+        });
     }
 
+    /**
+     * Creates an object URL from the selected file and revokes the previous one.
+     * @param event - File selection event
+     * @param safeUrl - Previous SafeUrl to revoke
+     * @param handle - Optional handler for the selected file
+     * @returns - New SafeUrl for the selected file
+     */
     getURLFromInputElem(event: Event, safeUrl: SafeUrl, handle?: (file: File) => void): SafeUrl {
         const input = event.target as HTMLInputElement;
 
@@ -108,7 +127,7 @@ export class ImmerseComponent {
 
     onVideoPlaying(event: Event): void {
         const currentTimeInSeconds = this.videoPlayer().nativeElement.currentTime;
-        log.info('Current video time:', currentTimeInSeconds);
+        log.debug('Current video time:', currentTimeInSeconds);
         this.updateCurrentSubtitle(currentTimeInSeconds);
     }
 

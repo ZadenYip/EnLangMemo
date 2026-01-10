@@ -12,7 +12,7 @@ When esbuild bundles `preload.ts`, it follows the import chain and bundles all d
 
 ```
 preload.ts
-  └─ services.ts
+  └─ service.ts
        └─ database-service.ts        ← This file contains the DatabaseService class
             └─ better-sqlite3        ← Unnecessarily bundled into preload ✗
 ```
@@ -24,7 +24,7 @@ database-service.interface.ts   ← Only interface and descriptor
 database-service.ts             ← Has class and better-sqlite3
 ```
 
-Then, `ipc-services.ts` uses electron-ipc-cat's `createProxy` to create proxy objects, avoiding importing the implementation class.
+Then, `ipc-service.ts` uses electron-ipc-cat's `createProxy` to create proxy objects, avoiding importing the implementation class.
 
 ```typescript
 import { createProxy } from 'electron-ipc-cat/client';
@@ -85,10 +85,10 @@ function registerDatabaseHandlers() {
 }
 ```
 
-After registration, create proxy objects for preload to use. We introduce an `ipc-services.ts` file for better organization:
+After registration, create proxy objects for preload to use. We introduce an `ipc-service.ts` file for better organization:
 
 ```typescript
-/** app/ipc/ipc-services.ts **/
+/** app/ipc/ipc-service.ts **/
 import { createProxy } from 'electron-ipc-cat/client';
 import { AsyncifyProxy } from 'electron-ipc-cat/common';
 
@@ -105,23 +105,23 @@ export const descriptors = {
 ```typescript
 /** app/preload.ts **/
 import { contextBridge } from "electron";
-import * as service from "./ipc/ipc-services";
+import * as service from "./ipc/ipc-service";
 
 contextBridge.exposeInMainWorld('service', service);
 
 console.log('[Preload] Exposed service to window');
 ```
 
-Finally, to let the renderer process know which Services are available, add a type declaration file `ipc-api.d.ts` and include it in Angular's `tsconfig.app.json`:
+Finally, to let the renderer process know which service are available, add a type declaration file `ipc-api.d.ts` and include it in Angular's `tsconfig.app.json`:
 
 ```typescript
 import { IServicesWithOnlyObservables, IServicesWithoutObservables } from "electron-ipc-cat/common";
-import * as services from "./ipc-services";
+import * as service from "./ipc-service";
 
 declare global {
   interface Window {
-    observables: IServicesWithOnlyObservables<typeof services>;
-    service: IServicesWithoutObservables<typeof services>;
+    observables: IServicesWithOnlyObservables<typeof service>;
+    service: IServicesWithoutObservables<typeof service>;
   }
 }
 ```

@@ -15,7 +15,7 @@ export class HomeService {
             SELECT deck_id, name, new_cards_per_day, new_cards_learned FROM decks
         `;
 
-        return from(window.services.database.runSQL(sql)).pipe(
+        return from(window.service.database.runSQL(sql)).pipe(
             map((rawDecks: any[] | Database.RunResult) => {
                 rawDecks = rawDecks as any[];
                 const deckList: DeckListItem[] = rawDecks.map((item) => ({
