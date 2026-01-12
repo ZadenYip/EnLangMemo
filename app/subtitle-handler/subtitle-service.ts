@@ -1,22 +1,23 @@
-import { Cue, ISubtitleService } from './subtitle-service.interface';
+import { ISubtitleService } from './subtitle-service.interface';
 import { Observable } from 'rxjs';
 import { createReadStream } from 'fs';
 import { Parser } from './srt/parser/parser';
+import { GlobalSubtitle } from '../../src/app/immerse/subtitle-interface';
 
 export class SubtitleService implements ISubtitleService {
 
-    public fetchSubtitles$(filePath: string): Observable<Cue> {
+    public fetchSubtitles$(filePath: string): Observable<GlobalSubtitle> {
         const stream = createReadStream(filePath);
         const cueIterator = Parser.createParser(stream);
         
-        const ObservableCue$ = new Observable<Cue>(
+        const ObservableCue$ = new Observable<GlobalSubtitle>(
             (subscriber) => {
                 
                 const run = async () => {
                     try {
                         for await (const cueAST of cueIterator) {
-                            const cue: Cue = {
-                                sequence: cueAST.sequence,
+                            const cue: GlobalSubtitle = {
+                                id: cueAST.sequence,
                                 startTime: cueAST.startTime.totalMilliseconds,
                                 endTime: cueAST.endTime.totalMilliseconds,
                                 textLines: cueAST.textLines,

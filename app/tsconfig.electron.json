@@ -15,7 +15,8 @@
     ]
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "../src/app/immerse/subtitle-interface.d.ts"
   ],
   "exclude": [
     "node_modules",

@@ -12,7 +12,9 @@
       "SUBTITLE": {
         "HEADER": "字幕内容",
         "VIDEO_SELECTION": "选择视频文件",
-        "SUBTITLE_SELECTION": "选择字幕文件"
+        "SUBTITLE_SELECTION": "选择字幕文件",
+        "FAIL_TO_LOAD_MSG": "加载字幕文件失败。",
+        "FAIL_TO_LOAD_ACTION": "关闭"
       }
     },
     "DETAIL": {

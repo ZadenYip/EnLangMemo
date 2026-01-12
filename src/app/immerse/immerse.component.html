@@ -1,12 +1,12 @@
 <div class="immerse-container">
   <div class="video-panel">
     <!-- Video Player  -->
-    <video #videoPlayer [src]="videoSrc" controls width="640" (loadedmetadata)="onVideoLoaded()" (timeupdate)="onVideoPlaying($event)"></video>
+    <video #videoPlayer [src]="videoSrc" controls width="640" (loadedmetadata)="onVideoLoad()" (timeupdate)="onVideoPlaying($event)"></video>
 
     <div class="video-overlay">
 
       <!-- Video File Selection Button  -->
-      <input #videoInput type="file" (change)="onVideoSelected($event)" accept="video/*">
+      <input #videoInput type="file" (change)="onVideoChange($event)" accept="video/*">
       <!-- Click to trigger #videoInput -->
       <button mat-icon-button class="input-video-btn" (click)="videoInput.click()" matTooltip="{{ 'PAGES.IMMERSE.SUBTITLE.VIDEO_SELECTION' | translate }}">
         <mat-icon>folder_open</mat-icon>
@@ -22,7 +22,7 @@
 
         <!-- Select Subtitle File -->
 
-        <input #subtitleInput type="file" (change)="onSubtitleSelected($event)" accept=".srt">
+        <input #subtitleInput type="file" (change)="onSubtitleChange($event)" accept=".srt">
         <button mat-icon-button class="input-subtitle-btn" (click)="subtitleInput.click()" matTooltip="{{ 'PAGES.IMMERSE.SUBTITLE.SUBTITLE_SELECTION' | translate }}">
           <mat-icon>folder_open</mat-icon>
         </button>
@@ -35,11 +35,17 @@
       </div>
     </div>
 
-    <cdk-virtual-scroll-viewport itemSize="32" class="subtitle-viewport">
+    <cdk-virtual-scroll-viewport #subtitleList itemSize="32" class="subtitle-viewport">
       <ul class="subtitle-list">
         <li *cdkVirtualFor="let sub of subtitles" class="subtitle-item">
           <!-- 2. Primary subtitle always displayed -->
-          <p class="primary-text">{{ sub.text }}</p>
+          <p class="primary-text">
+            @for (line of sub.textLines; track $index) {
+              {{ line }}<br>
+            } @empty {
+              There are no subtitle lines.
+            }
+          </p>
           
         </li>
       </ul>
