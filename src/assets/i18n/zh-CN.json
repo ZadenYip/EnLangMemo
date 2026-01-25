@@ -17,7 +17,7 @@
         "SUCCESS_LOAD_ACTION": "关闭",
         "FAIL_TO_LOAD_MSG": "加载字幕文件失败。",
         "FAIL_TO_LOAD_ACTION": "关闭",
-        "EMPTY_SUBTITLE_ITEM": "请导入字幕文件。"
+        "EMPTY": "请导入字幕文件。"
       }
     },
     "DETAIL": {

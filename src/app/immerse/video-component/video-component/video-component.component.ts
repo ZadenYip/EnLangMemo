@@ -6,6 +6,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
+import { SubtitleService } from '../../subtitle-service';
 
 @Component({
     selector: 'video-component',
@@ -20,6 +21,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class VideoComponent {
     private fileService = inject(FileService);
+    private subtitleService = inject(SubtitleService);
     readonly videoPlayer =
         viewChild.required<ElementRef<HTMLVideoElement>>('videoPlayer');
     videoSrc: SafeUrl = '';
@@ -56,6 +58,6 @@ export class VideoComponent {
         Logger.debug('Current video time:', currentTimeInSeconds);
 
         const currentTimeInMs = Math.ceil(currentTimeInSeconds * 1000);
-        // TODO this.subtitleUpdateTrigger$.next(currentTimeInMs);
+        this.subtitleService.notifySubtitleUpdate(currentTimeInMs);
     }
 }

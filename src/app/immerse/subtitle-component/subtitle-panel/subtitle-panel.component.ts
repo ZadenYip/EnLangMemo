@@ -1,37 +1,36 @@
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
-import { Component, inject, OnInit, viewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { SafeUrl } from '@angular/platform-browser';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService, TranslateDirective } from '@ngx-translate/core';
 import { SubtitleManager } from '../../find-subtitle-algo/subtitle-manager'; 
 import { SubtitleService } from '../../subtitle-service'; 
 import { FileService } from '../../../shared/services/file.service';
-import log from 'electron-log/renderer';
+import Logger from 'electron-log/renderer';
+import { filter, map, Subscription, throttleTime } from 'rxjs';
 
 
 @Component({
     selector: 'subtitle-panel',
     imports: [
-        CdkVirtualScrollViewport,
-        ScrollingModule,
-        MatIconModule,
-        MatButtonModule,
-        TranslatePipe,
-        MatSnackBarModule,
-        MatTooltip
-    ],
-    providers: [
-        SubtitleService
-    ],
+    CdkVirtualScrollViewport,
+    ScrollingModule,
+    MatIconModule,
+    MatButtonModule,
+    TranslatePipe,
+    MatSnackBarModule,
+    MatTooltip
+],
     templateUrl: './subtitle-panel.component.html',
     styleUrl: './subtitle-panel.component.scss',
 })
-export class SubtitlePanelComponent implements OnInit {
+export class SubtitlePanelComponent implements OnInit, OnDestroy {
     private fileService = inject(FileService);
     private translate = inject(TranslateService);
+    private subscribeVideoPlaying$ = new Subscription();
 
     readonly subtitleListView =
         viewChild.required<CdkVirtualScrollViewport>('subtitleList');
@@ -39,29 +38,37 @@ export class SubtitlePanelComponent implements OnInit {
     private notificationBar = inject(MatSnackBar);
     private subtitleService = inject(SubtitleService);
 
-    subtitles: GlobalSubtitle[] = [];
-    /**
-     * zero indicates no active subtitle
-     * because srt subtitle ids start from 1
-     */
-    activeSubtitleId: number = 0;
+    subtitleManager: SubtitleManager;
+    activeSubtitleIDs: Set<number> = new Set();
     
 
-    constructor() {}
+    constructor() {
+        this.subtitleManager = new SubtitleManager(
+            this.translate.instant(
+                'PAGES.IMMERSE.SUBTITLE.EMPTY',
+            ),
+        );
+    }
 
     ngOnInit(): void {
-        this.subtitles = [
-            {
-                id: 1,
-                startTime: 0,
-                endTime: 2000,
-                textLines: [
-                    this.translate.instant(
-                        'PAGES.IMMERSE.SUBTITLE.EMPTY_SUBTITLE_ITEM',
-                    ),
-                ],
-            },
-        ];
+        Logger.info('SubtitlePanelComponent initialized.');
+        this.createSubtitleHighlightTrigger();
+    }
+
+    private createSubtitleHighlightTrigger() {
+        this.subscribeVideoPlaying$ = this.subtitleService.subtitleUpdateTrigger$.pipe(
+            throttleTime(100),
+            map((videoCurTimeMs: number) => this.subtitleManager.nextSubtitleIds(videoCurTimeMs)),
+            filter((activeSubtitleIDs: Set<number>) => activeSubtitleIDs.size > 0),
+        ).subscribe(
+            (activeSubtitleIDs: Set<number>) => {
+                this.activeSubtitleIDs = activeSubtitleIDs;
+            }
+        );
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeVideoPlaying$.unsubscribe();
     }
 
     /**
@@ -70,8 +77,8 @@ export class SubtitlePanelComponent implements OnInit {
      */
     onSubtitleChange(event: Event): void {
         const handler = async (file: File) => {
-            log.info('Selected subtitle file:', file);
-            this.subtitles = await this.subtitleService.loadSubtitle(
+            Logger.info('Selected subtitle file:', file);
+            this.subtitleManager = await this.subtitleService.loadSubtitle(
                 file,
                 this.notificationBar,
             );
@@ -82,5 +89,9 @@ export class SubtitlePanelComponent implements OnInit {
             this.subtitleSrc,
             handler,
         );
+    }
+
+    trackBySubtitleId(index: number, subtitle: { id: number }): number {
+        return subtitle.id;
     }
 }

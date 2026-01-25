@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SubtitlePanelComponent } from './subtitle-panel.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('SubtitlePanelComponent', () => {
   let component: SubtitlePanelComponent;
@@ -8,7 +9,10 @@ describe('SubtitlePanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SubtitlePanelComponent]
+      imports: [ 
+        SubtitlePanelComponent,
+        TranslateModule.forRoot()
+       ]
     })
     .compileComponents();
 

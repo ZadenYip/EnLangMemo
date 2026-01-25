@@ -26,7 +26,7 @@ vi.mock('electron-log/main', () => ({
     globalThis.window = {} as any;
   }
 
-  Object.defineProperty(globalThis.window, 'services', {
+  Object.defineProperty(globalThis.window, 'service', {
     value: {
       database: {
         runSQL: vi.fn(),

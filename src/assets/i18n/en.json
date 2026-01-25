@@ -17,7 +17,7 @@
         "SUCCESS_LOAD_ACTION": "Close",
         "FAIL_TO_LOAD_MSG": "Failed to load subtitles.",
         "FAIL_TO_LOAD_ACTION": "Close",
-        "EMPTY_SUBTITLE_ITEM": "Please import a subtitle file."
+        "EMPTY": "Please import a subtitle file."
       }
     },
     "DETAIL": {

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VideoComponent } from './video-component.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('VideoComponentComponent', () => {
   let component: VideoComponent;
@@ -8,7 +9,10 @@ describe('VideoComponentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VideoComponent]
+      imports: [
+        VideoComponent,
+        TranslateModule.forRoot()
+      ],
     })
     .compileComponents();
 

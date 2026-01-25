@@ -20,7 +20,7 @@
 
   <cdk-virtual-scroll-viewport #subtitleList itemSize="32" class="subtitle-viewport">
     <ul class="subtitle-list">
-      <li *cdkVirtualFor="let sub of subtitles" class="subtitle-item" [class.subtitle-active]="sub.id === activeSubtitleId">
+      <li *cdkVirtualFor="let sub of subtitleManager.subtitles" class="subtitle-item" [class.subtitle-active]="activeSubtitleIDs.has(sub.id)">
         <!-- 2. Primary subtitle always displayed -->
         <p class="primary-text">
           @for (line of sub.textLines; track $index) {
