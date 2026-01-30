@@ -40,7 +40,7 @@
           "pattern": "$tsc",
           "background": {
             "activeOnStart": true,
-            "beginsPattern": "^.*",
+            "beginsPattern": "Application bundle generation complete",
             "endsPattern": "Application bundle generation complete"
           }
         }

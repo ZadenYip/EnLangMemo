@@ -9,11 +9,11 @@
             "type": "chrome",
             "request": "attach",
             "port": 9876,
-            "url": "http://localhost:4200",
-            "sourceMaps": true,  
+            "sourceMaps": true,
+            "urlFilter": "http://localhost:4200*",
             "timeout": 20000,
             "trace": true,
-            "preLaunchTask": "Build.Renderer"
+            "preLaunchTask": "Build.Renderer",
         },
         {
             "name": "Main",
@@ -79,7 +79,7 @@
     "compounds": [
         {
             "name": "Application Debug",
-            "configurations": [ "Renderer", "Main" ]
+            "configurations": [ "Main", "Renderer" ]
         }
     ]
 }
