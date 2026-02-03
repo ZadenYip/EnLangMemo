@@ -22,7 +22,7 @@
     <ul class="subtitle-list">
       <li app-subtitle-item 
       class="subtitle-item" 
-      *cdkVirtualFor="let sub of subtitleService.manager.subtitles"
+      *cdkVirtualFor="let sub of subtitleService.subtitles"
       [id]="sub.id" [textLines]="sub.textLines">
       </li>
     </ul>

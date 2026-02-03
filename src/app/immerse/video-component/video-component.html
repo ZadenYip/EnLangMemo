@@ -16,4 +16,10 @@
     </button>
 
   </div>
+
+  <div class="subtitle-overlay">
+    @for (subtitle of displaySubtitles(); track $index) {
+        {{ subtitle }}<br>
+    }
+  </div>
 </div>

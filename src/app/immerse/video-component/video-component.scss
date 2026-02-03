@@ -55,3 +55,33 @@
   // Enable pointer events only for the button itself
   pointer-events: auto;
 }
+
+.subtitle-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10%;
+  text-align: center;
+  color: #fff;
+  font-size: 2em; /* Increased font size for better readability */
+  font-weight: bold;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000,
+     0px  2px 0 #000,
+     2px  0px 0 #000,
+     0px -2px 0 #000,
+    -2px  0px 0 #000;
+  padding: 0.5em 1em;
+  pointer-events: auto; /* Allow interaction with subtitles */
+  z-index: 20; /* Ensure subtitles are above the video */
+  display: flex;
+  flex-direction: column; /* Ensure subtitles stack vertically */
+  align-items: center; /* Center subtitles horizontally */
+  justify-content: center; /* Center subtitles vertically */
+  gap: 0.5em; /* Add spacing between subtitle lines */
+  white-space: pre-wrap; /* Preserve line breaks in subtitles */
+  line-height: 1.5; /* Add line height to prevent overlapping of subtitle lines */
+}

@@ -3,6 +3,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { TranslateService } from "@ngx-translate/core";
 import { filter, map, Subject, Subscription, throttleTime } from "rxjs";
 import { SubtitleManager } from "./find-subtitle-algo/subtitle-manager";
+import { GlobalSubtitle } from "./subtitle-interface";
 
 @Injectable()
     export class SubtitleService implements OnDestroy {
@@ -42,14 +43,26 @@ import { SubtitleManager } from "./find-subtitle-algo/subtitle-manager";
         ));
     }
 
-    get manager(): SubtitleManager {
-        return this.subtitleManager;
-    }
-
     ngOnDestroy(): void {
         this.subscription.unsubscribe();
     }
 
+    get subtitles(): GlobalSubtitle[] {
+        return this.subtitleManager.subtitles;
+    }
+
+    /**
+     * 
+     * @param id - start from 0
+     * @returns 
+     */
+    public getSubtitle(id: number): GlobalSubtitle | null {
+        if (id < 0 || id >= this.subtitleManager.subtitles.length) {
+            return null;
+        }
+        return this.subtitleManager.subtitles[id];
+    }
+    
     /**
      * 
      * @param videoCurTimeMs - video time
@@ -93,7 +106,7 @@ import { SubtitleManager } from "./find-subtitle-algo/subtitle-manager";
                         { duration: 3000 }
                     );
                     resolve();
-                    this.manager.refreshSubtitlesRef();
+                    this.subtitleManager.refreshSubtitlesRef();
                 },
           });
         });
