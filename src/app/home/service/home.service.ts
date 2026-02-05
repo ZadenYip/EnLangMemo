@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { from, map, Observable } from 'rxjs';
 import { DeckListItem } from '../deck-list-item.model';
-import log from 'electron-log/renderer';
 import Database from 'better-sqlite3';
+import Logger from 'electron-log';
 
 @Injectable({
     providedIn: 'root',
@@ -24,7 +24,7 @@ export class HomeService {
                     newCardsPerDay: item.new_cards_per_day,
                     newCardsLearned: item.new_cards_learned,
                 }));
-                log.info('Mapped deck list:', deckList);
+                Logger.info('Mapped deck list:', deckList);
                 return deckList;
             })
         );

@@ -8,7 +8,7 @@ import {
 } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import log from 'electron-log/renderer';
+import Logger from 'electron-log/renderer';
 
 @Component({
     selector: 'app-root',
@@ -47,13 +47,13 @@ export class AppComponent {
     };
 
     onSync() {
-        log.info('Sync triggered');
+        Logger.info('Sync triggered');
     }
 
     constructor(private router: Router, private translate: TranslateService) {
         this.translate.setDefaultLang('en');
         // Use browser language
         this.translate.use(navigator.language);
-        log.info('language set to', navigator.language);
+        Logger.info('language set to', navigator.language);
     }
 }

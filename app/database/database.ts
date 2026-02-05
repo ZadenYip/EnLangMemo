@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import { app } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-import log from 'electron-log/main';
+import Logger from 'electron-log';
 
 let db: Database.Database | null = null;
 
@@ -18,11 +18,11 @@ export function initDatabase(): void {
         // 判断数据库db文件是否存在
         db = new Database(path.join(dbDirPath, 'app_database.db'));
         db.pragma('journal_mode = WAL');
-        log.info(
+        Logger.info(
             'Database initialized at', path.join(dbDirPath, 'app_database.db')
         );
     } else {
-        log.warn('Database already initialized');
+        Logger.warn('Database already initialized');
     }
     createTableIfNotExists();
 }
@@ -30,7 +30,7 @@ export function initDatabase(): void {
 export function closeDatabase(): void {
     if (db !== null) {
         db.close();
-        log.info('Database connection closed.');
+        Logger.info('Database connection closed.');
     }
 }
 
