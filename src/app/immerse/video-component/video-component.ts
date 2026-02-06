@@ -19,6 +19,7 @@ export class VideoComponent implements OnDestroy{
     private subtitleService = inject(SubtitleService);
     readonly videoPlayer =
         viewChild.required<ElementRef<HTMLVideoElement>>('videoPlayer');
+    private userPaused = false;
     displaySubtitles = computed<string[]>(() => {
         const subtitles: string[] = [];
         for (const id of this.subtitleService.videoActiveIDs()) {
@@ -71,18 +72,23 @@ export class VideoComponent implements OnDestroy{
 
     onVideoJump(event: Event): void {
         const currentTimeInSeconds =
-            this.videoPlayer().nativeElement.currentTime;
+        this.videoPlayer().nativeElement.currentTime;
         Logger.debug('Video jumped to:', currentTimeInSeconds);
 
         const currentTimeInMs = Math.ceil(currentTimeInSeconds * 1000);
         this.subtitleService.pushVideoTime(currentTimeInMs);
     }
 
-    pauseVideo(): void {
+    pauseOnSubtitleHover(): void {
+        this.userPaused = this.videoPlayer().nativeElement.paused;
         this.videoPlayer().nativeElement.pause();
     }
 
-    playVideo(): void {
-        this.videoPlayer().nativeElement.play();
+    playIfNotUserPaused(): void {
+        if (this.userPaused) {
+            return;
+        } else {
+            this.videoPlayer().nativeElement.play();
+        }
     }
 }
