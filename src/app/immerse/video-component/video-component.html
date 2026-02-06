@@ -1,6 +1,6 @@
 <div class="video-panel">
   <!-- Video Player  -->
-  <video #videoPlayer [src]="videoSrc" controls width="640"
+  <video  #videoPlayer [src]="videoSrc" controls width="640"
   (loadedmetadata)="onVideoLoad()"
   (timeupdate)="onVideoPlaying($event)"
   (seeked)="onVideoJump($event)">
@@ -17,9 +17,9 @@
 
   </div>
 
-  <div class="subtitle-overlay" (mouseenter)="pauseVideo()" (mouseleave)="playVideo()">
+  <div class="subtitle-overlay">
     @for (subtitle of displaySubtitles(); track $index) {
-        {{ subtitle }}<br>
+      <div (mouseenter)="pauseOnSubtitleHover()" (mouseleave)="playIfNotUserPaused()">{{ subtitle }}<br></div>
     }
   </div>
 </div>
