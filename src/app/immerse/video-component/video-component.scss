@@ -85,3 +85,16 @@
   white-space: pre-wrap; /* Preserve line breaks in subtitles */
   line-height: 1.5; /* Add line height to prevent overlapping of subtitle lines */
 }
+
+.subtitle-offset-tips {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em; /* Small font size for subtle appearance */
+  z-index: 1000; /* Ensure it appears above other elements */
+  pointer-events: none; /* Prevent interaction */
+  white-space: nowrap; /* Prevent text wrapping */
+}

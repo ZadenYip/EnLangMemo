@@ -17,7 +17,8 @@
         "SUCCESS_LOAD_ACTION": "Close",
         "FAIL_TO_LOAD_MSG": "Failed to load subtitles.",
         "FAIL_TO_LOAD_ACTION": "Close",
-        "EMPTY": "Please import a subtitle file."
+        "EMPTY": "Please import a subtitle file.",
+        "OFFSET_TIP": "Subtitle offset: {{offset}} ms"
       }
     },
     "DETAIL": {

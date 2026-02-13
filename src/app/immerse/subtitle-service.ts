@@ -13,6 +13,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
      * notifying subtitle-panel component
      */
     private videoTime$ = new Subject<number>();
+    private subtitleOffsetMs = 0;
     
     panelActiveIDs: Signal<Set<number>>;
     videoActiveIDs: Signal<Set<number>>;
@@ -28,20 +29,34 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 
         // filtering active IDs for panel (only non-empty sets)
-        this.panelActiveIDs = toSignal(this.getActiveIDsStream().pipe(filter(activeIDs => activeIDs.size > 0)), {initialValue: new Set<number>()});
-        this.videoActiveIDs = toSignal(this.getActiveIDsStream(), {initialValue: new Set<number>()});
+        this.panelActiveIDs = toSignal(this.getActiveIDsStream().pipe(filter(activeIDs => activeIDs.size > 0)), { initialValue: new Set<number>()} );
+        this.videoActiveIDs = toSignal(this.getActiveIDsStream(), { initialValue: new Set<number>() });
     }
 
     private getActiveIDsStream() {
         return this.videoTime$.pipe(
             throttleTime(10),
-            map((videoCurTimeMs: number) => this.subtitleManager.nextSubtitleIds(videoCurTimeMs)
+            map((videoCurTimeMs: number) => {
+                const adjustedTime = videoCurTimeMs + this.subtitleOffsetMs;
+                return this.subtitleManager.nextSubtitleIds(adjustedTime)
+            }
         ));
     }
 
     get subtitles(): GlobalSubtitle[] {
         return this.subtitleManager.subtitles;
     }
+
+    /**
+     * 
+     * @param offsetMs - increase/decrease time in ms
+     * @returns incresed/decresed time in ms
+     */
+    public adjustSubtitleOffset(offsetMs: number): number {
+        this.subtitleOffsetMs += offsetMs;
+        return this.subtitleOffsetMs;
+    }
+    
 
     /**
      * 
