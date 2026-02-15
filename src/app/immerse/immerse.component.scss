@@ -13,137 +13,19 @@
 // ==========================================
 // 2. Left Video Panel
 // ==========================================
-.video-panel {
-  flex: 1; // Key: Let the video panel take up all available remaining space
+// Let video-component host element participate in flex layout
+video-component {
+  flex: 1; // Take up all available remaining space
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #000;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative; // Provide positioning context for video-overlay
-
-  video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; // Maintain original video aspect ratio
-  }
+  min-height: 0;
 }
 
 // ==========================================
 // 3. Right Subtitle Panel
 // ==========================================
-.subtitle-panel {
-  width: 280px; // Key: Give the subtitle panel a fixed width
-  flex-shrink: 0; // Prevent shrinking when the window is resized smaller
+// Let subtitle-panel component's host element participate in flex layout
+subtitle-panel {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  
-  // New styles: Add border, rounded corners, and padding to form a rounded rectangle
-  border: 1px solid #e0e0e0;
-  border-radius: 16px;
-  padding: 16px;
-  background-color: #fff; // Add a white background
-
-  .subtitle-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 8px;
-    color: var(--mat-sys-primary);
-  }
-
-  .subtitle-action-bar {
-    display: flex;
-    align-items: center;
-
-    input {
-      display: none;
-    }
-  }
-
-  .subtitle-list, .subtitle-viewport {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    overflow-y: auto; // If subtitle content is too long, allow scrolling
-    flex-grow: 1; // Occupy all available vertical space
-
-    .subtitle-item {
-      padding: 12px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-
-      &:hover {
-        background-color: #f0f0f0;
-      }
-
-      &.active {
-        background-color: #e3f2fd; // Highlight style
-      }
-
-      // Common styles for p tags
-      p {
-        margin: 0;
-        white-space: normal;
-        word-break: break-word;
-        line-height: 1.5;
-      }
-
-      // Styles for primary subtitle
-      .primary-text {
-        font-size: 1em;
-        color: #212121; // Darker color for emphasis
-        margin-bottom: 4px; // Space between primary and secondary subtitles
-      }
-
-      // Styles for secondary subtitle
-      .secondary-text {
-        font-size: 0.9em;
-        color: #757575; // Light gray, as auxiliary
-      }
-    }
-  }
-}
-
-// ==========================================
-// 4. Video Hover Effect
-// ==========================================
-
-// Overlay layer on top of the video
-.video-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-
-  // Make this overlay never intercept mouse events
-  pointer-events: none;
-
-  // 隐藏文件输入框
-  input {
-    display: none;
-  }
-}
-
-// When the mouse hovers over the video panel, only change the overlay's opacity
-.video-panel:hover .video-overlay {
-  opacity: 1;
-}
-
-// "Open File" button styles
-.input-video-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-
-  // Key fix #2: Enable pointer events only for the button itself
-  pointer-events: auto;
+  min-height: 0; // Allow shrinking
 }

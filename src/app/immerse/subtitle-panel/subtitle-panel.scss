@@ -1,0 +1,63 @@
+.subtitle-panel {
+  width: 280px; // Key: Give the subtitle panel a fixed width
+  flex-shrink: 0; // Prevent shrinking when the window is resized smaller
+  flex-grow: 1; // Fill parent container height
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0; // Key: Allow shrinking
+  
+  // New styles: Add border, rounded corners, and padding to form a rounded rectangle
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 16px;
+  background-color: #fff; // Add a white background
+
+  .subtitle-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    color: var(--mat-sys-primary);
+    flex-shrink: 0; // Header should not shrink
+  }
+
+  .subtitle-action-bar {
+    display: flex;
+    align-items: center;
+
+    input {
+      display: none;
+    }
+  }
+
+  // cdk-virtual-scroll-viewport requires explicit height
+  .subtitle-viewport {
+    flex: 1 1 0; // Key: flex-grow:1, flex-shrink:1, flex-basis:0
+    height: 0; // Key: Works with flex: 1 1 0 to achieve adaptive height
+    min-height: 0;
+  }
+
+  .subtitle-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .subtitle-list, .subtitle-viewport {
+    overflow-y: auto; // If subtitle content is too long, allow scrolling
+    flex-grow: 1; // Occupy all available vertical space
+
+    .subtitle-item {
+      padding: 12px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #f0f0f0;
+      }
+
+    }
+  }
+}

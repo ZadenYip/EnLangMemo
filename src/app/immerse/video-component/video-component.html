@@ -1,0 +1,27 @@
+<div class="video-panel">
+  <!-- Video Player  -->
+  <video  #videoPlayer [src]="videoSrc" controls width="640"
+  (loadedmetadata)="onVideoLoad()"
+  (timeupdate)="onVideoPlaying($event)"
+  (seeked)="onVideoJump($event)">
+  </video>
+
+  <div class="video-overlay">
+    <!-- Subtitle Offset Tips-->
+    <div class="subtitle-offset-tips">{{ subtitleOffsetTip }}</div>
+
+    <!-- Video File Selection Button  -->
+    <input #videoInput type="file" (change)="onVideoChange($event)" accept="video/*">
+    <!-- Click to trigger #videoInput -->
+    <button mat-icon-button class="input-video-btn" (click)="videoInput.click()" matTooltip="{{ 'PAGES.IMMERSE.SUBTITLE.VIDEO_SELECTION' | translate }}">
+    <mat-icon>folder_open</mat-icon>
+    </button>
+
+  </div>
+
+  <div class="subtitle-overlay">
+    @for (subtitle of displaySubtitles(); track $index) {
+      <div (mouseenter)="pauseOnSubtitleHover()" (mouseleave)="playIfNotUserPaused()">{{ subtitle }}<br></div>
+    }
+  </div>
+</div>

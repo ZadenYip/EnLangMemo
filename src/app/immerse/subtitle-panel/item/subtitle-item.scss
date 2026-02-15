@@ -1,0 +1,21 @@
+:host {
+  // Active subtitle highlight
+  &.subtitle-active {
+    background-color: #e3f2fd; // Highlight style
+  }
+  // Common styles for p tags
+  p {
+    margin: 0;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.5;
+  }
+
+  // Styles for primary subtitle
+  .primary-text {
+    font-size: 1em;
+    color: #212121; // Darker color for emphasis
+    margin-bottom: 4px; // Space between primary and secondary subtitles
+  }
+
+}

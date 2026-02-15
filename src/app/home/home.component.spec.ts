@@ -8,17 +8,17 @@ describe('HomeComponent', () => {
     let component: HomeComponent;
     let fixture: ComponentFixture<HomeComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
             imports: [HomeComponent, TranslateModule.forRoot()],
             providers: [provideRouter([])]
         }).compileComponents();
-    }));
+    });
 
-    beforeEach(() => {
+    beforeEach(async () => {
         fixture = TestBed.createComponent(HomeComponent);
         component = fixture.componentInstance;
-        // fixture.detectChanges();
+        // await fixture.detectChanges();
     });
 
     it('should create', () => {

@@ -5,31 +5,41 @@
  * providing empty implementations.
  */
 
+vi.mock('electron-log/renderer', () => {
+  const mockLogger = {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+  return {
+    ...mockLogger,
+    default: mockLogger
+  };
+});
 
-
-vi.mock('electron-log/renderer', () => ({
-  info: vi.fn(),
-  error: vi.fn(),
-  warn: vi.fn(),
-  debug: vi.fn(),
-}));
-
-vi.mock('electron-log/main', () => ({
-  info: vi.fn(),
-  error: vi.fn(),
-  warn: vi.fn(),
-  debug: vi.fn(),
-}));
+vi.mock('electron-log/main', () => {
+  const mockLogger = {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
+  return {
+    ...mockLogger,
+    default: mockLogger
+  };
+});
 
 (function defineGlobalWindow() {
   if (typeof globalThis.window === 'undefined') {
     globalThis.window = {} as any;
   }
 
-  Object.defineProperty(globalThis.window, 'bridge', {
+  Object.defineProperty(globalThis.window, 'service', {
     value: {
       database: {
-        ipcRunSQL: vi.fn(),
+        runSQL: vi.fn(),
       },
     },
     writable: true,

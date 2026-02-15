@@ -8,17 +8,17 @@ describe('ImmerseComponent', () => {
     let component: ImmerseComponent;
     let fixture: ComponentFixture<ImmerseComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
+    beforeEach(async() => {
+        await TestBed.configureTestingModule({
             imports: [ImmerseComponent, TranslateModule.forRoot()],
             providers: [provideRouter([])]
         }).compileComponents();
-    }));
+    });
 
-    beforeEach(() => {
+    beforeEach(async () => {
         fixture = TestBed.createComponent(ImmerseComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
+        await fixture.detectChanges();
     });
 
     it('should create', () => {

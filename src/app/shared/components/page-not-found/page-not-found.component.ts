@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import log from 'electron-log/renderer';
+import Logger from 'electron-log/renderer';
 
 @Component({
     selector: 'app-page-not-found',
@@ -11,6 +11,6 @@ export class PageNotFoundComponent implements OnInit {
     constructor() {}
 
     ngOnInit(): void {
-        log.info('PageNotFoundComponent INIT');
+        Logger.info('PageNotFoundComponent INIT');
     }
 }

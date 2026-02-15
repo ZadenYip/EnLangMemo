@@ -1,21 +1,18 @@
-import { ipcMain, IpcMainInvokeEvent, webUtils } from "electron";
-import { runSQL } from "../database/database";
+import { registerProxy } from 'electron-ipc-cat/server';
+import { DatabaseServiceIPCDescriptor } from '../database/database-service.interface';
+import { DatabaseService } from '../database/database-service';
+import { SubtitleService } from '../subtitle-handler/subtitle-service';
+import { SubtitleServiceIPCDescriptor } from '../subtitle-handler/subtitle-service.interface';
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
-    // registerSubtitleLibHandlers(); TODO
 }
 
 function registerDatabaseHandlers() {
-    ipcMain.handle(
-        'database:runSQL', async (event: IpcMainInvokeEvent, sql: string, params?: any[]) => {
-            return runSQL(sql, params);
-        }
-    );
+    const databaseService = new DatabaseService();
+    registerProxy(databaseService, DatabaseServiceIPCDescriptor);
+
+    const subtitleService = new SubtitleService();
+    registerProxy(subtitleService, SubtitleServiceIPCDescriptor);
 }
 
-// function registerSubtitleLibHandlers() {
-//     ipcMain.handle(
-//         'subtitleLib:parseSubtitle', parseSubtitle
-//     )
-// }

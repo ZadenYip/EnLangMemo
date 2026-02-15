@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { initDatabase } from './database/database';
 import { registerAllIPCHandlers } from './ipc';
-import { loggerSetUp } from './log';
+import { loggerSetUp } from './logs/log';
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),

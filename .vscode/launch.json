@@ -9,23 +9,19 @@
             "type": "chrome",
             "request": "attach",
             "port": 9876,
-            "url": "http://localhost:4200",
-            "sourceMaps": true,  
-            "timeout": 10000,
-            "trace": "verbose",
-            "sourceMapPathOverrides": {
-                "webpack:///./*": "${workspaceFolder}/*"
-            },
-            "preLaunchTask": "Build.Renderer"
+            "sourceMaps": true,
+            "urlFilter": "http://localhost:4200*",
+            "timeout": 20000,
+            "trace": true,
+            "preLaunchTask": "Build.Renderer",
         },
         {
             "name": "Main",
             "type": "node",
             "request": "launch",
-            "protocol": "inspector",
             "cwd": "${workspaceFolder}",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-            "trace": "verbose",
+            "trace": true,
             "runtimeArgs": [
                 "--serve",
                 ".",
@@ -34,10 +30,12 @@
             "windows": {
                 "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
             },
+            "outFiles": ["${workspaceFolder}/app/**/*.js"],
+            "sourceMaps": true,
             "preLaunchTask": "Build.Main"
         },
         {
-            "name": "Debug Current Angular Test File",
+            "name": "Run Current Angular Test File",
             "request": "launch",
             "type": "node",
             "cwd": "${workspaceFolder}",
@@ -45,19 +43,21 @@
             "args": [
                 "test",
                 "--include",
-                "**/${fileBasename}"
+                "**/${fileBasename}",
+                "--debug",
             ],
             "console": "integratedTerminal"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug Current Main Process Test File",
+            "name": "Run Current Main Process Test File",
             "autoAttachChildProcesses": true,
             "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
             "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
             "args": ["run", "${relativeFile}"],
             "smartStep": true,
+            "sourceMaps": true,
             "console": "integratedTerminal"
         },
         {
@@ -68,12 +68,20 @@
             "runtimeExecutable": "npm",
             "args": ["run", "electron:test"],
             "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Test All Angular Files",
+            "runtimeExecutable": "npm",
+            "args": ["run", "angular-test"],
+            "console": "integratedTerminal"
         }
     ],
     "compounds": [
         {
             "name": "Application Debug",
-            "configurations": [ "Renderer", "Main" ]
+            "configurations": [ "Main", "Renderer" ]
         }
     ]
 }

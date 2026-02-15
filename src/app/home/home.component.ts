@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { DataSource } from '@angular/cdk/table';
 import { DeckListItem } from './deck-list-item.model';
-import log from 'electron-log/renderer';
+import Logger from 'electron-log';
 
 @Component({
     selector: 'app-home',
@@ -24,17 +24,17 @@ export class HomeComponent implements OnInit {
     constructor(private router: Router) {}
 
     ngOnInit(): void {
-        log.info('HomeComponent initialized');
+        Logger.info('HomeComponent initialized');
         this.reloadDecks();
     }
 
     reloadDecks() {
-        log.info('Reloading decks...');
+        Logger.info('Reloading decks...');
         this.deckListSrc = new DeckListDataSource(this.homeService.queryDeckList());
     }
 
     clickDeckRow(deck: DeckListItem) {
-        log.info('Clicked deck row:', deck);
+        Logger.info('Clicked deck row:', deck);
     }
 }
 

@@ -1,15 +1,27 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["app/shared/*"],
+      "@app/*": ["app/*"],
+      "@assets/*": ["assets/*"],
+      "@env/*": ["environments/*"]
+    },
     "esModuleInterop": true,
     "outDir": "../out-tsc/spec",
+    "typeRoots": ["../node_modules/@types", "../node_modules"],
     "types": [
-      "vitest/globals"
+      "vitest/globals",
+      "node"
     ]
   },
   "include": [
+    "**/*.ts",
     "**/*.spec.ts",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "../app/ipc/ipc-api.d.ts"
   ],
   "exclude": [
     "dist",

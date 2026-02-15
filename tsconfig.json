@@ -1,5 +1,11 @@
 {
   "compileOnSave": false,
+  "references": [
+    { "path": "./app/tsconfig.electron.json" },
+    { "path": "./app/tsconfig.electron.spec.json" },
+    { "path": "./src/tsconfig.app.json" },
+    { "path": "./src/tsconfig.spec.json" }
+  ],
   "compilerOptions": {
     "strict": true,
     "outDir": "./dist/out-tsc",
@@ -7,7 +13,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

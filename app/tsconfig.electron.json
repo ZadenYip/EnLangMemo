@@ -1,30 +1,26 @@
 {
   "compilerOptions": {
+    "strict": true,
+    "composite": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "module": "commonjs",
-    "target": "es2015",
+    "target": "es2020",
     "types": [
       "node"
-    ],
-    "lib": [
-      "es2017",
-      "es2016",
-      "es2015",
-      "dom"
     ]
   },
-  "files": [
-    "app/main.ts",
-    "app/preload.ts"
+  "include": [
+    "**/*.ts",
+    "../src/app/immerse/subtitle-interface.d.ts"
   ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts"
   ]
 }
+// Just use for code completion and type checking in Electron main process files

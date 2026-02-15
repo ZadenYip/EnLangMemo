@@ -1,6 +1,7 @@
 import { app } from 'electron';
 import log from 'electron-log/main';
 import * as path from 'path';
+import { of } from 'rxjs';
 
 export function loggerSetUp(serve: boolean): void {
     // Initialize Electron Log
@@ -13,5 +14,7 @@ export function loggerSetUp(serve: boolean): void {
     const month = now.getMonth() + 1;
     const day = now.getDate();
     log.transports.file.resolvePathFn = () => path.join(logDir, `${year}-${month}-${day}.log`);
+    log.transports.file.level = serve ? 'debug' : 'info';
     log.initialize();
+
 }

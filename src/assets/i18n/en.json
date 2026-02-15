@@ -12,7 +12,13 @@
       "SUBTITLE": {
         "HEADER": "Subtitle Content",
         "VIDEO_SELECTION": "Select Video File",
-        "SUBTITLE_SELECTION": "Select Subtitle File"
+        "SUBTITLE_SELECTION": "Select Subtitle File",
+        "SUCCESS_LOAD_MSG": "Subtitles loaded successfully.",
+        "SUCCESS_LOAD_ACTION": "Close",
+        "FAIL_TO_LOAD_MSG": "Failed to load subtitles.",
+        "FAIL_TO_LOAD_ACTION": "Close",
+        "EMPTY": "Please import a subtitle file.",
+        "OFFSET_TIP": "Subtitle offset: {{offset}} ms"
       }
     },
     "DETAIL": {

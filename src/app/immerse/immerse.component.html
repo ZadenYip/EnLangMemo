@@ -1,49 +1,6 @@
 <div class="immerse-container">
-  <div class="video-panel">
-    <!-- Video Player  -->
-    <video #videoPlayer [src]="videoSrc" controls width="640" (loadedmetadata)="onVideoLoaded()" (timeupdate)="onVideoPlaying($event)"></video>
 
-    <div class="video-overlay">
-
-      <!-- Video File Selection Button  -->
-      <input #videoInput type="file" (change)="onVideoSelected($event)" accept="video/*">
-      <!-- Click to trigger #videoInput -->
-      <button mat-icon-button class="input-video-btn" (click)="videoInput.click()" matTooltip="{{ 'PAGES.IMMERSE.SUBTITLE.VIDEO_SELECTION' | translate }}">
-        <mat-icon>folder_open</mat-icon>
-      </button>
-
-    </div>
-  </div>
-
-  <div class="subtitle-panel">
-    <div class="subtitle-header">
-      <div class="subtitle-title">{{ 'PAGES.IMMERSE.SUBTITLE.HEADER' | translate }}</div>
-      <div class="subtitle-action-bar">
-
-        <!-- Select Subtitle File -->
-
-        <input #subtitleInput type="file" (change)="onSubtitleSelected($event)" accept=".srt">
-        <button mat-icon-button class="input-subtitle-btn" (click)="subtitleInput.click()" matTooltip="{{ 'PAGES.IMMERSE.SUBTITLE.SUBTITLE_SELECTION' | translate }}">
-          <mat-icon>folder_open</mat-icon>
-        </button>
-
-        <!-- Subtitle Settings Button -->
-        <button mat-icon-button class="subtitle-settings-btn">
-          <mat-icon class="subtitle-settings.icon">settings</mat-icon>
-        </button>
-
-      </div>
-    </div>
-
-    <cdk-virtual-scroll-viewport itemSize="32" class="subtitle-viewport">
-      <ul class="subtitle-list">
-        <li *cdkVirtualFor="let sub of subtitles" class="subtitle-item">
-          <!-- 2. Primary subtitle always displayed -->
-          <p class="primary-text">{{ sub.text }}</p>
-          
-        </li>
-      </ul>
-    </cdk-virtual-scroll-viewport>
-  </div>
+  <video-component></video-component>
+  <subtitle-panel #subtitlePanel></subtitle-panel>
 
 </div>

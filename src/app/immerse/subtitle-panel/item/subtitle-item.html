@@ -1,0 +1,7 @@
+<p class="primary-text">
+    @for (line of textLines(); track $index) {
+    {{ line }}<br>
+    } @empty {
+        There are no subtitle lines.
+    }
+</p>

@@ -108,9 +108,6 @@
           "options": {
             "runner": "vitest",
             "tsConfig": "src/tsconfig.spec.json",
-            "browsers": [
-              "chromium"
-            ],
             "buildTarget": "angular-electron:build:testing",
             "coverage": true,
             "coverageReporters": [
