@@ -27,4 +27,4 @@ jobs:
     - name: Install Dependencies
       run: npm ci
     - name: Run Main Process Unit Test
-      run: npm run electron:test
+      run: npm run test
