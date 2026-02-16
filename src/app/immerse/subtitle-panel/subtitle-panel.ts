@@ -12,7 +12,6 @@ import Logger from 'electron-log/renderer';
 import { Subscription } from 'rxjs';
 import { SubtitleItemComponent } from './item/subtitle-item';
 
-
 @Component({
     selector: 'app-subtitle-panel',
     imports: [

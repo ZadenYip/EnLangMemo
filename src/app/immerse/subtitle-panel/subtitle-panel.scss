@@ -47,17 +47,5 @@
   .subtitle-list, .subtitle-viewport {
     overflow-y: auto; // If subtitle content is too long, allow scrolling
     flex-grow: 1; // Occupy all available vertical space
-
-    .subtitle-item {
-      padding: 12px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-
-      &:hover {
-        background-color: #f0f0f0;
-      }
-
-    }
   }
 }

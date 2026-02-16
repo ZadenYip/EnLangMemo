@@ -2,12 +2,9 @@ import { Component, computed, inject, input } from '@angular/core';
 import { SubtitleService } from '@app/immerse/subtitle-service';
 
 @Component({
-    selector: '[app-subtitle-item]',
+    selector: 'app-subtitle-item',
     templateUrl: './subtitle-item.html',
-    styleUrls: ['./subtitle-item.scss'],
-    host: {
-        '[class.subtitle-active]': 'isActive()'
-    }
+    styleUrls: ['./subtitle-item.scss']
 })
 export class SubtitleItemComponent {
     private subtitleService = inject(SubtitleService);

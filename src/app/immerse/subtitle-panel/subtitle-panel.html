@@ -20,11 +20,11 @@
 
   <cdk-virtual-scroll-viewport #subtitleList itemSize="32" class="subtitle-viewport">
     <ul class="subtitle-list">
-      <li app-subtitle-item 
+      <app-subtitle-item 
       class="subtitle-item" 
       *cdkVirtualFor="let sub of subtitleService.subtitles"
       [id]="sub.id" [textLines]="sub.textLines">
-      </li>
+      </app-subtitle-item>
     </ul>
   </cdk-virtual-scroll-viewport>
 </div>
