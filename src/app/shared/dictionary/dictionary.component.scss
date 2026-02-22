@@ -1,0 +1,120 @@
+.dictionary-page {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: min(960px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  background: #f5f7fb;
+  border-radius: 20px;
+  box-shadow: 0 10px 26px rgba(20, 20, 20, 0.18);
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  display: grid;
+  gap: 0;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 16px;
+}
+
+.context-card,
+.meanings-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f5f7fb;
+  box-shadow: none;
+}
+
+.avatar-icon {
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: #1c1c1c;
+  display: grid;
+  place-items: center;
+
+  mat-icon {
+    font-size: 20px;
+  }
+}
+
+mat-card-title {
+  font-weight: 600;
+}
+
+.selected-text,
+.context-sentence {
+  margin-top: 12px;
+}
+
+.label {
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.54);
+  margin-bottom: 6px;
+}
+
+.value {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f1f1f;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.meaning-scroll {
+  height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+}
+
+.word-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 13px;
+}
+
+.phonetic {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.meaning-cards {
+  display: grid;
+  gap: 10px;
+  padding-right: 6px;
+}
+
+.pos {
+  font-weight: 600;
+  color: #37474f;
+}
+
+
+@media (min-width: 960px) {
+  .dictionary-page {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+
+  .context-card {
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .meanings-card {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .dictionary-page {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    border-radius: 16px;
+  }
+}

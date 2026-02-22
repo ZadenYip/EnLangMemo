@@ -9,6 +9,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import Logger from 'electron-log/renderer';
+import { DictionaryComponent } from "./shared/dictionary/dictionary.component";
 
 @Component({
     selector: 'app-root',
@@ -16,13 +17,14 @@ import Logger from 'electron-log/renderer';
     styleUrls: ['./app.component.scss'],
     standalone: true,
     imports: [
-        RouterOutlet,
-        RouterLink,
-        RouterLinkActive,
-        MatButtonModule,
-        MatToolbarModule,
-        TranslatePipe,
-    ],
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MatButtonModule,
+    MatToolbarModule,
+    TranslatePipe,
+    DictionaryComponent
+],
 })
 export class AppComponent {
     private readonly router: Router = inject(Router);

@@ -1,0 +1,29 @@
+<mat-card class="meaning-card">
+  <mat-card-content>
+    @if (senseLabel()) {
+      <div class="sense-label">{{ senseLabel() }}</div>
+    }
+    <div class="meaning-head">
+      <span class="badge">{{ badge() }}</span>
+      <div class="gloss">
+        @for (line of meaningLines(); track $index) {
+          <div>{{ line }}</div>
+        }
+        @if (meaningZh()) {
+          <div class="gloss-zh">{{ meaningZh() }}</div>
+        }
+      </div>
+    </div>
+    @for (ex of examples(); track $index) {
+      <div class="example-block">
+        <div class="example">
+          <span class="bullet">•</span>
+          <span>{{ ex.text }}</span>
+        </div>
+        @if (ex.zh) {
+          <div class="example-zh">{{ ex.zh }}</div>
+        }
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

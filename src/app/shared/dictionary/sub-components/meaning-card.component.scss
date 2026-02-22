@@ -1,0 +1,75 @@
+.meaning-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+
+  mat-card-content {
+    padding: 12px 14px;
+  }
+}
+
+.sense-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  background: rgba(51, 65, 85, 0.12);
+  margin-bottom: 8px;
+}
+
+.meaning-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #3f51b5;
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.gloss {
+  flex: 1;
+  color: #1f1f1f;
+  display: grid;
+  gap: 2px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.gloss-zh {
+  color: rgba(0, 0, 0, 0.68);
+  font-size: 13px;
+}
+
+.example-block {
+  margin-top: 10px;
+}
+
+.example {
+  display: flex;
+  gap: 8px;
+  color: rgba(0, 0, 0, 0.72);
+  line-height: 1.45;
+}
+
+.bullet {
+  color: rgba(0, 0, 0, 0.45);
+  flex: 0 0 auto;
+}
+
+.example-zh {
+  margin-left: 18px;
+  margin-top: 4px;
+  color: rgba(0, 0, 0, 0.58);
+  font-size: 13px;
+}
