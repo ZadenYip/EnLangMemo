@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { SubtitleService } from '@app/immerse/subtitle-service';
+import { SubtitleService } from 'app/immerse/subtitle-service';
 
 @Component({
     selector: 'app-subtitle-item',

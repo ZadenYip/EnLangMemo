@@ -26,25 +26,26 @@
   <mat-card class="meanings-card">
     <mat-card-header>
       <mat-card-title>释义列表</mat-card-title>
-      <mat-card-subtitle>PLACEHOLDER_WORD</mat-card-subtitle>
+      <mat-card-subtitle>{{ entry.word }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <div class="word-meta">
-        <span class="pos">PLACEHOLDER_POS</span>
-        <span class="phonetic">/PLACEHOLDER_PHONETIC/</span>
+      <div class="phonetic-row">
+        <div class="phonetic">{{ entry.phoneticSymbol.join(' / ') }}</div>
       </div>
-      <div class="meaning-scroll">
-        <div class="meaning-cards">
-          @for (card of meaningCards; track $index) {
-            <app-meaning-card
-              [senseLabel]="card.senseLabel"
-              [badge]="card.badge"
-              [meaningLines]="card.meaningLines"
-              [meaningZh]="card.meaningZh"
-              [examples]="card.examples"
-            ></app-meaning-card>
-          }
-        </div>
+      <div class="meaning-scroll" #meaningScroll>
+        @for (sense of entry.senses; track $index) {
+          <div class="sense-section" #senseSection>
+            <div class="meaning-cards">
+              @for (def of sense.definitions; track $index) {
+                <app-meaning-card
+                  [item]="def"
+                  [index]="$index + 1"
+                  [posLabel]="sense.partOfSpeech"
+                ></app-meaning-card>
+              }
+            </div>
+          </div>
+        }
       </div>
     </mat-card-content>
   </mat-card>

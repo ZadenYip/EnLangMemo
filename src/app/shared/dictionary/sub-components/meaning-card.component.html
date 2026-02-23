@@ -1,29 +1,38 @@
 <mat-card class="meaning-card">
   <mat-card-content>
-    @if (senseLabel()) {
-      <div class="sense-label">{{ senseLabel() }}</div>
+    @if (posLabel()) {
+      <div class="pos-label">{{ posLabel() }}</div>
+    }
+    @if (item().cefr) {
+      <div class="sense-label">{{ item().cefr }}</div>
     }
     <div class="meaning-head">
-      <span class="badge">{{ badge() }}</span>
+      <span class="badge">{{ index() }}</span>
       <div class="gloss">
-        @for (line of meaningLines(); track $index) {
-          <div>{{ line }}</div>
-        }
-        @if (meaningZh()) {
-          <div class="gloss-zh">{{ meaningZh() }}</div>
+        <div>{{ item().definition.source }}</div>
+        @if (item().definition.target) {
+          <div class="gloss-zh">{{ item().definition.target }}</div>
         }
       </div>
     </div>
-    @for (ex of examples(); track $index) {
-      <div class="example-block">
-        <div class="example">
-          <span class="bullet">•</span>
-          <span>{{ ex.text }}</span>
-        </div>
-        @if (ex.zh) {
-          <div class="example-zh">{{ ex.zh }}</div>
+    @if ((item().examples ?? []).length) {
+      <mat-expansion-panel class="example-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>例句</mat-panel-title>
+          <mat-panel-description>展开/收起</mat-panel-description>
+        </mat-expansion-panel-header>
+        @for (ex of item().examples; track $index) {
+          <div class="example-block">
+            <div class="example">
+              <span class="bullet">•</span>
+              <span>{{ ex.source }}</span>
+            </div>
+            @if (ex.target) {
+              <div class="example-zh">{{ ex.target }}</div>
+            }
+          </div>
         }
-      </div>
+      </mat-expansion-panel>
     }
   </mat-card-content>
 </mat-card>

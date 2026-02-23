@@ -67,28 +67,31 @@ mat-card-title {
   padding-right: 6px;
 }
 
-.word-meta {
+.phonetic-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 13px;
+  margin: 6px 0 12px;
 }
 
 .phonetic {
+  margin: 0;
   color: rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+.sense-section + .sense-section {
+  margin-top: 16px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.06);
 }
 
 .meaning-cards {
   display: grid;
   gap: 10px;
   padding-right: 6px;
-}
-
-.pos {
-  font-weight: 600;
-  color: #37474f;
 }
 
 
@@ -118,3 +121,4 @@ mat-card-title {
     border-radius: 16px;
   }
 }
+
