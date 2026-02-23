@@ -51,6 +51,7 @@
 - 文案走 i18n 文件（`src/assets/i18n/*.json`），避免硬编码。
 - 复杂字幕处理逻辑优先落在 `app/subtitle-handler/`，保持纯函数与可测试性。
 - 数据库改动先改 `app/database/*`，再通过 IPC 暴露给前端。
+- 使用 UTF-8 编码
 
 ## 7. 测试门禁（提交前至少执行）
 1. `npm run lint`
