@@ -17,7 +17,7 @@ export interface Definition {
         source: string;
         target: string;
     };
-    examples: Example[];
+    examples?: Example[];
 }
 
 export interface Example {
