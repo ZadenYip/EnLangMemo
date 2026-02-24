@@ -19,9 +19,7 @@
 
   </div>
 
-  <div class="subtitle-overlay">
-    @for (subtitle of displaySubtitles(); track $index) {
-      <div (mouseenter)="pauseOnSubtitleHover()" (mouseleave)="playIfNotUserPaused()">{{ subtitle }}<br></div>
-    }
+  <div class="subtitle-overlay" appDictionarySelectionSource>
+      <div (mouseenter)="pauseOnSubtitleHover()" (mouseleave)="playIfNotUserPaused()">{{ displaySubtitles().join('\n') }}</div>
   </div>
 </div>

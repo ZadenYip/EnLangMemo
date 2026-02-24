@@ -11,6 +11,7 @@ import { FileService } from '@shared/services/file.service';
 import Logger from 'electron-log/renderer';
 import { Subscription } from 'rxjs';
 import { SubtitleItemComponent } from './item/subtitle-item';
+import { DictionarySelectionSourceDirective } from '@app/shared/dictionary/selection/selection-source.directive';
 
 @Component({
     selector: 'app-subtitle-panel',
@@ -22,7 +23,8 @@ import { SubtitleItemComponent } from './item/subtitle-item';
     TranslatePipe,
     MatSnackBarModule,
     MatTooltip,
-    SubtitleItemComponent
+    SubtitleItemComponent,
+    DictionarySelectionSourceDirective
 ],
     templateUrl: './subtitle-panel.html',
     styleUrl: './subtitle-panel.scss',
