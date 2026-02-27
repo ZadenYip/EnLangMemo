@@ -7,6 +7,7 @@ import { Definition } from './dictionary-interface';
 import { DictionarySelectionService } from './selection/selection.service';
 import { MeaningCardComponent } from './sub-components/meaning-card.component';
 import Logger from 'electron-log/renderer';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-dictionary',
@@ -15,21 +16,16 @@ import Logger from 'electron-log/renderer';
         MatIconModule,
         MatDividerModule,
         MatButtonModule,
-        MeaningCardComponent
+        MeaningCardComponent,
+        TranslatePipe
     ],
     templateUrl: './dictionary.component.html',
     styleUrl: './dictionary.component.scss',
 })
 export class DictionaryComponent {
     private readonly selectionService = inject(DictionarySelectionService);
-
-    selectedText(): string {
-        return this.selectionService.selection().selectedText || 'PLACEHOLDER_SELECTED_TEXT';
-    }
-
-    contextSentence(): string {
-        return this.selectionService.selection().contextSentence || 'PLACEHOLDER_CONTEXT_SENTENCE';
-    }
+    readonly selectedText = this.selectionService.selection().selectedText;
+    readonly contextSentence = this.selectionService.selection().contextSentence;
 
     onAddCard(definition: Definition, partOfSpeech: string): void {
         Logger.info('add card', { partOfSpeech, definition });

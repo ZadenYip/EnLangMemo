@@ -5,7 +5,7 @@ export interface DictionarySelection {
     contextSentence: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: 'root'})
 export class DictionarySelectionService {
     private readonly _selection = signal<DictionarySelection>({
         selectedText: '',

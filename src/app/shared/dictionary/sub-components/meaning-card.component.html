@@ -15,14 +15,14 @@
         }
       </div>
       <button mat-stroked-button color="primary" class="add-card-btn" (click)="addToCard()">
-        添加卡片
+        {{ 'DICTIONARY.ADD_CARD' | translate }}
       </button>
     </div>
     @if ((item().examples ?? []).length) {
       <mat-expansion-panel class="example-panel">
         <mat-expansion-panel-header>
-          <mat-panel-title>例句</mat-panel-title>
-          <mat-panel-description>展开/收起</mat-panel-description>
+          <mat-panel-title>{{ 'DICTIONARY.EXAMPLE_SENTENCE' | translate }}</mat-panel-title>
+          <mat-panel-description>{{ 'DICTIONARY.FOLD/UNFOLD' | translate }}</mat-panel-description>
         </mat-expansion-panel-header>
         @for (ex of item().examples; track $index) {
           <div class="example-block">

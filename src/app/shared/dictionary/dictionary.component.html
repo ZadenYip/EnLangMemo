@@ -4,25 +4,25 @@
       <div mat-card-avatar class="avatar-icon">
         <mat-icon>menu_book</mat-icon>
       </div>
-      <mat-card-title>当前选中文本</mat-card-title>
-      <mat-card-subtitle>占位符 · 语言/来源</mat-card-subtitle>
+      <mat-card-title>{{ 'DICTIONARY.TITLE' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'DICTIONARY.CUR_LANG' | translate }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <div class="selected-text">
-        <div class="label">文本</div>
-        <div class="value">{{ selectedText() }}</div>
+        <div class="label">{{ 'DICTIONARY.SELECTED_TEXT_LABEL' | translate }}</div>
+        <div class="value">{{ selectedText || 'DICTIONARY.NO_SELECTION' | translate }}</div>
       </div>
       <mat-divider></mat-divider>
       <div class="context-sentence">
-        <div class="label">上下文句子</div>
-        <div class="value">{{ contextSentence() }}</div>
+        <div class="label">{{ 'DICTIONARY.CONTEXT_SENTENCE' | translate }}</div>
+        <div class="value">{{ contextSentence || 'DICTIONARY.NO_SELECTION' | translate }}</div>
       </div>
     </mat-card-content>
   </mat-card>
 
   <mat-card class="meanings-card">
     <mat-card-header>
-      <mat-card-title>释义列表</mat-card-title>
+      <mat-card-title>{{ 'DICTIONARY.MEANINGS_TITLE' | translate }}</mat-card-title>
       <mat-card-subtitle>{{ entry.word }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
