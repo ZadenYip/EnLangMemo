@@ -1,9 +1,12 @@
-﻿import { Component, inject } from '@angular/core';
+﻿import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { HostListener, signal } from '@angular/core';
+import { ElementRef, viewChild } from '@angular/core';
 import { Definition } from './dictionary-interface';
+import { DictionaryWindowService } from './dictionary-window.service';
 import { DictionarySelectionService } from './selection/selection.service';
 import { MeaningCardComponent } from './sub-components/meaning-card.component';
 import Logger from 'electron-log/renderer';
@@ -24,8 +27,99 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class DictionaryComponent {
     private readonly selectionService = inject(DictionarySelectionService);
-    readonly selectedText = this.selectionService.selection().selectedText;
-    readonly contextSentence = this.selectionService.selection().contextSentence;
+    private readonly dictionaryWindowService = inject(DictionaryWindowService);
+    readonly dictionaryWindow = viewChild.required<ElementRef<HTMLElement>>('dictionaryWindow');
+
+    readonly dragOffset = signal({ x: 0, y: 0 });
+    private isDragging = false;
+    private dragStartPointerX = 0;
+    private dragStartPointerY = 0;
+    private dragStartOffsetX = 0;
+    private dragStartOffsetY = 0;
+
+    readonly selectedText = computed(() => this.selectionService.selection().selectedText);
+    readonly contextSentence = computed(() => this.selectionService.selection().contextSentence);
+    readonly visible = computed(() => this.dictionaryWindowService.visible());
+
+    showWindow(): void {
+        this.dictionaryWindowService.show();
+    }
+
+    hideWindow(): void {
+        this.dictionaryWindowService.hide();
+    }
+
+    toggleWindow(): void {
+        this.dictionaryWindowService.toggle();
+    }
+
+    onDragStart(event: PointerEvent): void {
+        if (event.button !== 0) {
+            return;
+        }
+        event.preventDefault();
+        this.isDragging = true;
+        this.dragStartPointerX = event.clientX;
+        this.dragStartPointerY = event.clientY;
+        this.dragStartOffsetX = this.dragOffset().x;
+        this.dragStartOffsetY = this.dragOffset().y;
+    }
+
+    @HostListener('document:pointermove', ['$event'])
+    onPointerMove(event: PointerEvent): void {
+        if (!this.isDragging) {
+            return;
+        }
+        const deltaX = event.clientX - this.dragStartPointerX;
+        const deltaY = event.clientY - this.dragStartPointerY;
+        const nextOffset = this.clampOffsetToViewport({
+            x: this.dragStartOffsetX + deltaX,
+            y: this.dragStartOffsetY + deltaY,
+        });
+        this.dragOffset.set(nextOffset);
+    }
+
+    @HostListener('document:pointerup')
+    onPointerUp(): void {
+        this.isDragging = false;
+    }
+
+    @HostListener('window:resize')
+    onWindowResize(): void {
+        this.dragOffset.set(this.clampOffsetToViewport(this.dragOffset()));
+    }
+
+    private clampOffsetToViewport(offset: { x: number; y: number }): { x: number; y: number } {
+        const windowElement = this.dictionaryWindow().nativeElement;
+        const currentRect = windowElement.getBoundingClientRect();
+        const currentOffset = this.dragOffset();
+        const deltaX = offset.x - currentOffset.x;
+        const deltaY = offset.y - currentOffset.y;
+        const nextLeft = currentRect.left + deltaX;
+        const nextRight = currentRect.right + deltaX;
+        const nextTop = currentRect.top + deltaY;
+        const nextBottom = currentRect.bottom + deltaY;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const edgePadding = 8;
+
+        let clampedX = offset.x;
+        let clampedY = offset.y;
+
+        if (nextLeft < edgePadding) {
+            clampedX += edgePadding - nextLeft;
+        } else if (nextRight > viewportWidth - edgePadding) {
+            clampedX -= nextRight - (viewportWidth - edgePadding);
+        }
+
+        if (nextTop < edgePadding) {
+            clampedY += edgePadding - nextTop;
+        } else if (nextBottom > viewportHeight - edgePadding) {
+            clampedY -= nextBottom - (viewportHeight - edgePadding);
+        }
+
+        return { x: clampedX, y: clampedY };
+    }
 
     onAddCard(definition: Definition, partOfSpeech: string): void {
         Logger.info('add card', { partOfSpeech, definition });

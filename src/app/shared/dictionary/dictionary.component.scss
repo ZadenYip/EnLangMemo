@@ -1,4 +1,6 @@
 .dictionary-page {
+  --drag-offset-x: 0px;
+  --drag-offset-y: 0px;
   position: fixed;
   right: 24px;
   bottom: 24px;
@@ -13,6 +15,33 @@
   gap: 0;
   grid-template-columns: minmax(0, 1fr);
   padding: 16px;
+  transform: translate3d(var(--drag-offset-x), var(--drag-offset-y), 0);
+  transition: opacity 120ms ease, visibility 120ms ease;
+  z-index: 1000;
+}
+
+.dictionary-page-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.dictionary-window-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  grid-column: 1 / -1;
+  padding: 4px 4px 10px 4px;
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+}
+
+.drag-title {
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  color: rgba(0, 0, 0, 0.52);
+  text-transform: uppercase;
 }
 
 .context-card,

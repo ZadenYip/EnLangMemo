@@ -1,4 +1,15 @@
-<div class="dictionary-page">
+<div
+  #dictionaryWindow
+  class="dictionary-page"
+  [class.dictionary-page-hidden]="!visible()"
+  [style.--drag-offset-x.px]="dragOffset().x"
+  [style.--drag-offset-y.px]="dragOffset().y"
+>
+  <div class="dictionary-window-toolbar" (pointerdown)="onDragStart($event)">
+    <button mat-icon-button type="button" (click)="hideWindow(); $event.stopPropagation()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
   <mat-card class="context-card">
     <mat-card-header>
       <div mat-card-avatar class="avatar-icon">
@@ -10,12 +21,12 @@
     <mat-card-content>
       <div class="selected-text">
         <div class="label">{{ 'DICTIONARY.SELECTED_TEXT_LABEL' | translate }}</div>
-        <div class="value">{{ selectedText || 'DICTIONARY.NO_SELECTION' | translate }}</div>
+        <div class="value">{{ selectedText() || ('DICTIONARY.NO_SELECTION' | translate) }}</div>
       </div>
       <mat-divider></mat-divider>
       <div class="context-sentence">
         <div class="label">{{ 'DICTIONARY.CONTEXT_SENTENCE' | translate }}</div>
-        <div class="value">{{ contextSentence || 'DICTIONARY.NO_SELECTION' | translate }}</div>
+        <div class="value">{{ contextSentence() || ('DICTIONARY.NO_SELECTION' | translate) }}</div>
       </div>
     </mat-card-content>
   </mat-card>
