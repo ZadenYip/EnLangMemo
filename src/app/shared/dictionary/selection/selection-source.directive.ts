@@ -2,8 +2,9 @@ import { Directive, ElementRef, HostListener, inject } from '@angular/core';
 import { DictionarySelectionService } from './selection.service';
 
 /**
- * It should be attached to any element that contains text 
- * which you expect users to select for dictionary lookup. 
+ * It should be attached to any element that contains text
+ * which you expect users to select for dictionary lookup.
+ * Only supports selection within a single text node.
  */
 @Directive({
     selector: '[appDictionarySelectionSource]',
@@ -16,10 +17,10 @@ export class DictionarySelectionSourceDirective {
 
     @HostListener('mouseup')
     onMouseUp(): void {
-        this.captureSelection();
+        this.processTextSelection();
     }
 
-    private captureSelection(): void {
+    private processTextSelection(): void {
         const selection = window.getSelection();
         if (!selection || selection.rangeCount === 0) {
             return;
@@ -31,19 +32,25 @@ export class DictionarySelectionSourceDirective {
         }
 
         const range = selection.getRangeAt(0);
+        // Only proceed if the selection is within a single text node inside the host element.
+        // This is a simplification that allows us to avoid complex DOM manipulations.
         const isInOneNode = this.isSelectionInOneNode(range);
         if (!isInOneNode) {
             return;
         }
+        // At this point, we have a valid selection within a single text node.
+        const selectionContainer = range.startContainer;
 
-        // review next
-        const contextSentence = this.extractContextSentence(range);
+        const contextSentence = this.extractContextSentence(selectionContainer);
         this.selectionService.updateSelection(
             selectedText,
             contextSentence || selectedText,
         );
     }
 
+    /**
+     * Wheather the selection is within a single text node.
+     */
     private isSelectionInOneNode(range: Range): boolean {
         const hostElement = this.host.nativeElement;
         const startContainer = range.startContainer;
@@ -55,59 +62,19 @@ export class DictionarySelectionSourceDirective {
         return startContainer === endContainer;
     }
 
-    private extractContextSentence(range: Range): string {
-        const contextNode = range.startContainer;
+    /**
+     * Extracts the sentence context for a given range.
+     * @param range The text range containing the user's selection.
+     * @returns The whole node text containing the selection
+     */
+    private extractContextSentence(node: Node): string {
+        const contextNode = node;
         const contextRaw = contextNode.textContent ?? '';
         if (!contextRaw) {
             return '';
         }
 
-        const selectedStart = this.getOffsetFromNodeStart(
-            contextNode,
-            range.startContainer,
-            range.startOffset,
-        );
-        const selectedEnd = this.getOffsetFromNodeStart(
-            contextNode,
-            range.endContainer,
-            range.endOffset,
-        );
-        const sentenceStart = this.findSentenceStart(contextRaw, selectedStart);
-        const sentenceEnd = this.findSentenceEnd(contextRaw, selectedEnd);
-        return this.cleanWhitespace(contextRaw.slice(sentenceStart, sentenceEnd));
-    }
-
-    private getOffsetFromNodeStart(
-        rootNode: Node,
-        container: Node,
-        offset: number,
-    ): number {
-        const prefixRange = document.createRange();
-        prefixRange.selectNodeContents(rootNode);
-        prefixRange.setEnd(container, offset);
-        return prefixRange.toString().length;
-    }
-
-    private findSentenceStart(text: string, fromIndex: number): number {
-        for (let i = fromIndex - 1; i >= 0; i -= 1) {
-            if (this.isSentenceBoundary(text[i])) {
-                return i + 1;
-            }
-        }
-        return 0;
-    }
-
-    private findSentenceEnd(text: string, fromIndex: number): number {
-        for (let i = fromIndex; i < text.length; i += 1) {
-            if (this.isSentenceBoundary(text[i])) {
-                return i + 1;
-            }
-        }
-        return text.length;
-    }
-
-    private isSentenceBoundary(char: string): boolean {
-        return char === '.' || char === '!' || char === '?' || char === '\n';
+        return this.cleanWhitespace(contextRaw);
     }
 
     private cleanWhitespace(text: string): string {
