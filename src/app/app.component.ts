@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
     Router,
@@ -9,6 +9,8 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import Logger from 'electron-log/renderer';
+import { DictionaryComponent } from "./shared/dictionary/dictionary.component";
+import { DictionaryWindowService } from './shared/dictionary/dictionary-window.service';
 
 @Component({
     selector: 'app-root',
@@ -16,17 +18,19 @@ import Logger from 'electron-log/renderer';
     styleUrls: ['./app.component.scss'],
     standalone: true,
     imports: [
-        RouterOutlet,
-        RouterLink,
-        RouterLinkActive,
-        MatButtonModule,
-        MatToolbarModule,
-        TranslatePipe,
-    ],
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MatButtonModule,
+    MatToolbarModule,
+    TranslatePipe,
+    DictionaryComponent
+],
 })
 export class AppComponent {
     private readonly router: Router = inject(Router);
     private readonly translate: TranslateService = inject(TranslateService);
+    private readonly dictionaryWindowService = inject(DictionaryWindowService);
     
     readonly tabs = [
         { label: 'HEADER.DECKS', path: '/home' },
@@ -51,6 +55,20 @@ export class AppComponent {
 
     onSync() {
         Logger.info('Sync triggered');
+    }
+
+    @HostListener('document:mousedown', ['$event'])
+    onDocumentMouseDown(event: MouseEvent): void {
+        const target = event.target as HTMLElement | null;
+        if (!target) {
+            return;
+        }
+
+        if (target.closest('app-dictionary')) {
+            return;
+        }
+
+        this.dictionaryWindowService.hide();
     }
 
     constructor() {

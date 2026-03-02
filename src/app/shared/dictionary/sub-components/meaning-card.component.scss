@@ -1,0 +1,138 @@
+.meaning-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+
+  mat-card-content {
+    padding: 12px 14px;
+  }
+}
+
+.sense-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  background: rgba(51, 65, 85, 0.12);
+  margin-bottom: 8px;
+}
+
+.pos-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.72);
+  background: rgba(0, 0, 0, 0.08);
+  margin: 2px 0 8px;
+}
+
+.meaning-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #3f51b5;
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.gloss {
+  flex: 1;
+  color: #1f1f1f;
+  display: grid;
+  gap: 2px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.gloss-target {
+  color: rgba(0, 0, 0, 0.68);
+  font-size: 13px;
+}
+
+.add-card-btn {
+  margin-left: auto;
+  align-self: flex-start;
+  white-space: nowrap;
+  min-height: 30px;
+  padding: 0 10px;
+}
+
+.example-block {
+  margin-top: 10px;
+}
+
+.example {
+  display: flex;
+  gap: 8px;
+  color: rgba(0, 0, 0, 0.72);
+  line-height: 1.45;
+}
+
+.bullet {
+  color: rgba(0, 0, 0, 0.45);
+  flex: 0 0 auto;
+}
+
+.example-target {
+  margin-left: 18px;
+  margin-top: 4px;
+  color: rgba(0, 0, 0, 0.58);
+  font-size: 13px;
+}
+
+.example-panel {
+  margin-top: 10px;
+  box-shadow: none;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  background: transparent;
+  overflow: hidden;
+}
+
+.example-panel .mat-expansion-panel-header {
+  font-size: 13px;
+  padding: 0 12px;
+  min-height: 34px;
+  border-radius: 0;
+  color: rgba(0, 0, 0, 0.64);
+  background: transparent;
+}
+
+.example-panel .mat-expansion-panel-header:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.example-panel .mat-expansion-panel-header.mat-expanded {
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+}
+
+.example-panel .mat-expansion-panel-header-title,
+.example-panel .mat-expansion-panel-header-description {
+  color: inherit;
+  font-weight: 600;
+}
+
+.example-panel .mat-expansion-panel-body {
+  padding: 0 12px 10px;
+}
+
+.example-panel .mat-expansion-indicator::after {
+  border-color: rgba(0, 0, 0, 0.45);
+}

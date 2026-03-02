@@ -16,8 +16,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
     private videoTime$ = new Subject<number>();
     private subtitleOffsetMs = 0;
     
-    panelActiveIDs: Signal<Set<number>>;
-    videoActiveIDs: Signal<Set<number>>;
+    readonly panelActiveIDs: Signal<Set<number>>;
+    readonly videoActiveIDs: Signal<Set<number>>;
     
     private subtitleManager: SubtitleManager;
     

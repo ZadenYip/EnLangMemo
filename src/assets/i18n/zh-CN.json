@@ -26,6 +26,17 @@
       "BACK_TO_HOME": "Back to Home"
     }
   },
+  "DICTIONARY": {
+    "TITLE": "词典",
+    "CUR_LANG": "语言/来源",
+    "SELECTED_TEXT_LABEL": "选中文本",
+    "NO_SELECTION": "没有选中文本",
+    "CONTEXT_SENTENCE": "上下文句子",
+    "MEANINGS_TITLE": "释义列表",
+    "ADD_CARD": "添加卡片",
+    "EXAMPLE_SENTENCE": "例句",
+    "FOLD/UNFOLD": "展开/收起"
+  },
   "HEADER": {
     "DECKS": "牌组",
     "IMMERSE": "沉浸",

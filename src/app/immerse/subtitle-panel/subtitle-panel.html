@@ -21,6 +21,7 @@
   <cdk-virtual-scroll-viewport #subtitleList itemSize="32" class="subtitle-viewport">
     <ul class="subtitle-list">
       <app-subtitle-item 
+      appDictionarySelectionSource 
       class="subtitle-item" 
       *cdkVirtualFor="let sub of subtitleService.subtitles"
       [id]="sub.id" [textLines]="sub.textLines">
