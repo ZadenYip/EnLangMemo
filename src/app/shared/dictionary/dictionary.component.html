@@ -2,10 +2,12 @@
   #dictionaryWindow
   class="dictionary-page"
   [class.dictionary-page-hidden]="!visible()"
-  [style.--drag-offset-x.px]="dragOffset().x"
-  [style.--drag-offset-y.px]="dragOffset().y"
+  [style.left.px]="windowPosition().left"
+  [style.top.px]="windowPosition().top"
+  [style.width.px]="windowSize().width"
+  [style.height.px]="windowSize().height"
 >
-  <div class="dictionary-window-toolbar" (pointerdown)="onDragStart($event)">
+  <div class="dictionary-window-toolbar" (pointerdown)="onWindowDragStart($event)">
     <button mat-icon-button type="button" (click)="hideWindow(); $event.stopPropagation()">
       <mat-icon>close</mat-icon>
     </button>
@@ -58,4 +60,5 @@
       </div>
     </mat-card-content>
   </mat-card>
+  <div class="window-resize-handle" (pointerdown)="onResizeStart($event)"></div>
 </div>

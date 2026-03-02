@@ -13,8 +13,5 @@ export class DictionaryWindowService {
         this._visible.set(false);
     }
 
-    toggle(): void {
-        this._visible.update((value) => !value);
-    }
 }
 
