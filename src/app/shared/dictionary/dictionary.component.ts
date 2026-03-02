@@ -5,7 +5,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { HostListener, signal } from '@angular/core';
 import { ElementRef, viewChild } from '@angular/core';
-import { Definition } from './dictionary-interface';
+import { Definition, DictionaryEntry } from './dictionary-interface';
 import { DictionaryWindowService } from './dictionary-window.service';
 import { DictionarySelectionService } from './selection/selection.service';
 import { MeaningCardComponent } from './sub-components/meaning-card.component';
@@ -125,7 +125,7 @@ export class DictionaryComponent {
         Logger.info('add card', { partOfSpeech, definition });
     }
 
-    readonly entry = {
+    readonly entry: DictionaryEntry = {
         word: 'run',
         phoneticSymbol: ['/rʌn/', '/rʌn/'],
         senses: [

@@ -12,15 +12,12 @@ export interface Sense {
 }
 
 export interface Definition {
-    cefr: string;
-    definition: {
-        source: string;
-        target: string;
-    };
-    examples?: Example[];
+    cefr?: string;
+    definition: BilingualText;
+    examples?: BilingualText[];
 }
 
-export interface Example {
+export interface BilingualText {
     source: string;
     target: string;
 }

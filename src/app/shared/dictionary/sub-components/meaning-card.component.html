@@ -11,7 +11,7 @@
       <div class="gloss">
         <div>{{ item().definition.source }}</div>
         @if (item().definition.target) {
-          <div class="gloss-zh">{{ item().definition.target }}</div>
+          <div class="gloss-target">{{ item().definition.target }}</div>
         }
       </div>
       <button mat-stroked-button color="primary" class="add-card-btn" (click)="addToCard()">
@@ -31,7 +31,7 @@
               <span>{{ ex.source }}</span>
             </div>
             @if (ex.target) {
-              <div class="example-zh">{{ ex.target }}</div>
+              <div class="example-target">{{ ex.target }}</div>
             }
           </div>
         }
