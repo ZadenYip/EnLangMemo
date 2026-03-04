@@ -70,6 +70,7 @@
     "@angular/cli": "21.0.2",
     "@angular/compiler-cli": "21.0.3",
     "@electron/rebuild": "4.0.2",
+    "@eslint/js": "9.39.3",
     "@ngx-translate/core": "17.0.0",
     "@ngx-translate/http-loader": "17.0.0",
     "@playwright/test": "1.57.0",
