@@ -55,7 +55,9 @@
             "autoAttachChildProcesses": true,
             "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
             "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
-            "args": ["run", "${relativeFile}"],
+            "args": [
+                "${relativeFile}"
+            ],
             "smartStep": true,
             "sourceMaps": true,
             "console": "integratedTerminal"
@@ -65,16 +67,20 @@
             "request": "launch",
             "name": "Test All Main Process Files",
             "autoAttachChildProcesses": true,
-            "runtimeExecutable": "npm",
-            "args": ["run", "electron:test"],
+            "runtimeExecutable": "pnpm",
+            "args": [
+                "electron:test"
+            ],
             "console": "integratedTerminal"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Test All Angular Files",
-            "runtimeExecutable": "npm",
-            "args": ["run", "angular-test"],
+            "runtimeExecutable": "pnpm",
+            "args": [
+                "angular-test"
+            ],
             "console": "integratedTerminal"
         }
     ],
