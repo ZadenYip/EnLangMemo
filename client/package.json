@@ -27,6 +27,8 @@
   "scripts": {
     "ng": "ng",
     "start": "pnpm --parallel run electron:serve ng:serve",
+    "db:generate": "drizzle-kit generate --config app/db/drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config app/db/drizzle.config.ts",
     "ng:serve": "ng serve -c dev -o --open=false",
     "build": "pnpm electron:rebuild && pnpm electron:serve-build && ng build --base-href ./",
     "web:dev": "pnpm build",
