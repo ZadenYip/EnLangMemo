@@ -15,8 +15,8 @@ export const wordsTable = sqliteTable(
         fingerprint: blob('fingerprint', { mode: 'buffer' }).notNull(),
         phoneticBre: text('phonetic_bre'),
         phoneticAme: text('phonetic_ame'),
-        createTime: int('created_at').notNull(),
-        updateTime: int('updated_at').notNull(),
+        createdAt: int('created_at').notNull(),
+        updatedAt: int('updated_at').notNull(),
     },
     (table) => [uniqueIndex('idx_words_spelling').on(table.spelling)],
 );
@@ -29,8 +29,8 @@ export const wordPosesTable = sqliteTable(
             .notNull()
             .references(() => wordsTable.wordId, { onDelete: 'cascade' }),
         partOfSpeech: text('part_of_speech'),
-        createTime: int('created_at').notNull(),
-        updateTime: int('updated_at').notNull(),
+        createdAt: int('created_at').notNull(),
+        updatedAt: int('updated_at').notNull(),
     },
     (table) => [index('idx_word_poses_word_id').on(table.wordId)],
 );
@@ -44,8 +44,8 @@ export const definitionsTable = sqliteTable(
             .references(() => wordPosesTable.poseId, { onDelete: 'cascade' }),
         defSrc: text('def_src'),
         defTgt: text('def_tgt'),
-        createTime: int('created_at').notNull(),
-        updateTime: int('updated_at').notNull(),
+        createdAt: int('created_at').notNull(),
+        updatedAt: int('updated_at').notNull(),
     },
     (table) => [index('idx_definitions_word_pos_id').on(table.wordPosId)],
 );
@@ -59,8 +59,8 @@ export const examplesTable = sqliteTable(
             .references(() => definitionsTable.defId, { onDelete: 'cascade' }),
         exSrc: text('ex_src').notNull(),
         exTgt: text('ex_tgt'),
-        createTime: int('created_at').notNull(),
-        updateTime: int('updated_at').notNull(),
+        createdAt: int('created_at').notNull(),
+        updatedAt: int('updated_at').notNull(),
     },
     (table) => [index('idx_examples_def_id').on(table.defId)],
 );
