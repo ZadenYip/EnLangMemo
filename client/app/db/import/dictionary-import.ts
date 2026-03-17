@@ -7,44 +7,12 @@ import {
     wordPosesTable,
     wordsTable,
 } from '../schema/dictionary';
+import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from '../schema/dictionary-types';
 
-// Shared timestamp columns used by all table-level JSONL rows.
-interface TimeCols {
-    created_at: number;
-    updated_at: number;
-}
-
-// One line from words.jsonl.
-export interface WordImportRow extends TimeCols {
-    word_id: string;
-    spelling: string;
-    fingerprint: string;
-    phonetic_bre?: string | null;
-    phonetic_ame?: string | null;
-}
-
-// One line from word_poses.jsonl.
-export interface WordPosImportRow extends TimeCols {
-    pose_id: string;
-    word_id: string;
-    part_of_speech?: string | null;
-}
-
-// One line from definitions.jsonl.
-export interface DefinitionImportRow extends TimeCols {
-    def_id: string;
-    word_pos_id: string;
-    def_src?: string | null;
-    def_tgt?: string | null;
-}
-
-// One line from examples.jsonl.
-export interface ExampleImportRow extends TimeCols {
-    exp_id: string;
-    def_id: string;
-    ex_src: string;
-    ex_tgt?: string | null;
-}
+type WordImportRow = Omit<WordInsert, 'wordId' | 'fingerprint'> & { wordId: string, fingerprint: string };
+type WordPosImportRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: string; poseId: string };
+type DefinitionImportRow = Omit<DefinitionInsert, 'defId' | 'wordPosId'> & { defId: string; wordPosId: string };
+type ExampleImportRow = Omit<ExampleInsert, 'expId' | 'defId'> & { expId: string; defId: string };
 
 // Common import summary returned by all import functions.
 export interface DictionaryImportResult {
@@ -52,6 +20,34 @@ export interface DictionaryImportResult {
     processed: number;
     skipped: number;
 }
+
+function withoutCreatedAt<T extends { createdAt: unknown }>(data: T): Omit<T, 'createdAt'> {
+    const { createdAt: _createdAt, ...rest } = data;
+    return rest;
+}
+
+/**
+ * Converts a snake_case string to camelCase.
+ * @param str - a snake_case string
+ * @returns - a camelCase string
+ */
+function toCamelCase(str: string): string {
+    return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+function convertKeysToCamelCase(obj: any): any {
+    if (Array.isArray(obj)) {
+        return obj.map(convertKeysToCamelCase);
+    } else if (obj !== null && typeof obj === 'object') {
+        return Object.entries(obj).reduce((acc, [key, value]) => {
+            const camelKey = toCamelCase(key);
+            acc[camelKey] = convertKeysToCamelCase(value); // 递归处理子对象
+            return acc;
+        }, {} as Record<string, any>);
+    }
+    return obj; // 如果是基本类型，直接返回
+}
+
 
 // Fail early when the local JSONL file does not exist.
 function assertFileExists(filePath: string): void {
@@ -116,7 +112,7 @@ async function importJsonLines<TRow>(
             continue;
         }
 
-        const row = JSON.parse(trimmed_str) as Partial<TRow>;
+        const row = convertKeysToCamelCase(JSON.parse(trimmed_str)) as Partial<TRow>;
 
         if (!isValidRow(row)) {
             skipped += 1;
@@ -138,29 +134,20 @@ async function importJsonLines<TRow>(
 export async function importWords(filePath: string): Promise<DictionaryImportResult> {
     const db = getDicDb();
     const isWordImportRow = (row: Partial<WordImportRow>): row is WordImportRow =>
-        Boolean(row.word_id && row.spelling && row.fingerprint);
+        Boolean(row.wordId && row.spelling && row.fingerprint);
 
     return importJsonLines<WordImportRow>(filePath, isWordImportRow, async (row) => {
+        const insertData: WordInsert = {
+            ...row,
+            wordId: uuidToBuffer(row.wordId),
+            fingerprint: hexToBuffer(row.fingerprint)
+        }
         await db
             .insert(wordsTable)
-            .values({
-                wordId: uuidToBuffer(row.word_id),
-                spelling: row.spelling,
-                fingerprint: hexToBuffer(row.fingerprint),
-                phoneticBre: row.phonetic_bre ?? null,
-                phoneticAme: row.phonetic_ame ?? null,
-                createdAt: row.created_at,
-                updatedAt: row.updated_at,
-            })
+            .values(insertData)
             .onConflictDoUpdate({
                 target: wordsTable.spelling,
-                set: {
-                    wordId: uuidToBuffer(row.word_id),
-                    fingerprint: hexToBuffer(row.fingerprint),
-                    phoneticBre: row.phonetic_bre ?? null,
-                    phoneticAme: row.phonetic_ame ?? null,
-                    updatedAt: row.updated_at,
-                },
+                set: withoutCreatedAt(insertData),
             });
     });
 }
@@ -169,25 +156,20 @@ export async function importWords(filePath: string): Promise<DictionaryImportRes
 export async function importWordPoses(filePath: string): Promise<DictionaryImportResult> {
     const db = getDicDb();
     const isWordPosImportRow = (row: Partial<WordPosImportRow>): row is WordPosImportRow =>
-        Boolean(row.pose_id && row.word_id);
+        Boolean(row.poseId && row.wordId);
 
     return importJsonLines<WordPosImportRow>(filePath, isWordPosImportRow, async (row) => {
+        const insertData: WordPosInsert = {
+            ...row,
+            poseId: uuidToBuffer(row.poseId),
+            wordId: uuidToBuffer(row.wordId)
+        };
         await db
             .insert(wordPosesTable)
-            .values({
-                poseId: uuidToBuffer(row.pose_id),
-                wordId: uuidToBuffer(row.word_id),
-                partOfSpeech: row.part_of_speech ?? null,
-                createdAt: row.created_at,
-                updatedAt: row.updated_at,
-            })
+            .values(insertData)
             .onConflictDoUpdate({
                 target: wordPosesTable.poseId,
-                set: {
-                    wordId: uuidToBuffer(row.word_id),
-                    partOfSpeech: row.part_of_speech ?? null,
-                    updatedAt: row.updated_at,
-                },
+                set: withoutCreatedAt(insertData),
             });
     });
 }
@@ -197,27 +179,20 @@ export async function importDefinitions(filePath: string): Promise<DictionaryImp
     const db = getDicDb();
     const isDefinitionImportRow = (
         row: Partial<DefinitionImportRow>,
-    ): row is DefinitionImportRow => Boolean(row.def_id && row.word_pos_id);
+    ): row is DefinitionImportRow => Boolean(row.defId && row.wordPosId);
 
     return importJsonLines<DefinitionImportRow>(filePath, isDefinitionImportRow, async (row) => {
+        const insertData: DefinitionInsert = {
+            ...row,
+            defId: uuidToBuffer(row.defId),
+            wordPosId: uuidToBuffer(row.wordPosId)
+        };
         await db
             .insert(definitionsTable)
-            .values({
-                defId: uuidToBuffer(row.def_id),
-                wordPosId: uuidToBuffer(row.word_pos_id),
-                defSrc: row.def_src ?? null,
-                defTgt: row.def_tgt ?? null,
-                createdAt: row.created_at,
-                updatedAt: row.updated_at,
-            })
+            .values(insertData)
             .onConflictDoUpdate({
                 target: definitionsTable.defId,
-                set: {
-                    wordPosId: uuidToBuffer(row.word_pos_id),
-                    defSrc: row.def_src ?? null,
-                    defTgt: row.def_tgt ?? null,
-                    updatedAt: row.updated_at,
-                },
+                set: withoutCreatedAt(insertData),
             });
     });
 }
@@ -226,27 +201,20 @@ export async function importDefinitions(filePath: string): Promise<DictionaryImp
 export async function importExamples(filePath: string): Promise<DictionaryImportResult> {
     const db = getDicDb();
     const isExampleImportRow = (row: Partial<ExampleImportRow>): row is ExampleImportRow =>
-        Boolean(row.exp_id && row.def_id && row.ex_src);
+        Boolean(row.expId && row.defId && row.exSrc);
 
     return importJsonLines<ExampleImportRow>(filePath, isExampleImportRow, async (row) => {
+        const insertData: ExampleInsert = {
+            ...row,
+            expId: uuidToBuffer(row.expId),
+            defId: uuidToBuffer(row.defId)
+        };
         await db
             .insert(examplesTable)
-            .values({
-                expId: uuidToBuffer(row.exp_id),
-                defId: uuidToBuffer(row.def_id),
-                exSrc: row.ex_src,
-                exTgt: row.ex_tgt ?? null,
-                createdAt: row.created_at,
-                updatedAt: row.updated_at,
-            })
+            .values(insertData)
             .onConflictDoUpdate({
                 target: examplesTable.expId,
-                set: {
-                    defId: uuidToBuffer(row.def_id),
-                    exSrc: row.ex_src,
-                    exTgt: row.ex_tgt ?? null,
-                    updatedAt: row.updated_at,
-                },
+                set: withoutCreatedAt(insertData),
             });
     });
 }

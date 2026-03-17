@@ -14,16 +14,12 @@ import {
 } from '../schema/dictionary';
 import {
     bufferToHex,
-    DefinitionImportRow,
-    ExampleImportRow,
     hexToBuffer,
     importDefinitions,
     importExamples,
     importWordPoses,
     importWords,
     uuidToBuffer,
-    WordImportRow,
-    WordPosImportRow,
 } from './dictionary-import';
 
 vi.mock('../db', () => ({
@@ -44,7 +40,7 @@ function writeJsonLinesFile(tempDir: string, filename: string, rows: unknown[]):
     return filePath;
 }
 
-function toExpectedWordRecord(row: WordImportRow): {
+function toExpectedWordRecord(row: any): {
     wordId: Buffer;
     spelling: string;
     fingerprint: Buffer;
@@ -86,7 +82,7 @@ describe('Dictionary Import Tests', () => {
     });
 
     it('imports words into the in-memory dictionary database', async () => {
-        const words: WordImportRow[] = [
+        const words = [
             {
                 word_id: '11111111-1111-1111-1111-111111111111',
                 spelling: 'hello',
@@ -128,7 +124,7 @@ describe('Dictionary Import Tests', () => {
     });
 
     it('imports word poses into the in-memory dictionary database', async () => {
-        const words: WordImportRow[] = [
+        const words = [
             {
                 word_id: '33333333-3333-3333-3333-333333333333',
                 spelling: 'run',
@@ -141,7 +137,7 @@ describe('Dictionary Import Tests', () => {
         ];
         await importWords(writeJsonLinesFile(tempDir, 'seed-words.jsonl', words));
 
-        const poses: WordPosImportRow[] = [
+        const poses = [
             {
                 pose_id: '44444444-4444-4444-4444-444444444444',
                 word_id: words[0].word_id,
@@ -171,7 +167,7 @@ describe('Dictionary Import Tests', () => {
     });
 
     it('imports definitions into the in-memory dictionary database', async () => {
-        const words: WordImportRow[] = [
+        const words = [
             {
                 word_id: '55555555-5555-5555-5555-555555555555',
                 spelling: 'bright',
@@ -182,7 +178,7 @@ describe('Dictionary Import Tests', () => {
                 updated_at: 200,
             },
         ];
-        const poses: WordPosImportRow[] = [
+        const poses = [
             {
                 pose_id: '66666666-6666-6666-6666-666666666666',
                 word_id: words[0].word_id,
@@ -194,7 +190,7 @@ describe('Dictionary Import Tests', () => {
         await importWords(writeJsonLinesFile(tempDir, 'seed-words.jsonl', words));
         await importWordPoses(writeJsonLinesFile(tempDir, 'seed-word-poses.jsonl', poses));
 
-        const definitions: DefinitionImportRow[] = [
+        const definitions = [
             {
                 def_id: '77777777-7777-7777-7777-777777777777',
                 word_pos_id: poses[0].pose_id,
@@ -226,7 +222,7 @@ describe('Dictionary Import Tests', () => {
     });
 
     it('imports examples into the in-memory dictionary database', async () => {
-        const words: WordImportRow[] = [
+        const words = [
             {
                 word_id: '88888888-8888-8888-8888-888888888888',
                 spelling: 'learn',
@@ -237,7 +233,7 @@ describe('Dictionary Import Tests', () => {
                 updated_at: 200,
             },
         ];
-        const poses: WordPosImportRow[] = [
+        const poses = [
             {
                 pose_id: '99999999-9999-9999-9999-999999999999',
                 word_id: words[0].word_id,
@@ -246,7 +242,7 @@ describe('Dictionary Import Tests', () => {
                 updated_at: 400,
             },
         ];
-        const definitions: DefinitionImportRow[] = [
+        const definitions = [
             {
                 def_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
                 word_pos_id: poses[0].pose_id,
@@ -260,7 +256,7 @@ describe('Dictionary Import Tests', () => {
         await importWordPoses(writeJsonLinesFile(tempDir, 'seed-word-poses.jsonl', poses));
         await importDefinitions(writeJsonLinesFile(tempDir, 'seed-definitions.jsonl', definitions));
 
-        const examples: ExampleImportRow[] = [
+        const examples = [
             {
                 exp_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 def_id: definitions[0].def_id,
