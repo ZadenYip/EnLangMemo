@@ -70,14 +70,31 @@ function createLineReader(filePath: string): readline.Interface {
     });
 }
 
-// Convert a UUID string into the SQLite blob format used by the schema.
-function uuidToBuffer(uuid: string): Buffer {
+/**
+ * Converts a standard UUID string to a 16-byte buffer.
+ * @param uuid - a standard UUID string (e.g., '123e4567-e89b-12d3-a456-426614174000')
+ * @returns - a 16-byte buffer representing the UUID
+ */
+export function uuidToBuffer(uuid: string): Buffer {
     return Buffer.from(uuid.replaceAll('-', ''), 'hex');
 }
 
-// Convert a hex string fingerprint into a SQLite blob.
-function hexToBuffer(value: string): Buffer {
+/**
+ * Converts a hexadecimal string to a bytes buffer.
+ * @param value - sha256 fingerprint
+ * @returns bytes buffer
+ */
+export function hexToBuffer(value: string): Buffer {
     return Buffer.from(value, 'hex');
+}
+
+/**
+ * Converts a bytes buffer to a hexadecimal string.
+ * @param value - sha256 fingerprint buffer
+ * @returns hexadecimal string
+ */
+export function bufferToHex(value: Buffer): string {
+    return value.toString('hex');
 }
 
 // Validate a words.jsonl row before writing it to the database.
