@@ -14,7 +14,12 @@ type WordPosImportRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: str
 type DefinitionImportRow = Omit<DefinitionInsert, 'defId' | 'wordPosId'> & { defId: string; wordPosId: string };
 type ExampleImportRow = Omit<ExampleInsert, 'expId' | 'defId'> & { expId: string; defId: string };
 
-// Common import summary returned by all import functions.
+/**
+ * Result of importing a dictionary JSONL file, 
+ * including the source file path, 
+ * number of processed rows, 
+ * and number of skipped rows.
+ */
 export interface DictionaryImportResult {
     source: string;
     processed: number;
@@ -28,13 +33,19 @@ function withoutCreatedAt<T extends { createdAt: unknown }>(data: T): Omit<T, 'c
 
 /**
  * Converts a snake_case string to camelCase.
- * @param str - a snake_case string
- * @returns - a camelCase string
+ * @param str a snake_case string
+ * @returns a camelCase string
  */
 function toCamelCase(str: string): string {
     return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
 
+/**
+ * Converts keys from snake_case to camelCase recursively.
+ * @param obj an object or array to recursively convert keys from snake_case to camelCase
+ * @returns the object or array with camelCase keys
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function convertKeysToCamelCase(obj: any): any {
     if (Array.isArray(obj)) {
         return obj.map(convertKeysToCamelCase);
@@ -43,9 +54,11 @@ function convertKeysToCamelCase(obj: any): any {
             const camelKey = toCamelCase(key);
             acc[camelKey] = convertKeysToCamelCase(value); // 递归处理子对象
             return acc;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         }, {} as Record<string, any>);
     }
-    return obj; // 如果是基本类型，直接返回
+    // if it's a basic type (string, number, boolean, null, undefined), return as is
+    return obj;
 }
 
 
@@ -130,7 +143,11 @@ async function importJsonLines<TRow>(
     };
 }
 
-// Import rows from words.jsonl into the words table.
+/**
+ * Imports word data from a JSONL file into the words table.
+ * @param filePath the path to the JSONL file containing word data
+ * @returns a promise resolving to the import result
+ */
 export async function importWords(filePath: string): Promise<DictionaryImportResult> {
     const db = getDicDb();
     const isWordImportRow = (row: Partial<WordImportRow>): row is WordImportRow =>
@@ -152,7 +169,11 @@ export async function importWords(filePath: string): Promise<DictionaryImportRes
     });
 }
 
-// Import rows from word_poses.jsonl into the word_poses table.
+/**
+ * Imports word-pos data from a JSONL file into the wordPoses table.
+ * @param filePath the path to the JSONL file containing word-pos data
+ * @returns a promise resolving to the import result
+ */
 export async function importWordPoses(filePath: string): Promise<DictionaryImportResult> {
     const db = getDicDb();
     const isWordPosImportRow = (row: Partial<WordPosImportRow>): row is WordPosImportRow =>
@@ -174,7 +195,11 @@ export async function importWordPoses(filePath: string): Promise<DictionaryImpor
     });
 }
 
-// Import rows from definitions.jsonl into the definitions table.
+/**
+ * Imports definition data from a JSONL file into the definitions table.
+ * @param filePath the path to the JSONL file containing definition data
+ * @returns a promise resolving to the import result
+ */
 export async function importDefinitions(filePath: string): Promise<DictionaryImportResult> {
     const db = getDicDb();
     const isDefinitionImportRow = (
@@ -197,7 +222,11 @@ export async function importDefinitions(filePath: string): Promise<DictionaryImp
     });
 }
 
-// Import rows from examples.jsonl into the examples table.
+/**
+ * Imports example data from a JSONL file into the examples table.
+ * @param filePath the path to the JSONL file containing example data
+ * @returns a promise resolving to the import result
+ */
 export async function importExamples(filePath: string): Promise<DictionaryImportResult> {
     const db = getDicDb();
     const isExampleImportRow = (row: Partial<ExampleImportRow>): row is ExampleImportRow =>
