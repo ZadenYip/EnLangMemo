@@ -44,6 +44,19 @@
             "endsPattern": "Application bundle generation complete"
           }
         }
+      },
+      {
+        "label": "Rebuild Electron",
+        "type": "shell",
+        "command": "pnpm nodejs-rebuild",
+        "isBackground": false,
+        "problemMatcher": {
+          "owner": "typescript",
+          "source": "ts",
+          "applyTo": "closedDocuments",
+          "fileLocation": ["relative", "${cwd}"],
+          "pattern": "$tsc"
+        }
       }
     ]
   }
