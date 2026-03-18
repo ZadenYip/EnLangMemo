@@ -8,11 +8,12 @@ import {
     wordsTable,
 } from '../schema/dictionary';
 import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from '../schema/dictionary-types';
+import { sql } from 'drizzle-orm';
 
-type WordImportRow = Omit<WordInsert, 'wordId' | 'fingerprint'> & { wordId: string, fingerprint: string };
-type WordPosImportRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: string; poseId: string };
-type DefinitionImportRow = Omit<DefinitionInsert, 'defId' | 'wordPosId'> & { defId: string; wordPosId: string };
-type ExampleImportRow = Omit<ExampleInsert, 'expId' | 'defId'> & { expId: string; defId: string };
+export type WordImportRow = Omit<WordInsert, 'wordId' | 'fingerprint'> & { wordId: string, fingerprint: string };
+export type WordPosImportRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: string; poseId: string };
+export type DefinitionImportRow = Omit<DefinitionInsert, 'defId' | 'wordPosId'> & { defId: string; wordPosId: string };
+export type ExampleImportRow = Omit<ExampleInsert, 'expId' | 'defId'> & { expId: string; defId: string };
 
 /**
  * Result of importing a dictionary JSONL file, 
@@ -24,11 +25,6 @@ export interface DictionaryImportResult {
     source: string;
     processed: number;
     skipped: number;
-}
-
-function withoutCreatedAt<T extends { createdAt: unknown }>(data: T): Omit<T, 'createdAt'> {
-    const { createdAt: _createdAt, ...rest } = data;
-    return rest;
 }
 
 /**
@@ -163,8 +159,16 @@ export async function importWords(filePath: string): Promise<DictionaryImportRes
             .insert(wordsTable)
             .values(insertData)
             .onConflictDoUpdate({
-                target: wordsTable.spelling,
-                set: withoutCreatedAt(insertData),
+                target: wordsTable.wordId,
+                // Only update if the existing record is older than the new data
+                targetWhere: sql`${wordsTable.updatedAt} < ${insertData.updatedAt}`,
+                set: {
+                    spelling: insertData.spelling,
+                    fingerprint: insertData.fingerprint,
+                    phoneticBre: insertData.phoneticBre,
+                    phoneticAme: insertData.phoneticAme,
+                    updatedAt: insertData.updatedAt,
+                },
             });
     });
 }
@@ -190,7 +194,13 @@ export async function importWordPoses(filePath: string): Promise<DictionaryImpor
             .values(insertData)
             .onConflictDoUpdate({
                 target: wordPosesTable.poseId,
-                set: withoutCreatedAt(insertData),
+                // Only update if the existing record is older than the new data
+                targetWhere: sql`${wordPosesTable.updatedAt} < ${insertData.updatedAt}`,
+                set: {
+                    wordId: insertData.wordId,
+                    partOfSpeech: insertData.partOfSpeech,
+                    updatedAt: insertData.updatedAt,
+                }
             });
     });
 }
@@ -217,7 +227,14 @@ export async function importDefinitions(filePath: string): Promise<DictionaryImp
             .values(insertData)
             .onConflictDoUpdate({
                 target: definitionsTable.defId,
-                set: withoutCreatedAt(insertData),
+                // Only update if the existing record is older than the new data
+                targetWhere: sql`${definitionsTable.updatedAt} < ${insertData.updatedAt}`,
+                set: {
+                    wordPosId: insertData.wordPosId,
+                    defSrc: insertData.defSrc,
+                    defTgt: insertData.defTgt,
+                    updatedAt: insertData.updatedAt,
+                },
             });
     });
 }
@@ -243,7 +260,14 @@ export async function importExamples(filePath: string): Promise<DictionaryImport
             .values(insertData)
             .onConflictDoUpdate({
                 target: examplesTable.expId,
-                set: withoutCreatedAt(insertData),
+                // Only update if the existing record is older than the new data
+                targetWhere: sql`${examplesTable.updatedAt} < ${insertData.updatedAt}`,
+                set: {
+                    defId: insertData.defId,
+                    exSrc: insertData.exSrc,
+                    exTgt: insertData.exTgt,
+                    updatedAt: insertData.updatedAt,
+                }
             });
     });
 }
