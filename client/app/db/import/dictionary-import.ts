@@ -161,7 +161,7 @@ export async function importWords(filePath: string): Promise<DictionaryImportRes
             .onConflictDoUpdate({
                 target: wordsTable.wordId,
                 // Only update if the existing record is older than the new data
-                targetWhere: sql`${wordsTable.updatedAt} < ${insertData.updatedAt}`,
+                setWhere: sql`${wordsTable.updatedAt} < ${insertData.updatedAt}`,
                 set: {
                     spelling: insertData.spelling,
                     fingerprint: insertData.fingerprint,
@@ -195,7 +195,7 @@ export async function importWordPoses(filePath: string): Promise<DictionaryImpor
             .onConflictDoUpdate({
                 target: wordPosesTable.poseId,
                 // Only update if the existing record is older than the new data
-                targetWhere: sql`${wordPosesTable.updatedAt} < ${insertData.updatedAt}`,
+                setWhere: sql`${wordPosesTable.updatedAt} < ${insertData.updatedAt}`,
                 set: {
                     wordId: insertData.wordId,
                     partOfSpeech: insertData.partOfSpeech,
@@ -228,7 +228,7 @@ export async function importDefinitions(filePath: string): Promise<DictionaryImp
             .onConflictDoUpdate({
                 target: definitionsTable.defId,
                 // Only update if the existing record is older than the new data
-                targetWhere: sql`${definitionsTable.updatedAt} < ${insertData.updatedAt}`,
+                setWhere: sql`${definitionsTable.updatedAt} < ${insertData.updatedAt}`,
                 set: {
                     wordPosId: insertData.wordPosId,
                     defSrc: insertData.defSrc,
@@ -261,7 +261,7 @@ export async function importExamples(filePath: string): Promise<DictionaryImport
             .onConflictDoUpdate({
                 target: examplesTable.expId,
                 // Only update if the existing record is older than the new data
-                targetWhere: sql`${examplesTable.updatedAt} < ${insertData.updatedAt}`,
+                setWhere: sql`${examplesTable.updatedAt} < ${insertData.updatedAt}`,
                 set: {
                     defId: insertData.defId,
                     exSrc: insertData.exSrc,
