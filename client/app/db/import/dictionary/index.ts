@@ -1,17 +1,17 @@
 import fs from 'node:fs';
 import readline from 'node:readline';
-import { getDicDb } from '../db';
+import { getDicDb } from '../../db';
 import {
     definitionsTable,
     examplesTable,
     wordPosesTable,
     wordsTable,
-} from '../schema/dictionary';
-import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from '../schema/dictionary-types';
+} from '../../schema/dictionary';
+import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from '../../schema/dictionary-types';
 import { sql } from 'drizzle-orm';
 import Database from 'better-sqlite3';
 import Logger from 'electron-log/main';
-import { convertKeysToCamelCase, hexToBuffer, uuidToBuffer } from './utils';
+import { convertKeysToCamelCase, hexToBuffer, uuidToBuffer } from '../utils';
 
 export type WordImportRow = Omit<WordInsert, 'wordId' | 'fingerprint'> & { wordId: string, fingerprint: string };
 export type WordPosImportRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: string; poseId: string };

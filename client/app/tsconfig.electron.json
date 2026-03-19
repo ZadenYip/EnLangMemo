@@ -21,7 +21,8 @@
   ],
   "exclude": [
     "node_modules",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*test-helpers.ts"
   ]
 }
 // Just use for code completion and type checking in Electron main process files
