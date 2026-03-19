@@ -13,14 +13,12 @@ import {
     wordsTable,
 } from '../schema/dictionary';
 import {
-    bufferToHex,
-    hexToBuffer,
     importDefinitions,
     importExamples,
     importWordPoses,
     importWords,
-    uuidToBuffer,
 } from './dictionary-import';
+import { bufferToHex, hexToBuffer, uuidToBuffer } from './utils';
 
 vi.mock('../db', () => ({
     getDicDb: vi.fn(),
