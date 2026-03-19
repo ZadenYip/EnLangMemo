@@ -10,6 +10,7 @@ import {
 import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from '../schema/dictionary-types';
 import { sql } from 'drizzle-orm';
 import Database from 'better-sqlite3';
+import Logger from 'electron-log/main';
 
 export type WordImportRow = Omit<WordInsert, 'wordId' | 'fingerprint'> & { wordId: string, fingerprint: string };
 export type WordPosImportRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: string; poseId: string };
@@ -116,6 +117,7 @@ async function importJsonLines<TRow>(
     let total = 0;
     let processed = 0;
     let invalidRow = 0;
+    let row: Partial<TRow>;
 
     for await (const line of lineReader) {
         total += 1;
@@ -125,7 +127,17 @@ async function importJsonLines<TRow>(
             continue;
         }
 
-        const row = convertKeysToCamelCase(JSON.parse(trimmed_str)) as Partial<TRow>;
+        try {
+            row = convertKeysToCamelCase(JSON.parse(trimmed_str)) as Partial<TRow>;
+        } catch (error) {
+            if (error instanceof SyntaxError) {
+                Logger.error(`Skipping invalid JSON line ${total} in ${filePath}: ${error.message}`);
+            } else {
+                Logger.error(`Unexpected error processing line ${total} in ${filePath}`);
+            }
+            invalidRow += 1;
+            continue;
+        }
 
         if (!isValidRow(row)) {
             invalidRow += 1;
