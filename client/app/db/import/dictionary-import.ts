@@ -9,6 +9,7 @@ import {
 } from '../schema/dictionary';
 import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from '../schema/dictionary-types';
 import { sql } from 'drizzle-orm';
+import Database from 'better-sqlite3';
 
 export type WordImportRow = Omit<WordInsert, 'wordId' | 'fingerprint'> & { wordId: string, fingerprint: string };
 export type WordPosImportRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: string; poseId: string };
@@ -25,6 +26,7 @@ export interface DictionaryImportResult {
     source: string;
     processed: number;
     skipped: number;
+    invalidRow: number;
 }
 
 /**
@@ -107,14 +109,16 @@ export function bufferToHex(value: Buffer): string {
 async function importJsonLines<TRow>(
     filePath: string,
     isValidRow: (row: Partial<TRow>) => row is TRow,
-    upsertRow: (row: TRow) => Promise<void>,
+    upsertRow: (row: TRow) => Promise<Database.RunResult>,
 ): Promise<DictionaryImportResult> {
     const lineReader = createLineReader(filePath);
 
+    let total = 0;
     let processed = 0;
-    let skipped = 0;
+    let invalidRow = 0;
 
     for await (const line of lineReader) {
+        total += 1;
         const trimmed_str = line.trim();
 
         if (!trimmed_str) {
@@ -124,18 +128,19 @@ async function importJsonLines<TRow>(
         const row = convertKeysToCamelCase(JSON.parse(trimmed_str)) as Partial<TRow>;
 
         if (!isValidRow(row)) {
-            skipped += 1;
+            invalidRow += 1;
             continue;
         }
 
-        await upsertRow(row);
-        processed += 1;
+        const result = await upsertRow(row);
+        processed += result.changes;
     }
 
     return {
         source: filePath,
-        processed,
-        skipped,
+        skipped: total - (processed + invalidRow),
+        invalidRow: invalidRow,
+        processed: processed,
     };
 }
 
@@ -155,7 +160,7 @@ export async function importWords(filePath: string): Promise<DictionaryImportRes
             wordId: uuidToBuffer(row.wordId),
             fingerprint: hexToBuffer(row.fingerprint)
         }
-        await db
+        return await db
             .insert(wordsTable)
             .values(insertData)
             .onConflictDoUpdate({
@@ -189,7 +194,7 @@ export async function importWordPoses(filePath: string): Promise<DictionaryImpor
             poseId: uuidToBuffer(row.poseId),
             wordId: uuidToBuffer(row.wordId)
         };
-        await db
+        return await db
             .insert(wordPosesTable)
             .values(insertData)
             .onConflictDoUpdate({
@@ -222,7 +227,7 @@ export async function importDefinitions(filePath: string): Promise<DictionaryImp
             defId: uuidToBuffer(row.defId),
             wordPosId: uuidToBuffer(row.wordPosId)
         };
-        await db
+        return await db
             .insert(definitionsTable)
             .values(insertData)
             .onConflictDoUpdate({
@@ -255,7 +260,7 @@ export async function importExamples(filePath: string): Promise<DictionaryImport
             expId: uuidToBuffer(row.expId),
             defId: uuidToBuffer(row.defId)
         };
-        await db
+        return await db
             .insert(examplesTable)
             .values(insertData)
             .onConflictDoUpdate({
