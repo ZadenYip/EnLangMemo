@@ -13,10 +13,10 @@ import Database from 'better-sqlite3';
 import Logger from 'electron-log/main';
 import { convertKeysToCamelCase, hexToBuffer, uuidToBuffer } from '../utils';
 
-export type WordImportRow = Omit<WordInsert, 'wordId' | 'fingerprint'> & { wordId: string, fingerprint: string };
-export type WordPosImportRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: string; poseId: string };
-export type DefinitionImportRow = Omit<DefinitionInsert, 'defId' | 'wordPosId'> & { defId: string; wordPosId: string };
-export type ExampleImportRow = Omit<ExampleInsert, 'expId' | 'defId'> & { expId: string; defId: string };
+export type WordRow = Omit<WordInsert, 'wordId' | 'fingerprint'> & { wordId: string, fingerprint: string };
+export type WordPosRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: string; poseId: string };
+export type DefinitionRow = Omit<DefinitionInsert, 'defId' | 'wordPosId'> & { defId: string; wordPosId: string };
+export type ExampleRow = Omit<ExampleInsert, 'expId' | 'defId'> & { expId: string; defId: string };
 
 /**
  * Result of importing a dictionary JSONL file, 
@@ -24,11 +24,11 @@ export type ExampleImportRow = Omit<ExampleInsert, 'expId' | 'defId'> & { expId:
  * number of processed rows, 
  * and number of skipped rows.
  */
-export interface DictionaryImportResult {
+export interface ImportResult {
     source: string;
     processed: number;
     skipped: number;
-    invalidRow: number;
+    failed: number;
 }
 
 // Fail early when the local JSONL file does not exist.
@@ -55,14 +55,18 @@ async function importJsonLines<TRow>(
     filePath: string,
     isValidRow: (row: Partial<TRow>) => row is TRow,
     upsertRow: (row: TRow) => Promise<Database.RunResult>,
-): Promise<DictionaryImportResult> {
+): Promise<ImportResult> {
     const lineReader = createLineReader(filePath);
 
+    const importResult: ImportResult = {
+        source: filePath,
+        processed: 0,
+        skipped: 0,
+        failed: 0,
+    };
+   
     let total = 0;
-    let processed = 0;
-    let invalidRow = 0;
     let row: Partial<TRow>;
-
     for await (const line of lineReader) {
         total += 1;
         const trimmed_str = line.trim();
@@ -79,25 +83,35 @@ async function importJsonLines<TRow>(
             } else {
                 Logger.error(`Unexpected error processing line ${total} in ${filePath}`);
             }
-            invalidRow += 1;
+            importResult.failed += 1;
             continue;
         }
 
         if (!isValidRow(row)) {
-            invalidRow += 1;
+            Logger.warn(`Skipping invalid data row ${total} in ${filePath}: missing required fields`);
+            importResult.failed += 1;
             continue;
         }
 
-        const result = await upsertRow(row);
-        processed += result.changes;
+        let result: Database.RunResult;
+        try {
+            result = await upsertRow(row);
+        } catch (error) {
+            Logger.error(`Database error processing line ${total} in ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
+            if (error instanceof Database.SqliteError) {
+                Logger.error(`SQLite error code: ${error.code}, message: ${error.message}`);
+            } else {
+                Logger.error(`Unexpected error type: ${error instanceof Error ? error.name : typeof error}`);
+            }
+            importResult.failed += 1;
+            continue;
+        }
+
+        importResult.processed += result.changes;
     }
 
-    return {
-        source: filePath,
-        skipped: total - (processed + invalidRow),
-        invalidRow: invalidRow,
-        processed: processed,
-    };
+    importResult.skipped = total - (importResult.processed + importResult.failed);
+    return importResult;
 }
 
 /**
@@ -105,12 +119,12 @@ async function importJsonLines<TRow>(
  * @param filePath the path to the JSONL file containing word data
  * @returns a promise resolving to the import result
  */
-export async function importWords(filePath: string): Promise<DictionaryImportResult> {
+export async function importWords(filePath: string): Promise<ImportResult> {
     const db = getDicDb();
-    const isWordImportRow = (row: Partial<WordImportRow>): row is WordImportRow =>
+    const isWordImportRow = (row: Partial<WordRow>): row is WordRow =>
         Boolean(row.wordId && row.spelling && row.fingerprint);
 
-    return importJsonLines<WordImportRow>(filePath, isWordImportRow, async (row) => {
+    return importJsonLines<WordRow>(filePath, isWordImportRow, async (row) => {
         const insertData: WordInsert = {
             ...row,
             wordId: uuidToBuffer(row.wordId),
@@ -139,12 +153,12 @@ export async function importWords(filePath: string): Promise<DictionaryImportRes
  * @param filePath the path to the JSONL file containing word-pos data
  * @returns a promise resolving to the import result
  */
-export async function importWordPoses(filePath: string): Promise<DictionaryImportResult> {
+export async function importWordPoses(filePath: string): Promise<ImportResult> {
     const db = getDicDb();
-    const isWordPosImportRow = (row: Partial<WordPosImportRow>): row is WordPosImportRow =>
+    const isWordPosImportRow = (row: Partial<WordPosRow>): row is WordPosRow =>
         Boolean(row.poseId && row.wordId);
 
-    return importJsonLines<WordPosImportRow>(filePath, isWordPosImportRow, async (row) => {
+    return importJsonLines<WordPosRow>(filePath, isWordPosImportRow, async (row) => {
         const insertData: WordPosInsert = {
             ...row,
             poseId: uuidToBuffer(row.poseId),
@@ -171,13 +185,13 @@ export async function importWordPoses(filePath: string): Promise<DictionaryImpor
  * @param filePath the path to the JSONL file containing definition data
  * @returns a promise resolving to the import result
  */
-export async function importDefinitions(filePath: string): Promise<DictionaryImportResult> {
+export async function importDefinitions(filePath: string): Promise<ImportResult> {
     const db = getDicDb();
     const isDefinitionImportRow = (
-        row: Partial<DefinitionImportRow>,
-    ): row is DefinitionImportRow => Boolean(row.defId && row.wordPosId);
+        row: Partial<DefinitionRow>,
+    ): row is DefinitionRow => Boolean(row.defId && row.wordPosId);
 
-    return importJsonLines<DefinitionImportRow>(filePath, isDefinitionImportRow, async (row) => {
+    return importJsonLines<DefinitionRow>(filePath, isDefinitionImportRow, async (row) => {
         const insertData: DefinitionInsert = {
             ...row,
             defId: uuidToBuffer(row.defId),
@@ -205,12 +219,12 @@ export async function importDefinitions(filePath: string): Promise<DictionaryImp
  * @param filePath the path to the JSONL file containing example data
  * @returns a promise resolving to the import result
  */
-export async function importExamples(filePath: string): Promise<DictionaryImportResult> {
+export async function importExamples(filePath: string): Promise<ImportResult> {
     const db = getDicDb();
-    const isExampleImportRow = (row: Partial<ExampleImportRow>): row is ExampleImportRow =>
+    const isExampleImportRow = (row: Partial<ExampleRow>): row is ExampleRow =>
         Boolean(row.expId && row.defId && row.exSrc);
 
-    return importJsonLines<ExampleImportRow>(filePath, isExampleImportRow, async (row) => {
+    return importJsonLines<ExampleRow>(filePath, isExampleImportRow, async (row) => {
         const insertData: ExampleInsert = {
             ...row,
             expId: uuidToBuffer(row.expId),

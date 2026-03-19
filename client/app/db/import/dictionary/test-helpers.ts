@@ -7,7 +7,7 @@ import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 export function createSchema(sqlite: Database.Database, db: BetterSQLite3Database): void {
     sqlite.pragma('foreign_keys = ON');
     migrate(db, {
-        migrationsFolder: path.resolve(__dirname, '../migrations'),
+        migrationsFolder: path.resolve(__dirname, '../../migrations'),
     });
 }
 
