@@ -2,7 +2,7 @@ import { ISubtitleService } from './subtitle-service.interface';
 import { Observable } from 'rxjs';
 import { createReadStream } from 'fs';
 import { Parser } from './srt/parser/parser';
-import { GlobalSubtitle } from '../../src/app/immerse/subtitle-interface';
+import { GlobalSubtitle } from './types';
 
 export class SubtitleService implements ISubtitleService {
 

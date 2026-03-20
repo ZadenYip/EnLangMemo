@@ -1,4 +1,5 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "strict": true,
     "composite": true,
@@ -11,13 +12,12 @@
     "module": "commonjs",
     "target": "es2022",
     "types": [
-      "node",
-      "drizzle-orm"
+      "node"
     ]
   },
   "include": [
     "**/*.ts",
-    "../src/app/immerse/subtitle-interface.d.ts"
+    "subtitle-handler/types.d.ts"
   ],
   "exclude": [
     "node_modules",
