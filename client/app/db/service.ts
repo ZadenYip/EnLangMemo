@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import { getDicDb, runSQL } from './db';
-import { IDatabaseService } from './db-service.interface';
+import { IDatabaseService } from './service-interface';
 import { wordsTable } from './schema/dictionary';
 import { eq } from 'drizzle-orm';
 
