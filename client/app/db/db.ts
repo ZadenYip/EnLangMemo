@@ -4,9 +4,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 import Logger from 'electron-log';
 import { BetterSQLite3Database, drizzle } from 'drizzle-orm/better-sqlite3';
+import * as dictionarySchema from './schema/dictionary';
 
-let dicDb: BetterSQLite3Database;
+let dicDb: BetterSQLite3Database<typeof dictionarySchema>;
 let cardDb: BetterSQLite3Database;
+let sqliteDic: Database.Database;
+let sqliteCard: Database.Database;
 
 export function initDatabase() {
 
@@ -19,22 +22,41 @@ export function initDatabase() {
     // Initialize the dictionary database
     const dicDbPath = path.join(dbDirPath, 'dictionary.db');
     Logger.info('Database initialization at', dicDbPath);
-    const sqliteDic = new Database(dicDbPath);
+    sqliteDic = new Database(dicDbPath);
     sqliteDic.pragma('journal_mode = WAL');
-    dicDb = drizzle(sqliteDic);
+    dicDb = drizzle(sqliteDic, { schema: dictionarySchema });
 
     // Initialize the card database
     const cardDbPath = path.join(dbDirPath, 'cards.db');
     Logger.info('Database initialization at', cardDbPath);
-    const sqliteCard = new Database(cardDbPath);
+    sqliteCard = new Database(cardDbPath);
     sqliteCard.pragma('journal_mode = WAL');
     cardDb = drizzle(sqliteCard);
 }
 
-export function getDicDb(): BetterSQLite3Database {
+export function getDicDb(): BetterSQLite3Database<typeof dictionarySchema> {
     return dicDb;
 }
 
 export function getCardDb(): BetterSQLite3Database {
     return cardDb;
+}
+
+export function runSQL(
+    sql: string,
+    params: any[] = [],
+): any[] | Database.RunResult {
+    const stmt = sqliteCard.prepare(sql);
+    const command = sql.trim().toLowerCase();
+
+    if (
+        command.startsWith('select') ||
+        command.startsWith('pragma') ||
+        command.startsWith('with') ||
+        command.startsWith('explain')
+    ) {
+        return stmt.all(...params);
+    }
+
+    return stmt.run(...params);
 }

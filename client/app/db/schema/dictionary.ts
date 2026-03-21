@@ -6,6 +6,7 @@ import {
     text,
     uniqueIndex,
 } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
 
 export const wordsTable = sqliteTable(
     'words',
@@ -64,3 +65,30 @@ export const examplesTable = sqliteTable(
     },
     (table) => [index('idx_examples_def_id').on(table.defId)],
 );
+
+export const wordsRelations = relations(wordsTable, ({ many }) => ({
+    poses: many(wordPosesTable),
+}));
+
+export const wordPosesRelations = relations(wordPosesTable, ({ one, many }) => ({
+    wordId: one(wordsTable, {
+        fields: [wordPosesTable.wordId],
+        references: [wordsTable.wordId],
+    }),
+    definitions: many(definitionsTable),
+}));
+
+export const definitionsRelations = relations(definitionsTable, ({ one, many }) => ({
+    wordPosId: one(wordPosesTable, {
+        fields: [definitionsTable.wordPosId],
+        references: [wordPosesTable.poseId],
+    }),
+    examples: many(examplesTable),
+}));
+
+export const examplesRelations = relations(examplesTable, ({ one }) => ({
+    defId: one(definitionsTable, {
+        fields: [examplesTable.defId],
+        references: [definitionsTable.defId],
+    }),
+}));

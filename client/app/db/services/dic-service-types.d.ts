@@ -1,5 +1,3 @@
-
-
 export interface DictionaryEntry {
     word: string;
     phoneticSymbol: string[];
@@ -12,12 +10,11 @@ export interface Sense {
 }
 
 export interface Definition {
-    cefr?: string;
     definition: BilingualText;
     examples?: BilingualText[];
 }
 
 export interface BilingualText {
-    source: string;
+    src: string;
     target: string;
 }
