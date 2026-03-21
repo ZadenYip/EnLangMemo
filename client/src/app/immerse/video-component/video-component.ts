@@ -8,7 +8,7 @@ import { MatIconButton } from '@angular/material/button';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SubtitleService } from '../subtitle-service';
 import { debounceTime, fromEvent, Subscription } from 'rxjs';
-import { DictionarySelectionSourceDirective } from '@app/shared/dictionary/selection/selection-source.directive';
+import { DictionarySelectionSourceDirective } from '../../shared/dictionary/selection/selection-source.directive';
 
 @Component({
     selector: 'app-video-component',

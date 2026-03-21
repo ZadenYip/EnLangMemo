@@ -2,13 +2,6 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "baseUrl": ".",
-    "paths": {
-      "@app/*": ["app/*"],
-      "@shared/*": ["app/shared/*"],
-      "@assets/*": ["assets/*"],
-      "@env/*": ["environments/*"]
-    },
     "outDir": "../out-tsc/app",
     "types": [
       "node"
@@ -20,7 +13,8 @@
   "include": [
     "**/*.ts",
     "**/*.d.ts",
-    "../app/ipc/ipc-api.d.ts"
+    "../app/ipc/ipc-api.d.ts",
+    "../app/subtitle-handler/types.d.ts"
   ],
   "exclude": [
     "**/*.spec.ts",

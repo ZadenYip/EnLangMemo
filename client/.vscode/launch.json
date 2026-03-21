@@ -52,15 +52,17 @@
             "type": "node",
             "request": "launch",
             "name": "Run Current Main Process Test File",
-            "autoAttachChildProcesses": true,
-            "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
-            "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+            "runtimeExecutable": "pnpm",
             "args": [
+                "vitest",
+                "run",
+                "--config",
+                "${workspaceFolder}/app/vitest-electron.config.ts",
                 "${relativeFile}"
             ],
-            "smartStep": true,
             "sourceMaps": true,
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "preLaunchTask": "Rebuild Electron"
         },
         {
             "type": "node",
@@ -69,7 +71,7 @@
             "autoAttachChildProcesses": true,
             "runtimeExecutable": "pnpm",
             "args": [
-                "electron:test"
+                "nodejs-test"
             ],
             "console": "integratedTerminal"
         },

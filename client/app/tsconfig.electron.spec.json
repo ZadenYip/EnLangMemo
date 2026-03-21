@@ -7,8 +7,11 @@
     "exclude": [],
     "compilerOptions": {
         "declaration": true,
+        "typeRoots": [
+            "../node_modules/@types"
+        ],
         "types": [
-            "vitest/globals"
+            "../vitest/globals"
         ]
     }
 }

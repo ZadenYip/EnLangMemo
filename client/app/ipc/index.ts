@@ -1,6 +1,6 @@
 import { registerProxy } from 'electron-ipc-cat/server';
-import { DatabaseServiceIPCDescriptor } from '../database/database-service.interface';
-import { DatabaseService } from '../database/database-service';
+import { DatabaseServiceIPCDescriptor } from '../db/service-interface';
+import { DatabaseService } from '../db/services/dic-service';
 import { SubtitleService } from '../subtitle-handler/subtitle-service';
 import { SubtitleServiceIPCDescriptor } from '../subtitle-handler/subtitle-service.interface';
 

@@ -3,7 +3,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { TranslateService } from "@ngx-translate/core";
 import { filter, map, Subject, throttleTime } from "rxjs";
 import { SubtitleManager } from "./find-subtitle-algo/subtitle-manager";
-import { GlobalSubtitle } from "./subtitle-interface";
+import { GlobalSubtitle } from "../../../app/subtitle-handler/types";
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable()
