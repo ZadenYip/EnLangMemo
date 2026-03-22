@@ -3,13 +3,14 @@ import os from 'node:os';
 import path from 'node:path';
 import Database from 'better-sqlite3';
 import { BetterSQLite3Database, drizzle } from 'drizzle-orm/better-sqlite3';
-import { getDicDb } from '../../db';
+import { dictionarySchema, getDicDb } from '../../db';
 import { definitionsTable } from '../../schema/dictionary';
 import { importDefinitions, importWordPoses, importWords } from '.';
 import { createSchema, writeJsonLinesFile } from './test-helpers';
 import { bufferToHex } from '../utils';
 
 vi.mock('../../db', () => ({
+    dictionarySchema: vi.importActual("../../db"),
     getDicDb: vi.fn(),
 }));
 
@@ -17,12 +18,12 @@ describe('Dictionary Import Definitions Tests', () => {
     const mockedGetDicDb = vi.mocked(getDicDb);
 
     let sqlite: Database.Database;
-    let db: BetterSQLite3Database;
+    let db: BetterSQLite3Database<typeof dictionarySchema>;
     let tempDir: string;
 
     beforeEach(() => {
         sqlite = new Database(':memory:');
-        db = drizzle(sqlite);
+        db = drizzle(sqlite, { schema: dictionarySchema });
         createSchema(sqlite, db);
         mockedGetDicDb.mockReturnValue(db);
         tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dictionary-import-'));

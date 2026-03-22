@@ -3,8 +3,9 @@ import path from 'node:path';
 import Database from 'better-sqlite3';
 import { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import { dictionarySchema } from '@main/db/db';
 
-export function createSchema(sqlite: Database.Database, db: BetterSQLite3Database): void {
+export function createSchema(sqlite: Database.Database, db: BetterSQLite3Database<typeof dictionarySchema>): void {
     sqlite.pragma('foreign_keys = ON');
     migrate(db, {
         migrationsFolder: path.resolve(__dirname, '../../migrations'),

@@ -4,9 +4,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import Logger from 'electron-log';
 import { BetterSQLite3Database, drizzle } from 'drizzle-orm/better-sqlite3';
-import * as dictionarySchema from './schema/dictionary';
+import * as schema from './schema/dictionary';
 
-let dicDb: BetterSQLite3Database<typeof dictionarySchema>;
+export const dictionarySchema = schema;
+
+let dicDb: BetterSQLite3Database<typeof schema>;
 let cardDb: BetterSQLite3Database;
 let sqliteDic: Database.Database;
 let sqliteCard: Database.Database;
@@ -24,7 +26,7 @@ export function initDatabase() {
     Logger.info('Database initialization at', dicDbPath);
     sqliteDic = new Database(dicDbPath);
     sqliteDic.pragma('journal_mode = WAL');
-    dicDb = drizzle(sqliteDic, { schema: dictionarySchema });
+    dicDb = drizzle(sqliteDic, { schema: schema });
 
     // Initialize the card database
     const cardDbPath = path.join(dbDirPath, 'cards.db');
@@ -34,7 +36,7 @@ export function initDatabase() {
     cardDb = drizzle(sqliteCard);
 }
 
-export function getDicDb(): BetterSQLite3Database<typeof dictionarySchema> {
+export function getDicDb(): BetterSQLite3Database<typeof schema> {
     return dicDb;
 }
 
