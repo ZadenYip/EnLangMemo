@@ -26,6 +26,7 @@ export type ExampleRow = Omit<ExampleInsert, 'expId' | 'defId'> & { expId: strin
  */
 export interface ImportResult {
     source: string;
+    total: number;
     processed: number;
     skipped: number;
     failed: number;
@@ -53,22 +54,24 @@ function createLineReader(filePath: string): readline.Interface {
 // Reusable JSONL import pipeline: read, parse, validate, and upsert.
 async function importJsonLines<TRow>(
     filePath: string,
-    isValidRow: (row: Partial<TRow>) => row is TRow,
-    upsertRow: (row: TRow) => Promise<Database.RunResult>,
+    isValidRowFn: (row: Partial<TRow>) => row is TRow,
+    upsertRowsFn: (rows: TRow[]) => Promise<Database.RunResult>,
 ): Promise<ImportResult> {
     const lineReader = createLineReader(filePath);
 
     const importResult: ImportResult = {
         source: filePath,
+        total: 0,
         processed: 0,
         skipped: 0,
         failed: 0,
     };
    
-    let total = 0;
     let row: Partial<TRow>;
+    let batch: TRow[] = [];
+    // TODO add transaction support for batch upsert to ensure data integrity and improve performance
     for await (const line of lineReader) {
-        total += 1;
+        importResult.total += 1;
         const trimmed_str = line.trim();
 
         if (!trimmed_str) {
@@ -79,39 +82,61 @@ async function importJsonLines<TRow>(
             row = convertKeysToCamelCase(JSON.parse(trimmed_str)) as Partial<TRow>;
         } catch (error) {
             if (error instanceof SyntaxError) {
-                Logger.error(`Skipping invalid JSON line ${total} in ${filePath}: ${error.message}`);
+                Logger.error(`Skipping invalid JSON line ${importResult.total} in ${filePath}: ${error.message}`);
             } else {
-                Logger.error(`Unexpected error processing line ${total} in ${filePath}`);
+                Logger.error(`Unexpected error processing line ${importResult.total} in ${filePath}`);
             }
             importResult.failed += 1;
             continue;
         }
 
-        if (!isValidRow(row)) {
-            Logger.warn(`Skipping invalid data row ${total} in ${filePath}: missing required fields`);
+        if (!isValidRowFn(row)) {
+            Logger.warn(`Skipping invalid data row ${importResult.total} in ${filePath}: missing required fields`);
             importResult.failed += 1;
             continue;
         }
 
-        let result: Database.RunResult;
-        try {
-            result = await upsertRow(row);
-        } catch (error) {
-            Logger.error(`Database error processing line ${total} in ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
-            if (error instanceof Database.SqliteError) {
-                Logger.error(`SQLite error code: ${error.code}, message: ${error.message}`);
-            } else {
-                Logger.error(`Unexpected error type: ${error instanceof Error ? error.name : typeof error}`);
-            }
-            importResult.failed += 1;
-            continue;
+        batch.push(row);
+        if (batch.length >= 1000) {
+            await upsertBatch(batch, upsertRowsFn, importResult, filePath);
+            batch = [];
         }
-
-        importResult.processed += result.changes;
     }
 
-    importResult.skipped = total - (importResult.processed + importResult.failed);
+    // Process any remaining rows in the batch after reading all lines
+    if (batch.length > 0) {
+        await upsertBatch(batch, upsertRowsFn, importResult, filePath);
+    }
+
+    importResult.skipped = importResult.total - (importResult.processed + importResult.failed);
     return importResult;
+}
+
+async function upsertBatch<TRow>(
+    batch: TRow[],
+    upsertRowsFn: (rows: TRow[]) => Promise<Database.RunResult>,
+    pointerImportResult: ImportResult,
+    filePath: string,
+) {
+    let result: Database.RunResult;
+    try {
+        result = await upsertRowsFn(batch);
+        pointerImportResult.processed += result.changes;
+    } catch (error) {
+        Logger.error(
+            `Database error processing line ${pointerImportResult.total} in ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+        if (error instanceof Database.SqliteError) {
+            Logger.error(
+                `SQLite error code: ${error.code}, message: ${error.message}`,
+            );
+        } else {
+            Logger.error(
+                `Unexpected error type: ${error instanceof Error ? error.name : typeof error}`,
+            );
+        }
+        pointerImportResult.failed += 1;
+    }
 }
 
 /**
@@ -120,32 +145,41 @@ async function importJsonLines<TRow>(
  * @returns a promise resolving to the import result
  */
 export async function importWords(filePath: string): Promise<ImportResult> {
-    const db = getDicDb();
+
     const isWordImportRow = (row: Partial<WordRow>): row is WordRow =>
         Boolean(row.wordId && row.spelling && row.fingerprint);
 
-    return importJsonLines<WordRow>(filePath, isWordImportRow, async (row) => {
-        const insertData: WordInsert = {
+    const impResult = importJsonLines<WordRow>(filePath, isWordImportRow, async (rows) => {
+        const insertDatas = rows.map(row => ({
             ...row,
             wordId: uuidToBuffer(row.wordId),
             fingerprint: hexToBuffer(row.fingerprint)
-        }
-        return await db
+        }));
+
+        // TODO DrizzleORM does not support async in transaction for better-sqlite3
+        // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
+
+        const transfactionResult = getDicDb().transaction((tx) => {
+            const dbResult = tx
             .insert(wordsTable)
-            .values(insertData)
+            .values(insertDatas)
             .onConflictDoUpdate({
                 target: wordsTable.wordId,
                 // Only update if the existing record is older than the new data
-                setWhere: sql`${wordsTable.updatedAt} < ${insertData.updatedAt}`,
+                setWhere: sql.raw(`${wordsTable.updatedAt.name} < excluded.${wordsTable.updatedAt.name}`),
                 set: {
-                    spelling: insertData.spelling,
-                    fingerprint: insertData.fingerprint,
-                    phoneticBre: insertData.phoneticBre,
-                    phoneticAme: insertData.phoneticAme,
-                    updatedAt: insertData.updatedAt,
+                    spelling: sql.raw(`excluded.${wordsTable.spelling.name}`),
+                    fingerprint: sql.raw(`excluded.${wordsTable.fingerprint.name}`),
+                    phoneticBre: sql.raw(`excluded.${wordsTable.phoneticBre.name}`),
+                    phoneticAme: sql.raw(`excluded.${wordsTable.phoneticAme.name}`),
+                    updatedAt: sql.raw(`excluded.${wordsTable.updatedAt.name}`),
                 },
-            });
+            }).run();
+            return dbResult;
+        });
+        return transfactionResult;
     });
+    return impResult; 
 }
 
 /**
@@ -154,30 +188,39 @@ export async function importWords(filePath: string): Promise<ImportResult> {
  * @returns a promise resolving to the import result
  */
 export async function importWordPoses(filePath: string): Promise<ImportResult> {
-    const db = getDicDb();
     const isWordPosImportRow = (row: Partial<WordPosRow>): row is WordPosRow =>
         Boolean(row.poseId && row.wordId);
 
-    return importJsonLines<WordPosRow>(filePath, isWordPosImportRow, async (row) => {
-        const insertData: WordPosInsert = {
+    const impResult = importJsonLines<WordPosRow>(filePath, isWordPosImportRow, async (rows) => {
+        const insertDatas: WordPosInsert[] = rows.map(row => ({
             ...row,
             poseId: uuidToBuffer(row.poseId),
             wordId: uuidToBuffer(row.wordId)
-        };
-        return await db
+        }));
+        
+        // TODO DrizzleORM does not support async in transaction for better-sqlite3
+        // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
+        const transfactionResult = getDicDb().transaction((tx) => {
+            const dbResult = tx
             .insert(wordPosesTable)
-            .values(insertData)
+            .values(insertDatas)
             .onConflictDoUpdate({
                 target: wordPosesTable.poseId,
                 // Only update if the existing record is older than the new data
-                setWhere: sql`${wordPosesTable.updatedAt} < ${insertData.updatedAt}`,
+                setWhere: sql.raw(`${wordPosesTable.updatedAt.name} < excluded.${wordPosesTable.updatedAt.name}`),
                 set: {
-                    wordId: insertData.wordId,
-                    partOfSpeech: insertData.partOfSpeech,
-                    updatedAt: insertData.updatedAt,
+                    wordId: sql.raw(`excluded.${wordPosesTable.wordId.name}`),
+                    partOfSpeech: sql.raw(`excluded.${wordPosesTable.partOfSpeech.name}`),
+                    updatedAt: sql.raw(`excluded.${wordPosesTable.updatedAt.name}`),
                 }
-            });
+            }).run();
+            
+            return dbResult;
+        });
+
+        return transfactionResult;
     });
+    return impResult;
 }
 
 /**
@@ -186,32 +229,40 @@ export async function importWordPoses(filePath: string): Promise<ImportResult> {
  * @returns a promise resolving to the import result
  */
 export async function importDefinitions(filePath: string): Promise<ImportResult> {
-    const db = getDicDb();
     const isDefinitionImportRow = (
         row: Partial<DefinitionRow>,
     ): row is DefinitionRow => Boolean(row.defId && row.wordPosId);
 
-    return importJsonLines<DefinitionRow>(filePath, isDefinitionImportRow, async (row) => {
-        const insertData: DefinitionInsert = {
+    const impResult = importJsonLines<DefinitionRow>(filePath, isDefinitionImportRow, async (rows) => {
+        const insertDatas: DefinitionInsert[] = rows.map(row => ({
             ...row,
             defId: uuidToBuffer(row.defId),
             wordPosId: uuidToBuffer(row.wordPosId)
-        };
-        return await db
-            .insert(definitionsTable)
-            .values(insertData)
-            .onConflictDoUpdate({
-                target: definitionsTable.defId,
-                // Only update if the existing record is older than the new data
-                setWhere: sql`${definitionsTable.updatedAt} < ${insertData.updatedAt}`,
-                set: {
-                    wordPosId: insertData.wordPosId,
-                    defSrc: insertData.defSrc,
-                    defTgt: insertData.defTgt,
-                    updatedAt: insertData.updatedAt,
-                },
-            });
+        }));
+
+        // TODO DrizzleORM does not support async in transaction for better-sqlite3
+        // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
+        const transfactionResult = getDicDb().transaction((tx) => {
+            const dbResult = tx
+                .insert(definitionsTable)
+                .values(insertDatas)
+                .onConflictDoUpdate({
+                    target: definitionsTable.defId,
+                    // Only update if the existing record is older than the new data
+                    setWhere: sql.raw(`${definitionsTable.updatedAt.name} < excluded.${definitionsTable.updatedAt.name}`),
+                    set: {
+                        wordPosId: sql.raw(`excluded.${definitionsTable.wordPosId.name}`),
+                        defSrc: sql.raw(`excluded.${definitionsTable.defSrc.name}`),
+                        defTgt: sql.raw(`excluded.${definitionsTable.defTgt.name}`),
+                        updatedAt: sql.raw(`excluded.${definitionsTable.updatedAt.name}`),
+                    },
+                }).run();
+            return dbResult;
+        });
+
+        return transfactionResult;
     });
+    return impResult;
 }
 
 /**
@@ -224,25 +275,34 @@ export async function importExamples(filePath: string): Promise<ImportResult> {
     const isExampleImportRow = (row: Partial<ExampleRow>): row is ExampleRow =>
         Boolean(row.expId && row.defId && row.exSrc);
 
-    return importJsonLines<ExampleRow>(filePath, isExampleImportRow, async (row) => {
-        const insertData: ExampleInsert = {
+    const impResult = importJsonLines<ExampleRow>(filePath, isExampleImportRow, async (rows) => {
+        const insertDatas: ExampleInsert[] = rows.map(row => ({
             ...row,
             expId: uuidToBuffer(row.expId),
             defId: uuidToBuffer(row.defId)
-        };
-        return await db
-            .insert(examplesTable)
-            .values(insertData)
-            .onConflictDoUpdate({
-                target: examplesTable.expId,
-                // Only update if the existing record is older than the new data
-                setWhere: sql`${examplesTable.updatedAt} < ${insertData.updatedAt}`,
-                set: {
-                    defId: insertData.defId,
-                    exSrc: insertData.exSrc,
-                    exTgt: insertData.exTgt,
-                    updatedAt: insertData.updatedAt,
-                }
-            });
+        }));
+
+        // TODO DrizzleORM does not support async in transaction for better-sqlite3
+        // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
+        const transfactionResult = db.transaction((tx) => {
+            const dbResult = tx
+                .insert(examplesTable)
+                .values(insertDatas)
+                .onConflictDoUpdate({
+                    target: examplesTable.expId,
+                    // Only update if the existing record is older than the new data
+                    setWhere: sql.raw(`${examplesTable.updatedAt.name} < excluded.${examplesTable.updatedAt.name}`),
+                    set: {
+                        defId: sql.raw(`excluded.${examplesTable.defId.name}`),
+                        exSrc: sql.raw(`excluded.${examplesTable.exSrc.name}`),
+                        exTgt: sql.raw(`excluded.${examplesTable.exTgt.name}`),
+                        updatedAt: sql.raw(`excluded.${examplesTable.updatedAt.name}`),
+                    }
+                }).run();
+            return dbResult;
+        });
+
+        return transfactionResult;
     });
+    return impResult;
 }
