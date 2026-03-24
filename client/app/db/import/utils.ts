@@ -12,8 +12,7 @@ export function toCamelCase(str: string): string {
  * @param obj an object or array to recursively convert keys from snake_case to camelCase
  * @returns the object or array with camelCase keys
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function convertKeysToCamelCase(obj: any): any {
+export function convertKeysToCamelCase(obj: unknown): unknown {
     if (Array.isArray(obj)) {
         return obj.map(convertKeysToCamelCase);
     } else if (obj !== null && typeof obj === 'object') {
@@ -21,8 +20,7 @@ export function convertKeysToCamelCase(obj: any): any {
             const camelKey = toCamelCase(key);
             acc[camelKey] = convertKeysToCamelCase(value); // 递归处理子对象
             return acc;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        }, {} as Record<string, any>);
+        }, {} as Record<string, unknown>);
     }
     // if it's a basic type (string, number, boolean, null, undefined), return as is
     return obj;
