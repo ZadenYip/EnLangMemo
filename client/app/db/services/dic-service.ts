@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import { getDicDb, runSQL } from '../db';
 import { IDatabaseService } from '../service-interface';
-import type { DictionaryEntry } from './dic-service-types';
+import type { Definition, DictionaryEntry, Sense } from './dic-service-types';
 import { wordsTable } from '../schema/dictionary';
 import { eq } from 'drizzle-orm';
 
@@ -58,24 +58,27 @@ export class DatabaseService implements IDatabaseService {
             return null;
         }
 
-        return {
+        const result: DictionaryEntry = {
             word: row.spelling,
-            phoneticSymbol: [row.phoneticBre, row.phoneticAme].filter(
-                (value): value is string => Boolean(value),
-            ),
-            senses: row.poses.map((pose) => ({
-                partOfSpeech: pose.partOfSpeech ?? '',
-                definitions: pose.definitions.map((def) => ({
+            phoneticSymbol: {
+                bre: row.phoneticAme ?? "",
+                ame: row.phoneticBre ?? "",
+            },
+            senses: row.poses.map<Sense>(pose => ({
+                partOfSpeech: pose.partOfSpeech ?? "",
+                definitions: pose.definitions.map<Definition>(def => ({
                     definition: {
-                        source: def.defSrc ?? '',
-                        target: def.defTgt ?? '',
+                        src: def.defSrc ?? "",
+                        target: def.defTgt ?? "",
                     },
-                    examples: def.examples.map((exp) => ({
-                        source: exp.exSrc,
-                        target: exp.exTgt ?? '',
+                    examples: def.examples.map(exp => ({
+                        src: exp.exSrc ?? "",
+                        target: exp.exTgt ?? "",
                     })),
                 })),
-            })),
-        };
+            }))
+        }
+
+        return result;
     }
 }

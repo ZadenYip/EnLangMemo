@@ -1,6 +1,10 @@
 export interface DictionaryEntry {
     word: string;
-    phoneticSymbol: string[];
+    phoneticSymbol: {
+        // british and american phonetic symbols
+        bre: string;
+        ame: string;
+    }
     senses: Sense[];
 }
 
