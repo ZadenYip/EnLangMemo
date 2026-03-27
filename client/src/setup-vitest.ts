@@ -7,10 +7,10 @@
 
 vi.mock('electron-log/renderer', () => {
   const mockLogger = {
-    info: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-    debug: vi.fn(),
+    info: console.info,
+    error: console.error,
+    warn: console.warn,
+    debug: console.debug,
   };
   return {
     ...mockLogger,
@@ -20,10 +20,10 @@ vi.mock('electron-log/renderer', () => {
 
 vi.mock('electron-log/main', () => {
   const mockLogger = {
-    info: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-    debug: vi.fn(),
+    info: console.info,
+    error: console.error,
+    warn: console.warn,
+    debug: console.debug,
   };
   return {
     ...mockLogger,

@@ -1,8 +1,10 @@
-
-
 export interface DictionaryEntry {
     word: string;
-    phoneticSymbol: string[];
+    phoneticSymbol: {
+        // british and american phonetic symbols
+        bre: string;
+        ame: string;
+    }
     senses: Sense[];
 }
 
@@ -12,12 +14,11 @@ export interface Sense {
 }
 
 export interface Definition {
-    cefr?: string;
     definition: BilingualText;
     examples?: BilingualText[];
 }
 
 export interface BilingualText {
-    source: string;
+    src: string;
     target: string;
 }

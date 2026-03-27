@@ -1,4 +1,4 @@
-import { GlobalSubtitle } from "../subtitle-interface";
+import { GlobalSubtitle } from "@main/subtitle-handler/types";
 import { IntervalTree } from "./interval-tree";
 
 export class SubtitleManager {

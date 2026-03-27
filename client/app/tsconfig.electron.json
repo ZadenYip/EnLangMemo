@@ -1,4 +1,5 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "strict": true,
     "composite": true,
@@ -16,11 +17,12 @@
   },
   "include": [
     "**/*.ts",
-    "../src/app/immerse/subtitle-interface.d.ts"
+    "subtitle-handler/types.d.ts"
   ],
   "exclude": [
     "node_modules",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*test-helpers.ts"
   ]
 }
 // Just use for code completion and type checking in Electron main process files

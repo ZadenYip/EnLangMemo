@@ -1,7 +1,7 @@
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-import { initDatabase } from './database/database';
+import { initDatabase } from './db/db';
 import { registerAllIPCHandlers } from './ipc';
 import { loggerSetUp } from './logs/log';
 

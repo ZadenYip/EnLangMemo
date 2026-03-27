@@ -1,6 +1,6 @@
 import { registerProxy } from 'electron-ipc-cat/server';
-import { DatabaseServiceIPCDescriptor } from '../database/database-service.interface';
-import { DatabaseService } from '../database/database-service';
+import { DicServiceIPCDescriptor } from '../db/services/dic-service-interface';
+import { DictionaryService } from '../db/services/dic-service';
 import { SubtitleService } from '../subtitle-handler/subtitle-service';
 import { SubtitleServiceIPCDescriptor } from '../subtitle-handler/subtitle-service.interface';
 
@@ -9,8 +9,8 @@ export function registerAllIPCHandlers() {
 }
 
 function registerDatabaseHandlers() {
-    const databaseService = new DatabaseService();
-    registerProxy(databaseService, DatabaseServiceIPCDescriptor);
+    const databaseService = new DictionaryService();
+    registerProxy(databaseService, DicServiceIPCDescriptor);
 
     const subtitleService = new SubtitleService();
     registerProxy(subtitleService, SubtitleServiceIPCDescriptor);
