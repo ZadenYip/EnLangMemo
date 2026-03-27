@@ -3,7 +3,7 @@ import * as service from "./ipc/ipc-service";
 
 console.log('[Preload] Loading preload script...');
 console.log('[Preload] services object:', service);
-console.log('[Preload] services.database:', service.database);
+console.log('[Preload] services.dicService:', service.dicService);
 
 contextBridge.exposeInMainWorld('service', service);
 contextBridge.exposeInMainWorld('electron', {
