@@ -1,4 +1,4 @@
-<div
+﻿<div
   #dictionaryWindow
   class="dictionary-page"
   [class.dictionary-page-hidden]="!visible()"
@@ -40,7 +40,7 @@
     </mat-card-header>
     <mat-card-content>
       <div class="phonetic-row">
-        <div class="phonetic">{{ entry.phoneticSymbol.join(' / ') }}</div>
+        <div class="phonetic">{{ entry.phoneticSymbol.bre }} / {{ entry.phoneticSymbol.ame }}</div>
       </div>
       <div class="meaning-scroll" #meaningScroll>
         @for (sense of entry.senses; track $index) {
