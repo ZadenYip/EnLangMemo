@@ -1,18 +1,10 @@
-import Database from 'better-sqlite3';
-import { getDicDb, runSQL } from '../db';
-import { IDatabaseService } from '../service-interface';
+import { getDicDb } from '../db';
+import { IDatabaseService as IDictionaryService } from './dic-service-interface';
 import type { Definition, DictionaryEntry, Sense } from './dic-service-types';
 import { wordsTable } from '../schema/dictionary';
 import { eq } from 'drizzle-orm';
 
-export class DatabaseService implements IDatabaseService {
-    public async runSQL(
-        sql: string,
-        params: any[] = [],
-    ): Promise<any[] | Database.RunResult> {
-        return runSQL(sql, params);
-    }
-
+export class DictionaryService implements IDictionaryService {
     public async queryWord(spelling: string): Promise<DictionaryEntry | null> {
         const row = await getDicDb().query.wordsTable.findFirst({
             where: eq(wordsTable.spelling, spelling),

@@ -2,11 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Database from 'better-sqlite3';
 import { BetterSQLite3Database, drizzle } from 'drizzle-orm/better-sqlite3';
-import { dictionarySchema, getDicDb, runSQL } from '../db';
+import { dictionarySchema, getDicDb } from '../db';
 import { importDefinitions, importExamples, importWordPoses, importWords } from '../import/dictionary';
 import { createSchema } from '../import/dictionary/test-helpers';
 import { uuidToBuffer } from '../import/utils';
-import { DatabaseService } from './dic-service';
+import { DictionaryService } from './dic-service';
 
 vi.mock('../db', async () => {
     const actual = await vi.importActual<typeof import('../db')>('../db');
@@ -41,12 +41,11 @@ interface ExplainPlanRow {
 
 describe('Dictionary Service Tests', () => {
     const mockedGetDicDb = vi.mocked(getDicDb);
-    const mockedRunSQL = vi.mocked(runSQL);
     const fixturesDir = path.resolve(__dirname, './fixtures');
 
     let sqlite: Database.Database;
     let db: BetterSQLite3Database<typeof dictionarySchema>;
-    let service: DatabaseService;
+    let service: DictionaryService;
 
     // For development/debugging, we can import the full fixtures with more entries.
     // const fulWordsJSLPath = path.resolve(fixturesDir, "full", 'words.jsonl');
@@ -66,19 +65,17 @@ describe('Dictionary Service Tests', () => {
         createSchema(sqlite, db);
 
         mockedGetDicDb.mockReturnValue(db);
-        mockedRunSQL.mockImplementation(() => []);
 
         await importWords(sliceWordsJSLPath);
         await importWordPoses(slicePosesJSLPath);
         await importDefinitions(sliceDefsPath);
         await importExamples(sliceExpsJSLPath);
 
-        service = new DatabaseService();
+        service = new DictionaryService();
     });
 
     afterEach(() => {
         mockedGetDicDb.mockReset();
-        mockedRunSQL.mockReset();
         sqlite.close();
     });
 

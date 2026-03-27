@@ -43,22 +43,3 @@ export function getDicDb(): BetterSQLite3Database<typeof schema> {
 export function getCardDb(): BetterSQLite3Database {
     return cardDb;
 }
-
-export function runSQL(
-    sql: string,
-    params: any[] = [],
-): any[] | Database.RunResult {
-    const stmt = sqliteCard.prepare(sql);
-    const command = sql.trim().toLowerCase();
-
-    if (
-        command.startsWith('select') ||
-        command.startsWith('pragma') ||
-        command.startsWith('with') ||
-        command.startsWith('explain')
-    ) {
-        return stmt.all(...params);
-    }
-
-    return stmt.run(...params);
-}
