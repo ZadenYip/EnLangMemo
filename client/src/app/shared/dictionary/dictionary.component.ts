@@ -259,7 +259,11 @@ export class DictionaryComponent implements AfterViewInit {
         };
     }
 
-    onAddCard(definition: Definition, partOfSpeech: string): void {
+    private async queryDictionaryEntry(word: string): Promise<DictionaryEntry | null> {
+        return await window.service.dicService.queryWord(word);
+    }
+
+    addCard(definition: Definition, partOfSpeech: string): void {
         Logger.info('add card', { partOfSpeech, definition });
     }
 

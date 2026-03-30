@@ -27,7 +27,7 @@ export class MeaningCardComponent {
     });
     add = output<Definition>();
 
-    addToCard(): void {
+    pressAddCard(): void {
         this.add.emit(this.item());
     }
 }
