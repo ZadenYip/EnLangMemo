@@ -69,7 +69,6 @@ async function importJsonLines<TRow>(
    
     let row: Partial<TRow>;
     let batch: TRow[] = [];
-    // TODO add transaction support for batch upsert to ensure data integrity and improve performance
     for await (const line of lineReader) {
         importResult.total += 1;
         const trimmed_str = line.trim();
