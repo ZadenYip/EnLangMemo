@@ -36,25 +36,34 @@
   <mat-card class="meanings-card">
     <mat-card-header>
       <mat-card-title>{{ 'DICTIONARY.MEANINGS_TITLE' | translate }}</mat-card-title>
-      <mat-card-subtitle>{{ entry()?.word }}</mat-card-subtitle>
+      <mat-card-subtitle>{{ entry()?.word || '' }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <div class="phonetic-row">
-        <div class="phonetic">{{ entry()?.phoneticSymbol!.bre }} / {{ entry()?.phoneticSymbol!.ame }}</div>
-      </div>
+      @if (entry()?.phoneticSymbol?.bre || entry()?.phoneticSymbol?.ame) {
+        <div class="phonetic-row">
+          <div class="phonetic">{{ entry()?.phoneticSymbol?.bre || '-' }} / {{ entry()?.phoneticSymbol?.ame || '-' }}</div>
+        </div>
+      }
       <div class="meaning-scroll" #meaningScroll>
-        @for (sense of entry()?.senses; track $index) {
-          <div class="sense-section" #senseSection>
-            <div class="meaning-cards">
-              @for (def of sense.definitions; track $index) {
-                <app-meaning-card
-                  [item]="def"
-                  [index]="$index + 1"
-                  [posLabel]="sense.partOfSpeech"
-                  (add)="addCard($event, sense.partOfSpeech)"
-                ></app-meaning-card>
-              }
+        @if ((entry()?.senses?.length ?? 0) > 0) {
+          @for (sense of entry()?.senses; track $index) {
+            <div class="sense-section" #senseSection>
+              <div class="meaning-cards">
+                @for (def of sense.definitions; track $index) {
+                  <app-meaning-card
+                    [item]="def"
+                    [index]="$index + 1"
+                    [posLabel]="sense.partOfSpeech"
+                    (add)="addCard($event, sense.partOfSpeech)"
+                  ></app-meaning-card>
+                }
+              </div>
             </div>
+          }
+        } @else {
+          <div class="meaning-empty-hint">
+            <mat-icon>search_off</mat-icon>
+            <span>{{ 'DICTIONARY.NO_SELECTION' | translate }}</span>
           </div>
         }
       </div>

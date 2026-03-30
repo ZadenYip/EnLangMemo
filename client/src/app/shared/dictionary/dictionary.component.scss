@@ -1,6 +1,5 @@
-.dictionary-page {
+﻿.dictionary-page {
   position: fixed;
-  box-sizing: border-box;
   left: 24px;
   top: 24px;
   width: min(960px, calc(100vw - 48px));
@@ -14,7 +13,12 @@
   border: 1px solid rgba(0, 0, 0, 0.28);
   display: grid;
   gap: 0;
-  grid-template-columns: minmax(0, 1fr);
+  // first row auto height for toolbar, second row takes the rest of the space
+  grid-template-rows: auto 1fr; 
+  grid-template-columns: 1fr 1.4fr;
+  grid-template-areas:
+    "toolbar toolbar"
+    "context meanings";
   padding: 16px;
   transition: opacity 120ms ease, visibility 120ms ease;
   z-index: 1000;
@@ -60,6 +64,7 @@
 }
 
 .context-card {
+  grid-area: context;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -74,6 +79,7 @@
 }
 
 .meanings-card {
+  grid-area: meanings;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -157,6 +163,22 @@ mat-card-title {
   letter-spacing: 0.2px;
   white-space: nowrap;
 }
+
+.meaning-empty-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  color: rgba(0, 0, 0, 0.52);
+  font-size: 14px;
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+}
+
 .sense-section + .sense-section {
   margin-top: 16px;
   padding-top: 6px;
@@ -168,7 +190,6 @@ mat-card-title {
   gap: 10px;
   padding-right: 6px;
 }
-
 
 @media (min-width: 960px) {
   .dictionary-page {
