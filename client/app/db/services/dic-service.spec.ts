@@ -8,6 +8,13 @@ import { createSchema } from "../import/dictionary/test-helpers";
 import { uuidToBuffer } from "../import/utils";
 import { DictionaryService } from "./dic-service";
 
+// Mock the lemmatize function
+vi.mock("@main/lemmatization", () => {
+    return {
+        lemmatize: vi.fn((word: string) => word), // Mock implementation: return the input word as-is
+    };
+});
+
 vi.mock("../db", async () => {
     const actual = await vi.importActual<typeof import("../db")>("../db");
     return {
