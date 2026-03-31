@@ -13,6 +13,10 @@ export class DictionaryService implements IDictionaryService {
      * @param spelling the word spelling to query, e.g. "running"
      */
     private async getEntry(spelling: string) {
+        if (!spelling) {
+            return null;
+        }
+        
         const row = await getDicDb().query.wordsTable.findFirst({
             where: eq(wordsTable.spelling, spelling),
             columns: {

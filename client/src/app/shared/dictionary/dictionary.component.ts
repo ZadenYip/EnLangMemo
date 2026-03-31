@@ -9,9 +9,9 @@ import { DictionarySelectionService } from './selection/selection.service';
 import { MeaningCardComponent } from './sub-components/meaning-card.component';
 import Logger from 'electron-log/renderer';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Definition } from '@main/db/services/dic-service-types';
+import { Definition, DictionaryEntry } from '@main/db/services/dic-service-types';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged, from, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, from, map, switchMap } from 'rxjs';
 
 @Component({
     selector: 'app-dictionary',
@@ -21,7 +21,7 @@ import { debounceTime, distinctUntilChanged, from, switchMap } from 'rxjs';
         MatDividerModule,
         MatButtonModule,
         MeaningCardComponent,
-        TranslatePipe
+        TranslatePipe,
     ],
     templateUrl: './dictionary.component.html',
     styleUrl: './dictionary.component.scss',
@@ -62,6 +62,14 @@ export class DictionaryComponent implements AfterViewInit {
     );
     readonly contextSentence = computed(
         () => this.selectionService.selection().contextSentence,
+    );
+    readonly hasSelectedText = computed(() =>
+        Boolean(this.selectedText()?.trim()),
+    );
+    readonly meaningEmptyMessageKey = computed(() =>
+        this.hasSelectedText()
+            ? 'DICTIONARY.NO_RESULTS'
+            : 'DICTIONARY.NO_SELECTION',
     );
     readonly visible = computed(() => this.dictionaryWindowService.visible());
 
@@ -218,14 +226,8 @@ export class DictionaryComponent implements AfterViewInit {
         const size = this.windowSize();
         const viewportWidth = document.documentElement.clientWidth;
         const viewportHeight = document.documentElement.clientHeight;
-        const maxLeft = Math.max(
-            0,
-            viewportWidth - size.width,
-        );
-        const maxTop = Math.max(
-            0,
-            viewportHeight - size.height,
-        );
+        const maxLeft = Math.max(0, viewportWidth - size.width);
+        const maxTop = Math.max(0, viewportHeight - size.height);
         return {
             left: Math.min(Math.max(position.left, 0), maxLeft),
             top: Math.min(Math.max(position.top, 0), maxTop),
@@ -266,15 +268,31 @@ export class DictionaryComponent implements AfterViewInit {
         Logger.info('add card', { partOfSpeech, definition });
     }
 
-    readonly entry  = toSignal(
+    readonly dummyEntry: DictionaryEntry = {
+        word: '',
+        phoneticSymbol: { bre: '-', ame: '-' },
+        senses: [],
+    };
+
+    readonly entry = toSignal(
         toObservable(this.selectedText).pipe(
             debounceTime(50),
             distinctUntilChanged(),
-            switchMap(word => {
-                return from(window.service.dicService.queryWord(word));
-            })
-        )
-    )
+            switchMap((word) =>
+                from(window.service.dicService.queryWord(word)),
+            ),
+            map((result) => {
+                if (!result) {
+                    return this.dummyEntry;
+                } else {
+                    return result;
+                }
+            }),
+        ),
+        {
+            initialValue: this.dummyEntry
+        }
+    );
 }
 
 

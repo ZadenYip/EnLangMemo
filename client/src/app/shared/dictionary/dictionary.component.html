@@ -1,4 +1,4 @@
-﻿<div
+<div
   #dictionaryWindow
   class="dictionary-page"
   [class.dictionary-page-hidden]="!visible()"
@@ -36,17 +36,17 @@
   <mat-card class="meanings-card">
     <mat-card-header>
       <mat-card-title>{{ 'DICTIONARY.MEANINGS_TITLE' | translate }}</mat-card-title>
-      <mat-card-subtitle>{{ entry()?.word || '' }}</mat-card-subtitle>
+      <mat-card-subtitle>{{ entry().word }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      @if (entry()?.phoneticSymbol?.bre || entry()?.phoneticSymbol?.ame) {
+      @if (entry().phoneticSymbol.bre || entry().phoneticSymbol.ame) {
         <div class="phonetic-row">
-          <div class="phonetic">{{ entry()?.phoneticSymbol?.bre || '-' }} / {{ entry()?.phoneticSymbol?.ame || '-' }}</div>
+          <div class="phonetic">{{ entry().phoneticSymbol.bre }} / {{ entry().phoneticSymbol.ame }}</div>
         </div>
       }
       <div class="meaning-scroll" #meaningScroll>
-        @if ((entry()?.senses?.length ?? 0) > 0) {
-          @for (sense of entry()?.senses; track $index) {
+        @if (entry().senses.length > 0) {
+          @for (sense of entry().senses; track $index) {
             <div class="sense-section" #senseSection>
               <div class="meaning-cards">
                 @for (def of sense.definitions; track $index) {
@@ -61,9 +61,11 @@
             </div>
           }
         } @else {
-          <div class="meaning-empty-hint">
-            <mat-icon>search_off</mat-icon>
-            <span>{{ 'DICTIONARY.NO_SELECTION' | translate }}</span>
+          <div class="meaning-empty-state">
+            <div class="meaning-empty-hint">
+              <mat-icon>search_off</mat-icon>
+              <span>{{ meaningEmptyMessageKey() | translate }}</span>
+            </div>
           </div>
         }
       </div>
