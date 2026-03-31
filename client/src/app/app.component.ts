@@ -11,6 +11,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import Logger from "electron-log/renderer";
 import { DictionaryComponent } from "./shared/dictionary/dictionary.component";
 import { DictionaryWindowService } from "./shared/dictionary/dictionary-window.service";
+import { APP_PATHS } from "./route/route";
 
 @Component({
     selector: "app-root",
@@ -33,10 +34,10 @@ export class AppComponent {
     private readonly dictionaryWindowService = inject(DictionaryWindowService);
     
     readonly tabs = [
-        { label: "HEADER.DECKS", path: "/home" },
-        { label: "HEADER.IMMERSE", path: "/immerse" },
-        { label: "HEADER.BROWSE", path: "/browse" },
-        { label: "HEADER.STATS", path: "/stats" }
+        { label: "HEADER.DECKS", path: `/${APP_PATHS.home}` },
+        { label: "HEADER.IMMERSE", path: `/${APP_PATHS.immerse}` },
+        { label: "HEADER.BROWSE", path: `/${APP_PATHS.browse}` },
+        { label: "HEADER.STATS", path: `/${APP_PATHS.stats}` }
     ] as const;
 
     /**

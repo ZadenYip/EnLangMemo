@@ -9,9 +9,7 @@ import { AppComponent } from "./app/app.component";
 import { APP_CONFIG } from "./environments/environment";
 import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
-import { PageNotFoundComponent } from "./app/shared/components";
-import { HomeComponent } from "./app/home/home.component";
-import { ImmerseComponent } from "./app/immerse/immerse.component";
+import { APP_ROUTES } from "@render/route/route";
 
 if (APP_CONFIG.production) {
   enableProdMode();
@@ -28,28 +26,6 @@ bootstrapApplication(AppComponent, {
       fallbackLang: "en",
       lang: "en"
     }),
-    provideRouter([
-      {
-        path: "",
-        redirectTo: "home",
-        pathMatch: "full"
-      },
-      {
-        path: "home",
-        component: HomeComponent
-      },
-      {
-        path: "immerse",
-        component: ImmerseComponent
-      },
-      {
-        path: "browse",
-        component: PageNotFoundComponent
-      },
-      {
-        path: "stats",
-        component: PageNotFoundComponent
-      }
-    ])
+    provideRouter(APP_ROUTES)
   ]
 }).catch(err => console.error(err));
