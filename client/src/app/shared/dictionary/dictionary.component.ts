@@ -1,20 +1,20 @@
-﻿import { Component, computed, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { AfterViewInit, ElementRef, HostListener, signal, viewChild } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { DictionaryWindowService } from './dictionary-window.service';
-import { DictionarySelectionService } from './selection/selection.service';
-import { MeaningCardComponent } from './sub-components/meaning-card.component';
-import Logger from 'electron-log/renderer';
-import { TranslatePipe } from '@ngx-translate/core';
-import { Definition, DictionaryEntry } from '@main/db/services/dic-service-types';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged, from, map, switchMap } from 'rxjs';
+﻿import { Component, computed, inject } from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
+import { AfterViewInit, ElementRef, HostListener, signal, viewChild } from "@angular/core";
+import { MatCardModule } from "@angular/material/card";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatIconModule } from "@angular/material/icon";
+import { DictionaryWindowService } from "./dictionary-window.service";
+import { DictionarySelectionService } from "./selection/selection.service";
+import { MeaningCardComponent } from "./sub-components/meaning-card.component";
+import Logger from "electron-log/renderer";
+import { TranslatePipe } from "@ngx-translate/core";
+import { Definition, DictionaryEntry } from "@main/db/services/dic-service-types";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { debounceTime, distinctUntilChanged, from, map, switchMap } from "rxjs";
 
 @Component({
-    selector: 'app-dictionary',
+    selector: "app-dictionary",
     imports: [
         MatCardModule,
         MatIconModule,
@@ -23,14 +23,14 @@ import { debounceTime, distinctUntilChanged, from, map, switchMap } from 'rxjs';
         MeaningCardComponent,
         TranslatePipe,
     ],
-    templateUrl: './dictionary.component.html',
-    styleUrl: './dictionary.component.scss',
+    templateUrl: "./dictionary.component.html",
+    styleUrl: "./dictionary.component.scss",
 })
 export class DictionaryComponent implements AfterViewInit {
     private readonly selectionService = inject(DictionarySelectionService);
     private readonly dictionaryWindowService = inject(DictionaryWindowService);
     readonly dictionaryWindow =
-        viewChild<ElementRef<HTMLElement>>('dictionaryWindow');
+        viewChild<ElementRef<HTMLElement>>("dictionaryWindow");
 
     // Floating window top-left position in viewport coordinates.
     readonly windowPosition = signal({ left: 24, top: 24 });
@@ -68,8 +68,8 @@ export class DictionaryComponent implements AfterViewInit {
     );
     readonly meaningEmptyMessageKey = computed(() =>
         this.hasSelectedText()
-            ? 'DICTIONARY.NO_RESULTS'
-            : 'DICTIONARY.NO_SELECTION',
+            ? "DICTIONARY.NO_RESULTS"
+            : "DICTIONARY.NO_SELECTION",
     );
     readonly visible = computed(() => this.dictionaryWindowService.visible());
 
@@ -108,7 +108,7 @@ export class DictionaryComponent implements AfterViewInit {
 
         // Do not start drag when clicking toolbar buttons (e.g. close).
         const target = event.target as HTMLElement | null;
-        if (target?.closest('button')) {
+        if (target?.closest("button")) {
             return;
         }
 
@@ -121,7 +121,7 @@ export class DictionaryComponent implements AfterViewInit {
         this.dragStartTop = this.windowPosition().top;
     }
 
-    @HostListener('document:pointermove', ['$event'])
+    @HostListener("document:pointermove", ["$event"])
     onPointerMove(event: PointerEvent): void {
         if (this.handleResizeMove(event)) {
             return;
@@ -195,13 +195,13 @@ export class DictionaryComponent implements AfterViewInit {
         this.resizeStartTop = this.windowPosition().top;
     }
 
-    @HostListener('document:pointerup')
+    @HostListener("document:pointerup")
     onPointerUp(): void {
         this.isDragging = false;
         this.isResizing = false;
     }
 
-    @HostListener('window:resize')
+    @HostListener("window:resize")
     onWindowResize(): void {
         // Keep window valid after viewport size changes.
         this.normalizeWindowBounds();
@@ -265,12 +265,12 @@ export class DictionaryComponent implements AfterViewInit {
 
     addCard(definition: Definition, partOfSpeech: string): void {
         // TODO: implement add card logic
-        Logger.info('add card', { partOfSpeech, definition });
+        Logger.info("add card", { partOfSpeech, definition });
     }
 
     readonly dummyEntry: DictionaryEntry = {
-        word: '',
-        phoneticSymbol: { bre: '-', ame: '-' },
+        word: "",
+        phoneticSymbol: { bre: "-", ame: "-" },
         senses: [],
     };
 

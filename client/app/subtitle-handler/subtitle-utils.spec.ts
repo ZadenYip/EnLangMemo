@@ -2,9 +2,9 @@ import { TimestampAST } from "./srt/parser/parser";
 import { shiftTimestamp } from "./subtitle-utils";
 
 
-describe('Subtitle Utils Tests', () => {
+describe("Subtitle Utils Tests", () => {
     
-    it('should shift timestamp correctly', () => {
+    it("should shift timestamp correctly", () => {
         // time: 00:01:00,000
         const originalTimestamp = new TimestampAST(0, 1, 0, 0);
 
@@ -18,7 +18,7 @@ describe('Subtitle Utils Tests', () => {
         expect(shiftedTimestamp.milliseconds).toBe(0);
     });
 
-    it('should shift timestamp to zero if negative', () => {
+    it("should shift timestamp to zero if negative", () => {
         // time: 00:00:10,000
         const originalTimestamp = new TimestampAST(0, 0, 10, 0);
 
@@ -31,7 +31,7 @@ describe('Subtitle Utils Tests', () => {
         expect(shiftedTimestamp.milliseconds).toBe(0);
     });
 
-    it('should borrow correctly across time units when shifting', () => {
+    it("should borrow correctly across time units when shifting", () => {
         // time: 01:00:00,000
         const originalTimestamp = new TimestampAST(1, 0, 0, 0);
         // shift by -61 seconds
@@ -43,7 +43,7 @@ describe('Subtitle Utils Tests', () => {
         expect(shiftedTimestamp.milliseconds).toBe(0);
     });
 
-    it('should carry correctly across time units when shifting', () => {
+    it("should carry correctly across time units when shifting", () => {
         // time: 00:59:59,500
         const originalTimestamp = new TimestampAST(0, 59, 59, 500);
         // shift by 1000 milliseconds
@@ -55,7 +55,7 @@ describe('Subtitle Utils Tests', () => {
         expect(shiftedTimestamp.milliseconds).toBe(0);
     });
 
-    it('should throw error for non-integer shiftMs', () => {
+    it("should throw error for non-integer shiftMs", () => {
         // time: 00:10:00,000
         const originalTimestamp = new TimestampAST(0, 10, 0, 0);
         expect(() => shiftTimestamp(1500.5, originalTimestamp)).toThrowError("shiftMs must be an integer");

@@ -1,22 +1,22 @@
-import fs from 'node:fs';
-import readline from 'node:readline';
-import { getDicDb } from '../../db';
+import fs from "node:fs";
+import readline from "node:readline";
+import { getDicDb } from "../../db";
 import {
     definitionsTable,
     examplesTable,
     wordPosesTable,
     wordsTable,
-} from '../../schema/dictionary';
-import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from '../../schema/dictionary-types';
-import { sql } from 'drizzle-orm';
-import Database from 'better-sqlite3';
-import Logger from 'electron-log/main';
-import { convertKeysToCamelCase, hexToBuffer, uuidToBuffer } from '../utils';
+} from "../../schema/dictionary";
+import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from "../../schema/dictionary-types";
+import { sql } from "drizzle-orm";
+import Database from "better-sqlite3";
+import Logger from "electron-log/main";
+import { convertKeysToCamelCase, hexToBuffer, uuidToBuffer } from "../utils";
 
-export type WordRow = Omit<WordInsert, 'wordId' | 'fingerprint'> & { wordId: string, fingerprint: string };
-export type WordPosRow = Omit<WordPosInsert, 'wordId' | 'poseId'> & { wordId: string; poseId: string };
-export type DefinitionRow = Omit<DefinitionInsert, 'defId' | 'wordPosId'> & { defId: string; wordPosId: string };
-export type ExampleRow = Omit<ExampleInsert, 'expId' | 'defId'> & { expId: string; defId: string };
+export type WordRow = Omit<WordInsert, "wordId" | "fingerprint"> & { wordId: string, fingerprint: string };
+export type WordPosRow = Omit<WordPosInsert, "wordId" | "poseId"> & { wordId: string; poseId: string };
+export type DefinitionRow = Omit<DefinitionInsert, "defId" | "wordPosId"> & { defId: string; wordPosId: string };
+export type ExampleRow = Omit<ExampleInsert, "expId" | "defId"> & { expId: string; defId: string };
 
 /**
  * Result of importing a dictionary JSONL file, 
@@ -44,7 +44,7 @@ function createLineReader(filePath: string): readline.Interface {
     assertFileExists(filePath);
 
     return readline.createInterface({
-        input: fs.createReadStream(filePath, { encoding: 'utf8' }),
+        input: fs.createReadStream(filePath, { encoding: "utf8" }),
         crlfDelay: Infinity,
     });
 }

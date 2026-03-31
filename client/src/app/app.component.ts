@@ -1,21 +1,21 @@
-import { Component, HostListener, inject } from '@angular/core';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Component, HostListener, inject } from "@angular/core";
+import { TranslatePipe, TranslateService } from "@ngx-translate/core";
 import {
     Router,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-} from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import Logger from 'electron-log/renderer';
+} from "@angular/router";
+import { MatButtonModule } from "@angular/material/button";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import Logger from "electron-log/renderer";
 import { DictionaryComponent } from "./shared/dictionary/dictionary.component";
-import { DictionaryWindowService } from './shared/dictionary/dictionary-window.service';
+import { DictionaryWindowService } from "./shared/dictionary/dictionary-window.service";
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
+    selector: "app-root",
+    templateUrl: "./app.component.html",
+    styleUrls: ["./app.component.scss"],
     standalone: true,
     imports: [
     RouterOutlet,
@@ -33,38 +33,38 @@ export class AppComponent {
     private readonly dictionaryWindowService = inject(DictionaryWindowService);
     
     readonly tabs = [
-        { label: 'HEADER.DECKS', path: '/home' },
-        { label: 'HEADER.IMMERSE', path: '/immerse' },
-        { label: 'HEADER.BROWSE', path: '/browse' },
-        { label: 'HEADER.STATS', path: '/stats' },
+        { label: "HEADER.DECKS", path: "/home" },
+        { label: "HEADER.IMMERSE", path: "/immerse" },
+        { label: "HEADER.BROWSE", path: "/browse" },
+        { label: "HEADER.STATS", path: "/stats" }
     ] as const;
 
     /**
      *
-     * @param path - The path to check for active state（e.g., '/home'）
+     * @param path - The path to check for active state（e.g., "/home"）
      * @returns True if the path is active, false otherwise
      */
     isActive = (path: string): boolean => {
         return this.router.isActive(path, {
-            paths: 'subset',
-            queryParams: 'subset',
-            fragment: 'ignored',
-            matrixParams: 'ignored',
+            paths: "subset",
+            queryParams: "subset",
+            fragment: "ignored",
+            matrixParams: "ignored",
         });
     };
 
     onSync() {
-        Logger.info('Sync triggered');
+        Logger.info("Sync triggered");
     }
 
-    @HostListener('document:mousedown', ['$event'])
+    @HostListener("document:mousedown", ["$event"])
     onDocumentMouseDown(event: MouseEvent): void {
         const target = event.target as HTMLElement | null;
         if (!target) {
             return;
         }
 
-        if (target.closest('app-dictionary')) {
+        if (target.closest("app-dictionary")) {
             return;
         }
 
@@ -72,9 +72,9 @@ export class AppComponent {
     }
 
     constructor() {
-        this.translate.setDefaultLang('en');
+        this.translate.setDefaultLang("en");
         // Use browser language
         this.translate.use(navigator.language);
-        Logger.info('language set to', navigator.language);
+        Logger.info("language set to", navigator.language);
     }
 }

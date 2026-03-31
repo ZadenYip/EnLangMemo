@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { VideoComponent } from './video-component';
-import { TranslateModule } from '@ngx-translate/core';
-import { SubtitleService } from '../subtitle-service';
+import { VideoComponent } from "./video-component";
+import { TranslateModule } from "@ngx-translate/core";
+import { SubtitleService } from "../subtitle-service";
 
-describe('VideoComponentComponent', () => {
+describe("VideoComponentComponent", () => {
   let component: VideoComponent;
   let fixture: ComponentFixture<VideoComponent>;
 
@@ -25,7 +25,7 @@ describe('VideoComponentComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

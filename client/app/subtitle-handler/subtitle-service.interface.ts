@@ -7,7 +7,7 @@ export interface ISubtitleService {
 }
 
 export const SubtitleServiceIPCDescriptor = {
-    channel: 'subtitleService',
+    channel: "subtitleService",
     properties: {
         fetchSubtitles$: ProxyPropertyType.Function$
     },

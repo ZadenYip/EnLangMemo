@@ -1,17 +1,17 @@
-import 'electron-ipc-cat/fixContextIsolation'; // Ensure ipc works in context-isolated environments
+import "electron-ipc-cat/fixContextIsolation"; // Ensure ipc works in context-isolated environments
 
-import { enableProdMode, provideZoneChangeDetection } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { enableProdMode, provideZoneChangeDetection } from "@angular/core";
+import { bootstrapApplication } from "@angular/platform-browser";
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideRouter } from "@angular/router";
 
-import { AppComponent } from './app/app.component';
-import { APP_CONFIG } from './environments/environment';
-import { provideTranslateService } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
-import { PageNotFoundComponent } from './app/shared/components';
-import { HomeComponent } from './app/home/home.component';
-import { ImmerseComponent } from './app/immerse/immerse.component';
+import { AppComponent } from "./app/app.component";
+import { APP_CONFIG } from "./environments/environment";
+import { provideTranslateService } from "@ngx-translate/core";
+import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
+import { PageNotFoundComponent } from "./app/shared/components";
+import { HomeComponent } from "./app/home/home.component";
+import { ImmerseComponent } from "./app/immerse/immerse.component";
 
 if (APP_CONFIG.production) {
   enableProdMode();
@@ -22,32 +22,32 @@ bootstrapApplication(AppComponent, {
     provideZoneChangeDetection(),provideHttpClient(withInterceptorsFromDi()),
     provideTranslateService({
       loader: provideTranslateHttpLoader({
-        prefix: './assets/i18n/',
-        suffix: '.json'
+        prefix: "./assets/i18n/",
+        suffix: ".json"
       }),
-      fallbackLang: 'en',
-      lang: 'en'
+      fallbackLang: "en",
+      lang: "en"
     }),
     provideRouter([
       {
-        path: '',
-        redirectTo: 'home',
-        pathMatch: 'full'
+        path: "",
+        redirectTo: "home",
+        pathMatch: "full"
       },
       {
-        path: 'home',
+        path: "home",
         component: HomeComponent
       },
       {
-        path: 'immerse',
+        path: "immerse",
         component: ImmerseComponent
       },
       {
-        path: 'browse',
+        path: "browse",
         component: PageNotFoundComponent
       },
       {
-        path: 'stats',
+        path: "stats",
         component: PageNotFoundComponent
       }
     ])

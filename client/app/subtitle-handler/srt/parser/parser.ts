@@ -154,14 +154,14 @@ export class Parser {
 
     private async parseLinesFromText(): Promise<string[]> {
         const textLines: string[] = [];
-        let line = '';
+        let line = "";
         let currentToken = this.tokenStream.peek();
 
         while (currentToken.type !== TokenType.EOF) {
             const text = currentToken.value!;
             if (currentToken.type === TokenType.NEWLINE) {
                 textLines.push(line);
-                line = '';
+                line = "";
                 await this.tokenStream.eatExpect(TokenType.NEWLINE);
 
                 // check if next token is also NEWLINE (empty line between cues)

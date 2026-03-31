@@ -4,7 +4,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { filter, map, Subject, throttleTime } from "rxjs";
 import { SubtitleManager } from "./find-subtitle-algo/subtitle-manager";
 import { GlobalSubtitle } from "../../../app/subtitle-handler/types";
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from "@angular/core/rxjs-interop";
 
 @Injectable()
     export class SubtitleService {
@@ -24,7 +24,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
     constructor() {
         this.subtitleManager = new SubtitleManager(
             this.translate.instant(
-                'PAGES.IMMERSE.SUBTITLE.EMPTY',
+                "PAGES.IMMERSE.SUBTITLE.EMPTY",
             ),
         );
 
@@ -86,30 +86,30 @@ import { toSignal } from '@angular/core/rxjs-interop';
         return new Promise<void>((resolve, reject) => {
             window.observables.subtitleService.fetchSubtitles$(filePath).subscribe({
                 next: (cue) => {
-                    console.debug('Received subtitle cue:', cue);
+                    console.debug("Received subtitle cue:", cue);
                     this.subtitleManager.add(cue);
                 },
                 error: (err) => {
-                    console.error('Error fetching subtitles:', err);
+                    console.error("Error fetching subtitles:", err);
                     notificationBar.open(
                         this.translate.instant(
-                            'PAGES.IMMERSE.SUBTITLE.FAIL_TO_LOAD_MSG'
+                            "PAGES.IMMERSE.SUBTITLE.FAIL_TO_LOAD_MSG"
                         ),
                         this.translate.instant(
-                            'PAGES.IMMERSE.SUBTITLE.FAIL_TO_LOAD_ACTION'
+                            "PAGES.IMMERSE.SUBTITLE.FAIL_TO_LOAD_ACTION"
                         )
                     );
                     reject(err);
                 },
                 complete: () => {
-                    console.log('Completed fetching subtitles.');
-                    console.log('Total subtitles loaded:', this.subtitleManager.subtitles.length);
+                    console.log("Completed fetching subtitles.");
+                    console.log("Total subtitles loaded:", this.subtitleManager.subtitles.length);
                     notificationBar.open(
                         this.translate.instant(
-                            'PAGES.IMMERSE.SUBTITLE.SUCCESS_LOAD_MSG'
+                            "PAGES.IMMERSE.SUBTITLE.SUCCESS_LOAD_MSG"
                         ),
                         this.translate.instant(
-                            'PAGES.IMMERSE.SUBTITLE.SUCCESS_LOAD_ACTION'
+                            "PAGES.IMMERSE.SUBTITLE.SUCCESS_LOAD_ACTION"
                         ),
                         { duration: 3000 }
                     );

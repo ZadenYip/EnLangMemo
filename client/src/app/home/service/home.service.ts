@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { from, map, Observable } from 'rxjs';
-import { DeckListItem } from '../deck-list-item.model';
-import Database from 'better-sqlite3';
-import Logger from 'electron-log';
+import { Injectable } from "@angular/core";
+import { from, map, Observable } from "rxjs";
+import { DeckListItem } from "../deck-list-item.model";
+import Database from "better-sqlite3";
+import Logger from "electron-log";
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class HomeService {
 
@@ -24,7 +24,7 @@ export class HomeService {
         //             newCardsPerDay: item.new_cards_per_day,
         //             newCardsLearned: item.new_cards_learned,
         //         }));
-        //         Logger.info('Mapped deck list:', deckList);
+        //         Logger.info("Mapped deck list:", deckList);
         //         return deckList;
         //     })
         // );

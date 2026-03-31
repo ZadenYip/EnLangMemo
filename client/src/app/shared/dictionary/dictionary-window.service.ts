@@ -1,6 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal } from "@angular/core";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class DictionaryWindowService {
     private readonly _visible = signal(false);
     readonly visible = this._visible.asReadonly();

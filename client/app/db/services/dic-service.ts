@@ -1,9 +1,9 @@
-import { getDicDb } from '../db';
-import { IDatabaseService as IDictionaryService } from './dic-service-interface';
-import type { Definition, DictionaryEntry, Sense } from './dic-service-types';
-import { wordsTable } from '../schema/dictionary';
-import { eq } from 'drizzle-orm';
-import { lemmatize } from '@main/lemmatization';
+import { getDicDb } from "../db";
+import { IDatabaseService as IDictionaryService } from "./dic-service-interface";
+import type { Definition, DictionaryEntry, Sense } from "./dic-service-types";
+import { wordsTable } from "../schema/dictionary";
+import { eq } from "drizzle-orm";
+import { lemmatize } from "@main/lemmatization";
 
 export class DictionaryService implements IDictionaryService {
     /**
@@ -79,19 +79,19 @@ export class DictionaryService implements IDictionaryService {
         const result: DictionaryEntry = {
             word: row.spelling,
             phoneticSymbol: {
-                bre: row.phoneticAme ?? '',
-                ame: row.phoneticBre ?? '',
+                bre: row.phoneticAme ?? "",
+                ame: row.phoneticBre ?? "",
             },
             senses: row.poses.map<Sense>((pose) => ({
-                partOfSpeech: pose.partOfSpeech ?? '',
+                partOfSpeech: pose.partOfSpeech ?? "",
                 definitions: pose.definitions.map<Definition>((def) => ({
                     definition: {
-                        src: def.defSrc ?? '',
-                        target: def.defTgt ?? '',
+                        src: def.defSrc ?? "",
+                        target: def.defTgt ?? "",
                     },
                     examples: def.examples.map((exp) => ({
-                        src: exp.exSrc ?? '',
-                        target: exp.exTgt ?? '',
+                        src: exp.exSrc ?? "",
+                        target: exp.exTgt ?? "",
                     })),
                 })),
             })),

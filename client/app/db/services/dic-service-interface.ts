@@ -6,7 +6,7 @@ export interface IDatabaseService {
 }
 
 export const DicServiceIPCDescriptor = {
-    channel: 'dicService',
+    channel: "dicService",
     properties: {
         queryWord: ProxyPropertyType.Function,
     },

@@ -5,7 +5,7 @@
  * providing empty implementations.
  */
 
-vi.mock('electron-log/renderer', () => {
+vi.mock("electron-log/renderer", () => {
   const mockLogger = {
     info: console.info,
     error: console.error,
@@ -18,7 +18,7 @@ vi.mock('electron-log/renderer', () => {
   };
 });
 
-vi.mock('electron-log/main', () => {
+vi.mock("electron-log/main", () => {
   const mockLogger = {
     info: console.info,
     error: console.error,
@@ -32,11 +32,11 @@ vi.mock('electron-log/main', () => {
 });
 
 (function defineGlobalWindow() {
-  if (typeof globalThis.window === 'undefined') {
+  if (typeof globalThis.window === "undefined") {
     globalThis.window = {} as any;
   }
 
-  Object.defineProperty(globalThis.window, 'service', {
+  Object.defineProperty(globalThis.window, "service", {
     value: {
       database: {
         runSQL: vi.fn(),

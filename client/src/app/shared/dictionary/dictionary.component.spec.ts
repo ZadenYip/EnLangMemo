@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DictionaryComponent } from './dictionary.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { DictionaryComponent } from "./dictionary.component";
+import { TranslateModule } from "@ngx-translate/core";
 
-describe('DictionaryComponent', () => {
+describe("DictionaryComponent", () => {
     let component: DictionaryComponent;
     let fixture: ComponentFixture<DictionaryComponent>;
 
@@ -20,7 +20,7 @@ describe('DictionaryComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });
