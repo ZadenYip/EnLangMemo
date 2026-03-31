@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { SubtitleItemComponent } from "./subtitle-item";
-import { SubtitleService } from "@app/immerse/subtitle-service";
 import { TranslateModule } from "@ngx-translate/core";
+import { SubtitleService } from "@render/immerse/subtitle-service";
 
 describe("SubtitleItemComponent", () => {
     let component: SubtitleItemComponent;
