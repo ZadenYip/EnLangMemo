@@ -8,6 +8,7 @@ import { examplesTable } from "../../schema/dictionary";
 import {
     importDefinitions,
     importExamples,
+    ImportResult,
     importWordPoses,
     importWords,
 } from ".";
@@ -90,11 +91,12 @@ describe("Dictionary Import Examples Tests", () => {
 
         const result = await importExamples(filePath);
 
-        expect(result).toEqual({
+        expect(result).toEqual<ImportResult>({
             source: filePath,
             processed: 1,
             skipped: 0,
             failed: 0,
+            total: 1
         });
 
         const exp_rows = await db.select().from(examplesTable);

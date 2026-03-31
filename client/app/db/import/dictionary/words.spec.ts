@@ -6,7 +6,7 @@ import { asc } from "drizzle-orm";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "../../db";
 import { wordsTable } from "../../schema/dictionary";
-import { importWords } from ".";
+import { ImportResult, importWords } from ".";
 import { createSchema, writeJsonLinesFile, writeRawLinesFile } from "./test-helpers";
 import { hexToBuffer, uuidToBuffer } from "../utils";
 
@@ -81,11 +81,12 @@ describe("Dictionary Import Words Tests", () => {
 
         const result = await importWords(filePath);
 
-        expect(result).toEqual({
+        expect(result).toEqual<ImportResult>({
             source: filePath,
             processed: 2,
             skipped: 0,
             failed: 0,
+            total: 2
         });
 
         // Select and verify the inserted rows in the database
@@ -142,11 +143,12 @@ describe("Dictionary Import Words Tests", () => {
 
         const result = await importWords(filePath);
 
-        expect(result).toEqual({
+        expect(result).toEqual<ImportResult>({
             source: filePath,
             processed: 1,
             skipped: 2,
             failed: 2,
+            total: 5
         });
 
         const rows = await db
@@ -172,11 +174,12 @@ describe("Dictionary Import Words Tests", () => {
 
         const result = await importWords(filePath);
 
-        expect(result).toEqual({
+        expect(result).toEqual<ImportResult>({
             source: filePath,
             processed: 0,
             skipped: 1,
             failed: 2,
+            total: 3
         });
 
         const rows = await db.select().from(wordsTable);

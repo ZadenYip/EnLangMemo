@@ -5,7 +5,7 @@ import Database from "better-sqlite3";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "../../db";
 import { definitionsTable } from "../../schema/dictionary";
-import { importDefinitions, importWordPoses, importWords } from ".";
+import { importDefinitions, ImportResult, importWordPoses, importWords } from ".";
 import { createSchema, writeJsonLinesFile } from "./test-helpers";
 import { bufferToHex } from "../utils";
 
@@ -74,11 +74,12 @@ describe("Dictionary Import Definitions Tests", () => {
 
         const result = await importDefinitions(filePath);
 
-        expect(result).toEqual({
+        expect(result).toEqual<ImportResult>({
             source: filePath,
             processed: 1,
             skipped: 0,
             failed: 0,
+            total: 1
         });
 
         const rows = await db.select().from(definitionsTable);

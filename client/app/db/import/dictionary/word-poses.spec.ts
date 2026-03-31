@@ -5,7 +5,7 @@ import Database from "better-sqlite3";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "../../db";
 import { wordPosesTable } from "../../schema/dictionary";
-import { importWordPoses, importWords } from ".";
+import { ImportResult, importWordPoses, importWords } from ".";
 import { createSchema, writeJsonLinesFile } from "./test-helpers";
 import { bufferToHex } from "../utils";
 
@@ -62,11 +62,12 @@ describe("Dictionary Import Word Poses Tests", () => {
 
         const result = await importWordPoses(filePath);
 
-        expect(result).toEqual({
+        expect(result).toEqual<ImportResult>({
             source: filePath,
             processed: 1,
             skipped: 0,
             failed: 0,
+            total: 1
         });
 
         const rows = await db.select().from(wordPosesTable);
@@ -94,11 +95,12 @@ describe("Dictionary Import Word Poses Tests", () => {
 
         const result = await importWordPoses(filePath);
 
-        expect(result).toEqual({
+        expect(result).toEqual<ImportResult>({
             source: filePath,
             processed: 0,
             skipped: 0,
             failed: 1,
+            total: 1
         });
 
         const rows = await db.select().from(wordPosesTable);
