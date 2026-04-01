@@ -12,25 +12,12 @@ import { sql } from "drizzle-orm";
 import Database from "better-sqlite3";
 import Logger from "electron-log/main";
 import { convertKeysToCamelCase, hexToBuffer, uuidToBuffer } from "../utils";
+import { ImportResult } from "./dic-import-type";
 
 export type WordRow = Omit<WordInsert, "wordId" | "fingerprint"> & { wordId: string, fingerprint: string };
 export type WordPosRow = Omit<WordPosInsert, "wordId" | "poseId"> & { wordId: string; poseId: string };
 export type DefinitionRow = Omit<DefinitionInsert, "defId" | "wordPosId"> & { defId: string; wordPosId: string };
 export type ExampleRow = Omit<ExampleInsert, "expId" | "defId"> & { expId: string; defId: string };
-
-/**
- * Result of importing a dictionary JSONL file, 
- * including the source file path, 
- * number of processed rows, 
- * and number of skipped rows.
- */
-export interface ImportResult {
-    source: string;
-    total: number;
-    processed: number;
-    skipped: number;
-    failed: number;
-}
 
 // Fail early when the local JSONL file does not exist.
 function assertFileExists(filePath: string): void {
