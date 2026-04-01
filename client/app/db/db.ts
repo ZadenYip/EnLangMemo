@@ -5,6 +5,7 @@ import * as fs from "fs";
 import Logger from "electron-log";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import * as schema from "./schema/dictionary";
+import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 
 export const dictionarySchema = schema;
 
@@ -27,6 +28,12 @@ export function initDatabase() {
     sqliteDic = new Database(dicDbPath);
     sqliteDic.pragma("journal_mode = WAL");
     dicDb = drizzle(sqliteDic, { schema: schema });
+
+    // TODO 生产环境改为对应路径，现在为开发方便还没改
+    Logger.info("__dirname:", __dirname);
+    
+    // __dirname is main.js's directory
+    migrate(dicDb, { migrationsFolder: path.join(__dirname, "db", "migrations") });
 
     // Initialize the card database
     const cardDbPath = path.join(dbDirPath, "cards.db");
