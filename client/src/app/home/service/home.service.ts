@@ -1,8 +1,6 @@
 import { Injectable } from "@angular/core";
-import { from, map, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import { DeckListItem } from "../deck-list-item.model";
-import Database from "better-sqlite3";
-import Logger from "electron-log";
 
 @Injectable({
     providedIn: "root",
@@ -10,10 +8,6 @@ import Logger from "electron-log";
 export class HomeService {
 
     public queryDeckList(): Observable<DeckListItem[]> {
-        const sql = `
-            SELECT deck_id, name, new_cards_per_day, new_cards_learned FROM decks
-        `;
-
         // TODO replace with = actual card db service method 
         // return from(window.service.dicService.runSQL(sql)).pipe(
         //     map((rawDecks: any[] | Database.RunResult) => {
