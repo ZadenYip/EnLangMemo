@@ -1,0 +1,12 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav mode="side" opened>
+        <mat-nav-list>
+            @for (route of getRoutes(); track $index) {
+                <a mat-list-item routerLink="{{ route.path }}">{{ route.title| translate }}</a>
+            }
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
