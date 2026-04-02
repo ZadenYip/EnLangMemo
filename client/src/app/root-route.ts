@@ -3,6 +3,7 @@ import { BrowseComponent } from "@render/browse/browse.component";
 import { HomeComponent } from "@render/home/home.component";
 import { ImmerseComponent } from "@render/immerse/immerse.component";
 import { PageNotFoundComponent } from "@render/shared/components";
+import { BROWSE_ROUTES } from "./browse/route";
 
 export const APP_PATHS = {
     home: "home",
@@ -28,6 +29,7 @@ export const APP_ROUTES: Routes = [
     {
         path: APP_PATHS.browse,
         component: BrowseComponent,
+        children: BROWSE_ROUTES
     },
     {
         path: APP_PATHS.stats,

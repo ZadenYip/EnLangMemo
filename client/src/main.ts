@@ -9,7 +9,7 @@ import { AppComponent } from "./app/app.component";
 import { APP_CONFIG } from "./environments/environment";
 import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
-import { APP_ROUTES } from "@render/route/route";
+import { APP_ROUTES } from "@render/root-route";
 
 if (APP_CONFIG.production) {
   enableProdMode();
