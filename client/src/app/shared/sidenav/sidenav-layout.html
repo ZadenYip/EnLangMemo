@@ -2,7 +2,7 @@
     <mat-sidenav mode="side" opened>
         <mat-nav-list>
             @for (route of getRoutes(); track $index) {
-                <a mat-list-item routerLink="{{ route.path }}">{{ route.title| translate }}</a>
+                <a mat-list-item routerLink="{{ route.path }}" routerLinkActive="active-link">{{ route.title | translate }}</a>
             }
         </mat-nav-list>
     </mat-sidenav>

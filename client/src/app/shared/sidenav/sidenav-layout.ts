@@ -1,7 +1,7 @@
 import { Component, input } from "@angular/core";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatListModule } from "@angular/material/list";
-import { Routes, RouterOutlet, RouterLink } from "@angular/router";
+import { Routes, RouterOutlet, RouterLink, RouterLinkActive } from "@angular/router";
 import { TranslateModule } from "@ngx-translate/core";
 
 interface RouteInfo {
@@ -12,12 +12,13 @@ interface RouteInfo {
 @Component({
     selector: "app-sidenav-layout",
     imports: [
-        MatSidenavModule,
-        MatListModule,
-        RouterOutlet,
-        RouterLink,
-        TranslateModule,
-    ],
+    MatSidenavModule,
+    MatListModule,
+    RouterOutlet,
+    RouterLink,
+    TranslateModule,
+    RouterLinkActive
+],
     templateUrl: "./sidenav-layout.html",
     styleUrl: "./sidenav-layout.scss",
 })
@@ -30,7 +31,7 @@ export class SidenavComponent {
                 path: route.path ?? "",
                 title: route.title as string
             }
-        });
+        }).filter(route => !!route.path);
 
         return routeInfos ?? [];
     }

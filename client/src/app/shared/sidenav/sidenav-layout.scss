@@ -20,11 +20,16 @@ mat-sidenav-container {
 }
 
 mat-sidenav {
-    flex: 1;
     width: 250px;
+    border-radius: 0;
+    padding: 8px;
+    border-right: 1px solid rgb(196, 198, 208);
+}
+
+.active-link {
+    background: rgb(218, 226, 249)
 }
 
 mat-sidenav-content {
-    flex: 1;
+    padding: 20px 50px 20px 50px;
 }
-
