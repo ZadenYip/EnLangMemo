@@ -24,6 +24,17 @@
     "DETAIL": {
       "TITLE": "Detail page !",
       "BACK_TO_HOME": "Back to Home"
+    },
+    "BROWSE": {
+      "ROUTES": {
+        "DIC-IMPORT": "Dictionary Import"
+      },
+      "TITLE": "Browse Files",
+      "SUBTITLE": "Please import a dictionary file",
+      "WORDS": "Words Table",
+      "POSES": "Parts of Speech Table",
+      "DEFS": "Definitions Table",
+      "EXPS": "Example Sentences Table"
     }
   },
   "DICTIONARY": {
