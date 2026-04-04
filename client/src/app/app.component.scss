@@ -14,7 +14,7 @@
 mat-toolbar {
   height: 56px;
   justify-content: center;
-  background-color: #d7e3ff;
+  background-color: rgb(215, 227, 255);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -30,7 +30,7 @@ mat-toolbar {
 }
 
 .main-toolbar > button.active {
-  background: #c1d5f8;
+  background: rgb(193, 213, 248);
 }
 
 .main-content {
