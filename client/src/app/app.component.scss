@@ -11,25 +11,24 @@
   min-height: 100vh;
 }
 
-mat-toolbar {
+nav {
   height: 56px;
-  justify-content: center;
   background-color: rgb(215, 227, 255);
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  padding: 0 24px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
 }
 
-.main-toolbar > button {
+nav > a {
   color: var(--mat-sys-primary);
 }
 
-.main-toolbar > button.active {
+nav > a.active {
   background: rgb(193, 213, 248);
 }
 
