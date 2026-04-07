@@ -9,7 +9,7 @@ export const BROWSE_ROUTES: Routes = [
     {
         path: BROSWE_PATHS.dictionary,
         component: DicImportComponent,
-        title: "PAGES.BROWSE.ROUTES.DIC_IMPORT",
+        title: "PAGES.BROWSE.DIC_IMPORT.TITLE",
     },
     {
         path: "",
