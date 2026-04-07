@@ -1,5 +1,49 @@
-﻿<h2> {{ "PAGES.BROWSE.TITLE" | translate }} </h2>
-<app-file-input [label]="'PAGES.BROWSE.WORDS' | translate"></app-file-input>
-<app-file-input [label]="'PAGES.BROWSE.POSES' | translate"></app-file-input>
-<app-file-input [label]="'PAGES.BROWSE.DEFS' | translate"></app-file-input>
-<app-file-input [label]="'PAGES.BROWSE.EXPS' | translate"></app-file-input>
+﻿<h2> {{ "PAGES.BROWSE.DIC_IMPORT.TITLE" | translate }} </h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <app-file-input formControlName="words" [label]="'PAGES.BROWSE.DIC_IMPORT.WORDS' | translate"
+        extension="jsonl"></app-file-input>
+    <app-file-input formControlName="poses" [label]="'PAGES.BROWSE.DIC_IMPORT.POSES' | translate"
+        extension="jsonl"></app-file-input>
+    <app-file-input formControlName="defs" [label]="'PAGES.BROWSE.DIC_IMPORT.DEFS' | translate"
+        extension="jsonl"></app-file-input>
+    <app-file-input formControlName="exps" [label]="'PAGES.BROWSE.DIC_IMPORT.EXPS' | translate"
+        extension="jsonl"></app-file-input>
+    <button matButton="outlined" type="submit" [disabled]="isSubmitDisabled()">
+        {{ "PAGES.BROWSE.DIC_IMPORT.SUBMIT" | translate }}
+    </button>
+    @if (isImporting()) {
+        <mat-progress-bar mode="determinate" [value]="progressValue"></mat-progress-bar>
+    }
+</form>
+
+@if (dataSource.length > 0) {
+    <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="item">
+            <th mat-header-cell *matHeaderCellDef> Item </th>
+            <td mat-cell *matCellDef="let element">{{ element.itemLabelKey | translate }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef> Total </th>
+            <td mat-cell *matCellDef="let element">{{ element.total }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="processed">
+            <th mat-header-cell *matHeaderCellDef> Processed </th>
+            <td mat-cell *matCellDef="let element">{{ element.processed }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="skipped">
+            <th mat-header-cell *matHeaderCellDef> Skipped </th>
+            <td mat-cell *matCellDef="let element">{{ element.skipped }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="failed">
+            <th mat-header-cell *matHeaderCellDef> Failed </th>
+            <td mat-cell *matCellDef="let element">{{ element.failed }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+}
