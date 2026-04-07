@@ -1,5 +1,5 @@
 <span class="file-label">{{ label() }}</span>
-<span class="file-path">{{ filePath() || '未选择文件' }}</span>
+<span class="file-path">{{ selectedFilePath() || ("FILES.SELECT" | translate) }}</span>
 <button mat-icon-button (click)="onSelectFile()">
-<mat-icon>folder_open</mat-icon>
+    <mat-icon>folder_open</mat-icon>
 </button>

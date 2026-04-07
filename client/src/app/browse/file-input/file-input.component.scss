@@ -5,6 +5,8 @@
     flex-flow: row;
     flex-wrap: nowrap;
     gap: 8px;
+
+    --file-input-path: 1024px;
 }
 
 // font-size
@@ -14,7 +16,6 @@
 
 .file-label {
     flex: 0 0 auto;
-    font-weight: bold;
     align-items: center;
 }
 
@@ -27,7 +28,7 @@
     display: flex;
     align-items: center;
 
-    flex: 0 1024px;
+    flex: 0 var(--file-input-path);
     height: 32px;
     color: rgba(0, 0, 0, 0.6);
     overflow: auto;
