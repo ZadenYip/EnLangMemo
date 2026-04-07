@@ -1,4 +1,7 @@
 {
+  "FILES": {
+    "SELECT": "选择文件"
+  },
   "PAGES": {
     "HOME": {
       "DECKS": {
@@ -26,15 +29,15 @@
       "BACK_TO_HOME": "Back to Home"
     },
     "BROWSE": {
-      "ROUTES": {
-        "DIC_IMPORT": "词典导入"
-      },
-      "TITLE": "浏览文件",
-      "SUBTITLE": "请导入词典文件",
-      "WORDS": "词项表",
-      "POSES": "词性表",
-      "DEFS": "释义表",
-      "EXPS": "例句表"
+      "DIC_IMPORT": {
+        "TITLE": "词典导入",
+        "SUBTITLE": "请导入词典文件",
+        "WORDS": "词项表",
+        "POSES": "词性表",
+        "DEFS": "释义表",
+        "EXPS": "例句表",
+        "SUBMIT": "提交"
+      }
     }
   },
   "DICTIONARY": {
