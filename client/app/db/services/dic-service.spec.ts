@@ -3,7 +3,7 @@ import path from "node:path";
 import Database from "better-sqlite3";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "../db";
-import { importDefinitions, importExamples, importWordPoses, importWords } from "../import/dictionary";
+import { impDefinitions, impExamples, impWordPoses, impWords } from "../import/dictionary";
 import { createSchema } from "../import/dictionary/test-helpers";
 import { uuidToBuffer } from "../import/utils";
 import { DictionaryService } from "./dic-service";
@@ -73,10 +73,10 @@ describe("Dictionary Service Tests", () => {
 
         mockedGetDicDb.mockReturnValue(db);
 
-        await importWords(sliceWordsJSLPath);
-        await importWordPoses(slicePosesJSLPath);
-        await importDefinitions(sliceDefsPath);
-        await importExamples(sliceExpsJSLPath);
+        await impWords(sliceWordsJSLPath);
+        await impWordPoses(slicePosesJSLPath);
+        await impDefinitions(sliceDefsPath);
+        await impExamples(sliceExpsJSLPath);
 
         service = new DictionaryService();
     });
@@ -191,10 +191,10 @@ describe("Dictionary Service Tests", () => {
     //     createSchema(loggedSqlite, loggedDb);
     //     mockedGetDicDb.mockReturnValue(loggedDb);
 
-    //     await importWords(sliceWordsJSLPath);
-    //     await importWordPoses(slicePosesJSLPath);
-    //     await importDefinitions(sliceDefsPath);
-    //     await importExamples(sliceExpsJSLPath);
+    //     await impWords(sliceWordsJSLPath);
+    //     await impWordPoses(slicePosesJSLPath);
+    //     await impDefinitions(sliceDefsPath);
+    //     await impExamples(sliceExpsJSLPath);
     //     loggedQueries.length = 0;
 
     //     const loggerService = new DatabaseService();

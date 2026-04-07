@@ -44,16 +44,26 @@ async function importJsonLines<TRow>(
     isValidRowFn: (row: Partial<TRow>) => row is TRow,
     upsertRowsFn: (rows: TRow[]) => Promise<Database.RunResult>,
 ): Promise<ImportResult> {
-    const lineReader = createLineReader(filePath);
-
     const importResult: ImportResult = {
-        source: filePath,
         total: 0,
         processed: 0,
         skipped: 0,
         failed: 0,
     };
-   
+    let lineReader;
+    try {
+        lineReader = createLineReader(filePath);
+    } catch (error) {
+        Logger.error(
+            `Failed to create line reader for file ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+
+        // indicate file read error with total = -1
+        importResult.total = -1;
+        return importResult;
+    }
+
+
     let row: Partial<TRow>;
     let batch: TRow[] = [];
     for await (const line of lineReader) {
@@ -130,7 +140,7 @@ async function upsertBatch<TRow>(
  * @param filePath the path to the JSONL file containing word data
  * @returns a promise resolving to the import result
  */
-export async function importWords(filePath: string): Promise<ImportResult> {
+export async function impWords(filePath: string): Promise<ImportResult> {
 
     const isWordImportRow = (row: Partial<WordRow>): row is WordRow =>
         Boolean(row.wordId && row.spelling && row.fingerprint);
@@ -173,7 +183,7 @@ export async function importWords(filePath: string): Promise<ImportResult> {
  * @param filePath the path to the JSONL file containing word-pos data
  * @returns a promise resolving to the import result
  */
-export async function importWordPoses(filePath: string): Promise<ImportResult> {
+export async function impWordPoses(filePath: string): Promise<ImportResult> {
     const isWordPosImportRow = (row: Partial<WordPosRow>): row is WordPosRow =>
         Boolean(row.poseId && row.wordId);
 
@@ -214,7 +224,7 @@ export async function importWordPoses(filePath: string): Promise<ImportResult> {
  * @param filePath the path to the JSONL file containing definition data
  * @returns a promise resolving to the import result
  */
-export async function importDefinitions(filePath: string): Promise<ImportResult> {
+export async function impDefinitions(filePath: string): Promise<ImportResult> {
     const isDefinitionImportRow = (
         row: Partial<DefinitionRow>,
     ): row is DefinitionRow => Boolean(row.defId && row.wordPosId);
@@ -256,7 +266,7 @@ export async function importDefinitions(filePath: string): Promise<ImportResult>
  * @param filePath the path to the JSONL file containing example data
  * @returns a promise resolving to the import result
  */
-export async function importExamples(filePath: string): Promise<ImportResult> {
+export async function impExamples(filePath: string): Promise<ImportResult> {
     const db = getDicDb();
     const isExampleImportRow = (row: Partial<ExampleRow>): row is ExampleRow =>
         Boolean(row.expId && row.defId && row.exSrc);

@@ -6,14 +6,14 @@ import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "../../db";
 import { examplesTable } from "../../schema/dictionary";
 import {
-    importDefinitions,
-    importExamples,
-    ImportResult,
-    importWordPoses,
-    importWords,
+    impDefinitions,
+    impExamples,
+    impWordPoses,
+    impWords,
 } from ".";
 import { createSchema, writeJsonLinesFile } from "./test-helpers";
 import { bufferToHex } from "../utils";
+import { ImportResult } from "./dic-import-type";
 
 vi.mock("../../db", () => ({
     dictionarySchema: vi.importActual("../../db"),
@@ -72,9 +72,9 @@ describe("Dictionary Import Examples Tests", () => {
                 updated_at: 600,
             },
         ];
-        await importWords(writeJsonLinesFile(tempDir, "seed-words.jsonl", words));
-        await importWordPoses(writeJsonLinesFile(tempDir, "seed-word-poses.jsonl", poses));
-        await importDefinitions(writeJsonLinesFile(tempDir, "seed-definitions.jsonl", definitions));
+        await impWords(writeJsonLinesFile(tempDir, "seed-words.jsonl", words));
+        await impWordPoses(writeJsonLinesFile(tempDir, "seed-word-poses.jsonl", poses));
+        await impDefinitions(writeJsonLinesFile(tempDir, "seed-definitions.jsonl", definitions));
 
         // examples.jsonl
         const examples = [
@@ -89,10 +89,9 @@ describe("Dictionary Import Examples Tests", () => {
         ];
         const filePath = writeJsonLinesFile(tempDir, "examples.jsonl", examples);
 
-        const result = await importExamples(filePath);
+        const result = await impExamples(filePath);
 
         expect(result).toEqual<ImportResult>({
-            source: filePath,
             processed: 1,
             skipped: 0,
             failed: 0,

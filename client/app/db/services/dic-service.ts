@@ -4,7 +4,7 @@ import type { Definition, DictionaryEntry, Sense } from "./dic-service-types";
 import { wordsTable } from "../schema/dictionary";
 import { eq } from "drizzle-orm";
 import { lemmatize } from "@main/lemmatization";
-import { importWords } from "../import/dictionary";
+import { impDefinitions, impExamples, impWordPoses, impWords } from "../import/dictionary";
 import { ImportResult } from "../import/dictionary/dic-import-type";
 
 export class DictionaryService implements IDictionaryService {
@@ -103,19 +103,19 @@ export class DictionaryService implements IDictionaryService {
     }
 
     public async importWords(path: string): Promise<ImportResult> {
-        return await importWords(path);
+        return await impWords(path);
     }
 
     public async importWordPoses(path: string): Promise<ImportResult> {
-        return await importWords(path);
+        return await impWordPoses(path);
     }
 
     public async importDefinitions(path: string): Promise<ImportResult> {
-        return await importWords(path);
+        return await impDefinitions(path);
     }
 
     public async importExamples(path: string): Promise<ImportResult> {
-        return await importWords(path);
+        return await impExamples(path);
     }
 
 }

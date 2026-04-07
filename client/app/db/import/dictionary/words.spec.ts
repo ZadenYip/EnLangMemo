@@ -6,9 +6,10 @@ import { asc } from "drizzle-orm";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "../../db";
 import { wordsTable } from "../../schema/dictionary";
-import { ImportResult, importWords } from ".";
+import { impWords } from ".";
 import { createSchema, writeJsonLinesFile, writeRawLinesFile } from "./test-helpers";
 import { hexToBuffer, uuidToBuffer } from "../utils";
+import { ImportResult } from "./dic-import-type";
 
 vi.mock("../../db", () => ({
     dictionarySchema: vi.importActual("../../db"),
@@ -56,6 +57,13 @@ describe("Dictionary Import Words Tests", () => {
         fs.rmSync(tempDir, { recursive: true, force: true });
     });
 
+    it("fail to find the file", async () => {
+        const filePath = path.join(tempDir, "nonexistent.jsonl");
+
+        const result = await impWords(filePath);
+        expect(result.total).toBe(-1);
+    });
+
     it("imports words into the in-memory dictionary database", async () => {
         const words = [
             {
@@ -79,10 +87,9 @@ describe("Dictionary Import Words Tests", () => {
         ];
         const filePath = writeJsonLinesFile(tempDir, "words.jsonl", words);
 
-        const result = await importWords(filePath);
+        const result = await impWords(filePath);
 
         expect(result).toEqual<ImportResult>({
-            source: filePath,
             processed: 2,
             skipped: 0,
             failed: 0,
@@ -111,7 +118,7 @@ describe("Dictionary Import Words Tests", () => {
             created_at: 100,
             updated_at: 300,
         };
-        await importWords(writeJsonLinesFile(tempDir, "seed-words.jsonl", [existing]));
+        await impWords(writeJsonLinesFile(tempDir, "seed-words.jsonl", [existing]));
 
         const validInsert = {
             word_id: "34343434-3434-3434-3434-343434343434",
@@ -141,10 +148,9 @@ describe("Dictionary Import Words Tests", () => {
             "{\"invalid_json\":",
         ]);
 
-        const result = await importWords(filePath);
+        const result = await impWords(filePath);
 
         expect(result).toEqual<ImportResult>({
-            source: filePath,
             processed: 1,
             skipped: 2,
             failed: 2,
@@ -172,10 +178,9 @@ describe("Dictionary Import Words Tests", () => {
             JSON.stringify(wrongTypeRow),
         ]);
 
-        const result = await importWords(filePath);
+        const result = await impWords(filePath);
 
         expect(result).toEqual<ImportResult>({
-            source: filePath,
             processed: 0,
             skipped: 1,
             failed: 2,

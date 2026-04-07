@@ -5,9 +5,10 @@ import Database from "better-sqlite3";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "../../db";
 import { wordPosesTable } from "../../schema/dictionary";
-import { ImportResult, importWordPoses, importWords } from ".";
+import { impWordPoses, impWords } from ".";
 import { createSchema, writeJsonLinesFile } from "./test-helpers";
 import { bufferToHex } from "../utils";
+import { ImportResult } from "./dic-import-type";
 
 vi.mock("../../db", () => ({
     dictionarySchema: vi.importActual("../../db"),
@@ -47,7 +48,7 @@ describe("Dictionary Import Word Poses Tests", () => {
                 updated_at: 200,
             },
         ];
-        await importWords(writeJsonLinesFile(tempDir, "seed-words.jsonl", words));
+        await impWords(writeJsonLinesFile(tempDir, "seed-words.jsonl", words));
 
         const poses = [
             {
@@ -60,10 +61,9 @@ describe("Dictionary Import Word Poses Tests", () => {
         ];
         const filePath = writeJsonLinesFile(tempDir, "word-poses.jsonl", poses);
 
-        const result = await importWordPoses(filePath);
+        const result = await impWordPoses(filePath);
 
         expect(result).toEqual<ImportResult>({
-            source: filePath,
             processed: 1,
             skipped: 0,
             failed: 0,
@@ -93,10 +93,9 @@ describe("Dictionary Import Word Poses Tests", () => {
         ];
         const filePath = writeJsonLinesFile(tempDir, "word-poses.jsonl", poses);
 
-        const result = await importWordPoses(filePath);
+        const result = await impWordPoses(filePath);
 
         expect(result).toEqual<ImportResult>({
-            source: filePath,
             processed: 0,
             skipped: 0,
             failed: 1,
