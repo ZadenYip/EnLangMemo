@@ -7,6 +7,24 @@
     { "path": "./src/tsconfig.spec.json" }
   ],
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@render/*": [
+        "./src/app/*"
+      ],
+      "@render/shared/*": [
+        "./src/app/shared/*"
+      ],
+      "@render/assets/*": [
+        "./src/assets/*"
+      ],
+      "@render/env/*": [
+        "./src/environments/*"
+      ],
+      "@main/*": [
+        "./app/*"
+      ]
+    },
     "strict": true,
     "outDir": "./dist/out-tsc",
     "module": "es2022",
@@ -20,7 +38,8 @@
     "allowJs": true,
     "target": "ES2022",
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
+      "./types"
     ],
     "useDefineForClassFields": false
   },

@@ -1,0 +1,40 @@
+:host {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-flow: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+
+    --file-input-path: 1024px;
+}
+
+// font-size
+.file-path, .file-label {
+    font-size: 16px;
+}
+
+.file-label {
+    flex: 0 0 auto;
+    align-items: center;
+}
+
+.file-path {
+    // 类似表单输入框的样式
+    background-color: rgba(224, 226, 236);
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+
+    display: flex;
+    align-items: center;
+
+    flex: 0 var(--file-input-path);
+    height: 32px;
+    color: rgba(0, 0, 0, 0.6);
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.file-path::-webkit-scrollbar {
+    display: none;
+}

@@ -26,7 +26,7 @@ export async function* removeDuplicateCue(input: Readable): AsyncGenerator<strin
     const cueKey = (cue: CueAST): string => {
         const start = formatTimestamp(cue.startTime);
         const end = formatTimestamp(cue.endTime);
-        const text = cue.textLines.join('\r\n');
+        const text = cue.textLines.join("\r\n");
         return `${start}${end}${text}`;
     }
 
@@ -40,14 +40,14 @@ export async function* removeDuplicateCue(input: Readable): AsyncGenerator<strin
 
         const rawSRTStr:string = convertCueToSRT(cue);
         // add sequence number line and empty line after each cue
-        const srt:string = (curLine) + '\r\n' + rawSRTStr + '\r\n';
+        const srt:string = (curLine) + "\r\n" + rawSRTStr + "\r\n";
         yield srt;
         curLine += 1;
     }
 }
 
 function formatTimeNumber(value: number, pad: number): string {
-    return value.toString().padStart(pad, '0');
+    return value.toString().padStart(pad, "0");
 }
 
 function formatTimestamp(timestamp: TimestampAST): string {
@@ -70,9 +70,9 @@ function formatTimestamp(timestamp: TimestampAST): string {
  */
 function convertCueToSRT(cue: CueAST): string {
     const startTimeStr = formatTimestamp(cue.startTime);
-    const timeArrow = '-->';
+    const timeArrow = "-->";
     const endTimeStr = formatTimestamp(cue.endTime);
     
-    const textStr = cue.textLines.join('\r\n');
+    const textStr = cue.textLines.join("\r\n");
     return `${startTimeStr} ${timeArrow} ${endTimeStr}\r\n${textStr}\r\n`;
 }

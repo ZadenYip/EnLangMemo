@@ -3,18 +3,15 @@
     @if (posLabel()) {
       <div class="pos-label">{{ posLabel() }}</div>
     }
-    @if (item().cefr) {
-      <div class="sense-label">{{ item().cefr }}</div>
-    }
     <div class="meaning-head">
       <span class="badge">{{ index() }}</span>
       <div class="gloss">
-        <div>{{ item().definition.source }}</div>
+        <div>{{ item().definition.src }}</div>
         @if (item().definition.target) {
           <div class="gloss-target">{{ item().definition.target }}</div>
         }
       </div>
-      <button mat-stroked-button color="primary" class="add-card-btn" (click)="addToCard()">
+      <button mat-stroked-button color="primary" class="add-card-btn" (click)="pressAddCard()">
         {{ 'DICTIONARY.ADD_CARD' | translate }}
       </button>
     </div>
@@ -28,7 +25,7 @@
           <div class="example-block">
             <div class="example">
               <span class="bullet">•</span>
-              <span>{{ ex.source }}</span>
+              <span>{{ ex.src }}</span>
             </div>
             @if (ex.target) {
               <div class="example-target">{{ ex.target }}</div>

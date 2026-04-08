@@ -1,8 +1,8 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from "@angular/core/testing";
 
-import {PageNotFoundComponent} from './page-not-found.component';
+import {PageNotFoundComponent} from "./page-not-found.component";
 
-describe('PageNotFoundComponent', () => {
+describe("PageNotFoundComponent", () => {
   let component: PageNotFoundComponent;
   let fixture: ComponentFixture<PageNotFoundComponent>;
 
@@ -17,7 +17,7 @@ describe('PageNotFoundComponent', () => {
     await fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

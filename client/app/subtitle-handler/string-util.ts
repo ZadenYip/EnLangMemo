@@ -1,6 +1,6 @@
 export function isDigit(char: string | null): boolean {
     const regex = /\d/;
-    return regex.test(char || '');
+    return regex.test(char || "");
 }
 
 /**
@@ -9,21 +9,21 @@ export function isDigit(char: string | null): boolean {
  * @returns true if the character is a space or a tab, false otherwise
  */
 export function isSpace(char: string | null): boolean {
-    return char === ' ' || char === '\t';
+    return char === " " || char === "\t";
 }
 
 export function isNewline(char: string | null): boolean {
-    return char === '\n' || char === '\r';
+    return char === "\n" || char === "\r";
 }
 
 export function isMacLineEnding(char: string | null): boolean {
-    return char === '\r';
+    return char === "\r";
 }
 
 export function isUnixLineEnding(char: string | null): boolean {
-    return char === '\n';
+    return char === "\n";
 }
 
 export function isWindowsLineEnding(char: string | null, nextChar: string | null): boolean {
-    return char === '\r' && nextChar === '\n';
+    return char === "\r" && nextChar === "\n";
 }

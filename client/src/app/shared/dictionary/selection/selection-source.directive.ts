@@ -1,6 +1,6 @@
-import { Directive, ElementRef, HostListener, inject } from '@angular/core';
-import { DictionarySelectionService } from './selection.service';
-import { DictionaryWindowService } from '../dictionary-window.service';
+import { Directive, ElementRef, HostListener, inject } from "@angular/core";
+import { DictionarySelectionService } from "./selection.service";
+import { DictionaryWindowService } from "../dictionary-window.service";
 
 /**
  * It should be attached to any element that contains text
@@ -8,7 +8,7 @@ import { DictionaryWindowService } from '../dictionary-window.service';
  * Only supports selection within a single text node.
  */
 @Directive({
-    selector: '[appDictionarySelectionSource]',
+    selector: "[appDictionarySelectionSource]",
     standalone: true,
 })
 export class DictionarySelectionSourceDirective {
@@ -17,7 +17,7 @@ export class DictionarySelectionSourceDirective {
     private readonly selectionService = inject(DictionarySelectionService);
     private readonly dictionaryWindowService = inject(DictionaryWindowService);
 
-    @HostListener('mouseup')
+    @HostListener("mouseup")
     onMouseUp(): void {
         this.processTextSelection();
     }
@@ -72,15 +72,15 @@ export class DictionarySelectionSourceDirective {
      */
     private extractContextSentence(node: Node): string {
         const contextNode = node;
-        const contextRaw = contextNode.textContent ?? '';
+        const contextRaw = contextNode.textContent ?? "";
         if (!contextRaw) {
-            return '';
+            return "";
         }
 
         return this.cleanWhitespace(contextRaw);
     }
 
     private cleanWhitespace(text: string): string {
-        return text.replace(/\s+/g, ' ').trim();
+        return text.replace(/\s+/g, " ").trim();
     }
 }

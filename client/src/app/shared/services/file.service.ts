@@ -1,9 +1,9 @@
-import { inject, Injectable, SecurityContext } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import Logger from 'electron-log/renderer';
+import { inject, Injectable, SecurityContext } from "@angular/core";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import Logger from "electron-log/renderer";
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class FileService {
     private sanitizer = inject(DomSanitizer);
@@ -31,24 +31,24 @@ export class FileService {
                 SecurityContext.URL,
                 safeUrl,
             );
-            if (urlString !== '') {
-                Logger.info('Revoking previous object URL:', urlString);
+            if (urlString !== "") {
+                Logger.info("Revoking previous object URL:", urlString);
                 URL.revokeObjectURL(urlString!);
             }
 
             handle?.(file);
 
-            Logger.info('Created object URL for file:', objectUrl);
+            Logger.info("Created object URL for file:", objectUrl);
             return this.sanitizer.bypassSecurityTrustUrl(objectUrl);
         }
 
-        return '';
+        return "";
     }
 
     revokeURL(safeUrl: SafeUrl): void {
         const urlString = this.sanitizer.sanitize(SecurityContext.URL, safeUrl);
-        if (urlString !== '') {
-            Logger.info('Revoking object URL:', urlString);
+        if (urlString !== "") {
+            Logger.info("Revoking object URL:", urlString);
             URL.revokeObjectURL(urlString!);
         }
     }

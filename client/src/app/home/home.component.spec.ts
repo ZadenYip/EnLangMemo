@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import {HomeComponent} from './home.component';
-import {TranslateModule} from '@ngx-translate/core';
-import {provideRouter} from '@angular/router';
+import {HomeComponent} from "./home.component";
+import {TranslateModule} from "@ngx-translate/core";
+import {provideRouter} from "@angular/router";
 
-describe('HomeComponent', () => {
+describe("HomeComponent", () => {
     let component: HomeComponent;
     let fixture: ComponentFixture<HomeComponent>;
 
@@ -21,7 +21,7 @@ describe('HomeComponent', () => {
         // await fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

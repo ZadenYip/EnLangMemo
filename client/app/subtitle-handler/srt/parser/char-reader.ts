@@ -1,9 +1,9 @@
 // CharReader.ts
-import { Readable } from 'stream';
+import { Readable } from "stream";
 
 export class CharReader {
     private iterator: AsyncIterableIterator<any>;
-    private buffer = ''; // buffer
+    private buffer = ""; // buffer
     private ptr = 0;     // current read pointer position
     private isEOF = false;
 

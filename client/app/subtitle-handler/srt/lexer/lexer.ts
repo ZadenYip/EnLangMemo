@@ -29,13 +29,13 @@ export class Token {
         this.type = type;
         switch (type) {
             case TokenType.COLON:
-                this.value = ':';
+                this.value = ":";
                 break;
             case TokenType.TIME_ARROW:
-                this.value = '-->';
+                this.value = "-->";
                 break;
             case TokenType.NEWLINE:
-                this.value = '\r\n';
+                this.value = "\r\n";
                 break;
             default:
                 this.value = value;
@@ -53,7 +53,7 @@ export class Lexer {
         let lastChar = await this.charReader.peek();
         
         while (isSpace(lastChar)) {
-            let spaceStr = '';
+            let spaceStr = "";
             do {
                 spaceStr += lastChar;
                 await this.charReader.next();
@@ -75,7 +75,7 @@ export class Lexer {
         }
 
         if (isDigit(lastChar)) {
-            let numberStr = '';
+            let numberStr = "";
             do {
                 numberStr += lastChar;
                 await this.charReader.next();
@@ -105,7 +105,7 @@ export class Lexer {
             return new Token(TokenType.EOF);
         } else {
             // TEXT
-            let text = '';
+            let text = "";
             do {
                 text += lastChar;
                 await this.charReader.next();
@@ -119,19 +119,19 @@ export class Lexer {
         const firstChar = await this.charReader.peek()
         const secondChar = await this.charReader.peek(1)
         const thirdChar = await this.charReader.peek(2)
-        return firstChar === '-' && secondChar === '-' && thirdChar === '>';
+        return firstChar === "-" && secondChar === "-" && thirdChar === ">";
     }
 
     private isDotOrComma(char: string | null): boolean {
-        return char === '.' || char === ',';
+        return char === "." || char === ",";
     }
 
     private isColon(char: string | null): boolean {
-        return char === ':';
+        return char === ":";
     }
 
     private isPossibleTimeArrowStart(char: string | null): boolean {
-        return char === '-';
+        return char === "-";
     }
 
     private isEOF(char: string | null): boolean {

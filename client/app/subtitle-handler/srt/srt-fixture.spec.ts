@@ -1,13 +1,13 @@
-import { createReadStream, readFileSync } from 'fs';
-import { CueAST, Parser, TimestampAST } from './parser/parser';
-import { resolve } from 'path';
+import { createReadStream, readFileSync } from "fs";
+import { CueAST, Parser, TimestampAST } from "./parser/parser";
+import { resolve } from "path";
 
 
-describe('SRT Fixture Tests', () => {
-    it('should parse GBC-ED.srt correctly', async () => {
+describe("SRT Fixture Tests", () => {
+    it("should parse GBC-ED.srt correctly", async () => {
         const subtitleData = createReadStream(
-            resolve(__dirname, './fixtures/GBC-ED.srt'),
-            'utf-8'
+            resolve(__dirname, "./fixtures/GBC-ED.srt"),
+            "utf-8"
         );
 
         const parserStream: AsyncIterable<CueAST> = Parser.createParser(subtitleData);
@@ -17,14 +17,14 @@ describe('SRT Fixture Tests', () => {
             cues.push(cue);
         }
 
-        const expected: CueAST[] = await expectCueASTEqual('./fixtures/GBC-ED-expected.json');
+        const expected: CueAST[] = await expectCueASTEqual("./fixtures/GBC-ED-expected.json");
         expect(cues).toEqual(expected);
     });
 });
 
 // convert JSON back to CueAST objects  
 async function expectCueASTEqual(jsonPath: string) {
-    const data = readFileSync(resolve(__dirname, jsonPath), 'utf-8');
+    const data = readFileSync(resolve(__dirname, jsonPath), "utf-8");
     const rawExpected = JSON.parse(data);
     const expected: CueAST[] = rawExpected.map((c: any) => 
         new CueAST(

@@ -4,6 +4,7 @@
 - 项目类型: 桌面应用（Angular 渲染进程 + Electron 主进程）
 - 前端: Angular 21, TypeScript, SCSS, Angular Material
 - 桌面层: Electron 39
+- 数据库: better-sqlite3，DrizzleORM
 - Node 能力: better-sqlite3, 文件系统, 日志
 - 测试: Vitest（Angular + Electron 单测）, Playwright（E2E）
 
@@ -19,15 +20,14 @@
 - `dist/`: Angular 构建输出，供生产模式 Electron 加载
 
 ## 3. 运行与构建命令
-- 开发联调（Angular + Electron）: `npm start`
-- 构建 Angular + Electron 启动资源: `npm run build`
-- 本地运行 Electron（基于已构建资源）: `npm run electron:local`
-- 打包桌面应用: `npm run electron:build`
-- 代码检查: `npm run lint`
+- 构建 Angular + Electron 启动资源: `pnpm build`
+- 本地运行 Electron（基于已构建资源）: `pnpm electron:local`
+- 打包桌面应用: `pnpm electron:build`
+- 代码检查: `pnpm lint`
 - 运行全部测试: `npm test`
-- Electron 侧测试: `npm run electron:test`
-- Angular 侧测试: `npm run angular-test`
-- E2E 测试: `npm run e2e`
+- Electron 侧单元测试: `pnpm nodejs-test`
+- Angular 侧单元测试: `pnpm angular-test`
+- E2E 测试: `pnpm e2e`
 
 ## 4. 架构边界（必须遵守）
 - 渲染进程（`src/`）禁止直接访问 Node 原生能力（如 `fs`、`path`、`better-sqlite3`）。
@@ -54,12 +54,12 @@
 - 使用 UTF-8 编码
 
 ## 7. 测试门禁（提交前至少执行）
-1. `npm run lint`
-2. `npm run electron:test`
-3. `npm run angular-test`
+1. `pnpm lint`
+2. `pnpm electron:test`
+3. `pnpm angular-test`
 
 如改动涉及用户主流程或页面导航，再补充:
-4. `npm run e2e`
+4. `pnpm e2e`
 
 ## 8. 常见任务策略
 - 新增数据库能力: `database service -> IPC descriptor -> preload/window type -> Angular service`

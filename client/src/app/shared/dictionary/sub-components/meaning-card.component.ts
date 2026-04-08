@@ -1,13 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { Component, input, output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { Definition } from '../dictionary-interface';
-import { TranslatePipe } from '@ngx-translate/core';
+import { CommonModule } from "@angular/common";
+import { Component, input, output } from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { Definition } from "@main/db/services/dic-service-types";
+import { TranslatePipe } from "@ngx-translate/core";
 
 @Component({
-    selector: 'app-meaning-card',
+    selector: "app-meaning-card",
     imports: [
         CommonModule,
         MatButtonModule,
@@ -15,20 +15,19 @@ import { TranslatePipe } from '@ngx-translate/core';
         MatExpansionModule,
         TranslatePipe,
     ],
-    templateUrl: './meaning-card.component.html',
-    styleUrl: './meaning-card.component.scss',
+    templateUrl: "./meaning-card.component.html",
+    styleUrl: "./meaning-card.component.scss",
 })
 export class MeaningCardComponent {
     index = input(0);
-    posLabel = input('');
+    posLabel = input("");
     item = input<Definition>({
-        cefr: '',
-        definition: { source: '', target: '' },
+        definition: { src: "", target: "" },
         examples: [],
     });
     add = output<Definition>();
 
-    addToCard(): void {
+    pressAddCard(): void {
         this.add.emit(this.item());
     }
 }

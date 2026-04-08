@@ -15,6 +15,8 @@ html {
     typography: Roboto,
     density: 0,
   ));
+
+  font-size: 16px;
 }
 
 body {
@@ -36,3 +38,23 @@ body {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+*, *::before, *::after { 
+  box-sizing: border-box; 
+}
+
+p {
+  font-size: 1rem;
+}
+
+h2 {
+  height: 1.85rem; // 29.6px
+  font-size: 1.5rem;
+  margin: 2rem 0 0.5rem 0;
+}
+
+h2 ~ p {
+  font-size: 1rem;
+  height: 28px;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}

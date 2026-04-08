@@ -1,15 +1,15 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal } from "@angular/core";
 
 export interface DictionarySelection {
     selectedText: string;
     contextSentence: string;
 }
 
-@Injectable({ providedIn: 'root'})
+@Injectable({ providedIn: "root"})
 export class DictionarySelectionService {
     private readonly _selection = signal<DictionarySelection>({
-        selectedText: '',
-        contextSentence: '',
+        selectedText: "",
+        contextSentence: "",
     });
 
     readonly selection = this._selection.asReadonly();

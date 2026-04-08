@@ -1,6 +1,6 @@
 import { IntervalTree, TreeNode } from "./interval-tree";
 
-describe('IntervelTree', () => {
+describe("IntervelTree", () => {
 
     class Intervel {
         low: number;
@@ -14,12 +14,12 @@ describe('IntervelTree', () => {
         }
     }
 
-    it('should create an instance', () => {
+    it("should create an instance", () => {
         const tree = new IntervalTree<number, number>(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, (a, b) => a - b);
         expect(tree).toBeTruthy();
     });
 
-    it('should maintain red-black properties after insertions', () => {
+    it("should maintain red-black properties after insertions", () => {
          const tree = new IntervalTree<number, string>(Number.NEGATIVE_INFINITY, "", (a, b) => a - b);
         const elementsToInsert = [new Intervel(10, 20, "10-20"), new Intervel(15, 25, "15-25"), new Intervel(30, 40, "30-40"), new Intervel(5, 15, "5-15"), new Intervel(25, 35, "25-35")];
 
@@ -31,16 +31,16 @@ describe('IntervelTree', () => {
         }
     });
 
-    it('should search correctly when intervals are single points', () => {
+    it("should search correctly when intervals are single points", () => {
         const tree = new IntervalTree<number, string>(Number.NEGATIVE_INFINITY, "", (a, b) => a - b);
         const elementsToInsert = [
-            new Intervel(50, 50, '50'),
-            new Intervel(30, 30, '30'),
-            new Intervel(70, 70, '70'),
-            new Intervel(20, 20, '20'),
-            new Intervel(40, 40, '40'),
-            new Intervel(60, 60, '60'),
-            new Intervel(80, 80, '80'),
+            new Intervel(50, 50, "50"),
+            new Intervel(30, 30, "30"),
+            new Intervel(70, 70, "70"),
+            new Intervel(20, 20, "20"),
+            new Intervel(40, 40, "40"),
+            new Intervel(60, 60, "60"),
+            new Intervel(80, 80, "80"),
         ];
         for (const element of elementsToInsert) {
             // value is same as key for simplicity
@@ -54,12 +54,12 @@ describe('IntervelTree', () => {
         expect(tree.search(-1, -1)).toBeNull();
     });
 
-    it('should search correctly with overlapping intervals', () => {
+    it("should search correctly with overlapping intervals", () => {
         const tree = new IntervalTree<number, string>(Number.NEGATIVE_INFINITY, "", (a, b) => a - b);
         const elementsToInsert = [
-            new Intervel(10, 20, '10-20'),
-            new Intervel(30, 40, '30-40'),
-            new Intervel(50, 60, '50-60'),
+            new Intervel(10, 20, "10-20"),
+            new Intervel(30, 40, "30-40"),
+            new Intervel(50, 60, "50-60"),
         ];
         for (const element of elementsToInsert) {
             tree.insert(element.low, element.high, element.value);
@@ -92,7 +92,7 @@ describe('IntervelTree', () => {
         expect(result).toBeNull();
     });
 
-    test('randomized insert and search test with single points', () => {
+    test("randomized insert and search test with single points", () => {
         const tree = new IntervalTree<number, string>(Number.NEGATIVE_INFINITY, "", (a, b) => a - b);
         const elementsToInsert = [];
         const numElements = 10000;

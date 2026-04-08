@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { TranslateModule } from '@ngx-translate/core';
-import { provideRouter } from '@angular/router';
-import { ImmerseComponent } from './immerse.component';
+import { TranslateModule } from "@ngx-translate/core";
+import { provideRouter } from "@angular/router";
+import { ImmerseComponent } from "./immerse.component";
 
-describe('ImmerseComponent', () => {
+describe("ImmerseComponent", () => {
     let component: ImmerseComponent;
     let fixture: ComponentFixture<ImmerseComponent>;
 
@@ -21,7 +21,7 @@ describe('ImmerseComponent', () => {
         await fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

@@ -1,30 +1,30 @@
-import { build } from 'esbuild'
+import { build } from "esbuild"
 
 build({
     entryPoints: {
-        'main': 'app/main.ts',
+        "main": "app/main.ts",
     },
     bundle: true,
-    platform: 'node',
-    target: 'es2022',
-    format: 'cjs',
+    platform: "node",
+    target: "es2022",
+    format: "cjs",
     sourcemap: true,
-    packages: 'external',
-    outdir: 'app/'
+    packages: "external",
+    outdir: "app/"
 }).catch(() => process.exit(1));
 
 // package electron-ipc-cat is pure JS, must bundle it
 build({
     entryPoints: {
-        'preload': 'app/preload.ts'
+        "preload": "app/preload.ts"
     },
     bundle: true,
-    platform: 'node',
-    target: 'es2022',
-    format: 'cjs',
+    platform: "node",
+    target: "es2022",
+    format: "cjs",
     sourcemap: true,
     external: [
-        'electron'
+        "electron"
     ],
-    outdir: 'app/'
+    outdir: "app/"
 }).catch(() => process.exit(1));

@@ -1,4 +1,7 @@
 {
+  "FILES": {
+    "SELECT": "Select File"
+  },
   "PAGES": {
     "HOME": {
       "DECKS": {
@@ -24,6 +27,16 @@
     "DETAIL": {
       "TITLE": "Detail page !",
       "BACK_TO_HOME": "Back to Home"
+    },
+    "BROWSE": {
+      "DIC_IMPORT": {
+        "TITLE": "Browse Files",
+        "SUBTITLE": "Please import a dictionary file",
+        "WORDS": "Words Table",
+        "POSES": "Parts of Speech Table",
+        "DEFS": "Definitions Table",
+        "EXPS": "Example Sentences Table"
+      }
     }
   },
   "DICTIONARY": {
@@ -31,6 +44,7 @@
     "CUR_LANG": "Language/Source",
     "SELECTED_TEXT_LABEL": "Selected Text",
     "NO_SELECTION": "No text selected",
+    "NO_RESULTS": "No search results",
     "CONTEXT_SENTENCE": "Context Sentence",
     "MEANINGS_TITLE": "Meanings List",
     "ADD_CARD": "Add Card",

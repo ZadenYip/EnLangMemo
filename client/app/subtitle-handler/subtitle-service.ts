@@ -1,8 +1,8 @@
-import { ISubtitleService } from './subtitle-service.interface';
-import { Observable } from 'rxjs';
-import { createReadStream } from 'fs';
-import { Parser } from './srt/parser/parser';
-import { GlobalSubtitle } from '../../src/app/immerse/subtitle-interface';
+import { ISubtitleService } from "./subtitle-service.interface";
+import { Observable } from "rxjs";
+import { createReadStream } from "fs";
+import { Parser } from "./srt/parser/parser";
+import { GlobalSubtitle } from "./types";
 
 export class SubtitleService implements ISubtitleService {
 
@@ -28,7 +28,7 @@ export class SubtitleService implements ISubtitleService {
                         subscriber.error(error);
                     } finally {
                         subscriber.complete();
-                        console.log('Subtitle stream completed.');
+                        console.log("Subtitle stream completed.");
                         stream.close();
                     }
                 };

@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { SubtitleItemComponent } from './subtitle-item';
-import { SubtitleService } from '@app/immerse/subtitle-service';
-import { TranslateModule } from '@ngx-translate/core';
+import { SubtitleItemComponent } from "./subtitle-item";
+import { TranslateModule } from "@ngx-translate/core";
+import { SubtitleService } from "@render/immerse/subtitle-service";
 
-describe('SubtitleItemComponent', () => {
+describe("SubtitleItemComponent", () => {
     let component: SubtitleItemComponent;
     let fixture: ComponentFixture<SubtitleItemComponent>;
 
@@ -24,7 +24,7 @@ describe('SubtitleItemComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });

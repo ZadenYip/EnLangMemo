@@ -178,9 +178,9 @@ describe("Lexer", () => {
         });
 
         it("should tokenize mixed input correctly", async () => {
-            const input = '1\r\n00:22:20,700 --> 00:22:23,230\r\n不被谁人影响 也无法成为他人\r\n' +
-            '2\r\n00:22:23,780 --> 00:22:26,300\r\n曾以为只是梦境 试着置之一笑';
-            const stream: Readable = Readable.from([input], { encoding: 'utf-8' });
+            const input = "1\r\n00:22:20,700 --> 00:22:23,230\r\n不被谁人影响 也无法成为他人\r\n" +
+            "2\r\n00:22:23,780 --> 00:22:26,300\r\n曾以为只是梦境 试着置之一笑";
+            const stream: Readable = Readable.from([input], { encoding: "utf-8" });
             const lexer = new Lexer(stream);
             const expectedTokens: Token[] = [
                 new Token(TokenType.NUMBER, "1"),

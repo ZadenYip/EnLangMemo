@@ -17,18 +17,18 @@
       <div mat-card-avatar class="avatar-icon">
         <mat-icon>menu_book</mat-icon>
       </div>
-      <mat-card-title>{{ 'DICTIONARY.TITLE' | translate }}</mat-card-title>
-      <mat-card-subtitle>{{ 'DICTIONARY.CUR_LANG' | translate }}</mat-card-subtitle>
+      <mat-card-title>{{ "DICTIONARY.TITLE" | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ "DICTIONARY.CUR_LANG" | translate }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <div class="selected-text">
-        <div class="label">{{ 'DICTIONARY.SELECTED_TEXT_LABEL' | translate }}</div>
-        <div class="value">{{ selectedText() || ('DICTIONARY.NO_SELECTION' | translate) }}</div>
+        <div class="label">{{ "DICTIONARY.SELECTED_TEXT_LABEL" | translate }}</div>
+        <div class="value">{{ selectedText() || ("DICTIONARY.NO_SELECTION" | translate) }}</div>
       </div>
       <mat-divider></mat-divider>
       <div class="context-sentence">
-        <div class="label">{{ 'DICTIONARY.CONTEXT_SENTENCE' | translate }}</div>
-        <div class="value">{{ contextSentence() || ('DICTIONARY.NO_SELECTION' | translate) }}</div>
+        <div class="label">{{ "DICTIONARY.CONTEXT_SENTENCE" | translate }}</div>
+        <div class="value">{{ contextSentence() || ("DICTIONARY.NO_SELECTION" | translate) }}</div>
       </div>
     </mat-card-content>
   </mat-card>
@@ -36,24 +36,35 @@
   <mat-card class="meanings-card">
     <mat-card-header>
       <mat-card-title>{{ 'DICTIONARY.MEANINGS_TITLE' | translate }}</mat-card-title>
-      <mat-card-subtitle>{{ entry.word }}</mat-card-subtitle>
+      <mat-card-subtitle>{{ entry().word }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <div class="phonetic-row">
-        <div class="phonetic">{{ entry.phoneticSymbol.join(' / ') }}</div>
-      </div>
+      @if (entry().phoneticSymbol.bre || entry().phoneticSymbol.ame) {
+        <div class="phonetic-row">
+          <div class="phonetic">{{ entry().phoneticSymbol.bre }} / {{ entry().phoneticSymbol.ame }}</div>
+        </div>
+      }
       <div class="meaning-scroll" #meaningScroll>
-        @for (sense of entry.senses; track $index) {
-          <div class="sense-section" #senseSection>
-            <div class="meaning-cards">
-              @for (def of sense.definitions; track $index) {
-                <app-meaning-card
-                  [item]="def"
-                  [index]="$index + 1"
-                  [posLabel]="sense.partOfSpeech"
-                  (add)="onAddCard($event, sense.partOfSpeech)"
-                ></app-meaning-card>
-              }
+        @if (entry().senses.length > 0) {
+          @for (sense of entry().senses; track $index) {
+            <div class="sense-section" #senseSection>
+              <div class="meaning-cards">
+                @for (def of sense.definitions; track $index) {
+                  <app-meaning-card
+                    [item]="def"
+                    [index]="$index + 1"
+                    [posLabel]="sense.partOfSpeech"
+                    (add)="addCard($event, sense.partOfSpeech)"
+                  ></app-meaning-card>
+                }
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="meaning-empty-state">
+            <div class="meaning-empty-hint">
+              <mat-icon>search_off</mat-icon>
+              <span>{{ meaningEmptyMessageKey() | translate }}</span>
             </div>
           </div>
         }
