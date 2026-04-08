@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DicImportComponent } from "./dic-import.component";
+import { TranslateModule } from "@ngx-translate/core";
 
 describe("DicImportComponent", () => {
     let component: DicImportComponent;
@@ -8,7 +9,10 @@ describe("DicImportComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [DicImportComponent],
+            imports: [
+                DicImportComponent,
+                TranslateModule.forRoot()
+            ],
         }).compileComponents();
 
         fixture = TestBed.createComponent(DicImportComponent);
