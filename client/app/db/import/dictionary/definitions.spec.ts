@@ -4,7 +4,7 @@ import path from "node:path";
 import Database from "better-sqlite3";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "../../db";
-import { definitionsTable } from "../../schema/dictionary";
+import { definitionsTable } from "../../schema/dictionary/dic";
 import { impDefinitions, impWordPoses, impWords } from ".";
 import { createSchema, writeJsonLinesFile } from "./test-helpers";
 import { bufferToHex } from "../utils";

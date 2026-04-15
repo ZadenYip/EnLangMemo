@@ -1,7 +1,7 @@
 import { getDicDb } from "../db";
 import { IDatabaseService as IDictionaryService } from "./dic-service-interface";
 import type { Definition, DictionaryEntry, Sense } from "./dic-service-types";
-import { wordsTable } from "../schema/dictionary";
+import { wordsTable } from "../schema/dictionary/dic";
 import { eq } from "drizzle-orm";
 import { lemmatize } from "@main/lemmatization";
 import { impDefinitions, impExamples, impWordPoses, impWords } from "../import/dictionary";

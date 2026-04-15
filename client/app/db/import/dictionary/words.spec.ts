@@ -5,7 +5,7 @@ import Database from "better-sqlite3";
 import { asc } from "drizzle-orm";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "../../db";
-import { wordsTable } from "../../schema/dictionary";
+import { wordsTable } from "../../schema/dictionary/dic";
 import { impWords } from ".";
 import { createSchema, writeJsonLinesFile, writeRawLinesFile } from "./test-helpers";
 import { hexToBuffer, uuidToBuffer } from "../utils";

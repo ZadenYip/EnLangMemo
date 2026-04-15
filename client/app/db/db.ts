@@ -4,7 +4,7 @@ import * as path from "path";
 import * as fs from "fs";
 import Logger from "electron-log";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
-import * as schema from "./schema/dictionary";
+import * as schema from "./schema/dictionary/dic";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 
 export const dictionarySchema = schema;
