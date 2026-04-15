@@ -9,7 +9,7 @@ import { DictionarySelectionService } from "./selection/selection.service";
 import { MeaningCardComponent } from "./sub-components/meaning-card.component";
 import Logger from "electron-log/renderer";
 import { TranslatePipe } from "@ngx-translate/core";
-import { Definition, DictionaryEntry } from "@main/db/services/dic-service-types";
+import { Definition, DictionaryEntry } from "@main/db/services/dictionary/dic-service-types";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { debounceTime, distinctUntilChanged, from, map, switchMap } from "rxjs";
 

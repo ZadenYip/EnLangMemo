@@ -2,10 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import Database from "better-sqlite3";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
-import { dictionarySchema, getDicDb } from "../db";
-import { impDefinitions, impExamples, impWordPoses, impWords } from "../import/dictionary";
-import { createSchema } from "../import/dictionary/test-helpers";
-import { uuidToBuffer } from "../import/utils";
+import { dictionarySchema, getDicDb } from "@db/db";
+import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
+import { createSchema } from "../../import/dictionary/test-helpers";
+import { uuidToBuffer } from "../../import/utils";
 import { DictionaryService } from "./dic-service";
 
 // Mock the lemmatize function
@@ -15,12 +15,12 @@ vi.mock("@main/lemmatization", () => {
     };
 });
 
-vi.mock("../db", async () => {
-    const actual = await vi.importActual<typeof import("../db")>("../db");
+vi.mock("@db/db", async () => {
+    const actual = await vi.importActual<typeof import("@db/db")>("@db/db");
     return {
         ...actual,
         getDicDb: vi.fn(),
-        runSQL: vi.fn(),
+        runSQL: vi.fn()
     };
 });
 

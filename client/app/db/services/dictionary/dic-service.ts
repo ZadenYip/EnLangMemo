@@ -1,11 +1,11 @@
-import { getDicDb } from "../db";
+import { getDicDb } from "../../db";
 import { IDatabaseService as IDictionaryService } from "./dic-service-interface";
 import type { Definition, DictionaryEntry, Sense } from "./dic-service-types";
-import { wordsTable } from "../schema/dictionary/dic";
+import { wordsTable } from "../../schema/dictionary/dic";
 import { eq } from "drizzle-orm";
 import { lemmatize } from "@main/lemmatization";
-import { impDefinitions, impExamples, impWordPoses, impWords } from "../import/dictionary";
-import { ImportResult } from "../import/dictionary/dic-import-type";
+import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
+import { ImportResult } from "../../import/dictionary/dic-import-type";
 
 export class DictionaryService implements IDictionaryService {
     /**

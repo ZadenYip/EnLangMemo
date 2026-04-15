@@ -2,7 +2,7 @@ import { createProxy } from "electron-ipc-cat/client";
 import { AsyncifyProxy } from "electron-ipc-cat/common";
 import { Observable } from "rxjs";
 
-import { DicServiceIPCDescriptor, IDatabaseService } from "../db/services/dic-service-interface";
+import { DicServiceIPCDescriptor, IDatabaseService } from "../db/services/dictionary/dic-service-interface";
 import { DialogServiceIPCDescriptor, IDialogService } from "../dialog/dialog-service.interface";
 import { ISubtitleService, SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service.interface";
 
