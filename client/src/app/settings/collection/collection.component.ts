@@ -34,62 +34,25 @@ interface UserProfileCollection {
     styleUrl: "./collection.component.scss",
 })
 export class SettingsCollectionComponent {
-    readonly dbAccountProfiles: DbAccountProfile[] = [
-        { id: "account-default", name: "Default Account" },
-        { id: "account-work", name: "Work Account" },
-        { id: "account-personal", name: "Personal Account" },
-    ];
 
     collectionName = "";
-    selectedDbAccountId = this.dbAccountProfiles[0].id;
+    selectedDeleteCollectionId = "";
     createdCollections: UserProfileCollection[] = [];
-    errorKey: string | null = null;
 
     onCollectionNameInput(event: Event): void {
         const target = event.target as HTMLInputElement | null;
         this.collectionName = target?.value ?? "";
-        this.errorKey = null;
     }
 
     onDbAccountChange(accountId: string): void {
-        this.selectedDbAccountId = accountId;
-        this.errorKey = null;
+        //
     }
 
     createCollection(): void {
-        const trimmedName = this.collectionName.trim();
-        if (!trimmedName) {
-            this.errorKey = "PAGES.SETTING.COLLECTION.ERRORS.EMPTY_NAME";
-            return;
-        }
+        //
+    }
 
-        const isDuplicate = this.createdCollections.some(
-            collection => collection.name.toLowerCase() === trimmedName.toLowerCase(),
-        );
-        if (isDuplicate) {
-            this.errorKey = "PAGES.SETTING.COLLECTION.ERRORS.DUPLICATE_NAME";
-            return;
-        }
-
-        const selectedAccount = this.dbAccountProfiles.find(
-            account => account.id === this.selectedDbAccountId,
-        );
-        if (!selectedAccount) {
-            this.errorKey = "PAGES.SETTING.COLLECTION.ERRORS.NO_ACCOUNT";
-            return;
-        }
-
-        this.createdCollections = [
-            {
-                id: crypto.randomUUID(),
-                name: trimmedName,
-                accountName: selectedAccount.name,
-                createdAt: new Date().toLocaleString(),
-            },
-            ...this.createdCollections,
-        ];
-
-        this.collectionName = "";
-        this.errorKey = null;
+    deleteCollection(): void {
+        //
     }
 }

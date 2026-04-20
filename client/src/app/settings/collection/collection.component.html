@@ -1,60 +1,82 @@
-﻿<mat-card appearance="outlined" class="section-card">
-  <mat-card-header>
-    <mat-card-title>{{ "PAGES.SETTING.COLLECTION.TITLE" | translate }}</mat-card-title>
-    <mat-card-subtitle>{{ "PAGES.SETTING.COLLECTION.DESCRIPTION" | translate }}</mat-card-subtitle>
-  </mat-card-header>
+﻿<!-- collection management container with flex column layout -->
+<div class="collection-management">
+  <!-- create collection group -->
+  <div class="section-group">
+    <mat-card appearance="outlined" class="section-card">
+      <mat-card-header>
+        <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.TITLE" | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ "PAGES.SETTINGS.COLLECTION.DESCRIPTION" | translate }}</mat-card-subtitle>
+      </mat-card-header>
 
-  <mat-card-content>
-    <div class="form-grid">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
-        <mat-label>{{ "PAGES.SETTING.COLLECTION.FIELDS.NAME" | translate }}</mat-label>
-        <input
-          matInput
-          [value]="collectionName"
-          (input)="onCollectionNameInput($event)"
-          [placeholder]="'PAGES.SETTING.COLLECTION.FIELDS.NAME_PLACEHOLDER' | translate"
-        />
-        @if (errorKey) {
-          <mat-error>{{ errorKey | translate }}</mat-error>
-        }
-      </mat-form-field>
+      <mat-card-content>
+        <!-- input collection name -->
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
+          <mat-label>{{ "PAGES.SETTINGS.COLLECTION.FIELDS.NAME" | translate }}</mat-label>
+          <input
+            matInput
+            [value]="collectionName"
+            (input)="onCollectionNameInput($event)"
+            [placeholder]="'PAGES.SETTINGS.COLLECTION.FIELDS.NAME_PLACEHOLDER' | translate"
+          />
+        </mat-form-field>
+      </mat-card-content>
 
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
-        <mat-label>{{ "PAGES.SETTING.COLLECTION.FIELDS.DB_ACCOUNT" | translate }}</mat-label>
-        <mat-select [value]="selectedDbAccountId" (valueChange)="onDbAccountChange($event)">
-          @for (account of dbAccountProfiles; track account.id) {
-            <mat-option [value]="account.id">{{ account.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="primary" (click)="createCollection()">
+          {{ "PAGES.SETTINGS.COLLECTION.ACTIONS.CREATE" | translate }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
 
-  <mat-card-actions align="end">
-    <button mat-flat-button color="primary" (click)="createCollection()">
-      {{ "PAGES.SETTING.COLLECTION.ACTIONS.CREATE" | translate }}
-    </button>
-  </mat-card-actions>
-</mat-card>
+  <!-- delete collection group -->
+  <div class="section-group">
+    <mat-card appearance="outlined" class="section-card">
+      <mat-card-header>
+        <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.DELETE.TITLE" | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ "PAGES.SETTINGS.COLLECTION.DELETE.DESCRIPTION" | translate }}</mat-card-subtitle>
+      </mat-card-header>
 
+      <mat-card-content>
+        <!-- choose collection to be deleted -->
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
+          <mat-label>{{ "PAGES.SETTINGS.COLLECTION.FIELDS.DELETE_COLLECTION" | translate }}</mat-label>
+          <mat-select [value]="selectedDeleteCollectionId" (valueChange)="selectedDeleteCollectionId = $event">
+            @for (collection of createdCollections; track collection.id) {
+              <mat-option [value]="collection.id">{{ collection.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-flat-button color="primary" (click)="deleteCollection()">
+          {{ "PAGES.SETTINGS.COLLECTION.ACTIONS.DELETE" | translate }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
+
+<!-- show created collections -->
 <mat-card appearance="outlined" class="section-card">
   <mat-card-header>
-    <mat-card-title>{{ "PAGES.SETTING.COLLECTION.CREATED.TITLE" | translate }}</mat-card-title>
+    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.CREATED.TITLE" | translate }}</mat-card-title>
   </mat-card-header>
 
   <mat-card-content>
     @if (createdCollections.length === 0) {
-      <p class="empty">{{ "PAGES.SETTING.COLLECTION.CREATED.EMPTY" | translate }}</p>
+      <p class="empty">{{ "PAGES.SETTINGS.COLLECTION.CREATED.EMPTY" | translate }}</p>
     } @else {
       <mat-list>
         @for (collection of createdCollections; track collection.id) {
           <mat-list-item>
             <div matListItemTitle>{{ collection.name }}</div>
             <div matListItemLine>
-              {{ "PAGES.SETTING.COLLECTION.CREATED.LINKED_ACCOUNT" | translate }}: {{ collection.accountName }}
+              {{ "PAGES.SETTINGS.COLLECTION.CREATED.LINKED_ACCOUNT" | translate }}: {{ collection.accountName }}
             </div>
             <div matListItemLine>
-              {{ "PAGES.SETTING.COLLECTION.CREATED.CREATED_AT" | translate }}: {{ collection.createdAt }}
+              {{ "PAGES.SETTINGS.COLLECTION.CREATED.CREATED_AT" | translate }}: {{ collection.createdAt }}
             </div>
           </mat-list-item>
         }

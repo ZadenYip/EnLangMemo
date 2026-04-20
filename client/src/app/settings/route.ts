@@ -9,7 +9,7 @@ export const SETTINGS_ROUTES: Routes = [
     {
         path: SETTINGS_PATHS.collection,
         component: SettingsCollectionComponent,
-        title: "PAGES.SETTING.COLLECTION.NAV_TITLE",
+        title: "PAGES.SETTINGS.COLLECTION.NAV_TITLE",
     },
     {
         path: "",

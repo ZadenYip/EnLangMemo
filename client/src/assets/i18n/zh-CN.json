@@ -39,7 +39,7 @@
         "SUBMIT": "提交"
       }
     },
-    "SETTING": {
+    "SETTINGS": {
       "COLLECTION": {
         "NAV_TITLE": "集合管理",
         "TITLE": "集合设置",
@@ -47,21 +47,28 @@
         "FIELDS": {
           "NAME": "集合名称",
           "NAME_PLACEHOLDER": "请输入集合名称",
-          "DB_ACCOUNT": "数据库账户"
+          "DB_ACCOUNT": "数据库账户",
+          "DELETE_COLLECTION": "选择要删除的集合"
         },
         "ACTIONS": {
-          "CREATE": "创建集合"
+          "CREATE": "创建集合",
+          "DELETE": "删除集合"
+        },
+        "DELETE": {
+          "TITLE": "删除集合",
+          "DESCRIPTION": "选择并删除你已创建的集合。"
         },
         "CREATED": {
           "TITLE": "已创建集合",
-          "EMPTY": "暂无集合。",
+          "EMPTY": "暂无集合",
           "LINKED_ACCOUNT": "绑定账户",
           "CREATED_AT": "创建时间"
         },
         "ERRORS": {
           "EMPTY_NAME": "集合名称不能为空。",
           "DUPLICATE_NAME": "集合名称已存在。",
-          "NO_ACCOUNT": "请选择数据库账户。"
+          "NO_ACCOUNT": "请选择数据库账户。",
+          "NO_SELECTION": "请选择要删除的集合。"
         }
       }
     }

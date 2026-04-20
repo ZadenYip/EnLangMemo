@@ -38,7 +38,7 @@
         "EXPS": "Example Sentences Table"
       }
     },
-    "SETTING": {
+    "SETTINGS": {
       "COLLECTION": {
         "NAV_TITLE": "Collections",
         "TITLE": "Collection Settings",
@@ -46,10 +46,16 @@
         "FIELDS": {
           "NAME": "Collection Name",
           "NAME_PLACEHOLDER": "Enter a collection name",
-          "DB_ACCOUNT": "Database Account"
+          "DB_ACCOUNT": "Database Account",
+          "DELETE_COLLECTION": "Select a collection to delete"
         },
         "ACTIONS": {
-          "CREATE": "Create Collection"
+          "CREATE": "Create Collection",
+          "DELETE": "Delete Collection"
+        },
+        "DELETE": {
+          "TITLE": "Delete Collection",
+          "DESCRIPTION": "Select and delete a collection you have created."
         },
         "CREATED": {
           "TITLE": "Created Collections",
@@ -60,7 +66,8 @@
         "ERRORS": {
           "EMPTY_NAME": "Collection name is required.",
           "DUPLICATE_NAME": "Collection name already exists.",
-          "NO_ACCOUNT": "Please select a database account."
+          "NO_ACCOUNT": "Please select a database account.",
+          "NO_SELECTION": "Please select a collection to delete."
         }
       }
     }

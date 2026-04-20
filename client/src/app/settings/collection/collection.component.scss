@@ -24,10 +24,14 @@
     margin: 0;
 }
 
-.form-grid {
-    display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+.collection-management {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.section-group {
+    width: 100%;
 }
 
 mat-form-field {
