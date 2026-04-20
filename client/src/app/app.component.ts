@@ -1,4 +1,4 @@
-import { Component, HostListener, inject } from "@angular/core";
+﻿import { Component, HostListener, inject } from "@angular/core";
 import { TranslatePipe, TranslateService } from "@ngx-translate/core";
 import {
     Router,
@@ -19,30 +19,31 @@ import { APP_PATHS } from "./root-route";
     styleUrls: ["./app.component.scss"],
     standalone: true,
     imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    MatButtonModule,
-    MatToolbarModule,
-    TranslatePipe,
-    DictionaryComponent
-],
+        RouterOutlet,
+        RouterLink,
+        RouterLinkActive,
+        MatButtonModule,
+        MatToolbarModule,
+        TranslatePipe,
+        DictionaryComponent,
+    ],
 })
 export class AppComponent {
     private readonly router: Router = inject(Router);
     private readonly translate: TranslateService = inject(TranslateService);
     private readonly dictionaryWindowService = inject(DictionaryWindowService);
-    
+
     readonly tabs = [
         { label: "HEADER.DECKS", path: `${APP_PATHS.home}` },
         { label: "HEADER.IMMERSE", path: `${APP_PATHS.immerse}` },
         { label: "HEADER.BROWSE", path: `${APP_PATHS.browse}` },
-        { label: "HEADER.STATS", path: `${APP_PATHS.stats}` }
+        { label: "HEADER.STATS", path: `${APP_PATHS.stats}` },
+        { label: "HEADER.SETTINGS", path: `${APP_PATHS.settings}` },
     ] as const;
 
     /**
      *
-     * @param path - The path to check for active state（e.g., "/home"）
+     * @param path - The path to check for active state锛坋.g., "/home"锛?
      * @returns True if the path is active, false otherwise
      */
     isActive = (path: string): boolean => {

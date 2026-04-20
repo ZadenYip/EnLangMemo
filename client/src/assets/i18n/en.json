@@ -37,6 +37,32 @@
         "DEFS": "Definitions Table",
         "EXPS": "Example Sentences Table"
       }
+    },
+    "SETTING": {
+      "COLLECTION": {
+        "NAV_TITLE": "Collections",
+        "TITLE": "Collection Settings",
+        "DESCRIPTION": "Create your collection and choose which database account it uses.",
+        "FIELDS": {
+          "NAME": "Collection Name",
+          "NAME_PLACEHOLDER": "Enter a collection name",
+          "DB_ACCOUNT": "Database Account"
+        },
+        "ACTIONS": {
+          "CREATE": "Create Collection"
+        },
+        "CREATED": {
+          "TITLE": "Created Collections",
+          "EMPTY": "No collections yet.",
+          "LINKED_ACCOUNT": "Linked Account",
+          "CREATED_AT": "Created At"
+        },
+        "ERRORS": {
+          "EMPTY_NAME": "Collection name is required.",
+          "DUPLICATE_NAME": "Collection name already exists.",
+          "NO_ACCOUNT": "Please select a database account."
+        }
+      }
     }
   },
   "DICTIONARY": {
@@ -57,6 +83,7 @@
     "ADD": "Add",
     "BROWSE": "Browse",
     "STATS": "Stats",
-    "SYNC": "Sync"
+    "SYNC": "Sync",
+    "SETTINGS": "Settings"
   }
 }

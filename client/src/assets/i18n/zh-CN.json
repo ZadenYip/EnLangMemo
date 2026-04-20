@@ -38,6 +38,32 @@
         "EXPS": "例句表",
         "SUBMIT": "提交"
       }
+    },
+    "SETTING": {
+      "COLLECTION": {
+        "NAV_TITLE": "集合管理",
+        "TITLE": "集合设置",
+        "DESCRIPTION": "创建你的集合，并选择要绑定的数据库账户。",
+        "FIELDS": {
+          "NAME": "集合名称",
+          "NAME_PLACEHOLDER": "请输入集合名称",
+          "DB_ACCOUNT": "数据库账户"
+        },
+        "ACTIONS": {
+          "CREATE": "创建集合"
+        },
+        "CREATED": {
+          "TITLE": "已创建集合",
+          "EMPTY": "暂无集合。",
+          "LINKED_ACCOUNT": "绑定账户",
+          "CREATED_AT": "创建时间"
+        },
+        "ERRORS": {
+          "EMPTY_NAME": "集合名称不能为空。",
+          "DUPLICATE_NAME": "集合名称已存在。",
+          "NO_ACCOUNT": "请选择数据库账户。"
+        }
+      }
     }
   },
   "DICTIONARY": {
@@ -58,6 +84,7 @@
     "ADD": "添加",
     "BROWSE": "浏览",
     "STATS": "统计",
-    "SYNC": "同步"
+    "SYNC": "同步",
+    "SETTINGS": "设置"
   }
 }

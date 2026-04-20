@@ -1,7 +1,9 @@
-import { Routes } from "@angular/router";
+﻿import { Routes } from "@angular/router";
 import { BrowseComponent } from "@render/browse/browse.component";
 import { HomeComponent } from "@render/home/home.component";
 import { ImmerseComponent } from "@render/immerse/immerse.component";
+import { SettingsComponent } from "@render/settings/settings.component";
+import { SETTINGS_ROUTES } from "@render/settings/route";
 import { PageNotFoundComponent } from "@render/shared/components";
 import { BROWSE_ROUTES } from "./browse/route";
 
@@ -9,6 +11,7 @@ export const APP_PATHS = {
     home: "home",
     immerse: "immerse",
     browse: "browse",
+    settings: "settings",
     stats: "stats",
 } as const;
 
@@ -29,7 +32,12 @@ export const APP_ROUTES: Routes = [
     {
         path: APP_PATHS.browse,
         component: BrowseComponent,
-        children: BROWSE_ROUTES
+        children: BROWSE_ROUTES,
+    },
+    {
+        path: APP_PATHS.settings,
+        component: SettingsComponent,
+        children: SETTINGS_ROUTES,
     },
     {
         path: APP_PATHS.stats,

@@ -1,0 +1,64 @@
+﻿<mat-card appearance="outlined" class="section-card">
+  <mat-card-header>
+    <mat-card-title>{{ "PAGES.SETTING.COLLECTION.TITLE" | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ "PAGES.SETTING.COLLECTION.DESCRIPTION" | translate }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="form-grid">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
+        <mat-label>{{ "PAGES.SETTING.COLLECTION.FIELDS.NAME" | translate }}</mat-label>
+        <input
+          matInput
+          [value]="collectionName"
+          (input)="onCollectionNameInput($event)"
+          [placeholder]="'PAGES.SETTING.COLLECTION.FIELDS.NAME_PLACEHOLDER' | translate"
+        />
+        @if (errorKey) {
+          <mat-error>{{ errorKey | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
+        <mat-label>{{ "PAGES.SETTING.COLLECTION.FIELDS.DB_ACCOUNT" | translate }}</mat-label>
+        <mat-select [value]="selectedDbAccountId" (valueChange)="onDbAccountChange($event)">
+          @for (account of dbAccountProfiles; track account.id) {
+            <mat-option [value]="account.id">{{ account.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-flat-button color="primary" (click)="createCollection()">
+      {{ "PAGES.SETTING.COLLECTION.ACTIONS.CREATE" | translate }}
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+<mat-card appearance="outlined" class="section-card">
+  <mat-card-header>
+    <mat-card-title>{{ "PAGES.SETTING.COLLECTION.CREATED.TITLE" | translate }}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (createdCollections.length === 0) {
+      <p class="empty">{{ "PAGES.SETTING.COLLECTION.CREATED.EMPTY" | translate }}</p>
+    } @else {
+      <mat-list>
+        @for (collection of createdCollections; track collection.id) {
+          <mat-list-item>
+            <div matListItemTitle>{{ collection.name }}</div>
+            <div matListItemLine>
+              {{ "PAGES.SETTING.COLLECTION.CREATED.LINKED_ACCOUNT" | translate }}: {{ collection.accountName }}
+            </div>
+            <div matListItemLine>
+              {{ "PAGES.SETTING.COLLECTION.CREATED.CREATED_AT" | translate }}: {{ collection.createdAt }}
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+  </mat-card-content>
+</mat-card>
