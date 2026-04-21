@@ -1,9 +1,10 @@
-import { app, dialog } from "electron";
+import { dialog } from "electron";
 import * as path from "path";
 import * as fs from "fs";
 import Logger from "electron-log";
 import { exit } from "process";
 import { isDev } from "@main/main";
+import { getUserDataDir } from "@main/paths";
 
 
 export interface AppConfig {
@@ -15,8 +16,7 @@ export interface AppConfig {
  * If config.json doesn't exist, generate default config and save it.
  */
 export function loadUserDataConfig(): AppConfig {
-    // executable's directory/user_data
-    const userDataDir = path.join(path.dirname(app.getPath("exe")), "user_data");
+    const userDataDir = getUserDataDir();
     const configPath = path.join(userDataDir, "config.json");
     
     if (fs.existsSync(configPath)) {

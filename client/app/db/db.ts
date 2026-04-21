@@ -1,5 +1,4 @@
 import Database from "better-sqlite3";
-import { app } from "electron";
 import * as path from "path";
 import * as fs from "fs";
 import Logger from "electron-log";
@@ -8,6 +7,7 @@ import * as dic_schema from "./schema/dictionary/dic";
 import * as rep_schema from "./schema/repetition/rep";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { AppConfig } from "./config/config";
+import { getAccountDir } from "@main/paths";
 
 export const dictionarySchema = dic_schema;
 export const repetitionSchema = rep_schema;
@@ -22,10 +22,9 @@ export function initDatabase(appConfig: AppConfig): void {
     const selectedAccount = appConfig.selectedAccount;
     Logger.info("Selected account:", selectedAccount);
 
-    // executable's directory/user_data
-    const dbDir = path.join(path.dirname(app.getPath("exe")), "user_data", selectedAccount);
+    const dbDir = getAccountDir(selectedAccount);
     if (!fs.existsSync(dbDir)) {
-        fs.mkdirSync(dbDir);
+        fs.mkdirSync(dbDir, { recursive: true });
     }
 
     // Initialize the dictionary database

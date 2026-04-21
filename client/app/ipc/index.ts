@@ -5,6 +5,8 @@ import { DialogService } from "../dialog/dialog-service";
 import { DialogServiceIPCDescriptor } from "../dialog/dialog-service.interface";
 import { SubtitleService } from "../subtitle-handler/subtitle-service";
 import { SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service.interface";
+import { CollectionService } from "../db/services/repetition/collection/collection-service";
+import { CollectionServiceIPCDescriptor } from "../db/services/repetition/collection/collection-service-interface";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
@@ -19,4 +21,7 @@ function registerDatabaseHandlers() {
 
     const subtitleService = new SubtitleService();
     registerProxy(subtitleService, SubtitleServiceIPCDescriptor);
+
+    const collectionService = new CollectionService();
+    registerProxy(collectionService, CollectionServiceIPCDescriptor);
 }

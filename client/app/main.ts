@@ -5,6 +5,7 @@ import { registerAllIPCHandlers } from "./ipc";
 import { loggerSetUp } from "./logs/log";
 import { loadUserDataConfig as loadAppConfig } from "./db/config/config";
 import { initDatabase } from "./db/db";
+import { getUserDataDir } from "./paths";
 
 // global reference to main window
 export const isDev = !app.isPackaged;
@@ -80,9 +81,9 @@ function initApp() {
     loggerSetUp(serve);
     
     // ensure user_data directory exists
-    const userDataDIr = path.join(path.dirname(app.getPath("exe")), "user_data");
-    if (!fs.existsSync(userDataDIr)) {
-        fs.mkdirSync(userDataDIr);
+    const userDataDir = getUserDataDir();
+    if (!fs.existsSync(userDataDir)) {
+        fs.mkdirSync(userDataDir);
     }
 
     const appConfig = loadAppConfig();
