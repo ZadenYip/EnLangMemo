@@ -1,9 +1,13 @@
 import { app, BrowserWindow, screen } from "electron";
 import * as path from "path";
 import * as fs from "fs";
-import { initDatabase } from "./db/db";
 import { registerAllIPCHandlers } from "./ipc";
 import { loggerSetUp } from "./logs/log";
+import { loadUserDataConfig as loadAppConfig } from "./db/config/config";
+import { initDatabase } from "./db/db";
+
+// global reference to main window
+export const isDev = !app.isPackaged;
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
@@ -63,10 +67,7 @@ function createWindow(): BrowserWindow {
 }
 
 app.whenReady().then(() => {
-    loggerSetUp(serve);
-    initDatabase();
-    createWindow();
-    registerAllIPCHandlers();
+    initApp();
 
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -74,6 +75,21 @@ app.whenReady().then(() => {
         }
     });
 });
+
+function initApp() {
+    loggerSetUp(serve);
+    
+    // ensure user_data directory exists
+    const userDataDIr = path.join(path.dirname(app.getPath("exe")), "user_data");
+    if (!fs.existsSync(userDataDIr)) {
+        fs.mkdirSync(userDataDIr);
+    }
+
+    const appConfig = loadAppConfig();
+    initDatabase(appConfig);
+    createWindow();
+    registerAllIPCHandlers();
+}
 
 app.on("window-all-closed", () => {
     // On OS X it is common for applications and their menu bar

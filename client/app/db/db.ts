@@ -4,49 +4,55 @@ import * as path from "path";
 import * as fs from "fs";
 import Logger from "electron-log";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
-import * as schema from "./schema/dictionary/dic";
+import * as dic_schema from "./schema/dictionary/dic";
+import * as rep_schema from "./schema/repetition/rep";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { AppConfig } from "./config/config";
 
-export const dictionarySchema = schema;
+export const dictionarySchema = dic_schema;
+export const repetitionSchema = rep_schema;
+let dicDb: BetterSQLite3Database<typeof dic_schema>;
+let repDb: BetterSQLite3Database<typeof rep_schema>;
 
-let dicDb: BetterSQLite3Database<typeof schema>;
-let cardDb: BetterSQLite3Database;
-let sqliteDic: Database.Database;
-let sqliteCard: Database.Database;
+let sqlDic: Database.Database;
+let sqlRep: Database.Database;
 
-export function initDatabase() {
+export function initDatabase(appConfig: AppConfig): void {
+    
+    const selectedAccount = appConfig.selectedAccount;
+    Logger.info("Selected account:", selectedAccount);
 
-    // Ensure the database directory exists
-    const dbDirPath = path.join(path.dirname(app.getPath("exe")), "user_data");
-    if (!fs.existsSync(dbDirPath)) {
-        fs.mkdirSync(dbDirPath);
+    // executable's directory/user_data
+    const dbDir = path.join(path.dirname(app.getPath("exe")), "user_data", selectedAccount);
+    if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir);
     }
 
     // Initialize the dictionary database
-    const dicDbPath = path.join(dbDirPath, "dictionary.db");
+    const dicDbPath = path.join(dbDir, "dictionary.db");
     Logger.info("Database initialization at", dicDbPath);
-    sqliteDic = new Database(dicDbPath);
-    sqliteDic.pragma("journal_mode = WAL");
-    dicDb = drizzle(sqliteDic, { schema: schema });
+    sqlDic = new Database(dicDbPath);
+    sqlDic.pragma("journal_mode = WAL");
+    dicDb = drizzle(sqlDic, { schema: dic_schema });
 
     // TODO 生产环境改为对应路径，现在为开发方便还没改
-    Logger.info("__dirname:", __dirname);
-    
     // __dirname is main.js's directory
-    migrate(dicDb, { migrationsFolder: path.join(__dirname, "db", "migrations") });
+    migrate(dicDb, { migrationsFolder: path.join(__dirname, "db", "migrations", "dictionary") });
 
     // Initialize the card database
-    const cardDbPath = path.join(dbDirPath, "cards.db");
-    Logger.info("Database initialization at", cardDbPath);
-    sqliteCard = new Database(cardDbPath);
-    sqliteCard.pragma("journal_mode = WAL");
-    cardDb = drizzle(sqliteCard);
+    const repDbPath = path.join(dbDir, "repetition.db");
+    Logger.info("Database initialization at", repDbPath);
+    sqlRep = new Database(repDbPath);
+    sqlRep.pragma("journal_mode = WAL");
+    repDb = drizzle(sqlRep, { schema: rep_schema });
+    migrate(repDb, { migrationsFolder: path.join(__dirname, "db", "migrations", "repetition") });
 }
 
-export function getDicDb(): BetterSQLite3Database<typeof schema> {
+export function getDicDb(): BetterSQLite3Database<typeof dic_schema> {
     return dicDb;
 }
 
-export function getCardDb(): BetterSQLite3Database {
-    return cardDb;
+export function getRepDb(): BetterSQLite3Database<typeof rep_schema> {
+    return repDb;
 }
+
