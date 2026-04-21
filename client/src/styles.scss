@@ -46,8 +46,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   box-sizing: border-box; 
 }
 
-p {
+@mixin global-p {
   font-size: 1rem;
+}
+
+p {
+  @include global-p; 
 }
 
 h2 {
@@ -56,9 +60,13 @@ h2 {
   margin: 2rem 0 0.5rem 0;
 }
 
-h2 ~ p {
+@mixin h2-p {
   font-size: 1rem;
   height: 28px;
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 1rem;  
+}
+
+h2 ~ p {
+  @include h2-p;
 }
