@@ -47,27 +47,43 @@
           "NAME": "Collection Name",
           "NAME_PLACEHOLDER": "Enter a collection name",
           "DB_ACCOUNT": "Database Account",
-          "DELETE_COLLECTION": "Select a collection to delete"
+          "DELETE_COLLECTION": "Select a collection to delete",
+          "SWITCH_COLLECTION": "Select a collection to switch to"
         },
         "ACTIONS": {
           "CREATE": "Create Collection",
-          "DELETE": "Delete Collection"
+          "DELETE": "Delete Collection",
+          "SWITCH": "Switch Collection"
         },
         "DELETE": {
           "TITLE": "Delete Collection",
-          "DESCRIPTION": "Select and delete a collection you have created."
+          "DESCRIPTION": "Select and delete a collection you have created.",
+          "NO_DELETABLE_COLLECTIONS": "No collections available to delete (the currently active collection cannot be deleted)",
+          "CONFIRM_DELETE": {
+            "TITLE": "Confirm Delete",
+            "MESSAGE": "Are you sure you want to delete the collection \"{{name}}\"? This action cannot be undone.",
+            "CONFIRM": "Delete"
+          }
+        },
+        "SWITCH": {
+          "TITLE": "Switch Collection",
+          "DESCRIPTION": "Select a collection to switch to， Current Collection: {{current}}",
+          "NO_SWITCHABLE_COLLECTIONS": "No collections available to switch to",
+          "SUCCESS": "Switched to collection: {{name}}"
         },
         "CREATED": {
           "TITLE": "Created Collections",
-          "EMPTY": "No collections yet.",
-          "LINKED_ACCOUNT": "Linked Account",
-          "CREATED_AT": "Created At"
+          "EMPTY": "No collections yet."
         },
         "ERRORS": {
           "EMPTY_NAME": "Collection name is required.",
           "DUPLICATE_NAME": "Collection name already exists.",
           "NO_ACCOUNT": "Please select a database account.",
-          "NO_SELECTION": "Please select a collection to delete."
+          "NO_SELECTION": "Please select a collection to delete.",
+          "INVALID_COLLECTION_NAME": "Collection name cannot contain characters forbidden by the file system: / \\ ? % * : | \" < >",
+          "CREATE_FAILED": "Failed to create collection.",
+          "DELETE_FAILED": "Failed to delete collection.",
+          "SWITCH_FAILED": "Failed to switch collection."
         }
       }
     }

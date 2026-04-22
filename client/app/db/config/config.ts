@@ -6,6 +6,7 @@ import { exit } from "process";
 import { isDev } from "@main/main";
 import { getUserDataDir } from "@main/paths";
 
+let appConfig: AppConfig;
 
 export interface AppConfig {
     selectedAccount: string;
@@ -22,10 +23,13 @@ export function loadUserDataConfig(): AppConfig {
     if (fs.existsSync(configPath)) {
         try {
             const configContent = fs.readFileSync(configPath, "utf-8");
-            return JSON.parse(configContent) as AppConfig;
+            appConfig = JSON.parse(configContent) as AppConfig;
+            Logger.info("User data config loaded from", configPath);
+            return appConfig;
         } catch (error) {
             Logger.error("Failed to load user data config:", error);
-            return generateDefaultConfig();
+            appConfig = generateDefaultConfig();
+            return appConfig;
         }
     } else {
         // Generate default config from resources
@@ -39,7 +43,8 @@ export function loadUserDataConfig(): AppConfig {
             Logger.warn("Failed to save config to", configPath, error);
         }
         
-        return defaultConfig;
+        appConfig = defaultConfig;
+        return appConfig;
     }
 }
 
@@ -72,5 +77,26 @@ function generateDefaultConfig(): AppConfig {
             "Failed to load default configuration. Please reinstall the application to fix this issue.",
         );
         exit(1);
+    }
+}
+
+export function getAppConfig(): AppConfig {
+    return appConfig;
+}
+
+/**
+ * Save app configuration to config.json file and update memory state
+ */
+export function saveAppConfig(config: AppConfig): void {
+    const userDataDir = getUserDataDir();
+    const configPath = path.join(userDataDir, "config.json");
+    
+    try {
+        fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf-8");
+        appConfig = config;
+        Logger.info("App config saved to", configPath);
+    } catch (error) {
+        Logger.error("Failed to save app config:", error);
+        throw new Error(`Failed to save configuration: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
 }

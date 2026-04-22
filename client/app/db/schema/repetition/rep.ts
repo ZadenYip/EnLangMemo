@@ -10,17 +10,23 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
+
+// More information see in https://dbdiagram.io/d/EnLangMemo-69aafcb1a3f0aa31e1146507
+
 /**
  * Drizzle ORM does not have native JSONB support for SQLite
  */
 const jsonb = <TData>(str: string) =>
     customType<{ data: TData; driverData: string }>({
+        // sqlite type
         dataType() {
             return "jsonb";
         },
+        // write to database by stringifying JSON
         toDriver(value: TData): string {
             return JSON.stringify(value);
         },
+        // read from database and parse JSON
         fromDriver(value: string): TData {
             return JSON.parse(value);
         },
@@ -85,9 +91,6 @@ export const noteTypesTable = sqliteTable("note_types", {
     config: jsonb("config").notNull(),
 });
 
-/**
- * Notes 表 - 笔记（卡片的内容载体）
- */
 export const notesTable = sqliteTable(
     "notes",
     {
@@ -109,10 +112,6 @@ export const notesTable = sqliteTable(
     (table) => [index("ix_notes_usn").on(table.usn)],
 );
 
-/**
- * ProcessingNotes 表 - 待加工卡片
- * 比 Notes 表的约束更少，用于临时存储
- */
 export const processingNotesTable = sqliteTable(
     "processing_notes",
     {
@@ -128,10 +127,6 @@ export const processingNotesTable = sqliteTable(
     (table) => [index("ix_processing_usn").on(table.usn)],
 );
 
-/**
- * Cards 表 - 卡片（复习对象）
- * 基于 SM-2 算法的复习参数
- */
 export const cardsTable = sqliteTable(
     "cards",
     {
@@ -141,17 +136,17 @@ export const cardsTable = sqliteTable(
             .references(() => notesTable.id, { onDelete: "cascade" }),
         usn: int("usn").notNull(),
         updatedAt: int("updated_at").notNull(),
-        ordinal: int("ordinal"), // 笔记模板的第几个卡片
-        difficulty: real("difficulty").notNull(), // 难度 (0-1)
-        stability: real("stability").notNull(), // 稳定性 (天数)
-        scheduledDays: int("scheduled_days").notNull(), // 当前间隔（天）
-        due: int("due").notNull(), // 到期时间（unix timestamp）
-        lastReview: int("last_review").default(0), // 上次复习时间
-        lapses: int("lapses").notNull(), // 遗忘次数
-        learningSteps: int("learning_steps").notNull(), // 学习步骤
-        repetitions: int("repetitions").notNull(), // 重复次数
-        state: int("state").notNull(), // 0=新, 1=学习中, 2=复习, 3=重学习
-        queue: int("queue").notNull(), // -1=停止, 0=正常
+        ordinal: int("ordinal"),
+        difficulty: real("difficulty").notNull(),
+        stability: real("stability").notNull(),
+        scheduledDays: int("scheduled_days").notNull(),
+        due: int("due").notNull(),
+        lastReview: int("last_review").default(0),
+        lapses: int("lapses").notNull(),
+        learningSteps: int("learning_steps").notNull(),
+        repetitions: int("repetitions").notNull(),
+        state: int("state").notNull(),
+        queue: int("queue").notNull(),
     },
     (table) => [
         index("ix_cards_sched").on(table.queue, table.state, table.due),

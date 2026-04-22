@@ -48,27 +48,43 @@
           "NAME": "集合名称",
           "NAME_PLACEHOLDER": "请输入集合名称",
           "DB_ACCOUNT": "数据库账户",
-          "DELETE_COLLECTION": "选择要删除的集合"
+          "DELETE_COLLECTION": "选择要删除的集合",
+          "SWITCH_COLLECTION": "选择要切换的集合"
         },
         "ACTIONS": {
           "CREATE": "创建集合",
-          "DELETE": "删除集合"
+          "DELETE": "删除集合",
+          "SWITCH": "切换集合"
         },
         "DELETE": {
           "TITLE": "删除集合",
-          "DESCRIPTION": "选择并删除你已创建的集合。"
+          "DESCRIPTION": "选择并删除你已创建的集合。",
+          "NO_DELETABLE_COLLECTIONS": "暂无可删除的集合（当前使用中的集合无法删除）",
+          "CONFIRM_DELETE": {
+            "TITLE": "确认删除",
+            "MESSAGE": "确定要删除集合 \"{{name}}\" 吗？此操作不可撤销。",
+            "CONFIRM": "删除"
+          }
+        },
+        "SWITCH": {
+          "TITLE": "切换集合",
+          "DESCRIPTION": "选择并切换到其他集合，当前的集合为：{{current}}",
+          "NO_SWITCHABLE_COLLECTIONS": "暂无可切换的集合",
+          "SUCCESS": "已切换到集合：{{name}}"
         },
         "CREATED": {
           "TITLE": "已创建集合",
-          "EMPTY": "暂无集合",
-          "LINKED_ACCOUNT": "绑定账户",
-          "CREATED_AT": "创建时间"
+          "EMPTY": "暂无集合"
         },
         "ERRORS": {
           "EMPTY_NAME": "集合名称不能为空。",
           "DUPLICATE_NAME": "集合名称已存在。",
           "NO_ACCOUNT": "请选择数据库账户。",
-          "NO_SELECTION": "请选择要删除的集合。"
+          "NO_SELECTION": "请选择要删除的集合。",
+          "INVALID_COLLECTION_NAME": "集合名称不能包含文件系统禁用的字符：/ \\ ? % * : | \" < >",
+          "CREATE_FAILED": "创建集合失败。",
+          "DELETE_FAILED": "删除集合失败。",
+          "SWITCH_FAILED": "切换集合失败。"
         }
       }
     }

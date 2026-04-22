@@ -1,58 +1,58 @@
-﻿import { Component } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatListModule } from "@angular/material/list";
-import { MatSelectModule } from "@angular/material/select";
+﻿import { Component, OnInit, signal } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
-
-interface DbAccountProfile {
-    id: string;
-    name: string;
-}
-
-interface UserProfileCollection {
-    id: string;
-    name: string;
-    accountName: string;
-    createdAt: string;
-}
+import { CreateComponent } from "./sub/create.component";
+import { DeleteComponent } from "./sub/delete.component";
+import { ListComponent } from "./sub/list.component";
+import { SwitchComponent } from "./sub/switch.component";
 
 @Component({
     selector: "app-settings-collection",
     imports: [
         TranslateModule,
-        MatCardModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatListModule,
+        CreateComponent,
+        DeleteComponent,
+        ListComponent,
+        SwitchComponent,
     ],
     templateUrl: "./collection.component.html",
     styleUrl: "./collection.component.scss",
 })
-export class SettingsCollectionComponent {
+export class SettingsCollectionComponent implements OnInit {
+    curAppColName = signal<string>("");
+    listCollections = signal<string[]>([]);
+    deletableCols = signal<string[]>([]);
+    switchableCols = signal<string[]>([]);
 
-    collectionName = "";
-    selectedDeleteCollectionId = "";
-    createdCollections: UserProfileCollection[] = [];
-
-    onCollectionNameInput(event: Event): void {
-        const target = event.target as HTMLInputElement | null;
-        this.collectionName = target?.value ?? "";
+    async ngOnInit(): Promise<void> {
+        // Get current collection first, then load all collections
+        this.curAppColName.set(
+            await window.service.collectionService.getCurrentCollection()
+        );
+        await this.loadCollections();
     }
 
-    onDbAccountChange(accountId: string): void {
-        //
+    private async loadCollections(): Promise<void> {
+        const collections = await window.service.collectionService.listCollections();
+        this.listCollections.set(collections);
+
+        // Filter out the currently active collection
+        const deletable = collections.filter(
+            (name) => name !== this.curAppColName()
+        );
+        this.deletableCols.set(deletable);
+        this.switchableCols.set(deletable);
     }
 
-    createCollection(): void {
-        //
+    async onCollectionCreated(): Promise<void> {
+        await this.loadCollections();
     }
 
-    deleteCollection(): void {
-        //
+    async onCollectionDeleted(): Promise<void> {
+        await this.loadCollections();
+    }
+
+    async onCollectionSwitched(name: string): Promise<void> {
+        this.curAppColName.set(name);
+        await this.loadCollections();
     }
 }

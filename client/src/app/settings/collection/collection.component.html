@@ -1,86 +1,24 @@
 ﻿<!-- collection management container with flex column layout -->
 <div class="collection-management">
   <!-- create collection group -->
-  <div class="section-group">
-    <mat-card appearance="outlined" class="section-card">
-      <mat-card-header>
-        <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.TITLE" | translate }}</mat-card-title>
-        <mat-card-subtitle>{{ "PAGES.SETTINGS.COLLECTION.DESCRIPTION" | translate }}</mat-card-subtitle>
-      </mat-card-header>
+  <app-collection-create
+    [existingCollections]="listCollections()"
+    (collectionCreated)="onCollectionCreated()"
+  ></app-collection-create>
 
-      <mat-card-content>
-        <!-- input collection name -->
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
-          <mat-label>{{ "PAGES.SETTINGS.COLLECTION.FIELDS.NAME" | translate }}</mat-label>
-          <input
-            matInput
-            [value]="collectionName"
-            (input)="onCollectionNameInput($event)"
-            [placeholder]="'PAGES.SETTINGS.COLLECTION.FIELDS.NAME_PLACEHOLDER' | translate"
-          />
-        </mat-form-field>
-      </mat-card-content>
-
-      <mat-card-actions>
-        <button mat-flat-button color="primary" (click)="createCollection()">
-          {{ "PAGES.SETTINGS.COLLECTION.ACTIONS.CREATE" | translate }}
-        </button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
+  <!-- switch collection group -->
+  <app-collection-switch
+    [switchableCols]="switchableCols()"
+    [currentCollectionName]="curAppColName()"
+    (collectionSwitched)="onCollectionSwitched($event)"
+  ></app-collection-switch>
 
   <!-- delete collection group -->
-  <div class="section-group">
-    <mat-card appearance="outlined" class="section-card">
-      <mat-card-header>
-        <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.DELETE.TITLE" | translate }}</mat-card-title>
-        <mat-card-subtitle>{{ "PAGES.SETTINGS.COLLECTION.DELETE.DESCRIPTION" | translate }}</mat-card-subtitle>
-      </mat-card-header>
-
-      <mat-card-content>
-        <!-- choose collection to be deleted -->
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
-          <mat-label>{{ "PAGES.SETTINGS.COLLECTION.FIELDS.DELETE_COLLECTION" | translate }}</mat-label>
-          <mat-select [value]="selectedDeleteCollectionId" (valueChange)="selectedDeleteCollectionId = $event">
-            @for (collection of createdCollections; track collection.id) {
-              <mat-option [value]="collection.id">{{ collection.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </mat-card-content>
-
-      <mat-card-actions>
-        <button mat-flat-button color="primary" (click)="deleteCollection()">
-          {{ "PAGES.SETTINGS.COLLECTION.ACTIONS.DELETE" | translate }}
-        </button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
+  <app-collection-delete
+    [deletableCols]="deletableCols()"
+    (collectionDeleted)="onCollectionDeleted()"
+  ></app-collection-delete>
 </div>
 
 <!-- show created collections -->
-<mat-card appearance="outlined" class="section-card">
-  <mat-card-header>
-    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.CREATED.TITLE" | translate }}</mat-card-title>
-  </mat-card-header>
-
-  <mat-card-content>
-    @if (createdCollections.length === 0) {
-      <p class="empty">{{ "PAGES.SETTINGS.COLLECTION.CREATED.EMPTY" | translate }}</p>
-    } @else {
-      <mat-list>
-        @for (collection of createdCollections; track collection.id) {
-          <mat-list-item>
-            <div matListItemTitle>{{ collection.name }}</div>
-            <div matListItemLine>
-              {{ "PAGES.SETTINGS.COLLECTION.CREATED.LINKED_ACCOUNT" | translate }}: {{ collection.accountName }}
-            </div>
-            <div matListItemLine>
-              {{ "PAGES.SETTINGS.COLLECTION.CREATED.CREATED_AT" | translate }}: {{ collection.createdAt }}
-            </div>
-          </mat-list-item>
-        }
-      </mat-list>
-    }
-  </mat-card-content>
-</mat-card>
+<app-collection-list [collections]="listCollections()"></app-collection-list>

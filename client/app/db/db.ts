@@ -18,7 +18,6 @@ let sqlDic: Database.Database;
 let sqlRep: Database.Database;
 
 export function initDatabase(appConfig: AppConfig): void {
-    
     const selectedAccount = appConfig.selectedAccount;
     Logger.info("Selected account:", selectedAccount);
 
@@ -45,6 +44,17 @@ export function initDatabase(appConfig: AppConfig): void {
     sqlRep.pragma("journal_mode = WAL");
     repDb = drizzle(sqlRep, { schema: rep_schema });
     migrate(repDb, { migrationsFolder: path.join(__dirname, "db", "migrations", "repetition") });
+}
+
+export function reInitDatabase(appConfig: AppConfig): void {
+    if (sqlDic !== null) {
+        sqlDic.close();
+    }
+    if (sqlRep !== null) {
+        sqlRep.close();
+    }
+    Logger.info("Reinitializing database with new config");
+    initDatabase(appConfig);
 }
 
 export function getDicDb(): BetterSQLite3Database<typeof dic_schema> {

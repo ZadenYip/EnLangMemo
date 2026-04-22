@@ -3,6 +3,8 @@ import * as path from "path";
 import Logger from "electron-log";
 import { getAccountsDir } from "@main/paths";
 import { ICollectionService } from "./collection-service-interface";
+import { getAppConfig, saveAppConfig } from "@main/db/config/config";
+import { reInitDatabase } from "@main/db/db";
 
 export class CollectionService implements ICollectionService {
     /**
@@ -27,10 +29,28 @@ export class CollectionService implements ICollectionService {
     }
 
     /**
+     * Create a new collection folder
+     * just folder without any files
+     * files should create when user switch to this collection
+     */
+    async createCollection(name: string): Promise<void> {
+        const collectionPath = path.join(getAccountsDir(), name);
+
+        // Check if collection already exists
+        if (fs.existsSync(collectionPath)) {
+            Logger.error(`Collection "${name}" already exists at path: ${collectionPath}`);
+            throw new Error(`Collection "${name}" already exists`);
+        }
+
+        // Create the collection folder
+        fs.mkdirSync(collectionPath, { recursive: true });
+        Logger.info(`Created collection: ${name} at path: ${collectionPath}`);
+    }
+
+    /**
      * Delete a collection folder by name
      */
     async deleteCollection(name: string): Promise<void> {
-        // TODO Review 改为如果触发异常失败
         const collectionPath = path.join(getAccountsDir(), name);
 
         if (!fs.existsSync(collectionPath)) {
@@ -40,5 +60,38 @@ export class CollectionService implements ICollectionService {
 
         fs.rmSync(collectionPath, { recursive: true, force: true });
         Logger.info(`Deleted collection: ${name}`);
+    }
+    
+    /**
+     * Get current active collection name
+     */
+    async getCurrentCollection(): Promise<string> {
+        const config = getAppConfig();
+        return config.selectedAccount;
+    }
+
+    /**
+     * Switch to a different collection by name.
+     * Updates config, reinitializes database, and saves configuration.
+     */
+    async switchCollection(collectionName: string): Promise<void> {
+        const collectionPath = path.join(getAccountsDir(), collectionName);
+
+        // Check if collection exists
+        if (!fs.existsSync(collectionPath)) {
+            Logger.error(`Collection "${collectionName}" not found at path: ${collectionPath}`);
+            throw new Error(`Collection "${collectionName}" not found`);
+        }
+
+        // Update config
+        const config = getAppConfig();
+        config.selectedAccount = collectionName;
+
+        // Save config to file and memory
+        saveAppConfig(config);
+
+        // Reinitialize database with new collection
+        reInitDatabase(config);
+        Logger.info(`Switched to collection: ${collectionName}`);
     }
 }
