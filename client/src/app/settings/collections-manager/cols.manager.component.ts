@@ -6,7 +6,7 @@ import { ListComponent } from "./sub/list.component";
 import { SwitchComponent } from "./sub/switch.component";
 
 @Component({
-    selector: "app-settings-collection",
+    selector: "app-collections-manager",
     imports: [
         TranslateModule,
         CreateComponent,
@@ -14,10 +14,10 @@ import { SwitchComponent } from "./sub/switch.component";
         ListComponent,
         SwitchComponent,
     ],
-    templateUrl: "./collection.component.html",
-    styleUrl: "./collection.component.scss",
+    templateUrl: "./cols.manager.component.html",
+    styleUrl: "./cols.manager.component.scss",
 })
-export class SettingsCollectionComponent implements OnInit {
+export class CollectionsManagerComponent implements OnInit {
     curAppColName = signal<string>("");
     listCollections = signal<string[]>([]);
     deletableCols = signal<string[]>([]);

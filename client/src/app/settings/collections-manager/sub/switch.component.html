@@ -1,18 +1,18 @@
 <mat-card appearance="outlined">
   <mat-card-header>
-    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.SWITCH.TITLE" | translate }}</mat-card-title>
+    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.SWITCH.TITLE" | translate }}</mat-card-title>
     <mat-card-subtitle>
-      {{ "PAGES.SETTINGS.COLLECTION.SWITCH.DESCRIPTION" | translate: { current: currentCollectionName() } }}
+      {{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.SWITCH.DESCRIPTION" | translate: { current: currentCollectionName() } }}
     </mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
-      <mat-label>{{ "PAGES.SETTINGS.COLLECTION.FIELDS.SWITCH_COLLECTION" | translate }}</mat-label>
+      <mat-label>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.FIELDS.SWITCH_COLLECTION" | translate }}</mat-label>
       <mat-select [value]="selectedSwitchColName()" (valueChange)="selectedSwitchColName.set($event)">
         @if (switchableCols().length === 0) {
-        <mat-option disabled>{{ "PAGES.SETTINGS.COLLECTION.SWITCH.NO_SWITCHABLE_COLLECTIONS" | translate }}</mat-option>
+        <mat-option disabled>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.SWITCH.NO_SWITCHABLE_COLLECTIONS" | translate }}</mat-option>
         } @else {
           @for (collectionName of switchableCols(); track collectionName) {
           <mat-option [value]="collectionName">{{ collectionName }}</mat-option>
@@ -24,7 +24,7 @@
 
   <mat-card-actions>
     <button [disabled]="switchableCols().length === 0" mat-flat-button color="primary" (click)="switchCollection()">
-      {{ "PAGES.SETTINGS.COLLECTION.ACTIONS.SWITCH" | translate }}
+      {{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.ACTIONS.SWITCH" | translate }}
     </button>
   </mat-card-actions>
 </mat-card>

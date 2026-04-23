@@ -11,7 +11,7 @@ import { TranslateModule } from "@ngx-translate/core";
         MatListModule,
     ],
     templateUrl: "./list.component.html",
-    styleUrl: "../collection.component.scss",
+    styleUrl: "../cols.manager.component.scss",
 })
 export class ListComponent {
     collections = input<string[]>([]);

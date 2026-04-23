@@ -1,15 +1,15 @@
 <mat-card appearance="outlined">
   <mat-card-header>
-    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.DELETE.TITLE" | translate }}</mat-card-title>
-    <mat-card-subtitle>{{ "PAGES.SETTINGS.COLLECTION.DELETE.DESCRIPTION" | translate }}</mat-card-subtitle>
+    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.TITLE" | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.DESCRIPTION" | translate }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
     <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
-      <mat-label>{{ "PAGES.SETTINGS.COLLECTION.FIELDS.DELETE_COLLECTION" | translate }}</mat-label>
+      <mat-label>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.FIELDS.DELETE_COLLECTION" | translate }}</mat-label>
       <mat-select [value]="selectedDelColName()" (valueChange)="selectedDelColName.set($event)">
         @if (deletableCols().length === 0) {
-        <mat-option disabled>{{ "PAGES.SETTINGS.COLLECTION.DELETE.NO_DELETABLE_COLLECTIONS" | translate }}</mat-option>
+        <mat-option disabled>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.NO_DELETABLE_COLLECTIONS" | translate }}</mat-option>
         } @else {
           @for (collectionName of deletableCols(); track collectionName) {
           <mat-option [value]="collectionName">{{ collectionName }}</mat-option>
@@ -21,7 +21,7 @@
 
   <mat-card-actions>
     <button [disabled]="deletableCols().length === 0" mat-flat-button color="primary" (click)="delCollection()">
-      {{ "PAGES.SETTINGS.COLLECTION.ACTIONS.DELETE" | translate }}
+      {{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.ACTIONS.DELETE" | translate }}
     </button>
   </mat-card-actions>
 </mat-card>

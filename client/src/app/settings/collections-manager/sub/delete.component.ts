@@ -22,7 +22,7 @@ import Logger from "electron-log";
         MatSnackBarModule,
     ],
     templateUrl: "./delete.component.html",
-    styleUrl: "../collection.component.scss",
+    styleUrl: "../cols.manager.component.scss",
 })
 export class DeleteComponent {
     private dialog = inject(MatDialog);
@@ -38,9 +38,9 @@ export class DeleteComponent {
         const name = this.selectedDelColName();
         if (!name) return;
 
-        const title = this.translate.instant("PAGES.SETTINGS.COLLECTION.DELETE.CONFIRM_DELETE.TITLE");
-        const message = this.translate.instant("PAGES.SETTINGS.COLLECTION.DELETE.CONFIRM_DELETE.MESSAGE", { name });
-        const confirmText = this.translate.instant("PAGES.SETTINGS.COLLECTION.DELETE.CONFIRM_DELETE.CONFIRM");
+        const title = this.translate.instant("PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.CONFIRM_DELETE.TITLE");
+        const message = this.translate.instant("PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.CONFIRM_DELETE.MESSAGE", { name });
+        const confirmText = this.translate.instant("PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.CONFIRM_DELETE.CONFIRM");
 
         // Open confirmation dialog
         const confirmed = await firstValueFrom(
@@ -65,7 +65,7 @@ export class DeleteComponent {
         } catch (error) {
             Logger.error("Failed to delete collection:", error);
             const deleteFailedMsg = this.translate.instant(
-                "PAGES.SETTINGS.COLLECTION.ERRORS.DELETE_FAILED"
+                "PAGES.SETTINGS.COLLECTIONS_MANAGER.ERRORS.DELETE_FAILED"
             );
             const errorReason = error instanceof Error ? error.message : "";
             const fullMsg = errorReason

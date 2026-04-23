@@ -39,7 +39,7 @@
       }
     },
     "SETTINGS": {
-      "COLLECTION": {
+      "COLLECTIONS_MANAGER": {
         "NAV_TITLE": "Collections",
         "TITLE": "Collection Settings",
         "DESCRIPTION": "Create your collection and choose which database account it uses.",
