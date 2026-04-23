@@ -9,13 +9,13 @@ import { uuidToBuffer } from "../../import/utils";
 import { DictionaryService } from "./dic-service";
 
 // Mock the lemmatize function
-vi.mock("@main/lemmatization", () => {
+vi.mock(import("@main/lemmatization"), () => {
     return {
         lemmatize: vi.fn((word: string) => word), // Mock implementation: return the input word as-is
     };
 });
 
-vi.mock("@db/db", async () => {
+vi.mock(import("@db/db"), async () => {
     const actual = await vi.importActual<typeof import("@db/db")>("@db/db");
     return {
         ...actual,
