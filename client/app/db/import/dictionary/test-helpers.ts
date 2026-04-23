@@ -8,7 +8,7 @@ import { dictionarySchema } from "@main/db/db";
 export function createSchema(sqlite: Database.Database, db: BetterSQLite3Database<typeof dictionarySchema>): void {
     sqlite.pragma("foreign_keys = ON");
     migrate(db, {
-        migrationsFolder: path.resolve(__dirname, "../../migrations"),
+        migrationsFolder: path.resolve(__dirname, "../../migrations/dictionary"),
     });
 }
 
