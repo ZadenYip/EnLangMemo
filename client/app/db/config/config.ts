@@ -1,7 +1,7 @@
 import { dialog } from "electron";
 import * as path from "path";
 import * as fs from "fs";
-import Logger from "electron-log";
+import Logger from "electron-log/main";
 import { exit } from "process";
 import { isDev } from "@main/main";
 import { getUserDataDir } from "@main/paths";

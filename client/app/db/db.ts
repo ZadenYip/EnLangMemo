@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import * as path from "path";
 import * as fs from "fs";
-import Logger from "electron-log";
+import Logger from "electron-log/main";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import * as dic_schema from "./schema/dictionary/dic";
 import * as rep_schema from "./schema/repetition/rep";
@@ -47,10 +47,10 @@ export function initDatabase(appConfig: AppConfig): void {
 }
 
 export function reInitDatabase(appConfig: AppConfig): void {
-    if (sqlDic !== null) {
+    if (sqlDic) {
         sqlDic.close();
     }
-    if (sqlRep !== null) {
+    if (sqlRep) {
         sqlRep.close();
     }
     Logger.info("Reinitializing database with new config");
