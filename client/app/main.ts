@@ -3,12 +3,13 @@ import * as path from "path";
 import * as fs from "fs";
 import { registerAllIPCHandlers } from "./ipc";
 import { loggerSetUp } from "./logs/log";
-import { loadUserDataConfig as loadAppConfig } from "./db/config/config";
+import { loadAppConfig } from "./db/config/config";
 import { initDatabase } from "./db/db";
 import { getUserDataDir } from "./paths";
 
-// global reference to main window
-export const isDev = !app.isPackaged;
+export function isDev(): boolean {
+    return !app.isPackaged;
+}
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),

@@ -10,8 +10,9 @@ import { getAppConfig, saveAppConfig } from "@main/db/config/config";
 import { reInitDatabase } from "@main/db/db";
 
 
+// mock @main/main avoid error caused by importing electron modules in test environment
 vi.mock(import("@main/main"), async () => ({
-    isDev: true,
+    isDev: () => true
 }));
 
 vi.mock(import("@main/paths"), async (_importOriginal) => {

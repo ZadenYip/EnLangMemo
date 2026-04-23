@@ -16,7 +16,7 @@ export interface AppConfig {
  * Load user configuration from config.json in user data directory.
  * If config.json doesn't exist, generate default config and save it.
  */
-export function loadUserDataConfig(): AppConfig {
+export function loadAppConfig(): AppConfig {
     const userDataDir = getUserDataDir();
     const configPath = path.join(userDataDir, "config.json");
     
@@ -54,7 +54,7 @@ export function loadUserDataConfig(): AppConfig {
 function generateDefaultConfig(): AppConfig {
     try {
         // TODO 打包路径可能有问题，倒时候要处理
-        const resourcesPath = isDev ? path.join(__dirname, "resources") : process.resourcesPath;
+        const resourcesPath = isDev() ? path.join(__dirname, "resources") : process.resourcesPath;
         const defaultConfigPath = path.join(resourcesPath, "config.default.json");
 
         if (fs.existsSync(defaultConfigPath)) {
