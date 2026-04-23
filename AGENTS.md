@@ -47,6 +47,7 @@
 - 不要绕过 preload 直接在 Angular 代码中调用 Electron API。
 
 ## 6. 开发约定
+- 注意添加必要的核心注释
 - Angular 功能开发优先放在 `src/app/<feature>/`，保持 `*.ts/html/scss/spec.ts` 配套。
 - 文案走 i18n 文件（`src/assets/i18n/*.json`），避免硬编码。
 - 复杂字幕处理逻辑优先落在 `app/subtitle-handler/`，保持纯函数与可测试性。

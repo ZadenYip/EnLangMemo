@@ -27,8 +27,8 @@
   "scripts": {
     "ng": "ng",
     "start": "pnpm --parallel run electron:serve ng:serve",
-    "db:generate": "drizzle-kit generate --config app/db/drizzle-dev.config.ts",
-    "db:migrate": "drizzle-kit migrate --config app/db/drizzle-dev.config.ts",
+    "db:generate": "drizzle-kit generate --config app/db/drizzle-dev-dic.config.ts && drizzle-kit generate --config app/db/drizzle-dev-rep.config.ts",
+    "db:migrate": "drizzle-kit migrate --config app/db/drizzle-dev-dic.config.ts && drizzle-kit migrate --config app/db/drizzle-dev-rep.config.ts",
     "ng:serve": "ng serve -c dev -o --open=false",
     "build": "pnpm electron:rebuild && pnpm electron:serve-build && ng build --base-href ./",
     "web:dev": "pnpm build",
@@ -104,6 +104,7 @@
     "tsx": "4.21.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.50.1",
+    "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.0.15",
     "wait-on": "9.0.3",
     "webdriver-manager": "13.0.2"

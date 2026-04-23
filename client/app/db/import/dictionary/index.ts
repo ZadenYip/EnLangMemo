@@ -6,8 +6,8 @@ import {
     examplesTable,
     wordPosesTable,
     wordsTable,
-} from "../../schema/dictionary";
-import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from "../../schema/dictionary-types";
+} from "../../schema/dictionary/dic";
+import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from "../../schema/dictionary/dic-types";
 import { sql } from "drizzle-orm";
 import Database from "better-sqlite3";
 import Logger from "electron-log/main";

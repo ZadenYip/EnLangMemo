@@ -4,17 +4,21 @@ import path from "node:path";
 import Database from "better-sqlite3";
 import { asc } from "drizzle-orm";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
-import { dictionarySchema, getDicDb } from "../../db";
-import { wordsTable } from "../../schema/dictionary";
+
+import { wordsTable } from "../../schema/dictionary/dic";
 import { impWords } from ".";
 import { createSchema, writeJsonLinesFile, writeRawLinesFile } from "./test-helpers";
 import { hexToBuffer, uuidToBuffer } from "../utils";
 import { ImportResult } from "./dic-import-type";
+import { dictionarySchema, getDicDb } from "@main/db/db";
 
-vi.mock("../../db", () => ({
-    dictionarySchema: vi.importActual("../../db"),
-    getDicDb: vi.fn(),
-}));
+vi.mock(import("@main/db/db"), async (importOriginal) => {
+    const mod = await importOriginal();
+    return {
+        dictionarySchema: mod.dictionarySchema,
+        getDicDb: vi.fn(),
+    };
+});
 
 function toExpectedWordRecord(row: any): {
     wordId: Buffer;

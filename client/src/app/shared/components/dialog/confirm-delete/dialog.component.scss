@@ -1,0 +1,12 @@
+@use "src/styles.scss" as global;
+
+:host {
+  h2 {
+    height: auto;
+    margin: 0;
+  }
+
+  p {
+    @include global.h2-p;
+  }
+}

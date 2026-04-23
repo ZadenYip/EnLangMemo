@@ -1,0 +1,24 @@
+﻿<!-- collection management container with flex column layout -->
+<div class="collection-management">
+  <!-- create collection group -->
+  <app-collection-create
+    [existingCollections]="listCollections()"
+    (collectionCreated)="onCollectionCreated()"
+  ></app-collection-create>
+
+  <!-- switch collection group -->
+  <app-collection-switch
+    [switchableCols]="switchableCols()"
+    [currentCollectionName]="curAppColName()"
+    (collectionSwitched)="onCollectionSwitched($event)"
+  ></app-collection-switch>
+
+  <!-- delete collection group -->
+  <app-collection-delete
+    [deletableCols]="deletableCols()"
+    (collectionDeleted)="onCollectionDeleted()"
+  ></app-collection-delete>
+</div>
+
+<!-- show created collections -->
+<app-collection-list [collections]="listCollections()"></app-collection-list>

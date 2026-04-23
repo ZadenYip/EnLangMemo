@@ -1,23 +1,28 @@
-import { getDicDb } from "../db";
+import { getDicDb } from "../../db";
 import { IDatabaseService as IDictionaryService } from "./dic-service-interface";
 import type { Definition, DictionaryEntry, Sense } from "./dic-service-types";
-import { wordsTable } from "../schema/dictionary";
+import { wordsTable } from "../../schema/dictionary/dic";
 import { eq } from "drizzle-orm";
 import { lemmatize } from "@main/lemmatization";
-import { impDefinitions, impExamples, impWordPoses, impWords } from "../import/dictionary";
-import { ImportResult } from "../import/dictionary/dic-import-type";
+import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
+import { ImportResult } from "../../import/dictionary/dic-import-type";
 
 export class DictionaryService implements IDictionaryService {
     /**
-     * without lemmatization, 
-     * e.g. "running" would not be found if only "run" is in the dictionary; 
+     * Query a complete dictionary entry by word spelling using cascading relations
+     * Execution flow: words -> word_poses -> definitions -> examples
+     * 
+     * without lemmatization, e.g. "running" would not be found if only "run" is in the dictionary;
      * with lemmatization, it would try to find "run" if "running" is not found.
+     * 
      * @param spelling the word spelling to query, e.g. "running"
+     * @returns complete word data structure (with pos, definitions, examples), null if not found
      */
     private async getEntry(spelling: string) {
         if (!spelling) {
             return null;
         }
+        
         
         const row = await getDicDb().query.wordsTable.findFirst({
             where: eq(wordsTable.spelling, spelling),
@@ -29,28 +34,13 @@ export class DictionaryService implements IDictionaryService {
             },
             with: {
                 poses: {
-                    columns: {
-                        poseId: false,
-                        wordId: false,
-                        createdAt: false,
-                        updatedAt: false,
-                    },
+                    columns: { poseId: false, wordId: false, createdAt: false, updatedAt: false },
                     with: {
                         definitions: {
-                            columns: {
-                                defId: false,
-                                wordPosId: false,
-                                createdAt: false,
-                                updatedAt: false,
-                            },
+                            columns: { defId: false, wordPosId: false, createdAt: false, updatedAt: false },
                             with: {
                                 examples: {
-                                    columns: {
-                                        expId: false,
-                                        defId: false,
-                                        createdAt: false,
-                                        updatedAt: false,
-                                    },
+                                    columns: { expId: false, defId: false, createdAt: false, updatedAt: false },
                                 },
                             },
                         },
