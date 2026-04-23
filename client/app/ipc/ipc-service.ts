@@ -5,7 +5,7 @@ import { Observable } from "rxjs";
 import { DicServiceIPCDescriptor, IDatabaseService } from "../db/services/dictionary/dic-service-interface";
 import { DialogServiceIPCDescriptor, IDialogService } from "../dialog/dialog-service.interface";
 import { ISubtitleService, SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service.interface";
-import { CollectionServiceIPCDescriptor, ICollectionService } from "../db/services/repetition/collection/collection-service-interface";
+import { CollectionServiceIPCDescriptor, ICollectionService } from "../db/services/repetition/collection/col-service-interface";
 
 export const dicService = createProxy<AsyncifyProxy<IDatabaseService>>(DicServiceIPCDescriptor);
 export const dialogService = createProxy<AsyncifyProxy<IDialogService>>(DialogServiceIPCDescriptor);

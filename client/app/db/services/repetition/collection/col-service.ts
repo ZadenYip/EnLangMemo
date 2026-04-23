@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import Logger from "electron-log";
 import { getAccountsDir } from "@main/paths";
-import { ICollectionService } from "./collection-service-interface";
+import { ICollectionService } from "./col-service-interface";
 import { getAppConfig, saveAppConfig } from "@main/db/config/config";
 import { reInitDatabase } from "@main/db/db";
 
