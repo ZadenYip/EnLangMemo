@@ -1,5 +1,4 @@
 ﻿<!-- collection management container with flex column layout -->
-<div class="collection-management">
   <!-- create collection group -->
   <app-collection-create
     [existingCollections]="listCollections()"
@@ -18,7 +17,6 @@
     [deletableCols]="deletableCols()"
     (collectionDeleted)="onCollectionDeleted()"
   ></app-collection-delete>
-</div>
 
 <!-- show created collections -->
 <app-collection-list [collections]="listCollections()"></app-collection-list>

@@ -22,7 +22,7 @@ import Logger from "electron-log";
         MatSnackBarModule,
     ],
     templateUrl: "./delete.component.html",
-    styleUrl: "../cols.manager.component.scss",
+    styleUrl: "../../mat-card.scss",
 })
 export class DeleteComponent {
     private dialog = inject(MatDialog);

@@ -18,7 +18,7 @@ import Logger from "electron-log";
         MatSnackBarModule,
     ],
     templateUrl: "./create.component.html",
-    styleUrl: "../cols.manager.component.scss",
+    styleUrl: "../../mat-card.scss",
 })
 export class CreateComponent {
     private translate = inject(TranslateService);

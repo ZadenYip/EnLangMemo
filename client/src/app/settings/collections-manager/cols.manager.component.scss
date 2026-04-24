@@ -1,6 +1,4 @@
-﻿// This style is used for collection component itself and its subcomponents.
-
-:host {
+﻿:host {
     display: grid;
     width: 100%;
     height: 100%;
@@ -8,45 +6,4 @@
     align-content: start;
     gap: 16px;
     padding: 16px;
-}
-
-mat-card {
-    border-radius: 16px;
-}
-
-mat-card-title {
-    margin-bottom: 0.5rem;
-}
-
-mat-card-header {
-    padding: 1rem;
-}
-
-mat-card-subtitle {
-    margin: 0;
-}
-
-.collection-management {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.section-group {
-    width: 100%;
-}
-
-mat-form-field {
-    width: 100%;
-}
-
-.empty {
-    margin: 0;
-    color: var(--mat-sys-on-surface-variant);
-}
-
-@media (max-width: 720px) {
-    .collection-page {
-        padding: 12px;
-    }
 }
