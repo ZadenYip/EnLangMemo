@@ -87,7 +87,13 @@
         }
       },
       "COLLECTION_CONFIG": {
-        "NAV_TITLE": "Current Collection Config"
+        "NAV_TITLE": "Current Collection Config",
+        "TITLE": "Review Reset Time",
+        "DESCRIPTION": "Set the daily reset hour used by scheduler. Time zone is detected from your current system.",
+        "FIELDS": {
+          "DAILY_RESET_TIME": "Daily Reset Hour",
+          "DAILY_RESET_TIME_HINT": "0-23, for example 1 means reset at 01:00"
+        }
       }
     }
   },

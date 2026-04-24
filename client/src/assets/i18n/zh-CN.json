@@ -88,7 +88,13 @@
         }
       },
       "COLLECTION_CONFIG": {
-        "NAV_TITLE": "当前集合配置"
+        "NAV_TITLE": "当前集合配置",
+        "TITLE": "复习重置时间",
+        "DESCRIPTION": "设置调度器每天重置的小时数。时区将使用当前系统时区。",
+        "FIELDS": {
+          "DAILY_RESET_TIME": "每日重置小时",
+          "DAILY_RESET_TIME_HINT": "范围 0-23，例如 1 表示 01:00 重置"
+        }
       }
     }
   },
