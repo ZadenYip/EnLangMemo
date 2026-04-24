@@ -85,6 +85,9 @@
           "DELETE_FAILED": "Failed to delete collection.",
           "SWITCH_FAILED": "Failed to switch collection."
         }
+      },
+      "COLLECTION_CONFIG": {
+        "NAV_TITLE": "Current Collection Config"
       }
     }
   },

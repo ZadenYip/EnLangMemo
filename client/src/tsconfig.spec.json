@@ -14,7 +14,9 @@
     "**/*.ts",
     "**/*.spec.ts",
     "**/*.d.ts",
-    "../app/ipc/ipc-api.d.ts"
+    "../app/ipc/ipc-api.d.ts",
+    "../app/db/services/*.d.ts",
+    "../app/subtitle-handler/*.d.ts"
   ],
   "exclude": [
     "dist",
