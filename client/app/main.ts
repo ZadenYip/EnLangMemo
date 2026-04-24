@@ -22,6 +22,7 @@ function createWindow(): BrowserWindow {
     win = new BrowserWindow({
         x: 0,
         y: 0,
+        title: "EnLangMemo",
         width: size.width,
         height: size.height,
         webPreferences: {
@@ -31,6 +32,10 @@ function createWindow(): BrowserWindow {
             webSecurity: !serve,
             preload: path.join(__dirname, "preload.js"),
         },
+    });
+    win.on("page-title-updated", (event) => {
+        // prevent title from being changed by renderer process
+        event.preventDefault();
     });
 
     if (serve) {
