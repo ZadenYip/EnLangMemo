@@ -30,7 +30,7 @@ export class CollectionService implements ICollectionService {
 
     /**
      * Create a new collection folder
-     * just folder without any files
+     * **just folder without any files**
      * files should create when user switch to this collection
      */
     async createCollection(name: string): Promise<void> {
