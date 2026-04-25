@@ -38,7 +38,7 @@ export class SwitchComponent {
         if (!name) return;
 
         try {
-            await window.service.collectionService.switchCollection(name);
+            await window.service.collection.switchCollection(name);
         } catch (error) {
             Logger.error("Failed to switch collection:", error);
             const switchFailedMsg = this.translate.instant(

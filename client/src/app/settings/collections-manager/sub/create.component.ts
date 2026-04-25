@@ -80,7 +80,7 @@ export class CreateComponent {
         }
 
         try {
-            await window.service.collectionService.createCollection(this.createColName);
+            await window.service.collection.createCollection(this.createColName);
             this.createColName = "";
             this.collectionCreated.emit();
         } catch (error) {

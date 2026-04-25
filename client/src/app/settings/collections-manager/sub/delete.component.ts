@@ -59,7 +59,7 @@ export class DeleteComponent {
         }
 
         try {
-            await window.service.collectionService.deleteCollection(name);
+            await window.service.collection.deleteCollection(name);
             this.selectedDelColName.set("");
             this.collectionDeleted.emit();
         } catch (error) {
