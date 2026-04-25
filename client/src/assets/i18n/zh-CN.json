@@ -94,6 +94,15 @@
         "FIELDS": {
           "DAILY_RESET_TIME": "每日重置小时",
           "DAILY_RESET_TIME_HINT": "范围 0-23，例如 1 表示 01:00 重置"
+        },
+        "ACTIONS": {
+          "SAVE": "保存配置"
+        },
+        "SUCCESS": {
+          "SAVE": "集合配置已保存。"
+        },
+        "ERRORS": {
+          "SAVE_FAILED": "保存集合配置失败。"
         }
       }
     }

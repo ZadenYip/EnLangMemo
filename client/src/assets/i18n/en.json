@@ -93,6 +93,15 @@
         "FIELDS": {
           "DAILY_RESET_TIME": "Daily Reset Hour",
           "DAILY_RESET_TIME_HINT": "0-23, for example 1 means reset at 01:00"
+        },
+        "ACTIONS": {
+          "SAVE": "Save Config"
+        },
+        "SUCCESS": {
+          "SAVE": "Collection config saved."
+        },
+        "ERRORS": {
+          "SAVE_FAILED": "Failed to save collection config."
         }
       }
     }
