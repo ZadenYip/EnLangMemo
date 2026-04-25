@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { CollectionConfigComponent } from "./col-config.component";
+import { TranslateModule } from "@ngx-translate/core";
 
 describe("CollectionConfigComponent", () => {
     let component: CollectionConfigComponent;
@@ -8,7 +9,10 @@ describe("CollectionConfigComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [CollectionConfigComponent],
+            imports: [
+                CollectionConfigComponent,
+                TranslateModule.forRoot()
+            ],
         }).compileComponents();
 
         fixture = TestBed.createComponent(CollectionConfigComponent);
