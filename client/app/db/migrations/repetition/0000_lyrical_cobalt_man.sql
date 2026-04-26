@@ -34,7 +34,10 @@ CREATE TABLE `collection` (
 CREATE TABLE `decks` (
 	`id` blob PRIMARY KEY NOT NULL,
 	`usn` integer NOT NULL,
+	`name` text NOT NULL,
 	`updated_at` integer NOT NULL,
+	`new_today` integer DEFAULT 0 NOT NULL,
+	`review_today` integer DEFAULT 0 NOT NULL,
 	`config` jsonb NOT NULL
 );
 --> statement-breakpoint
@@ -85,8 +88,7 @@ CREATE TABLE `review_log` (
 	`stability` real NOT NULL,
 	`learning_steps` integer NOT NULL,
 	`state` integer NOT NULL,
-	`duration` integer NOT NULL,
-	FOREIGN KEY (`card_id`) REFERENCES `cards`(`id`) ON UPDATE no action ON DELETE cascade
+	`duration` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE INDEX `ix_review_log_usn` ON `review_log` (`usn`);--> statement-breakpoint
