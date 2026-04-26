@@ -8,6 +8,7 @@ import * as rep_schema from "./schema/repetition/rep";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { AppConfig } from "./config/config";
 import { getAccountDir } from "@main/paths";
+import { CollectionConfig } from "./services/repetition/collection/col-service-types";
 
 export const dictionarySchema = dic_schema;
 export const repetitionSchema = rep_schema;
@@ -44,6 +45,44 @@ export function initDatabase(appConfig: AppConfig): void {
     sqlRep.pragma("journal_mode = WAL");
     repDb = drizzle(sqlRep, { schema: rep_schema });
     migrate(repDb, { migrationsFolder: path.join(__dirname, "db", "migrations", "repetition") });
+    collectionInit();
+}
+
+function collectionInit(): void {
+    // if exist collection record, do nothing
+    const existing = repDb.select().from(rep_schema.collectionTable).all();
+    if (existing.length > 0) {
+        Logger.info("Collection record already exists, skipping initialization.");
+        return;
+    }
+
+    Logger.info("No collection record found, initializing collection table with default config.");
+    const version = 1;
+    const zeroTime = (new Date(0)).getTime();
+    const usn = -1;
+    const date = new Date();
+    const nowTime = date.getTime();
+
+    // IANA time zone string, e.g. "Asia/Shanghai"
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const collectionConfig = {
+        timeZone,
+        dailyResetTime: 4,
+        lastRolloverAt: zeroTime,
+    } as CollectionConfig;
+
+    repDb.insert(rep_schema.collectionTable).values(
+        {
+            sqliteSchemaVersion: version,
+            lastSyncTime: zeroTime,
+            lastSyncUsn: usn,
+            usn: usn,
+            createdAt: nowTime,
+            updatedAt: nowTime,
+            collectionSchemaUpdatedAt: nowTime,
+            config: collectionConfig
+        }
+    ).run();
 }
 
 export function reInitDatabase(appConfig: AppConfig): void {

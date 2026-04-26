@@ -6,7 +6,7 @@ import { ListComponent } from "./sub/list.component";
 import { SwitchComponent } from "./sub/switch.component";
 
 @Component({
-    selector: "app-settings-collection",
+    selector: "app-collections-manager",
     imports: [
         TranslateModule,
         CreateComponent,
@@ -14,10 +14,10 @@ import { SwitchComponent } from "./sub/switch.component";
         ListComponent,
         SwitchComponent,
     ],
-    templateUrl: "./collection.component.html",
-    styleUrl: "./collection.component.scss",
+    templateUrl: "./cols.manager.component.html",
+    styleUrl: "./cols.manager.component.scss",
 })
-export class SettingsCollectionComponent implements OnInit {
+export class CollectionsManagerComponent implements OnInit {
     curAppColName = signal<string>("");
     listCollections = signal<string[]>([]);
     deletableCols = signal<string[]>([]);
@@ -26,13 +26,13 @@ export class SettingsCollectionComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         // Get current collection first, then load all collections
         this.curAppColName.set(
-            await window.service.collectionService.getCurrentCollection()
+            await window.service.collection.getCurrentCollection()
         );
         await this.loadCollections();
     }
 
     private async loadCollections(): Promise<void> {
-        const collections = await window.service.collectionService.listCollections();
+        const collections = await window.service.collection.listCollections();
         this.listCollections.set(collections);
 
         // Filter out the currently active collection

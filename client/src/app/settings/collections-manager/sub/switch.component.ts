@@ -18,7 +18,7 @@ import Logger from "electron-log";
         MatSnackBarModule,
     ],
     templateUrl: "./switch.component.html",
-    styleUrl: "../collection.component.scss",
+    styleUrl: "../../mat-card.scss",
 })
 export class SwitchComponent {
     private translate = inject(TranslateService);
@@ -38,11 +38,11 @@ export class SwitchComponent {
         if (!name) return;
 
         try {
-            await window.service.collectionService.switchCollection(name);
+            await window.service.collection.switchCollection(name);
         } catch (error) {
             Logger.error("Failed to switch collection:", error);
             const switchFailedMsg = this.translate.instant(
-                "PAGES.SETTINGS.COLLECTION.ERRORS.SWITCH_FAILED",
+                "PAGES.SETTINGS.COLLECTIONS_MANAGER.ERRORS.SWITCH_FAILED",
             );
             const errorReason = error instanceof Error ? error.message : "";
             const fullMsg = errorReason
@@ -62,7 +62,7 @@ export class SwitchComponent {
         
         // Show success message to user
         const successMsg = this.translate.instant(
-            "PAGES.SETTINGS.COLLECTION.SWITCH.SUCCESS",
+            "PAGES.SETTINGS.COLLECTIONS_MANAGER.SWITCH.SUCCESS",
             { name },
         );
         this.snackBar.open(successMsg, undefined, {

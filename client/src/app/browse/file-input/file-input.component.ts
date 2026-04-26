@@ -36,7 +36,7 @@ export class FileInputComponent implements ControlValueAccessor {
             return;
         }
 
-        const selectedPath = await window.service.dialogService.showOpenDialog(
+        const selectedPath = await window.service.dialog.showOpenDialog(
             "openFile",
             [this.extension()],
         );

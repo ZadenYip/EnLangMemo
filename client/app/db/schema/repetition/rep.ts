@@ -15,8 +15,9 @@ import { relations } from "drizzle-orm";
 
 /**
  * Drizzle ORM does not have native JSONB support for SQLite
+ * TData must be a json-serializable type, e.g. object
  */
-const jsonb = <TData>(str: string) =>
+const jsonb = <TData extends object>(str: string) =>
     customType<{ data: TData; driverData: string }>({
         // sqlite type
         dataType() {

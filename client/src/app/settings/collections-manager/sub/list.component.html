@@ -1,11 +1,11 @@
 <mat-card appearance="outlined">
   <mat-card-header>
-    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.CREATED.TITLE" | translate }}</mat-card-title>
+    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.CREATED.TITLE" | translate }}</mat-card-title>
   </mat-card-header>
 
   <mat-card-content>
     @if (collections().length === 0) {
-      <p class="empty">{{ "PAGES.SETTINGS.COLLECTION.CREATED.EMPTY" | translate }}</p>
+      <p class="empty">{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.CREATED.EMPTY" | translate }}</p>
     } @else {
       <mat-list>
         @for (collectionName of collections(); track collectionName) {

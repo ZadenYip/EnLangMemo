@@ -84,7 +84,7 @@ import { toSignal } from "@angular/core/rxjs-interop";
         this.subtitleManager = new SubtitleManager();
         
         return new Promise<void>((resolve, reject) => {
-            window.observables.subtitleService.fetchSubtitles$(filePath).subscribe({
+            window.observables.subtitle.fetchSubtitles$(filePath).subscribe({
                 next: (cue) => {
                     console.debug("Received subtitle cue:", cue);
                     this.subtitleManager.add(cue);

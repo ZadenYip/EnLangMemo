@@ -279,7 +279,7 @@ export class DictionaryComponent implements AfterViewInit {
             debounceTime(50),
             distinctUntilChanged(),
             switchMap((word) =>
-                from(window.service.dicService.queryWord(word)),
+                from(window.service.dic.queryWord(word)),
             ),
             map((result) => {
                 if (!result) {

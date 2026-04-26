@@ -18,7 +18,7 @@ import Logger from "electron-log";
         MatSnackBarModule,
     ],
     templateUrl: "./create.component.html",
-    styleUrl: "../collection.component.scss",
+    styleUrl: "../../mat-card.scss",
 })
 export class CreateComponent {
     private translate = inject(TranslateService);
@@ -39,7 +39,7 @@ export class CreateComponent {
             input.value = validName;
             // show warning message to user
             const warningMsg = this.translate.instant(
-                "PAGES.SETTINGS.COLLECTION.ERRORS.INVALID_COLLECTION_NAME"
+                "PAGES.SETTINGS.COLLECTIONS_MANAGER.ERRORS.INVALID_COLLECTION_NAME"
             );
             this.snackBar.open(warningMsg, undefined, {
                 duration: 1000,
@@ -54,7 +54,7 @@ export class CreateComponent {
         // Validate: name cannot be empty
         if (!this.createColName.trim()) {
             const errorMsg = this.translate.instant(
-                "PAGES.SETTINGS.COLLECTION.ERRORS.EMPTY_NAME"
+                "PAGES.SETTINGS.COLLECTIONS_MANAGER.ERRORS.EMPTY_NAME"
             );
             this.snackBar.open(errorMsg, undefined, {
                 duration: 2000,
@@ -68,7 +68,7 @@ export class CreateComponent {
         // Validate: name cannot be duplicated with existing collections
         if (this.existingCollections().includes(this.createColName)) {
             const errorMsg = this.translate.instant(
-                "PAGES.SETTINGS.COLLECTION.ERRORS.DUPLICATE_NAME"
+                "PAGES.SETTINGS.COLLECTIONS_MANAGER.ERRORS.DUPLICATE_NAME"
             );
             this.snackBar.open(errorMsg, undefined, {
                 duration: 2000,
@@ -80,13 +80,13 @@ export class CreateComponent {
         }
 
         try {
-            await window.service.collectionService.createCollection(this.createColName);
+            await window.service.collection.createCollection(this.createColName);
             this.createColName = "";
             this.collectionCreated.emit();
         } catch (error) {
             Logger.error("Failed to create collection:", error);
             const createFailedMsg = this.translate.instant(
-                "PAGES.SETTINGS.COLLECTION.ERRORS.CREATE_FAILED"
+                "PAGES.SETTINGS.COLLECTIONS_MANAGER.ERRORS.CREATE_FAILED"
             );
             const errorReason = error instanceof Error ? error.message : "";
             const fullMsg = errorReason

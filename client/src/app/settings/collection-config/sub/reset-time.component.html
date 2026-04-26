@@ -1,0 +1,30 @@
+﻿<mat-card appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION_CONFIG.TITLE" | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ "PAGES.SETTINGS.COLLECTION_CONFIG.DESCRIPTION" | translate }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="form-grid">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
+        <mat-label>{{ "PAGES.SETTINGS.COLLECTION_CONFIG.FIELDS.DAILY_RESET_TIME" | translate }}</mat-label>
+        <input
+          matInput
+          type="number"
+          min="0"
+          max="23"
+          [(ngModel)]="dailyResetTime"
+          (input)="onDailyResetTimeInput($event)"
+        />
+        <mat-hint>{{ "PAGES.SETTINGS.COLLECTION_CONFIG.FIELDS.DAILY_RESET_TIME_HINT" | translate }}</mat-hint>
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-flat-button (click)="onSaveConfig()">
+      {{ "PAGES.SETTINGS.COLLECTION_CONFIG.ACTIONS.SAVE" | translate }}
+    </button>
+  </mat-card-actions>
+</mat-card>
+

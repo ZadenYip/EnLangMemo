@@ -66,22 +66,22 @@ export class DicImportComponent {
         this.isImporting.set(true);
 
         const { words, poses, defs, exps } = this.form.value;
-        this.wordsImportResult = await window.service.dicService.importWords(
+        this.wordsImportResult = await window.service.dic.importWords(
             words ?? ""
         );
         this.progressValue = 25;
 
-        this.posesImportResult = await window.service.dicService.importWordPoses(
+        this.posesImportResult = await window.service.dic.importWordPoses(
             poses ?? ""
         );
         this.progressValue = 50;
 
-        this.defsImportResult = await window.service.dicService.importDefinitions(
+        this.defsImportResult = await window.service.dic.importDefinitions(
             defs ?? ""
         );
         this.progressValue = 75;
 
-        this.expsImportResult = await window.service.dicService.importExamples(
+        this.expsImportResult = await window.service.dic.importExamples(
             exps ?? ""
         );
         this.progressValue = 100;

@@ -1,10 +1,12 @@
-import * as fs from "fs";
+﻿import * as fs from "fs";
 import * as path from "path";
 import { getAccountsDir } from "@main/paths";
 import { ICollectionService } from "./col-service-interface";
 import { getAppConfig, saveAppConfig } from "@main/db/config/config";
-import { reInitDatabase } from "@main/db/db";
+import { getRepDb, reInitDatabase } from "@main/db/db";
 import Logger from "electron-log/main";
+import { CollectionConfig } from "./col-service-types";
+import { collectionTable } from "@main/db/schema/repetition/rep";
 
 export class CollectionService implements ICollectionService {
     /**
@@ -30,7 +32,7 @@ export class CollectionService implements ICollectionService {
 
     /**
      * Create a new collection folder
-     * just folder without any files
+     * **just folder without any files**
      * files should create when user switch to this collection
      */
     async createCollection(name: string): Promise<void> {
@@ -61,7 +63,7 @@ export class CollectionService implements ICollectionService {
         fs.rmSync(collectionPath, { recursive: true, force: true });
         Logger.info(`Deleted collection: ${name}`);
     }
-    
+
     /**
      * Get current active collection name
      */
@@ -94,4 +96,45 @@ export class CollectionService implements ICollectionService {
         reInitDatabase(config);
         Logger.info(`Switched to collection: ${collectionName}`);
     }
+    
+    async getCollectionConfig(): Promise<CollectionConfig> {
+        const collectionRecords = await getRepDb()
+            .select({
+                config: collectionTable.config,
+            })
+            .from(collectionTable);
+
+        const collectionRecord = collectionRecords[0];
+        return collectionRecord.config as CollectionConfig;
+    }
+
+
+    /**
+     * Change the daily review reset time
+     * @param resetTime hour in 24h format (0-23)
+     */
+    async changeColReviewRstTime(resetTime: number): Promise<void> {
+        const repDb = getRepDb();
+        const collectionRecords = await repDb
+        .select({
+                config: collectionTable.config
+            })
+        .from(collectionTable);
+        const collectionRecord = collectionRecords[0];
+
+        const collectionConfig = collectionRecord.config as CollectionConfig;
+        const nextConfig: CollectionConfig = {
+            ...collectionConfig,
+            dailyResetTime: resetTime,
+        };
+
+        Logger.info(`Changed collection daily reset time to ${resetTime}:00`);
+
+        repDb.update(collectionTable).set({
+            config: nextConfig,
+            usn: -1,
+            updatedAt: Date.now(),
+        }).run();
+    }
 }
+

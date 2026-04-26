@@ -17,7 +17,7 @@
   },
   "include": [
     "**/*.ts",
-    "subtitle-handler/types.d.ts"
+    "**/*.d.ts"
   ],
   "exclude": [
     "node_modules",

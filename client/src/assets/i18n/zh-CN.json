@@ -40,7 +40,7 @@
       }
     },
     "SETTINGS": {
-      "COLLECTION": {
+      "COLLECTIONS_MANAGER": {
         "NAV_TITLE": "集合管理",
         "TITLE": "集合设置",
         "DESCRIPTION": "创建你的集合，并选择要绑定的数据库账户。",
@@ -85,6 +85,24 @@
           "CREATE_FAILED": "创建集合失败。",
           "DELETE_FAILED": "删除集合失败。",
           "SWITCH_FAILED": "切换集合失败。"
+        }
+      },
+      "COLLECTION_CONFIG": {
+        "NAV_TITLE": "当前集合配置",
+        "TITLE": "复习重置时间",
+        "DESCRIPTION": "设置调度器每天重置的小时数。时区将使用当前系统时区。",
+        "FIELDS": {
+          "DAILY_RESET_TIME": "每日重置小时",
+          "DAILY_RESET_TIME_HINT": "范围 0-23，例如 1 表示 01:00 重置"
+        },
+        "ACTIONS": {
+          "SAVE": "保存配置"
+        },
+        "SUCCESS": {
+          "SAVE": "集合配置已保存。"
+        },
+        "ERRORS": {
+          "SAVE_FAILED": "保存集合配置失败。"
         }
       }
     }

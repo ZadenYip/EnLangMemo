@@ -1,24 +1,24 @@
 <mat-card appearance="outlined">
   <mat-card-header>
-    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTION.TITLE" | translate }}</mat-card-title>
-    <mat-card-subtitle>{{ "PAGES.SETTINGS.COLLECTION.DESCRIPTION" | translate }}</mat-card-subtitle>
+    <mat-card-title>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.TITLE" | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.DESCRIPTION" | translate }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
     <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always">
-      <mat-label>{{ "PAGES.SETTINGS.COLLECTION.FIELDS.NAME" | translate }}</mat-label>
+      <mat-label>{{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.FIELDS.NAME" | translate }}</mat-label>
       <input
         matInput
         [value]="createColName"
         (input)="onCollectionNameInput($event)"
-        [placeholder]="'PAGES.SETTINGS.COLLECTION.FIELDS.NAME_PLACEHOLDER' | translate"
+        [placeholder]="'PAGES.SETTINGS.COLLECTIONS_MANAGER.FIELDS.NAME_PLACEHOLDER' | translate"
       />
     </mat-form-field>
   </mat-card-content>
 
   <mat-card-actions>
     <button mat-flat-button color="primary" (click)="createCollection()">
-      {{ "PAGES.SETTINGS.COLLECTION.ACTIONS.CREATE" | translate }}
+      {{ "PAGES.SETTINGS.COLLECTIONS_MANAGER.ACTIONS.CREATE" | translate }}
     </button>
   </mat-card-actions>
 </mat-card>
