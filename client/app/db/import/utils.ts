@@ -1,3 +1,6 @@
+import Logger from "electron-log/main";
+import { v7 as uuidv7 } from "uuid";
+
 /**
  * Converts a snake_case string to camelCase.
  * @param str a snake_case string
@@ -24,6 +27,15 @@ export function convertKeysToCamelCase(obj: unknown): unknown {
     }
     // if it's a basic type (string, number, boolean, null, undefined), return as is
     return obj;
+}
+
+export function generateUUIDV7(): Buffer {
+    const uuidBuffer = Buffer.alloc(16);
+    uuidv7({ msecs: Date.now() }, uuidBuffer);
+    Logger.info("Generated UUIDv7", {
+        uuid: uuidBuffer.toString("hex"),
+    });
+    return uuidBuffer;
 }
 
 /**
