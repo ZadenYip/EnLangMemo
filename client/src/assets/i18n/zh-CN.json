@@ -16,6 +16,7 @@
         "DELETE_CONFIRM": "确定要删除牌组 \"{{name}}\" 吗？此操作不可撤销。",
         "DELETE_SUCCESS": "已删除牌组：{{name}}",
         "CREATE_SUCCESS": "已创建牌组：{{name}}",
+        "CREATE_NAME_EMPTY": "牌组名称不能为空。",
         "DELETE_DIALOG": {
           "TITLE": "确认删除",
           "CONFIRM": "删除"

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, ElementRef, OnInit, inject, viewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -42,6 +42,7 @@ export class HomeComponent implements OnInit {
     
     /** Pending deck name to create. */
     pendingDeckName = "";
+    createInputElem = viewChild<ElementRef<HTMLInputElement>>("createInput");
 
     async ngOnInit(): Promise<void> {
         Logger.info("Home deck material view initialized");
@@ -118,12 +119,32 @@ export class HomeComponent implements OnInit {
         );
         await this.loadDecks();
     }
+
+    /**
+     * Handles the input event for the deck name field.
+     * @param event The input event.
+     */
+    onInputDeckName(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        this.pendingDeckName = input.value;
+        if(!this.pendingDeckName.trim()) {
+            this.pendingDeckName = "";
+            const msg = this.translateService.instant("PAGES.HOME.DECKS.CREATE_NAME_EMPTY");
+            this.notify.open(msg);
+            return;
+        }
+    }
     
     /**
      * Cancel the deck creation process and clear the pending deck name.
      */
     cancelCreateDeck(): void {
+        this.resetCreateDeckInput();
+    }
+
+    resetCreateDeckInput(): void {
         this.pendingDeckName = "";
+        this.createInputElem()!.nativeElement.value = "";
     }
 
     /**
@@ -131,6 +152,12 @@ export class HomeComponent implements OnInit {
      */
     async confirmCreateDeck(): Promise<void> {
         const deckName = this.pendingDeckName;
+        if (!deckName.trim()) {
+            const msg = this.translateService.instant("PAGES.HOME.DECKS.CREATE_NAME_EMPTY");
+            this.resetCreateDeckInput();
+            this.notify.open(msg);
+            return;
+        }
         Logger.info(`confirm create deck with name: ${deckName}`);
         try {
             const result = await window.service.deck.createDeck(deckName);

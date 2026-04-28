@@ -26,11 +26,11 @@
     }
 
     <div class="create-deck-row">
-      <!-- TODO  给 placeholder 改为 tranlsatepipe 以及 (input) 添加非法字符过滤和检测-->
-      <input
+      <input #createInput
         class="create-name-input"
         type="text"
         [(ngModel)]="pendingDeckName"
+        (input)="onInputDeckName($event)"
         placeholder="{{ 'PAGES.HOME.DECKS.CREATE_PLACEHOLDER' | translate }}"
       />
       <span>-</span>

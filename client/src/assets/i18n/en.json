@@ -16,6 +16,7 @@
         "DELETE_CONFIRM": "Are you sure you want to delete the deck \"{{name}}\"? This action cannot be undone.",
         "DELETE_SUCCESS": "Deck deleted: {{name}}",
         "CREATE_SUCCESS": "Deck created: {{name}}",
+        "CREATE_NAME_EMPTY": "Deck name cannot be empty.",
         "DELETE_DIALOG": {
           "TITLE": "Confirm Delete",
           "CONFIRM": "Delete"
