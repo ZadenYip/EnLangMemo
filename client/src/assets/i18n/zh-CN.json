@@ -79,7 +79,8 @@
             "TITLE": "确认删除",
             "MESSAGE": "确定要删除集合 \"{{name}}\" 吗？此操作不可撤销。",
             "CONFIRM": "删除"
-          }
+          },
+          "DELETED_SUCCESS": "成功删除集合：{{name}}"
         },
         "SWITCH": {
           "TITLE": "切换集合",
@@ -89,7 +90,8 @@
         },
         "CREATED": {
           "TITLE": "已创建集合",
-          "EMPTY": "暂无集合"
+          "EMPTY": "暂无集合",
+          "CREATED_SUCCESS": "成功创建集合：{{name}}"
         },
         "ERRORS": {
           "EMPTY_NAME": "集合名称不能为空。",

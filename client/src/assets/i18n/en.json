@@ -78,7 +78,8 @@
             "TITLE": "Confirm Delete",
             "MESSAGE": "Are you sure you want to delete the collection \"{{name}}\"? This action cannot be undone.",
             "CONFIRM": "Delete"
-          }
+          },
+          "DELETED_SUCCESS": "Collection deleted: {{name}}"
         },
         "SWITCH": {
           "TITLE": "Switch Collection",
@@ -88,7 +89,8 @@
         },
         "CREATED": {
           "TITLE": "Created Collections",
-          "EMPTY": "No collections yet."
+          "EMPTY": "No collections yet.",
+          "CREATED_SUCCESS": "Collection created: {{name}}"
         },
         "ERRORS": {
           "EMPTY_NAME": "Collection name is required.",

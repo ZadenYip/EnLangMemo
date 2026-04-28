@@ -5,13 +5,13 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 import Logger from "electron-log";
 import { Deck } from "@main/db/services/repetition/deck/deck-service-types";
 import { ConfirmDeleteDialogComponent } from "../shared/components";
+import { NotifyService } from "../shared/services/notify.service";
 import { DeckSettingsComponent } from "./sub/deck-setting/settings.component";
 
 @Component({
@@ -26,7 +26,6 @@ import { DeckSettingsComponent } from "./sub/deck-setting/settings.component";
         MatCardModule,
         MatDialogModule,
         MatIconModule,
-        MatSnackBarModule,
         FormsModule,
         DeckSettingsComponent,
     ],
@@ -36,8 +35,8 @@ export class HomeComponent implements OnInit {
 
     private readonly dialog = inject(MatDialog);
     private readonly translateService = inject(TranslateService);
-    /** Snack bar service for success notifications. */
-    private readonly snackBar: MatSnackBar = inject(MatSnackBar);
+    /** Notification service for snack bar messages. */
+    private readonly notify = inject(NotifyService);
 
     deckOverviewList: Deck[] = [];
     
@@ -112,16 +111,10 @@ export class HomeComponent implements OnInit {
             });
             return;
         }
-        this.snackBar.open(
+        this.notify.open(
             this.translateService.instant("PAGES.HOME.DECKS.DELETE_SUCCESS", {
                 name: deck.name,
-            }),
-            undefined,
-            {
-                duration: 2500,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-            }
+            })
         );
         await this.loadDecks();
     }
@@ -145,16 +138,10 @@ export class HomeComponent implements OnInit {
                 Logger.info("Deck created successfully", {
                     deckName,
                 });
-                this.snackBar.open(
+                this.notify.open(
                     this.translateService.instant("PAGES.HOME.DECKS.CREATE_SUCCESS", {
                         name: deckName,
-                    }),
-                    undefined,
-                    {
-                        duration: 2500,
-                        horizontalPosition: "center",
-                        verticalPosition: "top",
-                    }
+                    })
                 );
                 await this.loadDecks();
             } else {

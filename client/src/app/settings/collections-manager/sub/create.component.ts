@@ -3,9 +3,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import Logger from "electron-log";
+import { NotifyService } from "../../../shared/services/notify.service";
 
 @Component({
     selector: "app-collection-create",
@@ -15,14 +15,13 @@ import Logger from "electron-log";
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
-        MatSnackBarModule,
     ],
     templateUrl: "./create.component.html",
     styleUrl: "../../mat-card.scss",
 })
 export class CreateComponent {
     private translate = inject(TranslateService);
-    private snackBar = inject(MatSnackBar);
+    private notify = inject(NotifyService);
 
     existingCollections = input<string[]>([]);
     collectionCreated = output<void>();
@@ -41,11 +40,7 @@ export class CreateComponent {
             const warningMsg = this.translate.instant(
                 "PAGES.SETTINGS.COLLECTIONS_MANAGER.ERRORS.INVALID_COLLECTION_NAME"
             );
-            this.snackBar.open(warningMsg, undefined, {
-                duration: 1000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-            });
+            this.notify.open(warningMsg);
         }
         this.createColName = validName;
     }
@@ -56,12 +51,7 @@ export class CreateComponent {
             const errorMsg = this.translate.instant(
                 "PAGES.SETTINGS.COLLECTIONS_MANAGER.ERRORS.EMPTY_NAME"
             );
-            this.snackBar.open(errorMsg, undefined, {
-                duration: 2000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-                panelClass: ["error-snackbar"],
-            });
+            this.notify.open(errorMsg);
             return;
         }
 
@@ -70,19 +60,12 @@ export class CreateComponent {
             const errorMsg = this.translate.instant(
                 "PAGES.SETTINGS.COLLECTIONS_MANAGER.ERRORS.DUPLICATE_NAME"
             );
-            this.snackBar.open(errorMsg, undefined, {
-                duration: 2000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-                panelClass: ["error-snackbar"],
-            });
+            this.notify.open(errorMsg);
             return;
         }
 
         try {
             await window.service.collection.createCollection(this.createColName);
-            this.createColName = "";
-            this.collectionCreated.emit();
         } catch (error) {
             Logger.error("Failed to create collection:", error);
             const createFailedMsg = this.translate.instant(
@@ -92,12 +75,17 @@ export class CreateComponent {
             const fullMsg = errorReason
                 ? `${createFailedMsg} - ${errorReason}`
                 : createFailedMsg;
-            this.snackBar.open(fullMsg, undefined, {
-                duration: 2000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-                panelClass: ["error-snackbar"],
-            });
+            this.notify.open(fullMsg);
+            return;
         }
+
+        const createdName = this.createColName;
+        this.createColName = "";
+        this.collectionCreated.emit();
+        const successMsg = this.translate.instant(
+            "PAGES.SETTINGS.COLLECTIONS_MANAGER.CREATED.CREATED_SUCCESS",
+            { name: createdName },
+        );
+        this.notify.open(successMsg);
     }
 }

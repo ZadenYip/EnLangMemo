@@ -5,10 +5,10 @@ import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { ConfirmDeleteDialogComponent } from "../../../shared/components";
 import Logger from "electron-log";
+import { NotifyService } from "../../../shared/services/notify.service";
 
 @Component({
     selector: "app-collection-delete",
@@ -19,7 +19,6 @@ import Logger from "electron-log";
         MatFormFieldModule,
         MatSelectModule,
         MatDialogModule,
-        MatSnackBarModule,
     ],
     templateUrl: "./delete.component.html",
     styleUrl: "../../mat-card.scss",
@@ -27,7 +26,7 @@ import Logger from "electron-log";
 export class DeleteComponent {
     private dialog = inject(MatDialog);
     private translate = inject(TranslateService);
-    private snackBar = inject(MatSnackBar);
+    private notify = inject(NotifyService);
 
     deletableCols = input<string[]>([]);
     collectionDeleted = output<void>();
@@ -62,6 +61,11 @@ export class DeleteComponent {
             await window.service.collection.deleteCollection(name);
             this.selectedDelColName.set("");
             this.collectionDeleted.emit();
+            const successMsg = this.translate.instant(
+                "PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.DELETED_SUCCESS",
+                { name },
+            );
+            this.notify.open(successMsg);
         } catch (error) {
             Logger.error("Failed to delete collection:", error);
             const deleteFailedMsg = this.translate.instant(
@@ -71,12 +75,7 @@ export class DeleteComponent {
             const fullMsg = errorReason
                 ? `${deleteFailedMsg} - ${errorReason}`
                 : deleteFailedMsg;
-            this.snackBar.open(fullMsg, undefined, {
-                duration: 3000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-                panelClass: ["error-snackbar"],
-            });
+            this.notify.open(fullMsg);
         }
     }
 }
