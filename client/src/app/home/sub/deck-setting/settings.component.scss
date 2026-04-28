@@ -1,0 +1,7 @@
+
+@use "src/styles.scss" as *;
+
+// menu text
+.deck-menu-text {
+    @include global-font-style;
+}

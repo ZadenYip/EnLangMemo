@@ -1,39 +1,42 @@
 ﻿<div class="deck-container">
   <div class="deck-header">
     <span>{{ "PAGES.HOME.DECKS.NAME" | translate }}</span>
-    <span>今日已复习</span>
-    <span>今日应复习</span>
-    <span>今日可新学</span>
-    <span>设置</span>
+    <span>{{ "PAGES.HOME.DECKS.CAN_LEARN_TODAY" | translate }}</span>
+    <span>{{ "PAGES.HOME.DECKS.SHOULD_REVIEW_TODAY" | translate }}</span>
+    <span>{{ "PAGES.HOME.DECKS.REVIEWED_TODAY" | translate }}</span>
+    <span>{{ "PAGES.HOME.DECKS.LEARNED_TODAY" | translate }}</span>
+    <span>{{ "PAGES.HOME.DECKS.SETTINGS" | translate }}</span>
   </div>
 
-    @for (deck of deckOverviewList; track deck.id) {
+    @for (deck of deckOverviewList; track deck.name) {
     <div class="deck-row">
       <a class="deck-link" href="" (click)="$event.preventDefault(); openDeckReview(deck)">
         {{ deck.name }}
       </a>
-      <span>{{ deck.reviewedToday }}</span>
-      <span>{{ deck.dueToday }}</span>
       <span>{{ deck.canLearnToday }}</span>
-      <button type="button" mat-icon-button class="deck-settings-btn" aria-label="牌组设置"
-        (click)="openDeckSettings(deck)">
-        <mat-icon>settings</mat-icon>
-      </button>
+      <span>{{ deck.canReviewToday }}</span>
+      <span>{{ deck.reviewedToday }}</span>
+      <span>{{ deck.learnedToday }}</span>
+      <app-deck-settings-menu
+        [deck]="deck"
+        (configure)="openDeckSettings($event)"
+        (delete)="confirmDeleteDeck($event)"
+      ></app-deck-settings-menu>
     </div>
     }
 
     <div class="create-deck-row">
-      <!-- TODO  给 placeholder 改为 tranlsatepipe -->
+      <!-- TODO  给 placeholder 改为 tranlsatepipe 以及 (input) 添加非法字符过滤和检测-->
       <input
         class="create-name-input"
         type="text"
-        [value]="pendingDeckName"
-        placeholder="点击添加牌组"
-        (input)="onPendingDeckNameInput($event)"
+        [(ngModel)]="pendingDeckName"
+        placeholder="{{ 'PAGES.HOME.DECKS.CREATE_PLACEHOLDER' | translate }}"
       />
-      <span class="create-placeholder">-</span>
-      <span class="create-placeholder">-</span>
-      <span class="create-placeholder">-</span>
+      <span>-</span>
+      <span>-</span>
+      <span>-</span>
+      <span>-</span>
       <div class="create-actions">
         <button type="button" mat-icon-button (click)="confirmCreateDeck()">
           <mat-icon>check</mat-icon>

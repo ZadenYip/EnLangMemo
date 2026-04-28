@@ -1,70 +1,80 @@
-﻿import { CommonModule } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { TranslateModule } from "@ngx-translate/core";
+import { TranslateModule, TranslateService } from "@ngx-translate/core";
+import { firstValueFrom } from "rxjs";
 import Logger from "electron-log";
-
-/**
- * 牌组首页条目视图模型。
- */
-interface DeckOverviewItem {
-    /** 牌组唯一标识，用于前端追踪与后续跳转。 */
-    id: string;
-    /** 牌组展示名称。 */
-    name: string;
-    /** 今日已复习卡片数量。 */
-    reviewedToday: number;
-    /** 今日应复习卡片数量。 */
-    dueToday: number;
-    /** 今日还可学习的新卡数量。 */
-    canLearnToday: number;
-}
+import { Deck } from "@main/db/services/repetition/deck/deck-service-types";
+import { ConfirmDeleteDialogComponent } from "../shared/components";
+import { DeckSettingsComponent } from "./sub/deck-setting/settings.component";
 
 @Component({
     selector: "app-home",
     templateUrl: "./home.component.html",
     styleUrls: ["./home.component.scss"],
     standalone: true,
-    imports: [CommonModule, TranslateModule, MatButtonModule, MatCardModule, MatIconModule],
+    imports: [
+        CommonModule,
+        TranslateModule,
+        MatButtonModule,
+        MatCardModule,
+        MatDialogModule,
+        MatIconModule,
+        MatSnackBarModule,
+        FormsModule,
+        DeckSettingsComponent,
+    ],
 })
 export class HomeComponent implements OnInit {
-    /** 路由服务，用于后续页面跳转。 */
-    private readonly router: Router = inject(Router);
+    private readonly router = inject(Router);
 
-    /** 首页展示的牌组列表；后续可替换为真实服务返回。 */
-    readonly deckOverviewList: DeckOverviewItem[] = [
-        { id: "default", name: "Default", reviewedToday: 12, dueToday: 35, canLearnToday: 18 },
-        { id: "ielts", name: "IELTS", reviewedToday: 7, dueToday: 22, canLearnToday: 25 },
-        { id: "movie", name: "Movie Phrases", reviewedToday: 4, dueToday: 11, canLearnToday: 30 },
-    ];
+    private readonly dialog = inject(MatDialog);
+    private readonly translateService = inject(TranslateService);
+    /** Snack bar service for success notifications. */
+    private readonly snackBar: MatSnackBar = inject(MatSnackBar);
 
-    /** 创建牌组输入框的临时名称值。 */
+    deckOverviewList: Deck[] = [];
+    
+    /** Pending deck name to create. */
     pendingDeckName = "";
 
-    /** 组件初始化钩子，用于记录首页加载。 */
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         Logger.info("Home deck material view initialized");
+        await this.loadDecks();
     }
 
     /**
-     * 点击牌组名按钮后进入该牌组复习页。
-     * 当前先保留占位逻辑，待复习页路由完成后接入。
+     * Loads the list of decks for the current collection.
      */
-    openDeckReview(deck: DeckOverviewItem): void {
+    private async loadDecks(): Promise<void> {
+        try {
+            this.deckOverviewList = await window.service.deck.listDecks();
+        } catch (error) {
+            Logger.error("Failed to load decks on home page", error);
+            this.deckOverviewList = [];
+            return;
+        }
+        Logger.info("Decks loaded for home page", {
+            deckOverviewList: this.deckOverviewList,
+        });
+    }
+
+    // TODO
+    openDeckReview(deck: Deck): void {
         Logger.info("TODO: open deck review page", {
             deck,
             currentUrl: this.router.url,
         });
     }
-
-    /**
-     * 点击设置按钮后进入牌组设置页。
-     * 当前先保留占位逻辑，待牌组设置页完成后接入。
-     */
-    openDeckSettings(deck: DeckOverviewItem): void {
+    
+    // TODO
+    openDeckSettings(deck: Deck): void {
         Logger.info("TODO: open deck settings page", {
             deck,
             currentUrl: this.router.url,
@@ -72,35 +82,92 @@ export class HomeComponent implements OnInit {
     }
 
     /**
-     * 点击创建占位块后触发创建牌组流程。
-     * 当前先保留占位逻辑，待创建流程确认后接入。
+     * Confirm and delete a deck, then refresh the list.
+     * @param deck the deck to be deleted emitted from subcomponent.
      */
-    createDeck(): void {
-        Logger.info("TODO: create deck", {
-            currentUrl: this.router.url,
+    async confirmDeleteDeck(deck: Deck): Promise<void> {
+        const title = this.translateService.instant("PAGES.HOME.DECKS.DELETE_DIALOG.TITLE");
+        const message = this.translateService.instant("PAGES.HOME.DECKS.DELETE_CONFIRM", {
+            name: deck.name,
         });
-    }
-
-    /** 监听创建输入框变化并同步到组件状态。 */
-    onPendingDeckNameInput(event: Event): void {
-        const target = event.target;
-        if (!(target instanceof HTMLInputElement)) {
+        const confirmText = this.translateService.instant("PAGES.HOME.DECKS.DELETE_DIALOG.CONFIRM");
+        const confirmed = await firstValueFrom(
+            this.dialog.open(ConfirmDeleteDialogComponent, {
+                data: {
+                    title,
+                    message,
+                    confirmText,
+                },
+            }).afterClosed()
+        );
+        if (!confirmed) {
             return;
         }
-        this.pendingDeckName = target.value;
+        try {
+            await window.service.deck.deleteDeck(deck.name);
+        } catch (error) {
+            Logger.error("Failed to delete deck", {
+                deckName: deck.name,
+                error,
+            });
+            return;
+        }
+        this.snackBar.open(
+            this.translateService.instant("PAGES.HOME.DECKS.DELETE_SUCCESS", {
+                name: deck.name,
+            }),
+            undefined,
+            {
+                duration: 2500,
+                horizontalPosition: "center",
+                verticalPosition: "top",
+            }
+        );
+        await this.loadDecks();
     }
-
-    /** 点击确认按钮时读取当前输入值，后续可在此接入真实创建逻辑。 */
-    confirmCreateDeck(): void {
-        const deckName = this.pendingDeckName.trim();
-        Logger.info("TODO: confirm create deck", {
-            deckName,
-            currentUrl: this.router.url,
-        });
-    }
-
-    /** 点击取消按钮时清空输入框。 */
+    
+    /**
+     * Cancel the deck creation process and clear the pending deck name.
+     */
     cancelCreateDeck(): void {
         this.pendingDeckName = "";
     }
+
+    /**
+     * Confirm and create a new deck, then refresh the list.
+     */
+    async confirmCreateDeck(): Promise<void> {
+        const deckName = this.pendingDeckName;
+        Logger.info(`confirm create deck with name: ${deckName}`);
+        try {
+            const result = await window.service.deck.createDeck(deckName);
+            if (result.isSuccess) {
+                Logger.info("Deck created successfully", {
+                    deckName,
+                });
+                this.snackBar.open(
+                    this.translateService.instant("PAGES.HOME.DECKS.CREATE_SUCCESS", {
+                        name: deckName,
+                    }),
+                    undefined,
+                    {
+                        duration: 2500,
+                        horizontalPosition: "center",
+                        verticalPosition: "top",
+                    }
+                );
+                await this.loadDecks();
+            } else {
+                Logger.error("Failed to create deck", {
+                    deckName,
+                    errorMessage: result.errorMessage,
+                });
+            }
+        } catch (error) {
+            Logger.error("Failed to create deck (unknown error)", error);
+            return;
+        }
+        this.pendingDeckName = "";
+    }
+
 }

@@ -5,10 +5,25 @@
   "PAGES": {
     "HOME": {
       "DECKS": {
-        "ID": "ID",
         "NAME": "名称",
-        "NEW_PER_DAY": "新学卡片上限",
-        "NEW_LEARNED": "今日已学新卡片"
+        "NEW_LEARNED": "今日已学新卡片",
+        "CAN_LEARN_TODAY": "今日可新学",
+        "SHOULD_REVIEW_TODAY": "今日应复习",
+        "REVIEWED_TODAY": "今日已复习",
+        "LEARNED_TODAY": "今日已学",
+        "SETTINGS": "设置",
+        "CREATE_PLACEHOLDER": "点击添加牌组",
+        "DELETE_CONFIRM": "确定要删除牌组 \"{{name}}\" 吗？此操作不可撤销。",
+        "DELETE_SUCCESS": "已删除牌组：{{name}}",
+        "CREATE_SUCCESS": "已创建牌组：{{name}}",
+        "DELETE_DIALOG": {
+          "TITLE": "确认删除",
+          "CONFIRM": "删除"
+        },
+        "MENU": {
+          "CONFIGURE": "牌组设置",
+          "DELETE": "删除牌组"
+        }
       }
     },
     "IMMERSE": {

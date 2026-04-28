@@ -7,7 +7,7 @@
 
 .deck-container {
   display: grid;
-  grid-template-columns: 2fr 2fr 2fr 2fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
 
   font-size: 1rem;
   padding: 3rem 7rem 0;
@@ -48,7 +48,7 @@
 }
 
 // cursor hover effect for deck container
-.deck-header:hover, .deck-row:hover {
+.deck-row:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -59,26 +59,26 @@
     align-items: center;
   }
 
-    &:focus-within {
-      // change the background color to blue with low opacity
-      background-color: rgba(0, 98, 255, 0.08);
-  
-      // show the hidden create actions
-      .create-actions {
-        display: flex;
-      }
-  
-      .create-name-input {
-  
-        // when the input is focused, the placeholder text will be hidden
-        &::placeholder {
-          color: transparent;
-        }
-  
-        outline: 0.125rem solid rgba(0, 98, 255, 0.45);
-        background-color: var(--mat-sys-surface);
-      }
+  &:focus-within {
+    // change the background color to blue with low opacity
+    background-color: rgba(0, 98, 255, 0.08);
+
+    // show the hidden create actions
+    .create-actions {
+      display: flex;
     }
+
+    .create-name-input {
+
+      // when the input is focused, the placeholder text will be hidden
+      &::placeholder {
+        color: transparent;
+      }
+
+      outline: 0.125rem solid rgba(0, 98, 255, 0.45);
+      background-color: var(--mat-sys-surface);
+    }
+  }
 }
 
 .create-name-input {

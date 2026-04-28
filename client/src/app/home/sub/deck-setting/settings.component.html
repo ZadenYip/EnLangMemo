@@ -1,0 +1,14 @@
+<button type="button" mat-icon-button class="deck-settings-btn" [matMenuTriggerFor]="deckMenu">
+  <mat-icon>settings</mat-icon>
+</button>
+
+<mat-menu #deckMenu="matMenu">
+  <button type="button" mat-menu-item (click)="onConfigure()">
+    <mat-icon>tune</mat-icon>
+    <span class="deck-menu-text">{{ "PAGES.HOME.DECKS.MENU.CONFIGURE" | translate }}</span>
+  </button>
+  <button type="button" mat-menu-item (click)="onDelete()">
+    <mat-icon>delete</mat-icon>
+    <span class="deck-menu-text">{{ "PAGES.HOME.DECKS.MENU.DELETE" | translate }}</span>
+  </button>
+</mat-menu>
