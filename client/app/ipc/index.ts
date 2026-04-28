@@ -7,6 +7,8 @@ import { SubtitleService } from "../subtitle-handler/subtitle-service";
 import { SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service.interface";
 import { CollectionService } from "../db/services/repetition/collection/col-service";
 import { CollectionServiceIPCDescriptor } from "../db/services/repetition/collection/col-service-interface";
+import { DeckService } from "../db/services/repetition/deck/deck-service";
+import { DeckServiceIPCDescriptor } from "../db/services/repetition/deck/deck-service-interface";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
@@ -24,4 +26,7 @@ function registerDatabaseHandlers() {
 
     const collectionService = new CollectionService();
     registerProxy(collectionService, CollectionServiceIPCDescriptor);
+
+    const deckService = new DeckService();
+    registerProxy(deckService, DeckServiceIPCDescriptor);
 }
