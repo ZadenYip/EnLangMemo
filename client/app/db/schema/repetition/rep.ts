@@ -60,8 +60,8 @@ export const decksTable = sqliteTable("decks", {
     usn: int("usn").notNull(),
     name: text("name").notNull(),
     updatedAt: int("updated_at").notNull(),
-    newToday: int("new_today").notNull().default(0),
-    reviewToday: int("review_today").notNull().default(0),
+    learnedToday: int("learned_today").notNull().default(0),
+    reviewedToday: int("reviewed_today").notNull().default(0),
     /**
      * 
      */

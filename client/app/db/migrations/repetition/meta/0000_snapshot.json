@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "43b91db4-8ef3-4d88-a8f3-261cf5b357a8",
+  "id": "55d9db09-b386-4fb2-a2e6-21845a73e686",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -257,16 +257,16 @@
           "notNull": true,
           "autoincrement": false
         },
-        "new_today": {
-          "name": "new_today",
+        "learned_today": {
+          "name": "learned_today",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": 0
         },
-        "review_today": {
-          "name": "review_today",
+        "reviewed_today": {
+          "name": "reviewed_today",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,

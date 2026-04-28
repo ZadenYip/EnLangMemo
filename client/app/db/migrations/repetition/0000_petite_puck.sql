@@ -36,8 +36,8 @@ CREATE TABLE `decks` (
 	`usn` integer NOT NULL,
 	`name` text NOT NULL,
 	`updated_at` integer NOT NULL,
-	`new_today` integer DEFAULT 0 NOT NULL,
-	`review_today` integer DEFAULT 0 NOT NULL,
+	`learned_today` integer DEFAULT 0 NOT NULL,
+	`reviewed_today` integer DEFAULT 0 NOT NULL,
 	`config` jsonb NOT NULL
 );
 --> statement-breakpoint
