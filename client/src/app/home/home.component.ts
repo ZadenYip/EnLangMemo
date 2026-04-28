@@ -138,17 +138,17 @@ export class HomeComponent implements OnInit {
                 Logger.info("Deck created successfully", {
                     deckName,
                 });
-                this.notify.open(
-                    this.translateService.instant("PAGES.HOME.DECKS.CREATE_SUCCESS", {
-                        name: deckName,
-                    })
-                );
+                const successMsg = this.translateService.instant("PAGES.HOME.DECKS.CREATE_SUCCESS", {
+                    name: deckName,
+                });
+                this.notify.open(successMsg);
                 await this.loadDecks();
             } else {
                 Logger.error("Failed to create deck", {
                     deckName,
                     errorMessage: result.errorMessage,
                 });
+                return;
             }
         } catch (error) {
             Logger.error("Failed to create deck (unknown error)", error);
