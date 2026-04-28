@@ -5,7 +5,7 @@ import { ImmerseComponent } from "@render/immerse/immerse.component";
 import { SettingsComponent } from "@render/settings/settings.component";
 import { SETTINGS_ROUTES } from "@render/settings/route";
 import { PageNotFoundComponent } from "@render/shared/components";
-import { BROWSE_ROUTES } from "./browse/route";
+import { BROWSE_ROUTES } from "@render/browse/route";
 
 export const APP_PATHS = {
     home: "home",
