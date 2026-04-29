@@ -17,12 +17,23 @@
         "DELETE_SUCCESS": "已删除牌组：{{name}}",
         "CREATE_SUCCESS": "已创建牌组：{{name}}",
         "CREATE_NAME_EMPTY": "牌组名称不能为空。",
+        "CONFIG_DIALOG": {
+          "TITLE": "牌组配置：{{name}}",
+          "FIELDS": {
+            "NEW_CARDS_PER_DAY": "每日新卡上限",
+            "NEW_CARDS_PER_DAY_HINT": "-1 表示不限"
+          },
+          "ACTIONS": {
+            "CANCEL": "取消",
+            "SAVE": "保存"
+          }
+        },
         "DELETE_DIALOG": {
           "TITLE": "确认删除",
           "CONFIRM": "删除"
         },
         "MENU": {
-          "CONFIGURE": "牌组设置",
+          "CONFIGURE": "牌组配置",
           "DELETE": "删除牌组"
         }
       }

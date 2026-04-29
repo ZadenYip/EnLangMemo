@@ -9,10 +9,12 @@ import { Router } from "@angular/router";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 import Logger from "electron-log";
-import { Deck } from "@main/db/services/repetition/deck/deck-service-types";
+import { Deck, DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
 import { ConfirmDeleteDialogComponent } from "../shared/components";
 import { NotifyService } from "../shared/services/notify.service";
-import { DeckSettingsComponent } from "./sub/deck-setting/settings.component";
+import { SettingsDialogService } from "../shared/services/settings-dialog.service";
+import { DeckConfigComponent } from "./sub/deck-config/config.component";
+import { DeckSettingsComponent } from "./sub/settings/settings.component";
 
 @Component({
     selector: "app-home",
@@ -37,6 +39,8 @@ export class HomeComponent implements OnInit {
     private readonly translateService = inject(TranslateService);
     /** Notification service for snack bar messages. */
     private readonly notify = inject(NotifyService);
+    /** Settings dialog service for default-sized dialogs. */
+    private readonly settingsDialog = inject(SettingsDialogService);
 
     deckOverviewList: Deck[] = [];
     
@@ -74,11 +78,26 @@ export class HomeComponent implements OnInit {
     }
     
     // TODO
-    openDeckSettings(deck: Deck): void {
-        Logger.info("TODO: open deck settings page", {
-            deck,
-            currentUrl: this.router.url,
-        });
+    async openDeckSettings(deck: Deck): Promise<void> {
+        const config = await window.service.deck.getDeckConfig(deck.name);
+    
+
+        const result = await firstValueFrom(
+            this.settingsDialog
+                .open(DeckConfigComponent, {
+                    data: {
+                        deckName: deck.name,
+                        config,
+                    },
+                })
+                .afterClosed()
+        );
+
+        if (!result) {
+            return;
+        }
+        const newConfig = result as DeckConfig;
+        await window.service.deck.updateDeckConfig(deck.name, newConfig);
     }
 
     /**

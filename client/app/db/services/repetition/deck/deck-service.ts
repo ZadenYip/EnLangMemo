@@ -83,6 +83,50 @@ export class DeckService {
         return;
     }
 
+    /**
+     * Get deck config by deck name.
+     * @param deckName - target deck name
+     */
+    async getDeckConfig(deckName: string): Promise<DeckConfig> {
+        Logger.info("Getting deck config for deck:", deckName);
+        const deckRow = await getRepDb().query.decksTable.findFirst({
+            where: eq(decksTable.name, deckName),
+            columns: {
+                config: true,
+            },
+        });
+        
+        if (!deckRow) {
+            Logger.error("Deck not found when getting config:", deckName);
+            throw new Error(`Deck with name "${deckName}" not found.`);
+        }
+
+        Logger.info("Deck config retrieved:", {
+            deckName,
+            config: deckRow.config,
+        });
+
+        return deckRow.config as DeckConfig;
+    }
+
+    /**
+     * Update deck config by deck name.
+     * @param deckName - target deck name
+     * @param config - updated config
+     */
+    async updateDeckConfig(deckName: string, config: DeckConfig): Promise<void> {
+        Logger.info("Updating deck config:", deckName);
+        await getRepDb()
+            .update(decksTable)
+            .set({
+                config,
+                updatedAt: Date.now(),
+            })
+            .where(eq(decksTable.name, deckName));
+        Logger.info("Deck config updated successfully:", deckName);
+        Logger.info("Updated config:", config);
+    }
+
     private generateDeckConfig(): DeckConfig {
         const defaultConfig: DeckConfig = {
             newCardsPerDay: 20,

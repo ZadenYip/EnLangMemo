@@ -17,12 +17,23 @@
         "DELETE_SUCCESS": "Deck deleted: {{name}}",
         "CREATE_SUCCESS": "Deck created: {{name}}",
         "CREATE_NAME_EMPTY": "Deck name cannot be empty.",
+        "CONFIG_DIALOG": {
+          "TITLE": "Deck Config: {{name}}",
+          "FIELDS": {
+            "NEW_CARDS_PER_DAY": "New Cards Per Day",
+            "NEW_CARDS_PER_DAY_HINT": "-1 means unlimited"
+          },
+          "ACTIONS": {
+            "CANCEL": "Cancel",
+            "SAVE": "Save"
+          }
+        },
         "DELETE_DIALOG": {
           "TITLE": "Confirm Delete",
           "CONFIRM": "Delete"
         },
         "MENU": {
-          "CONFIGURE": "Deck Settings",
+          "CONFIGURE": "Deck Config",
           "DELETE": "Delete Deck"
         }
       }
