@@ -5,10 +5,37 @@
   "PAGES": {
     "HOME": {
       "DECKS": {
-        "ID": "ID",
         "NAME": "Name",
-        "NEW_PER_DAY": "New Cards Per Day",
-        "NEW_LEARNED": "New Cards Learned Today"
+        "NEW_LEARNED": "New Cards Learned Today",
+        "CAN_LEARN_TODAY": "New Today",
+        "SHOULD_REVIEW_TODAY": "To Review Today",        
+        "REVIEWED_TODAY": "Reviewed Today",
+        "LEARNED_TODAY": "Learned Today",
+        "SETTINGS": "Settings",
+        "CREATE_PLACEHOLDER": "Click to add a deck",
+        "DELETE_CONFIRM": "Are you sure you want to delete the deck \"{{name}}\"? This action cannot be undone.",
+        "DELETE_SUCCESS": "Deck deleted: {{name}}",
+        "CREATE_SUCCESS": "Deck created: {{name}}",
+        "CREATE_NAME_EMPTY": "Deck name cannot be empty.",
+        "CONFIG_DIALOG": {
+          "TITLE": "Deck Config: {{name}}",
+          "FIELDS": {
+            "NEW_CARDS_PER_DAY": "New Cards Per Day",
+            "NEW_CARDS_PER_DAY_HINT": "-1 means unlimited"
+          },
+          "ACTIONS": {
+            "CANCEL": "Cancel",
+            "SAVE": "Save"
+          }
+        },
+        "DELETE_DIALOG": {
+          "TITLE": "Confirm Delete",
+          "CONFIRM": "Delete"
+        },
+        "MENU": {
+          "CONFIGURE": "Deck Config",
+          "DELETE": "Delete Deck"
+        }
       }
     },
     "IMMERSE": {
@@ -63,7 +90,8 @@
             "TITLE": "Confirm Delete",
             "MESSAGE": "Are you sure you want to delete the collection \"{{name}}\"? This action cannot be undone.",
             "CONFIRM": "Delete"
-          }
+          },
+          "DELETED_SUCCESS": "Collection deleted: {{name}}"
         },
         "SWITCH": {
           "TITLE": "Switch Collection",
@@ -73,7 +101,8 @@
         },
         "CREATED": {
           "TITLE": "Created Collections",
-          "EMPTY": "No collections yet."
+          "EMPTY": "No collections yet.",
+          "CREATED_SUCCESS": "Collection created: {{name}}"
         },
         "ERRORS": {
           "EMPTY_NAME": "Collection name is required.",

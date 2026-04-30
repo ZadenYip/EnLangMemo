@@ -75,10 +75,9 @@
 ## 10. 编码要求
 - 必须使用utf-8无BOM编码，否则会乱码
 - 读写文件时明确使用 UTF-8 无 BOM 
-- 必须使用简体中文编写代码
 - 每次写新的方法/变量时需要注释该方法/变量的用途
 - Always respond in Chinese-simplified
-- 每次需要大量读写中文前，先执行这组命令：
+- 每次需要大量读写中文配置前，先执行这组命令：
 ```
 chcp 65001 > $null
 [Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false)

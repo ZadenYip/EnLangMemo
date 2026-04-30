@@ -1,4 +1,4 @@
-// Review
+﻿// Review
 import {
     blob,
     customType,
@@ -46,12 +46,8 @@ export const collectionTable = sqliteTable("collection", {
     updatedAt: int("updated_at").notNull(),
     collectionSchemaUpdatedAt: int("collection_schema_updated_at").notNull(),
     /**
-     * JSON 配置：
-     * {
-     *   "timeZone": "Asia/Shanghai",
-     *   "dailyResetTime": 1,
-     *   "lastRolloverAt": 1698000000000
-     * }
+     * see app/db/services/repetition/collection/col-service-types.d.ts 
+     * CollectionConfig
      */
     config: jsonb("config").notNull(),
 });
@@ -62,7 +58,13 @@ export const collectionTable = sqliteTable("collection", {
 export const decksTable = sqliteTable("decks", {
     id: blob("id", { mode: "buffer" }).primaryKey(),
     usn: int("usn").notNull(),
+    name: text("name").notNull(),
     updatedAt: int("updated_at").notNull(),
+    learnedToday: int("learned_today").notNull().default(0),
+    reviewedToday: int("reviewed_today").notNull().default(0),
+    /**
+     * 
+     */
     config: jsonb("config").notNull(),
 });
 
@@ -163,9 +165,7 @@ export const reviewLogTable = sqliteTable(
     "review_log",
     {
         id: blob("id", { mode: "buffer" }).primaryKey(),
-        cardId: blob("card_id", { mode: "buffer" })
-            .notNull()
-            .references(() => cardsTable.id, { onDelete: "cascade" }),
+        cardId: blob("card_id", { mode: "buffer" }).notNull(),
         usn: int("usn").notNull(),
         reviewTime: int("review_time").notNull(), // 实际复习时间
         scheduledDays: int("scheduled_days").notNull(),
@@ -249,3 +249,5 @@ export const reviewLogRelations = relations(reviewLogTable, ({ one }) => ({
         references: [cardsTable.id],
     }),
 }));
+
+

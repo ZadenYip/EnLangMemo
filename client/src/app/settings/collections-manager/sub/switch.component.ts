@@ -3,9 +3,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import Logger from "electron-log";
+import { NotifyService } from "../../../shared/services/notify.service";
 
 @Component({
     selector: "app-collection-switch",
@@ -15,14 +15,13 @@ import Logger from "electron-log";
         MatButtonModule,
         MatFormFieldModule,
         MatSelectModule,
-        MatSnackBarModule,
     ],
     templateUrl: "./switch.component.html",
     styleUrl: "../../mat-card.scss",
 })
 export class SwitchComponent {
     private translate = inject(TranslateService);
-    private snackBar = inject(MatSnackBar);
+    private notify = inject(NotifyService);
 
     switchableCols = input<string[]>([]);
     currentCollectionName = input("");
@@ -48,12 +47,7 @@ export class SwitchComponent {
             const fullMsg = errorReason
                 ? `${switchFailedMsg} - ${errorReason}`
                 : switchFailedMsg;
-            this.snackBar.open(fullMsg, undefined, {
-                duration: 3000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-                panelClass: ["error-snackbar"],
-            });
+            this.notify.open(fullMsg);
             return;
         }
 
@@ -65,10 +59,6 @@ export class SwitchComponent {
             "PAGES.SETTINGS.COLLECTIONS_MANAGER.SWITCH.SUCCESS",
             { name },
         );
-        this.snackBar.open(successMsg, undefined, {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-        });
+        this.notify.open(successMsg);
     }
 }

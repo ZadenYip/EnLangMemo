@@ -5,10 +5,37 @@
   "PAGES": {
     "HOME": {
       "DECKS": {
-        "ID": "ID",
         "NAME": "名称",
-        "NEW_PER_DAY": "新学卡片上限",
-        "NEW_LEARNED": "今日已学新卡片"
+        "NEW_LEARNED": "今日已学新卡片",
+        "CAN_LEARN_TODAY": "今日可新学",
+        "SHOULD_REVIEW_TODAY": "今日应复习",
+        "REVIEWED_TODAY": "今日已复习",
+        "LEARNED_TODAY": "今日已学",
+        "SETTINGS": "设置",
+        "CREATE_PLACEHOLDER": "点击添加牌组",
+        "DELETE_CONFIRM": "确定要删除牌组 \"{{name}}\" 吗？此操作不可撤销。",
+        "DELETE_SUCCESS": "已删除牌组：{{name}}",
+        "CREATE_SUCCESS": "已创建牌组：{{name}}",
+        "CREATE_NAME_EMPTY": "牌组名称不能为空。",
+        "CONFIG_DIALOG": {
+          "TITLE": "牌组配置：{{name}}",
+          "FIELDS": {
+            "NEW_CARDS_PER_DAY": "每日新卡上限",
+            "NEW_CARDS_PER_DAY_HINT": "-1 表示不限"
+          },
+          "ACTIONS": {
+            "CANCEL": "取消",
+            "SAVE": "保存"
+          }
+        },
+        "DELETE_DIALOG": {
+          "TITLE": "确认删除",
+          "CONFIRM": "删除"
+        },
+        "MENU": {
+          "CONFIGURE": "牌组配置",
+          "DELETE": "删除牌组"
+        }
       }
     },
     "IMMERSE": {
@@ -64,7 +91,8 @@
             "TITLE": "确认删除",
             "MESSAGE": "确定要删除集合 \"{{name}}\" 吗？此操作不可撤销。",
             "CONFIRM": "删除"
-          }
+          },
+          "DELETED_SUCCESS": "成功删除集合：{{name}}"
         },
         "SWITCH": {
           "TITLE": "切换集合",
@@ -74,7 +102,8 @@
         },
         "CREATED": {
           "TITLE": "已创建集合",
-          "EMPTY": "暂无集合"
+          "EMPTY": "暂无集合",
+          "CREATED_SUCCESS": "成功创建集合：{{name}}"
         },
         "ERRORS": {
           "EMPTY_NAME": "集合名称不能为空。",

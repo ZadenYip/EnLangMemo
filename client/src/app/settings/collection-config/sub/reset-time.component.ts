@@ -4,9 +4,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { TranslatePipe, TranslateService } from "@ngx-translate/core";
 import Logger from "electron-log/renderer";
+import { NotifyService } from "../../../shared/services/notify.service";
 
 @Component({
     selector: "app-collection-daily-reset-time",
@@ -16,14 +16,13 @@ import Logger from "electron-log/renderer";
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
-        MatSnackBarModule,
         FormsModule,
     ],
     templateUrl: "./reset-time.component.html",
     styleUrl: "../../mat-card.scss",
 })
 export class DailyResetTimeComponent {
-    private snackBar = inject(MatSnackBar);
+    private notify = inject(NotifyService);
     private translate = inject(TranslateService);
 
     dailyResetTime = 4;
@@ -62,23 +61,14 @@ export class DailyResetTimeComponent {
                 ? `${saveFailedMsg} - ${errorReason}`
                 : `${saveFailedMsg}`;
 
-            this.snackBar.open(fullMsg, undefined, {
-                duration: 3000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-                panelClass: ["error-snackbar"],
-            });
+            this.notify.open(fullMsg);
             return;
         }
 
         const successMsg = this.translate.instant(
             "PAGES.SETTINGS.COLLECTION_CONFIG.SUCCESS.SAVE",
         );
-        this.snackBar.open(`${successMsg}`, undefined, {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-        });
+        this.notify.open(`${successMsg}`);
     }
 }
 
