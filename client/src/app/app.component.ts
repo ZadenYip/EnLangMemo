@@ -35,6 +35,7 @@ export class AppComponent {
 
     readonly tabs = [
         { label: "HEADER.DECKS", path: `${APP_PATHS.home}` },
+        { label: "HEADER.PROCESSING", path: `${APP_PATHS.processing}` },
         { label: "HEADER.IMMERSE", path: `${APP_PATHS.immerse}` },
         { label: "HEADER.BROWSE", path: `${APP_PATHS.browse}` },
         { label: "HEADER.STATS", path: `${APP_PATHS.stats}` },

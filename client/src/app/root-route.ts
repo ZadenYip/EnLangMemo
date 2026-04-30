@@ -6,9 +6,11 @@ import { SettingsComponent } from "@render/settings/settings.component";
 import { SETTINGS_ROUTES } from "@render/settings/route";
 import { PageNotFoundComponent } from "@render/shared/components";
 import { BROWSE_ROUTES } from "@render/browse/route";
+import { ProcessingComponent } from "./processing/processing.component";
 
 export const APP_PATHS = {
     home: "home",
+    processing: "processing",
     immerse: "immerse",
     browse: "browse",
     settings: "settings",
@@ -20,6 +22,10 @@ export const APP_ROUTES: Routes = [
         path: "",
         redirectTo: APP_PATHS.home,
         pathMatch: "full",
+    },
+    {
+        path: APP_PATHS.processing,
+        component: ProcessingComponent,
     },
     {
         path: APP_PATHS.home,
