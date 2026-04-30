@@ -44,7 +44,7 @@ export class AppComponent {
 
     /**
      *
-     * @param path - The path to check for active state锛坋.g., "/home"锛?
+     * @param path - The path to check for activeness. e.g. "/home" or "/settings/profile".
      * @returns True if the path is active, false otherwise
      */
     isActive = (path: string): boolean => {
