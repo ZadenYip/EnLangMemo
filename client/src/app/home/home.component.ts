@@ -178,9 +178,9 @@ export class HomeComponent implements OnInit {
             return;
         }
         Logger.info(`confirm create deck with name: ${deckName}`);
-        try {
-            const result = await window.service.deck.createDeck(deckName);
-            if (result.isSuccess) {
+        const result = await window.service.deck.createDeck(deckName);
+        switch (result.state) {
+            case "success": {
                 Logger.info("Deck created successfully", {
                     deckName,
                 });
@@ -189,16 +189,23 @@ export class HomeComponent implements OnInit {
                 });
                 this.notify.open(successMsg);
                 await this.loadDecks();
-            } else {
+                break;
+            }
+            case "duplicate": {
+                Logger.info("Deck creation failed due to duplicate name", {
+                    deckName,
+                });
+                const duplicateMsg = this.translateService.instant("PAGES.HOME.DECKS.CREATE_DUPLICATE");
+                this.notify.open(duplicateMsg);
+                break;
+            }
+            case "error": {
                 Logger.error("Failed to create deck", {
                     deckName,
                     errorMessage: result.errorMessage,
                 });
-                return;
+                break;
             }
-        } catch (error) {
-            Logger.error("Failed to create deck (unknown error)", error);
-            return;
         }
         this.pendingDeckName = "";
     }

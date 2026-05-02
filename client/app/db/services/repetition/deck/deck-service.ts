@@ -46,8 +46,7 @@ export class DeckService {
 
         if (response) {
             const result: DeckCreationResult = {
-                isSuccess: false,
-                errorMessage: "A deck with the same name already exists.",
+                state: "duplicate"
             }
             return result;
         }
@@ -65,8 +64,7 @@ export class DeckService {
         Logger.info("Deck created successfully:", deckName);
 
         const result: DeckCreationResult = {
-            isSuccess: true,
-            errorMessage: ""
+            state: "success",
         }
         return result;
     }

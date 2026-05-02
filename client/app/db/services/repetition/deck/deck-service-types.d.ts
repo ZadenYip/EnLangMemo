@@ -29,7 +29,7 @@ export interface Deck {
     reviewedToday: number;
 }
 
-export interface DeckCreationResult {
-    isSuccess: boolean;
-    errorMessage: string;
-}
+export type DeckCreationResult = 
+    | { state: "success" }
+    | { state: "duplicate" }
+    | { state: "error"; errorMessage: string }
