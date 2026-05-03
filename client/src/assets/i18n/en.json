@@ -52,6 +52,13 @@
         "OFFSET_TIP": "Subtitle offset: {{offset}} ms"
       }
     },
+      "PREVIEW": {
+        "HEADER": "Preview",
+        "ACTIONS": {
+          "FRONT": "Front",
+          "BACK": "Back"
+        }
+      }
     "DETAIL": {
       "TITLE": "Detail page !",
       "BACK_TO_HOME": "Back to Home"

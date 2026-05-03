@@ -52,6 +52,13 @@
         "OFFSET_TIP": "字幕偏移：{{offset}} ms"
       }
     },
+      "PREVIEW": {
+        "HEADER": "预览",
+        "ACTIONS": {
+          "FRONT": "正面",
+          "BACK": "背面"
+        }
+      }
     "DETAIL": {
       "TITLE": "Detail page !",
       "BACK_TO_HOME": "Back to Home"
