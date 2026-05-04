@@ -56,7 +56,7 @@
       "BENCH": {
         "HEADER": "Processing Bench",
         "MODES": {
-          "CARD_TEMPLATE": "Edit Card Template",
+          "NOTE_CONTENT": "Edit Note Content",
           "NOTE_TEMPLATE": "Edit Note Template"
         }
       },

@@ -56,7 +56,7 @@
       "BENCH": {
         "HEADER": "加工台",
         "MODES": {
-          "CARD_TEMPLATE": "编辑卡片模板",
+          "NOTE_CONTENT": "编辑笔记内容",
           "NOTE_TEMPLATE": "笔记模板编辑"
         }
       },

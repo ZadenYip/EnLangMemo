@@ -5,7 +5,7 @@ import {
     SelectDropdownOption,
 } from "../../shared/components/select-dropdown/select-dropdown.component";
 
-type BenchModeValue = "card-template" | "note-template";
+type BenchModeValue = "note-content" | "note-template";
 interface BenchModeOption extends SelectDropdownOption {
     value: BenchModeValue;
     labelKey: string;
@@ -23,8 +23,8 @@ export class ProcessingBenchComponent {
      */
     modeOptions: BenchModeOption[] = [
         {
-            value: "card-template",
-            labelKey: "PAGES.PROCESSING.BENCH.MODES.CARD_TEMPLATE",
+            value: "note-content",
+            labelKey: "PAGES.PROCESSING.BENCH.MODES.NOTE_CONTENT",
         },
         {
             value: "note-template",
