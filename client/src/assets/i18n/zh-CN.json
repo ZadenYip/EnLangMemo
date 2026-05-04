@@ -52,6 +52,10 @@
         "OFFSET_TIP": "字幕偏移：{{offset}} ms"
       }
     },
+    "PROCESSING": {
+      "BENCH": {
+        "HEADER": "加工台"
+      },
       "PREVIEW": {
         "HEADER": "预览",
         "ACTIONS": {
@@ -59,6 +63,7 @@
           "BACK": "背面"
         }
       }
+    },
     "DETAIL": {
       "TITLE": "Detail page !",
       "BACK_TO_HOME": "Back to Home"

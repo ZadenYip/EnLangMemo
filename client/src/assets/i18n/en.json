@@ -52,6 +52,10 @@
         "OFFSET_TIP": "Subtitle offset: {{offset}} ms"
       }
     },
+    "PROCESSING": {
+      "BENCH": {
+        "HEADER": "Processing Bench"
+      },
       "PREVIEW": {
         "HEADER": "Preview",
         "ACTIONS": {
@@ -59,6 +63,7 @@
           "BACK": "Back"
         }
       }
+    },
     "DETAIL": {
       "TITLE": "Detail page !",
       "BACK_TO_HOME": "Back to Home"
