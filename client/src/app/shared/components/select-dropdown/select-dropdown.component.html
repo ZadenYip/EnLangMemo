@@ -1,0 +1,28 @@
+<div
+    class="trigger"
+    role="button"
+    tabindex="0"
+    (click)="toggleMenu()"
+    (keydown.enter)="toggleMenu()"
+    (keydown.space)="toggleMenu()"
+    [attr.aria-expanded]="isMenuOpen()"
+>
+    {{ selectedOption().labelKey | translate }}
+    <span class="caret" aria-hidden="true"></span>
+</div>
+@if (isMenuOpen()) {
+    <ul class="menu" role="listbox">
+        @for (option of options(); track option.value) {
+            <li
+                class="option"
+                role="option"
+                tabindex="0"
+                [attr.aria-selected]="option.value === selectedOption().value"
+                (click)="selectOption(option)"
+                (keydown.enter)="selectOption(option)"
+            >
+                {{ option.labelKey | translate }}
+            </li>
+        }
+    </ul>
+}
