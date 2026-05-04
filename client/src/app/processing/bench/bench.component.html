@@ -2,8 +2,17 @@
     <div class="bench-title">
         {{ "PAGES.PROCESSING.BENCH.HEADER" | translate }}
     </div>
+    <app-select-dropdown
+        [options]="modeOptions"
+        [selectedOption]="editMode()"
+        (selectedOptionChange)="selectMode($event)"
+    ></app-select-dropdown>
 </div>
 
 <div class="bench-body">
-    test
+    @if (editMode().value === 'card-template') {
+        card-template
+    } @else {
+        note-template
+    }
 </div>

@@ -1,15 +1,48 @@
 import { Component, signal } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
+import {
+    SelectDropdownComponent,
+    SelectDropdownOption,
+} from "../../shared/components/select-dropdown/select-dropdown.component";
+
+type BenchModeValue = "card-template" | "note-template";
+interface BenchModeOption extends SelectDropdownOption {
+    value: BenchModeValue;
+    labelKey: string;
+}
 
 @Component({
     selector: "app-processing-bench",
-    imports: [TranslateModule],
+    imports: [SelectDropdownComponent, TranslateModule],
     templateUrl: "./bench.component.html",
     styleUrl: "./bench.component.scss",
 })
 export class ProcessingBenchComponent {
     /**
+     * Available edit modes for the bench dropdown.
+     */
+    modeOptions: BenchModeOption[] = [
+        {
+            value: "card-template",
+            labelKey: "PAGES.PROCESSING.BENCH.MODES.CARD_TEMPLATE",
+        },
+        {
+            value: "note-template",
+            labelKey: "PAGES.PROCESSING.BENCH.MODES.NOTE_TEMPLATE",
+        },
+    ];
+
+    /**
      * Current editing mode for bench content.
      */
-    editMode = signal("rich-text");
+    editMode = signal<BenchModeOption>(this.modeOptions[0]);
+
+
+    /**
+     * Switch bench editing mode and close the dropdown.
+     */
+    selectMode(option: SelectDropdownOption): void {
+        this.editMode.set(option as BenchModeOption);
+    }
+  
 }

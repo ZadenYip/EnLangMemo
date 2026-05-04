@@ -54,7 +54,11 @@
     },
     "PROCESSING": {
       "BENCH": {
-        "HEADER": "Processing Bench"
+        "HEADER": "Processing Bench",
+        "MODES": {
+          "CARD_TEMPLATE": "Edit Card Template",
+          "NOTE_TEMPLATE": "Edit Note Template"
+        }
       },
       "PREVIEW": {
         "HEADER": "Preview",

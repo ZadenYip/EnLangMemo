@@ -54,7 +54,11 @@
     },
     "PROCESSING": {
       "BENCH": {
-        "HEADER": "加工台"
+        "HEADER": "加工台",
+        "MODES": {
+          "CARD_TEMPLATE": "编辑卡片模板",
+          "NOTE_TEMPLATE": "笔记模板编辑"
+        }
       },
       "PREVIEW": {
         "HEADER": "预览",
