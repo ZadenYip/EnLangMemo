@@ -3,6 +3,12 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogTitle, MatDialogActions } from "@angular/material/dialog";
 import { TranslateModule } from "@ngx-translate/core";
 
+export interface ConfirmDeleteDialogData {  
+    title: string;
+    message: string;
+    confirmText: string;
+}
+
 @Component({
     standalone: true,
     imports: [
@@ -16,8 +22,9 @@ import { TranslateModule } from "@ngx-translate/core";
     styleUrl: "./dialog.component.scss",
 })
 export class ConfirmDeleteDialog {
-    dialogRef = inject(MatDialogRef<ConfirmDeleteDialog>);
-    data = inject(MAT_DIALOG_DATA);
+    private dialogRef = inject(MatDialogRef<ConfirmDeleteDialog>);
+    // TODO: 改为 interface 约束传入数据结构
+    private data = inject(MAT_DIALOG_DATA) as ConfirmDeleteDialogData;
 
     get title(): string {
         return this.data?.title || "确认删除";

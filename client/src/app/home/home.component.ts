@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 import Logger from "electron-log";
 import { Deck, DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
-import { ConfirmDeleteDialogComponent } from "../shared/components";
+import { ConfirmDeleteDialog, ConfirmDeleteDialogData } from "../shared/components";
 import { NotifyService } from "../shared/services/notify.service";
 import { SettingsDialogService } from "../shared/services/settings-dialog.service";
 import { DeckConfigComponent } from "./sub/deck-config/config.component";
@@ -111,7 +111,7 @@ export class HomeComponent implements OnInit {
         });
         const confirmText = this.translateService.instant("PAGES.HOME.DECKS.DELETE_DIALOG.CONFIRM");
         const confirmed = await firstValueFrom(
-            this.dialog.open(ConfirmDeleteDialogComponent, {
+            this.dialog.open<ConfirmDeleteDialog, ConfirmDeleteDialogData>(ConfirmDeleteDialog, {
                 data: {
                     title,
                     message,
