@@ -58,6 +58,17 @@
         "MODES": {
           "NOTE_CONTENT": "Edit Note Content",
           "NOTE_TEMPLATE": "Edit Note Template"
+        },
+        "ACTIONS": {
+          "EDIT_CURRENT_TEMPLATE": "Edit Selected Card Template"
+        },
+        "NOTE_TEMPLATE": {
+          "FRONT_TEMPLATE": "Front Template",
+          "BACK_TEMPLATE": "Back Template",
+          "CSS_TEMPLATE": "CSS Template",
+          "FRONT_PLACEHOLDER": "Edit front template HTML",
+          "BACK_PLACEHOLDER": "Edit back template HTML",
+          "CSS_PLACEHOLDER": "Edit CSS styles"
         }
       },
       "PREVIEW": {

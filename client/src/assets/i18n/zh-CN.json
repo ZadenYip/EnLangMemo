@@ -58,6 +58,17 @@
         "MODES": {
           "NOTE_CONTENT": "编辑笔记内容",
           "NOTE_TEMPLATE": "笔记模板编辑"
+        },
+        "ACTIONS": {
+          "EDIT_CURRENT_TEMPLATE": "编辑当前卡片模板"
+        },
+        "NOTE_TEMPLATE": {
+          "FRONT_TEMPLATE": "正面模板",
+          "BACK_TEMPLATE": "背面模板",
+          "CSS_TEMPLATE": "CSS 模板",
+          "FRONT_PLACEHOLDER": "编辑正面模板 HTML",
+          "BACK_PLACEHOLDER": "编辑背面模板 HTML",
+          "CSS_PLACEHOLDER": "编辑 CSS 样式"
         }
       },
       "PREVIEW": {

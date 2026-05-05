@@ -1,0 +1,51 @@
+<div class="header">
+    <div class="toolbar">
+        <app-select-dropdown
+            [options]="cardTemplateOptions"
+            [selectedOption]="selectedCardTemplate()"
+            (selectedOptionChange)="selectCardTemplate($event)"
+        ></app-select-dropdown>
+    </div>
+
+    <mat-radio-group
+        class="tabs"
+        [value]="selectedSection()"
+        (change)="selectSection($any($event.value))"
+    >
+        <mat-radio-button class="tab" value="front">
+            {{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.FRONT_TEMPLATE" | translate }}
+        </mat-radio-button>
+        <mat-radio-button class="tab" value="back">
+            {{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.BACK_TEMPLATE" | translate }}
+        </mat-radio-button>
+        <mat-radio-button class="tab" value="css">
+            {{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.CSS_TEMPLATE" | translate }}
+        </mat-radio-button>
+    </mat-radio-group>
+</div>
+
+<div class="editor">
+    @switch (selectedSection()) {
+        @case ("front") {
+            <app-note-template-editor-textarea
+                [value]="frontTemplateContent()"
+                [placeholder]="'PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.FRONT_PLACEHOLDER' | translate"
+                (valueChange)="frontTemplateContent.set($event)"
+            ></app-note-template-editor-textarea>
+        }
+        @case ("back") {
+            <app-note-template-editor-textarea
+                [value]="backTemplateContent()"
+                [placeholder]="'PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.BACK_PLACEHOLDER' | translate"
+                (valueChange)="backTemplateContent.set($event)"
+            ></app-note-template-editor-textarea>
+        }
+        @case ("css") {
+            <app-note-template-editor-textarea
+                [value]="cssTemplateContent()"
+                [placeholder]="'PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.CSS_PLACEHOLDER' | translate"
+                (valueChange)="cssTemplateContent.set($event)"
+            ></app-note-template-editor-textarea>
+        }
+    }
+</div>
