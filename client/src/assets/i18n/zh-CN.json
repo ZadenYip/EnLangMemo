@@ -66,6 +66,9 @@
           "FRONT_TEMPLATE": "正面模板",
           "BACK_TEMPLATE": "背面模板",
           "CSS_TEMPLATE": "CSS 模板",
+          "CREATE_TOOLTIP": "新增笔记模板",
+          "CREATE_CARD_TOOLTIP": "新增卡片模板",
+          "SETTINGS_TOOLTIP": "笔记模板设置",
           "FRONT_PLACEHOLDER": "编辑正面模板 HTML",
           "BACK_PLACEHOLDER": "编辑背面模板 HTML",
           "CSS_PLACEHOLDER": "编辑 CSS 样式"

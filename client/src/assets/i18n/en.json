@@ -66,6 +66,9 @@
           "FRONT_TEMPLATE": "Front Template",
           "BACK_TEMPLATE": "Back Template",
           "CSS_TEMPLATE": "CSS Template",
+          "CREATE_CARD_TOOLTIP": "Create card template",
+          "CREATE_TOOLTIP": "Create note template",
+          "SETTINGS_TOOLTIP": "Note template settings",
           "FRONT_PLACEHOLDER": "Edit front template HTML",
           "BACK_PLACEHOLDER": "Edit back template HTML",
           "CSS_PLACEHOLDER": "Edit CSS styles"

@@ -1,0 +1,17 @@
+<div class="template-operation-group">
+    <app-select-dropdown
+        [options]="opts()"
+        [selectedOption]="selected()"
+        (selectedOptionChange)="selectedChange.emit($event)"
+    ></app-select-dropdown>
+    <app-tool-icon
+        iconName="add"
+        [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.CREATE_TOOLTIP' | translate"
+        (clicked)="addClick.emit()"
+    ></app-tool-icon>
+    <app-tool-icon
+        iconName="settings"
+        [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.SETTINGS_TOOLTIP' | translate"
+        (clicked)="settingsClick.emit()"
+    ></app-tool-icon>
+</div>
