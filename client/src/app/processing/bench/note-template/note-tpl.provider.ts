@@ -1,10 +1,13 @@
-import { Injectable, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
+import { SettingsDialogService } from "@render/shared/services/settings-dialog.service";
+import { AddNoteTplDialog } from "./note-tpl-ops/dialog/add-note-tpl";
 
 type NoteTplSection = "front" | "back" | "css";
 
 @Injectable()
 export class NoteTplProvider {
+    private settingDialog = inject(SettingsDialogService);
     /**
      * Dropdown options for card templates.
      */
@@ -91,7 +94,9 @@ export class NoteTplProvider {
      * UI placeholder for creating a note template.
      */
     addNoteTpl(): void {
-        // TODO: Implement behavior in the data layer.
+        this.settingDialog.open(
+            AddNoteTplDialog
+        );
     }
 
     /**

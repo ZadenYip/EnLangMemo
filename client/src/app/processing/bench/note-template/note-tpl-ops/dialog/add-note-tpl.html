@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>{{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.ADD_NOTE_DIALOG.TITLE" | translate }}</h2>
+<mat-dialog-content>
+    <mat-form-field appearance="outline">
+        <mat-label>{{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.ADD_NOTE_DIALOG.FIELDS.CREATE_NAME" | translate }}</mat-label>
+        <input matInput type="text" [(ngModel)]="tplName"/>
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button type="button" mat-flat-button (click)="onConfirm()">
+        {{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.ADD_NOTE_DIALOG.ACTIONS.CONFIRM" | translate }}
+    </button>
+    <button type="button" mat-button (click)="onCancel()">
+        {{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.ADD_NOTE_DIALOG.ACTIONS.CANCEL" | translate }}
+    </button>
+</mat-dialog-actions>

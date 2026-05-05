@@ -1,5 +1,6 @@
 <div class="header">
     <div class="template-operation-area">
+        <!-- card template operations    -->
         <app-card-tpl-ops
             [opts]="cardTplOpts"
             [selected]="selCardTpl()"
@@ -7,6 +8,7 @@
             (addClick)="addCardTpl()"
         ></app-card-tpl-ops>
 
+        <!-- note template operations -->
         <app-note-tpl-ops
             [opts]="noteTplOpts"
             [selected]="selNoteTpl()"

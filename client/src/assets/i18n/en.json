@@ -71,7 +71,17 @@
           "SETTINGS_TOOLTIP": "Note template settings",
           "FRONT_PLACEHOLDER": "Edit front template HTML",
           "BACK_PLACEHOLDER": "Edit back template HTML",
-          "CSS_PLACEHOLDER": "Edit CSS styles"
+          "CSS_PLACEHOLDER": "Edit CSS styles",
+          "ADD_NOTE_DIALOG": {
+            "TITLE": "Add Note Template",
+            "FIELDS": {
+              "CREATE_NAME": "Template Name"
+            },
+            "ACTIONS": {
+              "CONFIRM": "Confirm",
+              "CANCEL": "Cancel"
+            }
+          }
         }
       },
       "PREVIEW": {
