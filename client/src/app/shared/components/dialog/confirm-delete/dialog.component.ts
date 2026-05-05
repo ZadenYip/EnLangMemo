@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogTitle, MatDia
 import { TranslateModule } from "@ngx-translate/core";
 
 @Component({
-    selector: "app-confirm-delete-dialog",
     standalone: true,
     imports: [
         MatButtonModule,
@@ -16,8 +15,8 @@ import { TranslateModule } from "@ngx-translate/core";
     templateUrl: "./dialog.component.html",
     styleUrl: "./dialog.component.scss",
 })
-export class ConfirmDeleteDialogComponent {
-    dialogRef = inject(MatDialogRef<ConfirmDeleteDialogComponent>);
+export class ConfirmDeleteDialog {
+    dialogRef = inject(MatDialogRef<ConfirmDeleteDialog>);
     data = inject(MAT_DIALOG_DATA);
 
     get title(): string {

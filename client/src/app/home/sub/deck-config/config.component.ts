@@ -17,7 +17,6 @@ export interface DeckConfigDialogData {
 }
 
 @Component({
-	selector: "app-deck-config",
 	templateUrl: "./config.component.html",
 	styleUrls: ["./config.component.scss"],
 	standalone: true,
