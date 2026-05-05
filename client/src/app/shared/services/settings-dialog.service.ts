@@ -11,14 +11,14 @@ export class SettingsDialogService {
 
     /**
      * Open a settings dialog with default size.
-     * @param component Dialog component to open.
+     * @param dialogComponent Dialog component to open.
      * @param config Optional dialog config overrides.
      */
     open<TComponent, TData = unknown, TResult = unknown>(
-        component: ComponentType<TComponent>,
+        dialogComponent: ComponentType<TComponent>,
         config: MatDialogConfig<TData> = {},
     ): MatDialogRef<TComponent, TResult> {
-        return this.dialog.open(component, {
+        return this.dialog.open(dialogComponent, {
             width: "50vw",
             minWidth: "50vw",
             maxWidth: "50vw",
