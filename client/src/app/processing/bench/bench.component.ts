@@ -4,7 +4,7 @@ import {
     SelectDropdownComponent,
     SelectDropdownOption,
 } from "../../shared/components/select-dropdown/select-dropdown.component";
-import { BenchNoteTemplateComponent } from "./note-template/note-tpl.component";
+import { BenchTemplateEditComponent } from "./note-template/note-tpl.component";
 
 type BenchModeValue = "note-content" | "note-template";
 interface BenchModeOption extends SelectDropdownOption {
@@ -14,7 +14,8 @@ interface BenchModeOption extends SelectDropdownOption {
 
 @Component({
     selector: "app-processing-bench",
-    imports: [BenchNoteTemplateComponent, SelectDropdownComponent, TranslateModule],
+    standalone: true,
+    imports: [BenchTemplateEditComponent, SelectDropdownComponent, TranslateModule],
     templateUrl: "./bench.component.html",
     styleUrl: "./bench.component.scss",
 })

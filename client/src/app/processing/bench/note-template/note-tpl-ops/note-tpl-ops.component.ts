@@ -1,11 +1,18 @@
 import { Component, input, output } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
-import { ToolIconComponent } from "../../tool-icon/tool-icon.component";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+
+/**
+ * Available actions emitted by the note template ops menu.
+ */
+export type NoteTplOpsAction = "add" | "settings";
 
 @Component({
     selector: "app-note-tpl-ops",
-    imports: [SelectDropdownComponent, ToolIconComponent, TranslateModule],
+    imports: [SelectDropdownComponent, MatMenuModule, MatIconModule, MatButtonModule, TranslateModule],
     templateUrl: "./note-tpl-ops.component.html",
     styleUrl: "./note-tpl-ops.component.scss",
     standalone: true,
@@ -27,12 +34,7 @@ export class NoteTplOpsComponent {
     selectedChange = output<SelectDropdownOption>();
 
     /**
-     * Emits when the add button is clicked.
+     * Emits when a note template menu action is selected.
      */
-    addClick = output<void>();
-
-    /**
-     * Emits when the settings button is clicked.
-     */
-    settingsClick = output<void>();
+    menuClick = output<NoteTplOpsAction>();
 }

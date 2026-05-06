@@ -4,10 +4,10 @@ import { TranslateModule } from "@ngx-translate/core";
 import { NoteTemplateEditorTextareaComponent } from "./editor-textarea/editor-textarea.component";
 import { NoteTplProvider } from "./note-tpl.provider";
 import { CardTplOpsComponent } from "./card-tpl-ops/card-tpl-ops.component";
-import { NoteTplOpsComponent } from "./note-tpl-ops/note-tpl-ops.component";
+import { NoteTplOpsAction, NoteTplOpsComponent } from "./note-tpl-ops/note-tpl-ops.component";
 
 @Component({
-    selector: "app-bench-note-template",
+    selector: "app-bench-template-edit",
     standalone: true,
     providers: [NoteTplProvider],
     imports: [
@@ -20,7 +20,7 @@ import { NoteTplOpsComponent } from "./note-tpl-ops/note-tpl-ops.component";
     templateUrl: "./note-tpl.component.html",
     styleUrl: "./note-tpl.component.scss",
 })
-export class BenchNoteTemplateComponent {
+export class BenchTemplateEditComponent {
     /**
      * Provider that owns note-template UI state.
      */
@@ -95,16 +95,24 @@ export class BenchNoteTemplateComponent {
     }
 
     /**
-     * UI placeholder for creating a note template.
-     */
-    addNoteTpl(): void {
-        this.provider.addNoteTpl();
-    }
-
-    /**
      * UI placeholder for note-template settings.
      */
     openNoteTplSettings(): void {
         this.provider.openNoteTplSettings();
+    }
+
+    /**
+     * Handle actions emitted from note-tpl-ops settings menu.
+     * Accepts payloads: 'add' | 'settings'
+     */
+    handleNoteTplAction(action: NoteTplOpsAction): void {
+        if (action === "add") {
+            this.provider.addNoteTpl();
+            return;
+        }
+        if (action === "settings") {
+            this.provider.openNoteTplSettings();
+            return;
+        }
     }
 }

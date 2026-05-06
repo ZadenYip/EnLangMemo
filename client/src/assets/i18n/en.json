@@ -62,13 +62,17 @@
         "ACTIONS": {
           "EDIT_CURRENT_TEMPLATE": "Edit Selected Card Template"
         },
-        "NOTE_TEMPLATE": {
+        "TEMPLATE_EDIT": {
           "FRONT_TEMPLATE": "Front Template",
           "BACK_TEMPLATE": "Back Template",
           "CSS_TEMPLATE": "CSS Template",
-          "CREATE_CARD_TOOLTIP": "Create card template",
-          "CREATE_TOOLTIP": "Create note template",
-          "SETTINGS_TOOLTIP": "Note template settings",
+          "CARD_TPL_OPS_MENU": {
+            "ADD": "Create card template"
+          },
+          "NOTE_TPL_OPS_MENU": {
+            "ADD": "Create note template",
+            "SETTINGS": "Note template settings"
+          },
           "FRONT_PLACEHOLDER": "Edit front template HTML",
           "BACK_PLACEHOLDER": "Edit back template HTML",
           "CSS_PLACEHOLDER": "Edit CSS styles",

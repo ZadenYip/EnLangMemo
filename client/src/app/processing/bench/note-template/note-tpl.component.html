@@ -5,7 +5,7 @@
             [opts]="cardTplOpts"
             [selected]="selCardTpl()"
             (selectedChange)="pickCardTpl($event)"
-            (addClick)="addCardTpl()"
+            (menuClick)="addCardTpl()"
         ></app-card-tpl-ops>
 
         <!-- note template operations -->
@@ -13,8 +13,7 @@
             [opts]="noteTplOpts"
             [selected]="selNoteTpl()"
             (selectedChange)="pickNoteTpl($event)"
-            (addClick)="addNoteTpl()"
-            (settingsClick)="openNoteTplSettings()"
+            (menuClick)="handleNoteTplAction($event)"
         ></app-note-tpl-ops>
     </div>
 
@@ -24,13 +23,13 @@
         (change)="setSection($any($event.value))"
     >
         <mat-radio-button class="tab" value="front">
-            {{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.FRONT_TEMPLATE" | translate }}
+            {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.FRONT_TEMPLATE" | translate }}
         </mat-radio-button>
         <mat-radio-button class="tab" value="back">
-            {{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.BACK_TEMPLATE" | translate }}
+            {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.BACK_TEMPLATE" | translate }}
         </mat-radio-button>
         <mat-radio-button class="tab" value="css">
-            {{ "PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.CSS_TEMPLATE" | translate }}
+            {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CSS_TEMPLATE" | translate }}
         </mat-radio-button>
     </mat-radio-group>
 </div>
@@ -40,21 +39,21 @@
         @case ("front") {
             <app-note-template-editor-textarea
                 [value]="frontTpl()"
-                [placeholder]="'PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.FRONT_PLACEHOLDER' | translate"
+                [placeholder]="'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.FRONT_PLACEHOLDER' | translate"
                 (valueChange)="frontTpl.set($event)"
             ></app-note-template-editor-textarea>
         }
         @case ("back") {
             <app-note-template-editor-textarea
                 [value]="backTpl()"
-                [placeholder]="'PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.BACK_PLACEHOLDER' | translate"
+                [placeholder]="'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.BACK_PLACEHOLDER' | translate"
                 (valueChange)="backTpl.set($event)"
             ></app-note-template-editor-textarea>
         }
         @case ("css") {
             <app-note-template-editor-textarea
                 [value]="cssTpl()"
-                [placeholder]="'PAGES.PROCESSING.BENCH.NOTE_TEMPLATE.CSS_PLACEHOLDER' | translate"
+                [placeholder]="'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CSS_PLACEHOLDER' | translate"
                 (valueChange)="cssTpl.set($event)"
             ></app-note-template-editor-textarea>
         }
