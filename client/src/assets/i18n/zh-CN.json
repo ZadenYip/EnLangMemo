@@ -76,7 +76,7 @@
           "FRONT_PLACEHOLDER": "编辑正面模板 HTML",
           "BACK_PLACEHOLDER": "编辑背面模板 HTML",
           "CSS_PLACEHOLDER": "编辑 CSS 样式",
-          "ADD_NOTE_DIALOG": {
+          "CREATE_NOTE_DIALOG": {
             "TITLE": "创建新笔记模板",
             "FIELDS": {
               "CREATE_NAME": "模板名称"

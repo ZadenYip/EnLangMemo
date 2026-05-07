@@ -76,7 +76,7 @@
           "FRONT_PLACEHOLDER": "Edit front template HTML",
           "BACK_PLACEHOLDER": "Edit back template HTML",
           "CSS_PLACEHOLDER": "Edit CSS styles",
-          "ADD_NOTE_DIALOG": {
+          "CREATE_NOTE_DIALOG": {
             "TITLE": "Add Note Template",
             "FIELDS": {
               "CREATE_NAME": "Template Name"
