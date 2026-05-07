@@ -46,7 +46,7 @@ CREATE TABLE `note_types` (
 	`name` text NOT NULL,
 	`usn` integer NOT NULL,
 	`updated_at` integer NOT NULL,
-	`config` jsonb NOT NULL
+	`note_template` jsonb NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `notes` (

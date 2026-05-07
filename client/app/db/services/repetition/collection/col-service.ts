@@ -105,7 +105,7 @@ export class CollectionService implements ICollectionService {
             .from(collectionTable);
 
         const collectionRecord = collectionRecords[0];
-        return collectionRecord.config as CollectionConfig;
+        return collectionRecord.config;
     }
 
 
@@ -122,7 +122,7 @@ export class CollectionService implements ICollectionService {
         .from(collectionTable);
         const collectionRecord = collectionRecords[0];
 
-        const collectionConfig = collectionRecord.config as CollectionConfig;
+        const collectionConfig = collectionRecord.config;
         const nextConfig: CollectionConfig = {
             ...collectionConfig,
             dailyResetTime: resetTime,

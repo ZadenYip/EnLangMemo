@@ -7,7 +7,7 @@ import Logger from "electron-log";
 
 export class DeckService {
     /**
-     * 获取当前 collection 下的所有牌组，并转换为前端需要的 Deck 模型。
+     * get all decks in current collection and transform them to Deck model needed by frontend.
      */
     async listDecks(): Promise<Deck[]> {
         const deckRows = await getRepDb().query.decksTable.findMany({
@@ -46,7 +46,7 @@ export class DeckService {
 
         if (response) {
             const result: DeckCreationResult = {
-                state: "duplicate"
+                state: "duplicate",
             }
             return result;
         }
@@ -104,7 +104,7 @@ export class DeckService {
             config: deckRow.config,
         });
 
-        return deckRow.config as DeckConfig;
+        return deckRow.config;
     }
 
     /**

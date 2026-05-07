@@ -9,6 +9,9 @@ import {
     text,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
+import type { NoteTemplate } from "@main/db/services/repetition/note/nt-service.types";
+import type { CollectionConfig } from "@main/db/services/repetition/collection/col-service-types";
+import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
 
 
 // More information see in https://dbdiagram.io/d/EnLangMemo-69aafcb1a3f0aa31e1146507
@@ -49,7 +52,7 @@ export const collectionTable = sqliteTable("collection", {
      * see app/db/services/repetition/collection/col-service-types.d.ts 
      * CollectionConfig
      */
-    config: jsonb("config").notNull(),
+    config: jsonb<CollectionConfig>("config").notNull(),
 });
 
 /**
@@ -65,7 +68,7 @@ export const decksTable = sqliteTable("decks", {
     /**
      * 
      */
-    config: jsonb("config").notNull(),
+    config: jsonb<DeckConfig>("config").notNull(),
 });
 
 /**
@@ -78,20 +81,19 @@ export const noteTypesTable = sqliteTable("note_types", {
     usn: int("usn").notNull(),
     updatedAt: int("updated_at").notNull(),
     /**
-     * JSON 配置：
-     * {
-     *   "css": "CSS...",
-     *   "sort_field": "TargetWord",
-     *   "fields": [{"name": "TargetWord"}, {"name": "Translation"}],
-     *   "templates": [{
-     *     "ordinal": 0,
-     *     "name": "默认卡",
-     *     "question": "{{TargetWord}}",
-     *     "answer": "{{Translation}}"
-     *   }]
-     * }
+      "css": "CSS content",
+      "sortField": timestamp,
+      "fields": [{"id": timestamp, "name": "TargetWord"}], 
+      "cardTpls": [
+        {
+          "id": timestamp
+          "name": "默认卡", 
+          "question": "{{TargetWord}}", 
+          "answer": "xxx"
+        }
+      ]
      */
-    config: jsonb("config").notNull(),
+    noteTemplate: jsonb<NoteTemplate>("note_template").notNull(),
 });
 
 export const notesTable = sqliteTable(

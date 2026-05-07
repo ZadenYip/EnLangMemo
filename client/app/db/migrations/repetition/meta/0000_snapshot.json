@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "55d9db09-b386-4fb2-a2e6-21845a73e686",
+  "id": "2ed3c7d5-c6cd-4a33-bfcc-e5915da1bc64",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -318,8 +318,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "config": {
-          "name": "config",
+        "note_template": {
+          "name": "note_template",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": true,
