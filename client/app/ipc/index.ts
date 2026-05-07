@@ -9,6 +9,8 @@ import { CollectionService } from "../db/services/repetition/collection/col-serv
 import { CollectionServiceIPCDescriptor } from "../db/services/repetition/collection/col-service-interface";
 import { DeckService } from "../db/services/repetition/deck/deck-service";
 import { DeckServiceIPCDescriptor } from "../db/services/repetition/deck/deck-service-interface";
+import { NoteTemplateService } from "../db/services/repetition/note/nt-service";
+import { NoteTemplateServiceIPCDescriptor } from "../db/services/repetition/note/nt-service-interface";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
@@ -29,4 +31,7 @@ function registerDatabaseHandlers() {
 
     const deckService = new DeckService();
     registerProxy(deckService, DeckServiceIPCDescriptor);
+
+    const noteTemplateService = new NoteTemplateService();
+    registerProxy(noteTemplateService, NoteTemplateServiceIPCDescriptor);
 }
