@@ -107,7 +107,7 @@ export class BenchTemplateEditComponent {
      */
     handleNoteTplAction(action: NoteTplOpsAction): void {
         if (action === "add") {
-            this.provider.addNoteTpl();
+            this.provider.createNoteTpl();
             return;
         }
         if (action === "settings") {

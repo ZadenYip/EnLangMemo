@@ -1,13 +1,18 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { SettingsDialogService } from "@render/shared/services/settings-dialog.service";
-import { AddNoteTplDialog } from "./note-tpl-ops/dialog/add-note-tpl";
+import { NotifyService } from "@render/shared/services/notify.service";
+import { CreateNoteTplDialog } from "./note-tpl-ops/dialog/create-note-tpl";
+import { firstValueFrom } from "rxjs";
+import { TranslateService } from "@ngx-translate/core";
 
 type NoteTplSection = "front" | "back" | "css";
 
 @Injectable()
 export class NoteTplProvider {
+    private translate = inject(TranslateService);   
     private settingDialog = inject(SettingsDialogService);
+    private notify = inject(NotifyService);
     /**
      * Dropdown options for card templates.
      */
@@ -93,10 +98,35 @@ export class NoteTplProvider {
     /**
      * UI placeholder for creating a note template.
      */
-    addNoteTpl(): void {
-        this.settingDialog.open(
-            AddNoteTplDialog
-        );
+    async createNoteTpl(): Promise<void> {
+        const dialogRef = this.settingDialog.open<CreateNoteTplDialog, unknown, string>(CreateNoteTplDialog);
+
+        const templateName = await firstValueFrom(dialogRef.afterClosed());
+        if (!templateName) {
+            return;
+        }
+
+        const result = await window.service.nt.createNoteTpl(templateName);
+        switch (result.state) {
+            case "success": {
+                const msg = this.translate.instant(
+                    "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CREATE_NOTE_DIALOG.SUCCESS",
+                    { name: templateName },
+                );
+                this.notify.open(msg);
+                return;
+            }
+            case "duplicate":
+                this.notify.open(
+                    "A note template with the same name already exists.",
+                );
+                return;
+            case "error":
+                this.notify.open(
+                    `Failed to create note template: ${result.errorMessage}`,
+                );
+                return;
+        }
     }
 
     /**

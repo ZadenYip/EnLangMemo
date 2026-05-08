@@ -84,7 +84,8 @@
             "ACTIONS": {
               "CONFIRM": "确认",
               "CANCEL": "取消"
-            }
+            },
+            "SUCCESS": "已创建笔记模板：{{name}}"
           }
         }
       },

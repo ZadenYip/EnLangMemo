@@ -84,7 +84,8 @@
             "ACTIONS": {
               "CONFIRM": "Confirm",
               "CANCEL": "Cancel"
-            }
+            },
+            "SUCCESS": "Note template created: {{name}}"
           }
         }
       },
