@@ -1,12 +1,13 @@
-import { Component, inject } from "@angular/core";
+﻿import { Component, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogTitle, MatDialogActions } from "@angular/material/dialog";
-import { TranslateModule } from "@ngx-translate/core";
+import { TranslateModule, TranslateService } from "@ngx-translate/core";
 
-export interface ConfirmDeleteDialogData {  
+export interface ConfirmDeleteDialogData {
     title: string;
     message: string;
-    confirmText: string;
+    confirmText?: string;
+    cancelText?: string;
 }
 
 @Component({
@@ -23,19 +24,23 @@ export interface ConfirmDeleteDialogData {
 })
 export class ConfirmDeleteDialog {
     private dialogRef = inject(MatDialogRef<ConfirmDeleteDialog>);
-    // TODO: 改为 interface 约束传入数据结构
+    private translate = inject(TranslateService);
     private data = inject(MAT_DIALOG_DATA) as ConfirmDeleteDialogData;
 
     get title(): string {
-        return this.data?.title || "确认删除";
+        return this.data.title;
     }
 
     get message(): string {
-        return this.data?.message || "确定要删除吗？";
+        return this.data.message;
     }
 
     get confirmText(): string {
-        return this.data?.confirmText || "删除";
+        return this.data.confirmText ?? this.translate.instant("CONFIRM_DELETE_DIALOG.CONFIRM");
+    }
+
+    get cancelText(): string {
+        return this.data.cancelText ?? this.translate.instant("CONFIRM_DELETE_DIALOG.CANCEL");
     }
 
     onCancel(): void {

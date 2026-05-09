@@ -202,5 +202,9 @@
     "STATS": "Stats",
     "SYNC": "Sync",
     "SETTINGS": "Settings"
+  },
+  "CONFIRM_DELETE_DIALOG": {
+    "CONFIRM": "Delete",
+    "CANCEL": "Cancel"
   }
 }

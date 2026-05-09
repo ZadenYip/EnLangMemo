@@ -203,5 +203,9 @@
     "STATS": "统计",
     "SYNC": "同步",
     "SETTINGS": "设置"
+  },
+  "CONFIRM_DELETE_DIALOG": {
+    "CONFIRM": "删除",
+    "CANCEL": "取消"
   }
 }
