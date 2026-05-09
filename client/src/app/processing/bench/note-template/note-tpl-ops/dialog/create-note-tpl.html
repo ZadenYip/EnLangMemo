@@ -6,7 +6,7 @@
     </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-    <button type="button" mat-flat-button (click)="onConfirm()">
+    <button type="button" mat-flat-button [disabled]="isTplNameEmpty" (click)="onConfirm()">
         {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CREATE_NOTE_DIALOG.ACTIONS.CONFIRM" | translate }}
     </button>
     <button type="button" mat-button (click)="onCancel()">

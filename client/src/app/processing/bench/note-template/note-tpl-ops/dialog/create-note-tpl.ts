@@ -27,12 +27,34 @@ export interface CreateNoteTplDialogData {
 })
 export class CreateNoteTplDialog {
     private readonly dialogRef = inject(MatDialogRef<CreateNoteTplDialog>);
+    /**
+     * User input for note template name.
+     */
     tplName = "";
 
+    /**
+     * Whether current note template name is empty after trim.
+     */
+    get isTplNameEmpty(): boolean {
+        return this.tplName.trim().length === 0;
+    }
+
+    /**
+     * Confirm creation and close dialog with normalized template name.
+     */
     onConfirm(): void {
+        const normalizedTplName = this.tplName.trim();
+        if (!normalizedTplName) {
+            return;
+        }
+
+        // Note: Not the trimmed name.
         this.dialogRef.close(this.tplName);
     }
 
+    /**
+     * Cancel note template creation dialog.
+     */
     onCancel(): void {
         this.dialogRef.close(null);
     }
