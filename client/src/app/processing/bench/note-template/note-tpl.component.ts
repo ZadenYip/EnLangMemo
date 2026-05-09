@@ -2,9 +2,9 @@ import { Component, inject } from "@angular/core";
 import { MatRadioModule } from "@angular/material/radio";
 import { TranslateModule } from "@ngx-translate/core";
 import { NoteTemplateEditorTextareaComponent } from "./editor-textarea/editor-textarea.component";
-import { NoteTplProvider } from "./note-tpl.provider";
+import { CardTplSection, NoteTplProvider } from "./note-tpl.provider";
 import { CardTplOpsComponent } from "./card-tpl-ops/card-tpl-ops.component";
-import { NoteTplOpsAction, NoteTplOpsComponent } from "./note-tpl-ops/note-tpl-ops.component";
+import { NoteTplOpsComponent } from "./note-tpl-ops/note-tpl-ops.component";
 
 @Component({
     selector: "app-bench-template-edit",
@@ -22,97 +22,16 @@ import { NoteTplOpsAction, NoteTplOpsComponent } from "./note-tpl-ops/note-tpl-o
 })
 export class BenchTemplateEditComponent {
     /**
-     * Provider that owns note-template UI state.
+     * View-model provider that owns note-template UI state and actions.
      */
-    private readonly provider = inject(NoteTplProvider);
+    readonly vm = inject(NoteTplProvider);
 
     /**
-     * Dropdown options for card templates.
+     * Update section only when value is a supported template section.
      */
-    readonly cardTplOpts = this.provider.cardTplOpts;
-
-    /**
-     * Dropdown options for note templates.
-     */
-    readonly noteTplOpts = this.provider.noteTplOpts;
-
-    /**
-     * Currently selected card template option.
-     */
-    readonly selCardTpl = this.provider.selCardTpl;
-
-    /**
-     * Currently selected note template option.
-     */
-    readonly selNoteTpl = this.provider.selNoteTpl;
-
-    /**
-     * Selected note template section.
-     */
-    readonly section = this.provider.section;
-
-    /**
-     * Front template HTML content.
-     */
-    readonly frontTpl = this.provider.frontTpl;
-
-    /**
-     * Back template HTML content.
-     */
-    readonly backTpl = this.provider.backTpl;
-
-    /**
-     * CSS template content.
-     */
-    readonly cssTpl = this.provider.cssTpl;
-
-    /**
-     * Update the current card template selection.
-     */
-    pickCardTpl(option: Parameters<NoteTplProvider["pickCardTpl"]>[0]): void {
-        this.provider.pickCardTpl(option);
-    }
-
-    /**
-     * UI placeholder for creating a card template.
-     */
-    addCardTpl(): void {
-        this.provider.addCardTpl();
-    }
-
-    /**
-     * Update the current note template selection.
-     */
-    pickNoteTpl(option: Parameters<NoteTplProvider["pickNoteTpl"]>[0]): void {
-        this.provider.pickNoteTpl(option);
-    }
-
-    /**
-     * Switch the active template section.
-     */
-    setSection(section: Parameters<NoteTplProvider["setSection"]>[0]): void {
-        this.provider.setSection(section);
-    }
-
-    /**
-     * UI placeholder for note-template settings.
-     */
-    openNoteTplSettings(): void {
-        this.provider.openNoteTplSettings();
-    }
-
-    /**
-     * Handle actions emitted from note-tpl-ops settings menu.
-     * Accepts payloads: 'add' | 'settings'
-     */
-    handleNoteTplAction(action: NoteTplOpsAction): void {
-        if (action === "add") {
-            this.provider.createNoteTpl();
-            return;
-        }
-        if (action === "settings") {
-            this.provider.openNoteTplSettings();
-            return;
+    onSectionChange(value: CardTplSection): void {
+        if (value === "front" || value === "back" || value === "css") {
+            this.vm.setSection(value);
         }
     }
 }

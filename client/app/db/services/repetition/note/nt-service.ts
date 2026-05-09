@@ -1,10 +1,10 @@
 import Logger from "electron-log/main";
 import { eq } from "drizzle-orm";
-import { generateUUIDV7 } from "@main/db/import/utils";
+import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import { getRepDb } from "@main/db/db";
 import { noteTypesTable } from "@main/db/schema/repetition/rep";
 import { INoteTemplateService } from "./nt-service-interface";
-import { NamedNoteTpl, NoteTemplateCreationResult } from "./nt-service.types";
+import { NamedNoteTpl, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
 import { genNoteTpl } from "./nt-service-helper";
 
 
@@ -47,13 +47,62 @@ export class NoteTemplateService implements INoteTemplateService {
     }
 
     async getAllNoteTpls(): Promise<NamedNoteTpl[]> {
-        const templates: NamedNoteTpl[] = await getRepDb().query.noteTypesTable.findMany({
+        const rawTpls = await getRepDb().query.noteTypesTable.findMany({
             columns: {
+                id: true,
                 name: true,
                 noteTemplate: true,
             },
         });
-        
-        return templates;
+
+        const tpls: NamedNoteTpl[] = rawTpls.map((raw) => ({
+            id: bufferToHex(raw.id),
+            name: raw.name,
+            noteTemplate: raw.noteTemplate,
+        }));
+
+        return tpls;
+    }
+
+    /**
+     * Delete an existing note template by id.
+     */
+    async deleteNoteTpl(templateId: string): Promise<NoteTemplateDeletionResult> {
+        const existingTplIds = await getRepDb().query.noteTypesTable.findMany({
+            columns: {
+                id: true,
+            },
+            limit: 2,
+        });
+
+        if (existingTplIds.length <= 1) {
+            Logger.warn("Prevented deleting the last remaining note template", {
+                templateId,
+            });
+            return {
+                state: "last-one",
+            };
+        }
+
+        const targetId = hexToBuffer(templateId);
+        const deletedRows = await getRepDb()
+            .delete(noteTypesTable)
+            .where(eq(noteTypesTable.id, targetId));
+
+        if (deletedRows.changes === 0) {
+            Logger.warn(
+                "Note template not found when deleting:",
+                templateId,
+            );
+            return {
+                state: "not-found",
+            };
+        }
+
+        Logger.info("Note template deleted:", templateId);
+        return {
+            state: "success",
+            templateId,
+        };
     }
 }

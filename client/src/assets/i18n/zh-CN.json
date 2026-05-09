@@ -30,10 +30,6 @@
             "SAVE": "保存"
           }
         },
-        "DELETE_DIALOG": {
-          "TITLE": "确认删除",
-          "CONFIRM": "删除"
-        },
         "MENU": {
           "CONFIGURE": "牌组配置",
           "DELETE": "删除牌组"
@@ -72,6 +68,8 @@
           },
           "NOTE_TPL_OPS_MENU": {
             "ADD": "新增笔记模板",
+            "DELETE": "删除笔记模板",
+            "DEFAULT": "默认",
             "SETTINGS": "笔记模板设置"
           },
           "FRONT_PLACEHOLDER": "编辑正面模板 HTML",
@@ -86,7 +84,16 @@
               "CONFIRM": "确认",
               "CANCEL": "取消"
             },
-            "SUCCESS": "已创建笔记模板：{{name}}"
+            "SUCCESS": "已创建笔记模板：{{name}}",
+            "DUPLICATE": "已存在同名笔记模板。"
+          },
+          "DELETE_NOTE_DIALOG": {
+            "TITLE": "确认删除",
+            "MESSAGE": "确定要删除笔记模板 \"{{name}}\" 吗？此操作不可撤销。",
+            "SUCCESS": "已删除笔记模板：{{name}}",
+            "NOT_FOUND": "所选笔记模板已不存在。",
+            "NO_SELECTION": "请先选择要删除的笔记模板。",
+            "LAST_ONE": "至少需要保留一个笔记模板。"
           }
         }
       },

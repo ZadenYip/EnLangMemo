@@ -68,6 +68,8 @@
           },
           "NOTE_TPL_OPS_MENU": {
             "ADD": "Create note template",
+            "DELETE": "Delete note template",
+            "DEFAULT": "Default",
             "SETTINGS": "Note template settings"
           },
           "FRONT_PLACEHOLDER": "Edit front template HTML",
@@ -82,7 +84,16 @@
               "CONFIRM": "Confirm",
               "CANCEL": "Cancel"
             },
-            "SUCCESS": "Note template created: {{name}}"
+            "SUCCESS": "Note template created: {{name}}",
+            "DUPLICATE": "A note template with the same name already exists."
+          },
+          "DELETE_NOTE_DIALOG": {
+            "TITLE": "Confirm Delete",
+            "MESSAGE": "Are you sure you want to delete the note template \"{{name}}\"? This action cannot be undone.",
+            "SUCCESS": "Note template deleted: {{name}}",
+            "NOT_FOUND": "The selected note template no longer exists.",
+            "NO_SELECTION": "Please select a note template to delete.",
+            "LAST_ONE": "At least one note template must be kept."
           }
         }
       },

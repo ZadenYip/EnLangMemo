@@ -5,14 +5,37 @@ import { NotifyService } from "@render/shared/services/notify.service";
 import { CreateNoteTplDialog } from "./note-tpl-ops/dialog/create-note-tpl";
 import { firstValueFrom } from "rxjs";
 import { TranslateService } from "@ngx-translate/core";
+import { MatDialog } from "@angular/material/dialog";
+import { ConfirmDeleteDialog, ConfirmDeleteDialogData } from "@render/shared/components";
+import { NoteTplOpsAction } from "./note-tpl-ops/note-tpl-ops.component";
 
-type NoteTplSection = "front" | "back" | "css";
+/**
+ * Sections of a note template that can be edited.  
+ */
+export type CardTplSection = "front" | "back" | "css";
+
+/**
+ * Dropdown option model for note templates with backend template id.
+ */
+export interface NoteTplOption extends SelectDropdownOption {
+    tplId: string;
+}
 
 @Injectable()
 export class NoteTplProvider {
     private translate = inject(TranslateService);   
+    private dialog = inject(MatDialog);
     private settingDialog = inject(SettingsDialogService);
     private notify = inject(NotifyService);
+
+    /**
+     * Placeholder option for note template dropdown when no templates are available.
+     */
+    private readonly placeholderNoteTplOpt: NoteTplOption = {
+        value: "default-note-template",
+        labelKey: "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TPL_OPS_MENU.DEFAULT",
+        tplId: "",
+    };
     /**
      * Dropdown options for card templates.
      */
@@ -30,12 +53,7 @@ export class NoteTplProvider {
     /**
      * Dropdown options for note templates.
      */
-    noteTplOpts: SelectDropdownOption[] = [
-        {
-            value: "default-note-template",
-            labelKey: "默认",
-        },
-    ];
+    noteTplOpts = signal<NoteTplOption[]>([this.placeholderNoteTplOpt]);
 
     /**
      * Currently selected card template option.
@@ -45,12 +63,12 @@ export class NoteTplProvider {
     /**
      * Currently selected note template option.
      */
-    selNoteTpl = signal<SelectDropdownOption>(this.noteTplOpts[0]);
+    selNoteTpl = signal<NoteTplOption>(this.placeholderNoteTplOpt);
 
     /**
      * Selected note template section.
      */
-    section = signal<NoteTplSection>("front");
+    section = signal<CardTplSection>("front");
 
     /**
      * Front template HTML content.
@@ -66,6 +84,10 @@ export class NoteTplProvider {
      * CSS template content.
      */
     cssTpl = signal("");
+
+    constructor() {
+        void this.loadNoteTplOpts();
+    }
 
     /**
      * Update the current card template selection.
@@ -84,15 +106,32 @@ export class NoteTplProvider {
     /**
      * Update the current note template selection.
      */
-    pickNoteTpl(option: SelectDropdownOption): void {
+    pickNoteTpl(option: NoteTplOption): void {
         this.selNoteTpl.set(option);
     }
 
     /**
      * Switch the active template section.
      */
-    setSection(section: NoteTplSection): void {
+    setSection(section: CardTplSection): void {
         this.section.set(section);
+    }
+
+    /**
+     * Handle note-template operation menu actions.
+     */
+    handleNoteTplAction(action: NoteTplOpsAction): void {
+        switch (action) {
+            case "add":
+                void this.createNoteTpl();
+                return;
+            case "delete":
+                void this.deleteCurrentNoteTpl();
+                return;
+            case "settings":
+                this.openNoteTplSettings();
+                return;
+        }
     }
 
     /**
@@ -114,16 +153,14 @@ export class NoteTplProvider {
                     { name: templateName },
                 );
                 this.notify.open(msg);
+                await this.loadNoteTplOpts();
                 return;
             }
             case "duplicate":
                 this.notify.open(
-                    "A note template with the same name already exists.",
-                );
-                return;
-            case "error":
-                this.notify.open(
-                    `Failed to create note template: ${result.errorMessage}`,
+                    this.translate.instant(
+                        "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CREATE_NOTE_DIALOG.DUPLICATE",
+                    ),
                 );
                 return;
         }
@@ -134,5 +171,82 @@ export class NoteTplProvider {
      */
     openNoteTplSettings(): void {
         // TODO: Implement behavior in the data layer.
+    }
+
+    /**
+     * Delete currently selected note template after user confirmation.
+     */
+    async deleteCurrentNoteTpl(): Promise<void> {
+        const selectedTpl = this.selNoteTpl();
+        if (!selectedTpl.tplId) {
+            this.notify.open(
+                this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.NO_SELECTION"),
+            );
+            return;
+        }
+
+        // Prevent deletion if it's only one template left.
+        const deletableTplCount = this.noteTplOpts().length
+        if (deletableTplCount <= 1) {
+            this.notify.open(
+                this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.LAST_ONE"),
+            );
+            return;
+        }
+
+        const tplName = selectedTpl.label;
+        const title = this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.TITLE");
+        const message = this.translate.instant(
+            "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.MESSAGE",
+            { name: tplName },
+        );
+
+        const confirmed = await firstValueFrom(
+            this.dialog.open<ConfirmDeleteDialog, ConfirmDeleteDialogData>(ConfirmDeleteDialog, {
+                data: {
+                    title,
+                    message,
+                },
+            }).afterClosed(),
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const result = await window.service.nt.deleteNoteTpl(selectedTpl.tplId);
+        switch (result.state) {
+            case "success":
+                this.notify.open(
+                    this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.SUCCESS", {
+                        name: tplName,
+                    }),
+                );
+                await this.loadNoteTplOpts();
+                return;
+            case "not-found":
+                this.notify.open(
+                    this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.NOT_FOUND"),
+                );
+                await this.loadNoteTplOpts();
+                return;
+        }
+    }
+
+    /**
+     * Load all note templates from main process and map to dropdown options.
+     */
+    private async loadNoteTplOpts(): Promise<void> {
+        const tpls = await window.service.nt.getAllNoteTpls();
+        const loadedOpts: NoteTplOption[] = tpls.map((tpl) => ({
+            value: tpl.id,
+            label: tpl.name,
+            tplId: tpl.id,
+        }));
+        const nextOpts = loadedOpts.length > 0 ? loadedOpts : [this.placeholderNoteTplOpt];
+        this.noteTplOpts.set(nextOpts);
+        const currentSelected = this.selNoteTpl();
+        const matchedSelected = nextOpts.find((opt) => opt.value === currentSelected.value);
+        this.selNoteTpl.set(matchedSelected ?? nextOpts[0]);
     }
 }

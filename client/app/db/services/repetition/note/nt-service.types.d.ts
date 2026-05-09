@@ -1,7 +1,9 @@
 export interface NamedNoteTpl {
+    id: string;
     name: string;
     noteTemplate: NoteTemplate;
 }
+
 
 export interface NoteTemplate {
     /**
@@ -21,8 +23,15 @@ export interface NoteTemplate {
  */
 export type NoteTemplateCreationResult =
     | { state: "success"; templateName: string }
-    | { state: "duplicate" }
-    | { state: "error"; errorMessage: string };
+    | { state: "duplicate" };
+
+/**
+ * Result of deleting an existing note template.
+ */
+export type NoteTemplateDeletionResult =
+    | { state: "success"; templateId: string }
+    | { state: "last-one" }
+    | { state: "not-found" };
 
 export interface TemplateField {
     /**

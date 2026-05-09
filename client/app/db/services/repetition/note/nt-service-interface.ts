@@ -1,5 +1,5 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { NoteTemplateCreationResult } from "./nt-service.types";
+import { NamedNoteTpl, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
 
 export interface INoteTemplateService {
 	/**
@@ -7,11 +7,22 @@ export interface INoteTemplateService {
 	 * @param templateName template name entered by user
 	 */
 	createNoteTpl(templateName: string): Promise<NoteTemplateCreationResult>;
+	/**
+	 * Get all note templates.
+	 */
+	getAllNoteTpls(): Promise<NamedNoteTpl[]>;
+	/**
+	 * Delete note template by id.
+	 * @param templateId note template id in hex string format
+	 */
+	deleteNoteTpl(templateId: string): Promise<NoteTemplateDeletionResult>;
 }
 
 export const NoteTemplateServiceIPCDescriptor = {
 	channel: "noteTemplateService",
 	properties: {
 		createNoteTpl: ProxyPropertyType.Function,
+		getAllNoteTpls: ProxyPropertyType.Function,
+		deleteNoteTpl: ProxyPropertyType.Function,
 	},
 };
