@@ -185,15 +185,6 @@ export class NoteTplProvider {
             return;
         }
 
-        // Prevent deletion if it's only one template left.
-        const deletableTplCount = this.noteTplOpts().length
-        if (deletableTplCount <= 1) {
-            this.notify.open(
-                this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.LAST_ONE"),
-            );
-            return;
-        }
-
         const tplName = selectedTpl.label;
         const title = this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.TITLE");
         const message = this.translate.instant(
@@ -227,6 +218,12 @@ export class NoteTplProvider {
             case "not-found":
                 this.notify.open(
                     this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.NOT_FOUND"),
+                );
+                await this.loadNoteTplOpts();
+                return;
+            case "last-one":
+                this.notify.open(
+                    this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.LAST_ONE"),
                 );
                 await this.loadNoteTplOpts();
                 return;
