@@ -7,11 +7,18 @@ import {
     output,
     signal,
 } from "@angular/core";
-import { TranslateModule } from "@ngx-translate/core";
+import { TranslateModule, TranslateService } from "@ngx-translate/core";
 
 export interface SelectDropdownOption {
     value: string;
-    labelKey: string;
+    /**
+     * Plain text label for the option. If not provided.
+     */
+    label?: string;
+    /**
+     * i18n key for the option label. Used if `label` is not provided.
+     */
+    labelKey?: string;
 }
 
 @Component({
@@ -25,6 +32,10 @@ export class SelectDropdownComponent {
      * Root element reference for click-outside detection.
      */
     private readonly hostRef: ElementRef<HTMLElement> = inject(ElementRef);
+    /**
+     * Translation service for resolving i18n labels.
+     */
+    private readonly translate = inject(TranslateService);
 
     /**
      * Available options for the dropdown.
@@ -75,6 +86,19 @@ export class SelectDropdownComponent {
     selectOption(option: SelectDropdownOption): void {
         this.selectedOptionChange.emit(option);
         this.isMenuOpen.set(false);
+    }
+
+    /**
+     * Resolve option display label from plain text or i18n key.
+     */
+    resolveLabel(option: SelectDropdownOption): string {
+        if (option.label) {
+            return option.label;
+        }
+        if (option.labelKey) {
+            return this.translate.instant(option.labelKey);
+        }
+        return "";
     }
 
 }

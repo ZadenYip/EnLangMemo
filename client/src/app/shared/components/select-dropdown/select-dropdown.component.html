@@ -7,7 +7,7 @@
     (keydown.space)="toggleMenu()"
     [attr.aria-expanded]="isMenuOpen()"
 >
-    {{ selectedOption().labelKey | translate }}
+    {{ resolveLabel(selectedOption()) }}
     <span class="caret" aria-hidden="true"></span>
 </div>
 @if (isMenuOpen()) {
@@ -21,7 +21,7 @@
                 (click)="selectOption(option)"
                 (keydown.enter)="selectOption(option)"
             >
-                {{ option.labelKey | translate }}
+                {{ resolveLabel(option) }}
             </li>
         }
     </ul>
