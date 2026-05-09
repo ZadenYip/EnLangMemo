@@ -9,4 +9,6 @@
   p {
     @include global.h2-p;
   }
+
+  white-space: pre;
 }
