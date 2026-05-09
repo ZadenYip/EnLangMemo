@@ -4,11 +4,12 @@ import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/co
 import { MatMenuModule } from "@angular/material/menu";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
+import { NoteTplOption } from "../note-tpl.provider";
 
 /**
  * Available actions emitted by the note template ops menu.
  */
-export type NoteTplOpsAction = "add" | "settings";
+export type NoteTplOpsAction = "add" | "delete" | "settings";
 
 @Component({
     selector: "app-note-tpl-ops",
@@ -21,20 +22,24 @@ export class NoteTplOpsComponent {
     /**
      * Dropdown options for note templates.
      */
-    opts = input.required<SelectDropdownOption[]>();
+    opts = input.required<NoteTplOption[]>();
 
     /**
      * Currently selected note template option.
      */
-    selected = input.required<SelectDropdownOption>();
+    selected = input.required<NoteTplOption>();
 
     /**
      * Emits when the selected note template changes.
      */
-    selectedChange = output<SelectDropdownOption>();
+    selectedChange = output<NoteTplOption>();
 
     /**
      * Emits when a note template menu action is selected.
      */
     menuClick = output<NoteTplOpsAction>();
+
+    pickNoteTpl(option: SelectDropdownOption): void {
+        this.selectedChange.emit(option as NoteTplOption);
+    }
 }
