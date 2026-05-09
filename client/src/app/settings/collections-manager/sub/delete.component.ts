@@ -39,7 +39,6 @@ export class DeleteComponent {
 
         const title = this.translate.instant("PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.CONFIRM_DELETE.TITLE");
         const message = this.translate.instant("PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.CONFIRM_DELETE.MESSAGE", { name });
-        const confirmText = this.translate.instant("PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.CONFIRM_DELETE.CONFIRM");
 
         // Open confirmation dialog
         const confirmed = await firstValueFrom(
@@ -47,7 +46,6 @@ export class DeleteComponent {
                 data: {
                     title,
                     message,
-                    confirmText,
                 }
             }).afterClosed()
         );

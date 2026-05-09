@@ -105,17 +105,15 @@ export class HomeComponent implements OnInit {
      * @param deck the deck to be deleted emitted from subcomponent.
      */
     async confirmDeleteDeck(deck: Deck): Promise<void> {
-        const title = this.translateService.instant("PAGES.HOME.DECKS.DELETE_DIALOG.TITLE");
+        const title = this.translateService.instant("PAGES.HOME.DECKS.DELETE_TITLE");
         const message = this.translateService.instant("PAGES.HOME.DECKS.DELETE_CONFIRM", {
             name: deck.name,
         });
-        const confirmText = this.translateService.instant("PAGES.HOME.DECKS.DELETE_DIALOG.CONFIRM");
         const confirmed = await firstValueFrom(
             this.dialog.open<ConfirmDeleteDialog, ConfirmDeleteDialogData>(ConfirmDeleteDialog, {
                 data: {
                     title,
                     message,
-                    confirmText,
                 },
             }).afterClosed()
         );

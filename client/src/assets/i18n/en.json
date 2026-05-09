@@ -13,6 +13,7 @@
         "LEARNED_TODAY": "Learned Today",
         "SETTINGS": "Settings",
         "CREATE_PLACEHOLDER": "Click to add a deck",
+        "DELETE_TITLE": "Delete Deck",
         "DELETE_CONFIRM": "Are you sure you want to delete the deck \"{{name}}\"? This action cannot be undone.",
         "DELETE_SUCCESS": "Deck deleted: {{name}}",
         "CREATE_SUCCESS": "Deck created: {{name}}",
@@ -28,10 +29,6 @@
             "CANCEL": "Cancel",
             "SAVE": "Save"
           }
-        },
-        "DELETE_DIALOG": {
-          "TITLE": "Confirm Delete",
-          "CONFIRM": "Delete"
         },
         "MENU": {
           "CONFIGURE": "Deck Config",
@@ -133,9 +130,8 @@
           "DESCRIPTION": "Select and delete a collection you have created.",
           "NO_DELETABLE_COLLECTIONS": "No collections available to delete (the currently active collection cannot be deleted)",
           "CONFIRM_DELETE": {
-            "TITLE": "Confirm Delete",
-            "MESSAGE": "Are you sure you want to delete the collection \"{{name}}\"? This action cannot be undone.",
-            "CONFIRM": "Delete"
+            "TITLE": "Delete Collection",
+            "MESSAGE": "Are you sure you want to delete the collection \"{{name}}\"? This action cannot be undone."
           },
           "DELETED_SUCCESS": "Collection deleted: {{name}}"
         },
