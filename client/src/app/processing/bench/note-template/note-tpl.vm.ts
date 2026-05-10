@@ -15,13 +15,6 @@ import { NoteTplService } from "./note-tpl.service";
  */
 export type CardTplSection = "front" | "back" | "css";
 
-/**
- * Dropdown option model for note templates with backend template id.
- */
-export interface NoteTplOption extends SelectDropdownOption {
-    tplId: string;
-}
-
 @Injectable()
 export class NoteTplVm {
     private readonly translate = inject(TranslateService);
@@ -33,10 +26,9 @@ export class NoteTplVm {
     /**
      * Placeholder option for note template dropdown when no templates are available.
      */
-    private readonly placeholderNoteTplOpt: NoteTplOption = {
-        value: "default-note-template",
+    private readonly placeholderNoteTplOpt: SelectDropdownOption = {
+        value: "",
         labelKey: "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TPL_OPS_MENU.DEFAULT",
-        tplId: "",
     };
 
     /**
@@ -56,7 +48,7 @@ export class NoteTplVm {
     /**
      * Dropdown options for note templates.
      */
-    noteTplOpts = signal<NoteTplOption[]>([this.placeholderNoteTplOpt]);
+    noteTplOpts = signal<SelectDropdownOption[]>([this.placeholderNoteTplOpt]);
 
     /**
      * Currently selected card template option.
@@ -66,7 +58,7 @@ export class NoteTplVm {
     /**
      * Currently selected note template option.
      */
-    selNoteTpl = signal<NoteTplOption>(this.placeholderNoteTplOpt);
+    selNoteTpl = signal<SelectDropdownOption>(this.placeholderNoteTplOpt);
 
     /**
      * Selected note template section.
@@ -109,7 +101,7 @@ export class NoteTplVm {
     /**
      * Update the current note template selection.
      */
-    pickNoteTpl(option: NoteTplOption): void {
+    pickNoteTpl(option: SelectDropdownOption): void {
         this.selNoteTpl.set(option);
     }
 
@@ -181,14 +173,14 @@ export class NoteTplVm {
      */
     async deleteCurrentNoteTpl(): Promise<void> {
         const selectedTpl = this.selNoteTpl();
-        if (!selectedTpl.tplId) {
+        if (!selectedTpl.value) {
             this.notify.open(
                 this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.NO_SELECTION"),
             );
             return;
         }
 
-        const tplName = selectedTpl.label;
+        const tplName = selectedTpl.label ?? selectedTpl.value;
         const title = this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.TITLE");
         const message = this.translate.instant(
             "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.MESSAGE",
@@ -208,7 +200,7 @@ export class NoteTplVm {
             return;
         }
 
-        const result = await this.noteTplService.deleteNoteTpl(selectedTpl.tplId);
+        const result = await this.noteTplService.deleteNoteTpl(selectedTpl.value);
         switch (result.state) {
             case "success":
                 this.notify.open(
@@ -237,11 +229,10 @@ export class NoteTplVm {
      * Load all note templates and map to dropdown options.
      */
     private async loadNoteTplOpts(): Promise<void> {
-        const noteTpls = await this.noteTplService.getAllNoteTplRefs();
-        const loadedOpts: NoteTplOption[] = noteTpls.map((tpl) => ({
+        const noteTpls = await this.noteTplService.loadAllNoteTpls();
+        const loadedOpts: SelectDropdownOption[] = noteTpls.map((tpl) => ({
             value: tpl.id,
             label: tpl.name,
-            tplId: tpl.id,
         }));
         const nextOpts = loadedOpts.length > 0 ? loadedOpts : [this.placeholderNoteTplOpt];
         this.noteTplOpts.set(nextOpts);
