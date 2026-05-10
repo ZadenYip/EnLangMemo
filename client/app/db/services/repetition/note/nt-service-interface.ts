@@ -1,5 +1,5 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { NamedNoteTpl, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
+import { NoteTplRef, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
 
 export interface INoteTemplateService {
 	/**
@@ -10,7 +10,7 @@ export interface INoteTemplateService {
 	/**
 	 * Get all note templates.
 	 */
-	getAllNoteTpls(): Promise<NamedNoteTpl[]>;
+	getAllNoteTpls(): Promise<NoteTplRef[]>;
 	/**
 	 * Delete note template by id.
 	 * @param templateId note template id in hex string format

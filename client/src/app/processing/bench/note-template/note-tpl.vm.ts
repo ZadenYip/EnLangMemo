@@ -8,9 +8,10 @@ import { TranslateService } from "@ngx-translate/core";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfirmDeleteDialog, ConfirmDeleteDialogData } from "@render/shared/components";
 import { NoteTplOpsAction } from "./note-tpl-ops/note-tpl-ops.component";
+import { NoteTplService } from "./note-tpl.service";
 
 /**
- * Sections of a note template that can be edited.  
+ * Sections of a note template that can be edited.
  */
 export type CardTplSection = "front" | "back" | "css";
 
@@ -22,11 +23,12 @@ export interface NoteTplOption extends SelectDropdownOption {
 }
 
 @Injectable()
-export class NoteTplProvider {
-    private translate = inject(TranslateService);   
-    private dialog = inject(MatDialog);
-    private settingDialog = inject(SettingsDialogService);
-    private notify = inject(NotifyService);
+export class NoteTplVm {
+    private readonly translate = inject(TranslateService);
+    private readonly dialog = inject(MatDialog);
+    private readonly settingDialog = inject(SettingsDialogService);
+    private readonly notify = inject(NotifyService);
+    private readonly noteTplService = inject(NoteTplService);
 
     /**
      * Placeholder option for note template dropdown when no templates are available.
@@ -36,6 +38,7 @@ export class NoteTplProvider {
         labelKey: "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TPL_OPS_MENU.DEFAULT",
         tplId: "",
     };
+
     /**
      * Dropdown options for card templates.
      */
@@ -145,7 +148,7 @@ export class NoteTplProvider {
             return;
         }
 
-        const result = await window.service.nt.createNoteTpl(templateName);
+        const result = await this.noteTplService.createNoteTpl(templateName);
         switch (result.state) {
             case "success": {
                 const msg = this.translate.instant(
@@ -205,7 +208,7 @@ export class NoteTplProvider {
             return;
         }
 
-        const result = await window.service.nt.deleteNoteTpl(selectedTpl.tplId);
+        const result = await this.noteTplService.deleteNoteTpl(selectedTpl.tplId);
         switch (result.state) {
             case "success":
                 this.notify.open(
@@ -231,11 +234,11 @@ export class NoteTplProvider {
     }
 
     /**
-     * Load all note templates from main process and map to dropdown options.
+     * Load all note templates and map to dropdown options.
      */
     private async loadNoteTplOpts(): Promise<void> {
-        const tpls = await window.service.nt.getAllNoteTpls();
-        const loadedOpts: NoteTplOption[] = tpls.map((tpl) => ({
+        const noteTpls = await this.noteTplService.loadAllNoteTpls();
+        const loadedOpts: NoteTplOption[] = noteTpls.map((tpl) => ({
             value: tpl.id,
             label: tpl.name,
             tplId: tpl.id,

@@ -4,7 +4,7 @@ import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils"
 import { getRepDb } from "@main/db/db";
 import { noteTypesTable } from "@main/db/schema/repetition/rep";
 import { INoteTemplateService } from "./nt-service-interface";
-import { NamedNoteTpl, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
+import { NoteTplRef, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
 import { genNoteTpl } from "./nt-service-helper";
 
 
@@ -46,19 +46,17 @@ export class NoteTemplateService implements INoteTemplateService {
         };
     }
 
-    async getAllNoteTpls(): Promise<NamedNoteTpl[]> {
+    async getAllNoteTpls(): Promise<NoteTplRef[]> {
         const rawTpls = await getRepDb().query.noteTypesTable.findMany({
             columns: {
                 id: true,
                 name: true,
-                noteTemplate: true,
             },
         });
 
-        const tpls: NamedNoteTpl[] = rawTpls.map((raw) => ({
+        const tpls: NoteTplRef[] = rawTpls.map((raw) => ({
             id: bufferToHex(raw.id),
             name: raw.name,
-            noteTemplate: raw.noteTemplate,
         }));
 
         return tpls;

@@ -1,9 +1,7 @@
-export interface NamedNoteTpl {
+export interface NoteTplRef {
     id: string;
     name: string;
-    noteTemplate: NoteTemplate;
 }
-
 
 export interface NoteTemplate {
     /**
@@ -51,6 +49,7 @@ export interface CardTemplate {
      * bussiness id 
      */
     id: number;
+    name: string;
     /**
      * HTML content for the front side of the card.
      */

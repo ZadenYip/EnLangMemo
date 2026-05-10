@@ -4,7 +4,7 @@ import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/co
 import { MatMenuModule } from "@angular/material/menu";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { NoteTplOption } from "../note-tpl.provider";
+import { NoteTplOption } from "../note-tpl.vm";
 
 /**
  * Available actions emitted by the note template ops menu.
