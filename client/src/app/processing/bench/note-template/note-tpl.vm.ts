@@ -237,7 +237,7 @@ export class NoteTplVm {
      * Load all note templates and map to dropdown options.
      */
     private async loadNoteTplOpts(): Promise<void> {
-        const noteTpls = await this.noteTplService.loadAllNoteTpls();
+        const noteTpls = await this.noteTplService.getAllNoteTplRefs();
         const loadedOpts: NoteTplOption[] = noteTpls.map((tpl) => ({
             value: tpl.id,
             label: tpl.name,

@@ -10,7 +10,7 @@ export interface INoteTemplateService {
 	/**
 	 * Get all note templates.
 	 */
-	getAllNoteTpls(): Promise<NoteTplRef[]>;
+	getAllNoteTplRefs(): Promise<NoteTplRef[]>;
 	/**
 	 * Delete note template by id.
 	 * @param templateId note template id in hex string format
@@ -22,7 +22,7 @@ export const NoteTemplateServiceIPCDescriptor = {
 	channel: "noteTemplateService",
 	properties: {
 		createNoteTpl: ProxyPropertyType.Function,
-		getAllNoteTpls: ProxyPropertyType.Function,
+		getAllNoteTplRefs: ProxyPropertyType.Function,
 		deleteNoteTpl: ProxyPropertyType.Function,
 	},
 };

@@ -12,7 +12,7 @@ export class NoteTplService {
     /**
      * Cached list for preserving display order.
      */
-    private cachedNoteTpls: NoteTplRef[] = [];
+    private cachedNoteTplRefs: NoteTplRef[] = [];
     /**
      * Cached index for O(1) lookup by template id.
      */
@@ -22,7 +22,7 @@ export class NoteTplService {
      * Load note templates from IPC service and refresh local cache.
      */
     async loadAllNoteTpls(): Promise<NoteTplRef[]> {
-        const noteTpls = await window.service.nt.getAllNoteTpls();
+        const noteTpls = await window.service.nt.getAllNoteTplRefs();
         this.updateCache(noteTpls);
         return noteTpls;
     }
@@ -52,14 +52,14 @@ export class NoteTplService {
      * Get cached note templates list.
      */
     getCachedNoteTpls(): NoteTplRef[] {
-        return this.cachedNoteTpls;
+        return this.cachedNoteTplRefs;
     }
 
     /**
      * Replace internal cache with fresh list data.
      */
     private updateCache(noteTpls: NoteTplRef[]): void {
-        this.cachedNoteTpls = noteTpls;
+        this.cachedNoteTplRefs = noteTpls;
         this.cachedNoteTplMap = new Map(noteTpls.map((noteTpl) => [noteTpl.id, noteTpl]));
     }
 }

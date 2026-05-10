@@ -46,7 +46,7 @@ export class NoteTemplateService implements INoteTemplateService {
         };
     }
 
-    async getAllNoteTpls(): Promise<NoteTplRef[]> {
+    async getAllNoteTplRefs(): Promise<NoteTplRef[]> {
         const rawTpls = await getRepDb().query.noteTypesTable.findMany({
             columns: {
                 id: true,
