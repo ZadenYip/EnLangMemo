@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import {
+    CardTemplateCreationResult,
     NoteTplRef,
     NoteTemplate,
     NoteTemplateCreationResult,
@@ -19,6 +20,7 @@ export class NoteTplService {
      */
     private cachedCardTplMap = new Map<string, CardTemplate>();
     private curNoteTpl: NoteTemplate | null = null;
+    private curNoteTplId = "";
 
     constructor() {
         void this.loadAllNoteTplRefs();
@@ -55,6 +57,7 @@ export class NoteTplService {
             ? new Map(noteTpl.cardtpls.map((cardTpl) => [String(cardTpl.id), cardTpl]))
             : new Map();
         this.curNoteTpl = noteTpl;
+        this.curNoteTplId = noteTpl ? templateId : "";
         return noteTpl;
     }
 
@@ -93,6 +96,22 @@ export class NoteTplService {
     async createNoteTpl(templateName: string): Promise<NoteTemplateCreationResult> {
         const result = await window.service.nt.createNoteTpl(templateName);
         await this.loadAllNoteTplRefs();
+        return result;
+    }
+
+    /**
+     * Create a card template under current selected note template.
+     */
+    async createCardTpl(templateName: string): Promise<CardTemplateCreationResult> {
+        if (!this.curNoteTplId) {
+            return {
+                state: "not-found",
+            };
+        }
+        const result = await window.service.nt.createCardTpl(this.curNoteTplId, templateName);
+        if (result.state === "success") {
+            await this.loadNoteTplById(this.curNoteTplId);
+        }
         return result;
     }
 

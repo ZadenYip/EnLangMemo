@@ -1,5 +1,11 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { NoteTplRef, NoteTemplate, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
+import {
+	CardTemplateCreationResult,
+	NoteTplRef,
+	NoteTemplate,
+	NoteTemplateCreationResult,
+	NoteTemplateDeletionResult,
+} from "./nt-service.types";
 
 export interface INoteTemplateService {
 	/**
@@ -7,6 +13,12 @@ export interface INoteTemplateService {
 	 * @param templateName template name entered by user
 	 */
 	createNoteTpl(templateName: string): Promise<NoteTemplateCreationResult>;
+	/**
+	 * Create a new card template under the note template id.
+	 * @param noteTplId note template id in hex string format
+	 * @param templateName card template name entered by user
+	 */
+	createCardTpl(noteTplId: string, templateName: string): Promise<CardTemplateCreationResult>;
 	/**
 	 * Get all note templates.
 	 */
@@ -27,6 +39,7 @@ export const NoteTemplateServiceIPCDescriptor = {
 	channel: "noteTemplateService",
 	properties: {
 		createNoteTpl: ProxyPropertyType.Function,
+		createCardTpl: ProxyPropertyType.Function,
 		getAllNoteTplRefs: ProxyPropertyType.Function,
 		deleteNoteTpl: ProxyPropertyType.Function,
 		getNoteTplById: ProxyPropertyType.Function,

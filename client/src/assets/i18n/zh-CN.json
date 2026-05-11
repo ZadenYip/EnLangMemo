@@ -64,7 +64,7 @@
           "BACK_TEMPLATE": "背面模板",
           "CSS_TEMPLATE": "CSS 模板",
           "CARD_TPL_OPS_MENU": {
-            "ADD": "新增卡片模板"
+            "CREATE": "新增卡片模板"
           },
           "NOTE_TPL_OPS_MENU": {
             "CREATE": "新增笔记模板",
@@ -87,7 +87,10 @@
             "TITLE": "创建新卡片模板",
             "FIELDS": {
               "CREATE_NAME": "模板名称"
-            }
+            },
+            "SUCCESS": "已创建卡片模板：{{name}}",
+            "DUPLICATE": "已存在同名卡片模板。",
+            "NO_NOTE_SELECTED": "请先选择笔记模板。"
           },
           "DELETE_NOTE_DIALOG": {
             "TITLE": "确认删除",

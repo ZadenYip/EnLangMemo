@@ -24,6 +24,14 @@ export type NoteTemplateCreationResult =
     | { state: "duplicate" };
 
 /**
+ * Result of creating a new card template under a note template.
+ */
+export type CardTemplateCreationResult =
+    | { state: "success"; templateName: string }
+    | { state: "duplicate" }
+    | { state: "not-found" };
+
+/**
  * Result of deleting an existing note template.
  */
 export type NoteTemplateDeletionResult =

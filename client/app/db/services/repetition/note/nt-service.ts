@@ -4,8 +4,14 @@ import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils"
 import { getRepDb } from "@main/db/db";
 import { noteTypesTable } from "@main/db/schema/repetition/rep";
 import { INoteTemplateService } from "./nt-service-interface";
-import { NoteTplRef, NoteTemplate, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
-import { genNoteTpl } from "./nt-service-helper";
+import {
+    CardTemplateCreationResult,
+    NoteTplRef,
+    NoteTemplate,
+    NoteTemplateCreationResult,
+    NoteTemplateDeletionResult,
+} from "./nt-service.types";
+import { genCardTpl, genNoteTpl } from "./nt-service-helper";
 
 
 export class NoteTemplateService implements INoteTemplateService {
@@ -43,6 +49,57 @@ export class NoteTemplateService implements INoteTemplateService {
         return {
             state: "success",
             templateName: name,
+        };
+    }
+
+    /**
+     * Create a new card template under a note template.
+     */
+    async createCardTpl(noteTplId: string, templateName: string): Promise<CardTemplateCreationResult> {
+        const targetId = hexToBuffer(noteTplId);
+        const originNoteTpl = await getRepDb().query.noteTypesTable.findFirst({
+            where: eq(noteTypesTable.id, targetId),
+            columns: {
+                noteTemplate: true,
+            },
+        });
+
+        if (!originNoteTpl) {
+            Logger.warn("Note template not found when creating card template:", noteTplId);
+            return {
+                state: "not-found",
+            };
+        }
+
+        const hasDuplicateName = originNoteTpl.noteTemplate.cardtpls.some((cardTpl) => cardTpl.name === templateName);
+        if (hasDuplicateName) {
+            Logger.warn("Card template already exists:", templateName);
+            return {
+                state: "duplicate",
+            };
+        }
+
+        const newCardTpl = genCardTpl(templateName);
+        const newNoteTpl: NoteTemplate = {
+            ...originNoteTpl.noteTemplate,
+            cardtpls: [...originNoteTpl.noteTemplate.cardtpls, newCardTpl],
+        };
+
+        await getRepDb()
+            .update(noteTypesTable)
+            .set({
+                updatedAt: Date.now(),
+                noteTemplate: newNoteTpl,
+            })
+            .where(eq(noteTypesTable.id, targetId));
+
+        Logger.info("Card template created:", {
+            noteTplId,
+            templateName,
+        });
+        return {
+            state: "success",
+            templateName,
         };
     }
 

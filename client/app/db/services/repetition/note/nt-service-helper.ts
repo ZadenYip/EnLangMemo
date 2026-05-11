@@ -13,10 +13,10 @@ export function genNoteTpl(): NoteTemplate {
     };
 }
 
-export function genCardTpl(): CardTemplate {
+export function genCardTpl(name = "Default Card Template"): CardTemplate {
     const idTime = Date.now();
     return {
-        name: "Default Card Template",
+        name,
         id: idTime,
         front: "Question: {{Question Field}}",
         back: "Answer: {{Answer}}",
