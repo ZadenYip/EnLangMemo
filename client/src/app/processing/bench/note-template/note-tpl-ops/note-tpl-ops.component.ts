@@ -10,8 +10,7 @@ import { NotifyService } from "@render/shared/services/notify.service";
 import { firstValueFrom } from "rxjs";
 import { TranslateService } from "@ngx-translate/core";
 import { MatDialog } from "@angular/material/dialog";
-import { ConfirmDeleteDialog, ConfirmDeleteDialogData } from "@render/shared/components";
-import { CreateNoteTplDialog } from "./dialog/create-note-tpl";
+import { ConfirmDeleteDialog, ConfirmDeleteDialogData, InputNameDialog, InputNameDialogData } from "@render/shared/components";
 
 /**
  * Available actions emitted by the note template ops menu.
@@ -76,7 +75,12 @@ export class NoteTplOpsComponent {
      * Create a note template from dialog input and refresh current options.
      */
     async createNoteTpl(): Promise<void> {
-        const dialogRef = this.settingDialog.open<CreateNoteTplDialog, unknown, string>(CreateNoteTplDialog);
+        const dialogRef = this.settingDialog.open<InputNameDialog, InputNameDialogData, string>(InputNameDialog, {
+            data: {
+                title: this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CREATE_NOTE_DIALOG.TITLE"),
+                label: this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CREATE_NOTE_DIALOG.FIELDS.CREATE_NAME"),
+            },
+        });
         const templateName = await firstValueFrom(dialogRef.afterClosed());
         if (!templateName) {
             return;

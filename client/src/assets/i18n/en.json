@@ -83,6 +83,12 @@
             "SUCCESS": "Note template created: {{name}}",
             "DUPLICATE": "A note template with the same name already exists."
           },
+          "CREATE_CARD_DIALOG": {
+            "TITLE": "Add Card Template",
+            "FIELDS": {
+              "CREATE_NAME": "Template Name"
+            }
+          },
           "DELETE_NOTE_DIALOG": {
             "TITLE": "Confirm Delete",
             "MESSAGE": "Are you sure you want to delete the note template \"{{name}}\"? This action cannot be undone.",

@@ -83,6 +83,12 @@
             "SUCCESS": "已创建笔记模板：{{name}}",
             "DUPLICATE": "已存在同名笔记模板。"
           },
+          "CREATE_CARD_DIALOG": {
+            "TITLE": "创建新卡片模板",
+            "FIELDS": {
+              "CREATE_NAME": "模板名称"
+            }
+          },
           "DELETE_NOTE_DIALOG": {
             "TITLE": "确认删除",
             "MESSAGE": "确定要删除笔记模板 \"{{name}}\" 吗？此操作不可撤销。",
