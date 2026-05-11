@@ -80,10 +80,6 @@
             "FIELDS": {
               "CREATE_NAME": "模板名称"
             },
-            "ACTIONS": {
-              "CONFIRM": "确认",
-              "CANCEL": "取消"
-            },
             "SUCCESS": "已创建笔记模板：{{name}}",
             "DUPLICATE": "已存在同名笔记模板。"
           },

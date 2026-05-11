@@ -80,10 +80,6 @@
             "FIELDS": {
               "CREATE_NAME": "Template Name"
             },
-            "ACTIONS": {
-              "CONFIRM": "Confirm",
-              "CANCEL": "Cancel"
-            },
             "SUCCESS": "Note template created: {{name}}",
             "DUPLICATE": "A note template with the same name already exists."
           },
