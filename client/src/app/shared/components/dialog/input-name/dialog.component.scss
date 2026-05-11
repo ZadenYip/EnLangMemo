@@ -1,9 +1,20 @@
+@use "src/styles.scss" as global;
+
 :host {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+
+  h2 {
+    height: auto;
+    margin: 0;
+  }
+
+  p {
+    @include global.h2-p;
+  }
 }
 
 mat-form-field {
-    padding: 0.25rem;
-    width: 100%;
+  padding: 0.25rem;
+  width: 100%;
 }
