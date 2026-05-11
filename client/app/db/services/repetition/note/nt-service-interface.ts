@@ -1,5 +1,5 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { NoteTplRef, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
+import { NoteTplRef, NoteTemplate, NoteTemplateCreationResult, NoteTemplateDeletionResult } from "./nt-service.types";
 
 export interface INoteTemplateService {
 	/**
@@ -16,6 +16,11 @@ export interface INoteTemplateService {
 	 * @param templateId note template id in hex string format
 	 */
 	deleteNoteTpl(templateId: string): Promise<NoteTemplateDeletionResult>;
+	/**
+	 * Get note template detail by id.
+	 * @param templateId note template id in hex string format
+	 */
+	getNoteTplById(templateId: string): Promise<NoteTemplate | null>;
 }
 
 export const NoteTemplateServiceIPCDescriptor = {
@@ -24,5 +29,6 @@ export const NoteTemplateServiceIPCDescriptor = {
 		createNoteTpl: ProxyPropertyType.Function,
 		getAllNoteTplRefs: ProxyPropertyType.Function,
 		deleteNoteTpl: ProxyPropertyType.Function,
+		getNoteTplById: ProxyPropertyType.Function,
 	},
 };
