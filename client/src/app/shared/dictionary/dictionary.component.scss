@@ -14,13 +14,15 @@
   display: grid;
   gap: 0;
   // first row auto height for toolbar, second row takes the rest of the space
-  grid-template-rows: auto 1fr; 
+  grid-template-rows: auto 1fr;
   grid-template-columns: 1fr 1.4fr;
   grid-template-areas:
     "toolbar toolbar"
     "context meanings";
   padding: 16px;
-  transition: opacity 120ms ease, visibility 120ms ease;
+  transition:
+    opacity 120ms ease,
+    visibility 120ms ease;
   z-index: 1000;
 }
 
@@ -230,4 +232,3 @@ mat-card-title {
     border-radius: 16px;
   }
 }
-

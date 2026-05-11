@@ -1,35 +1,35 @@
 :host {
-    display: block;
-    width: 100%;
-    height: 100%;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 mat-sidenav-container {
-    display: block;
-    width: 100%;
-    height: 100%;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 mat-sidenav {
-    display: block;
-    width: 240px;
-    height: 100%;
-    border-radius: 0;
-    padding: 16px 8px;
-    border-right: 1px solid rgb(196, 198, 208);
+  display: block;
+  width: 240px;
+  height: 100%;
+  border-radius: 0;
+  padding: 16px 8px;
+  border-right: 1px solid rgb(196, 198, 208);
 }
 
 mat-nav-list {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .active-link {
-    background: rgb(218, 226, 249)
+  background: rgb(218, 226, 249);
 }
 
 // the router-outlet is inside mat-sidenav-content
 mat-sidenav-content {
-    height: 100%;
-    padding: 20px 50px 20px 50px;
+  height: 100%;
+  padding: 20px 50px 20px 50px;
 }

@@ -1,20 +1,17 @@
 <div class="toolbar-wrapper">
-  <nav>
-    @for (t of tabs; track t.path) {
-      <a mat-button 
-        routerLink="{{ t.path }}"
-        routerLinkActive="active"
-        >
-        {{ t.label | translate }}
-      </a>
-    }
-    <a mat-button> {{ "HEADER.SYNC" | translate }}</a>
-  </nav>
+    <nav>
+        @for (t of tabs; track t.path) {
+            <a mat-button routerLink="{{ t.path }}" routerLinkActive="active">
+                {{ t.label | translate }}
+            </a>
+        }
+        <a mat-button> {{ "HEADER.SYNC" | translate }}</a>
+    </nav>
 </div>
 
 <main class="main-content">
-  <div class="router-outlet-wrapper">
-    <router-outlet></router-outlet>
-  </div>
-  <app-dictionary></app-dictionary>
+    <div class="router-outlet-wrapper">
+        <router-outlet></router-outlet>
+    </div>
+    <app-dictionary></app-dictionary>
 </main>
