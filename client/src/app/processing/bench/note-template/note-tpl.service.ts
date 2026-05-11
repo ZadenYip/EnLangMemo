@@ -8,15 +8,6 @@ import {
 } from "@main/db/services/repetition/note/nt-service.types";
 import { SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 
-export interface NoteTplLoadedState {
-    noteTplOpts: SelectDropdownOption[];
-    selectedNoteTplOpt: SelectDropdownOption;
-    noteTplDetail: NoteTemplate | null;
-    cardTplOpts: SelectDropdownOption[];
-    selectedCardTplOpt: SelectDropdownOption;
-    cardTplMap: Map<string, CardTemplate>;
-}
-
 @Injectable()
 export class NoteTplService {
     /**
@@ -61,7 +52,7 @@ export class NoteTplService {
     public async loadNoteTplById(templateId: string): Promise<NoteTemplate | null> {
         const noteTpl = await window.service.nt.getNoteTplById(templateId);
         this.cachedCardTplMap = noteTpl
-            ? new Map(noteTpl.cardtpls.map((cardTpl) => [cardTpl.id, cardTpl]))
+            ? new Map(noteTpl.cardtpls.map((cardTpl) => [String(cardTpl.id), cardTpl]))
             : new Map();
         this.curNoteTpl = noteTpl;
         return noteTpl;
@@ -69,6 +60,23 @@ export class NoteTplService {
 
     public getNoteTpl(): NoteTemplate | null {
         return this.curNoteTpl;
+    }
+
+    /**
+     * Get card-template options for current loaded note template.
+     */
+    public getCardTplOptions(): SelectDropdownOption[] {
+        return Array.from(this.cachedCardTplMap.values()).map((cardTpl) => ({
+            label: cardTpl.name,
+            value: String(cardTpl.id),
+        }));
+    }
+
+    /**
+     * Get card template by id from cache.
+     */
+    public getCardTplById(cardTplId: string): CardTemplate | null {
+        return this.cachedCardTplMap.get(cardTplId) ?? null;
     }
 
     /**

@@ -24,7 +24,8 @@ export class NoteTemplateEditorTextareaComponent {
     /**
      * Handles textarea input changes.
      */
-    onValueChange(nextValue: string): void {
+    onValueChange(event: Event): void {
+        const nextValue = (event.target as HTMLTextAreaElement).value;
         this.valueChange.emit(nextValue);
     }
 }

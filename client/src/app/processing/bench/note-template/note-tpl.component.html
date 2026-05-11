@@ -2,24 +2,18 @@
     <div class="template-operation-area">
         <!-- card template operations    -->
         <app-card-tpl-ops
-            [opts]="vm.cardTplOpts"
-            [selected]="vm.selCardTpl()"
-            (selectedChange)="vm.pickCardTpl($event)"
-            (menuClick)="vm.addCardTpl()"
+            (selectedChange)="onCardTplSelected($event)"
         ></app-card-tpl-ops>
 
         <!-- note template operations -->
         <app-note-tpl-ops
-            [opts]="vm.noteTplOpts()"
-            [selected]="vm.selNoteTpl()"
-            (selectedChange)="vm.pickNoteTpl($event)"
-            (menuClick)="vm.handleNoteTplAction($event)"
+            (selectedChange)="onNoteTplSelected($event)"
         ></app-note-tpl-ops>
     </div>
 
     <mat-radio-group
         class="tabs"
-        [value]="vm.section()"
+        [value]="section()"
         (change)="onSectionChange($event.value)"
     >
         <mat-radio-button class="tab" value="front">
@@ -35,26 +29,26 @@
 </div>
 
 <div class="editor">
-    @switch (vm.section()) {
+    @switch (section()) {
         @case ("front") {
             <app-note-template-editor-textarea
-                [value]="vm.frontTpl()"
+                [value]="frontTpl()"
                 [placeholder]="'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.FRONT_PLACEHOLDER' | translate"
-                (valueChange)="vm.frontTpl.set($event)"
+                (valueChange)="onEditorValueChange($event)"
             ></app-note-template-editor-textarea>
         }
         @case ("back") {
             <app-note-template-editor-textarea
-                [value]="vm.backTpl()"
+                [value]="backTpl()"
                 [placeholder]="'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.BACK_PLACEHOLDER' | translate"
-                (valueChange)="vm.backTpl.set($event)"
+                (valueChange)="onEditorValueChange($event)"
             ></app-note-template-editor-textarea>
         }
         @case ("css") {
             <app-note-template-editor-textarea
-                [value]="vm.cssTpl()"
+                [value]="cssTpl()"
                 [placeholder]="'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CSS_PLACEHOLDER' | translate"
-                (valueChange)="vm.cssTpl.set($event)"
+                (valueChange)="onEditorValueChange($event)"
             ></app-note-template-editor-textarea>
         }
     }

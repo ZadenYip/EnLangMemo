@@ -1,6 +1,6 @@
-import { Component, input, output } from "@angular/core";
+import { Component, output } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
-import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
+import { createEmptyOption, SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -8,7 +8,7 @@ import { MatButtonModule } from "@angular/material/button";
 /**
  * Available actions emitted by the card template ops menu.
  */
-export type CardTplOpsAction = "add";
+export type CardTplOpsAction = "create" | "delete";
 
 @Component({
     selector: "app-card-tpl-ops",
@@ -18,23 +18,36 @@ export type CardTplOpsAction = "add";
     standalone: true,
 })
 export class CardTplOpsComponent {
-    /**
-     * Dropdown options for card templates.
-     */
-    opts = input.required<SelectDropdownOption[]>();
 
     /**
-     * Currently selected card template option.
+     * Dropdown options for note templates.
      */
-    selected = input.required<SelectDropdownOption>();
+    opts: SelectDropdownOption[] = [];
+    /**
+     * Currently selected note template option.
+     */
+    selected = createEmptyOption();
 
     /**
-     * Emits when the selected card template changes.
+     * Emits when the selected note template changes.
      */
     selectedChange = output<SelectDropdownOption>();
 
     /**
-     * Emits when a card template menu action is selected.
+     * Reload card-template options from NoteTplService cache.
      */
-    menuClick = output<CardTplOpsAction>();
+    syncFromService(opts: SelectDropdownOption[]): void {
+        this.opts = opts;
+        this.selected = opts[0] ?? createEmptyOption();
+        this.selectedChange.emit(this.selected);
+    }
+
+    pickCardTpl(option: SelectDropdownOption): void {
+        this.selected = option;
+        this.selectedChange.emit(option);
+    }
+
+    onMenuAction(_action: CardTplOpsAction): void {
+        // TODO
+    }
 }

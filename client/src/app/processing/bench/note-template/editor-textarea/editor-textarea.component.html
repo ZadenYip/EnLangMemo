@@ -1,6 +1,5 @@
 <textarea
     class="editor-input"
     [value]="value()"
-    [placeholder]="placeholder()"
-    (input)="onValueChange($any($event.target).value)"
+    (input)="onValueChange($event)"
 ></textarea>
