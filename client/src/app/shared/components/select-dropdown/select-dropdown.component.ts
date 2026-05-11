@@ -102,3 +102,10 @@ export class SelectDropdownComponent {
     }
 
 }
+
+export function createEmptyOption(): SelectDropdownOption {
+    return {
+        value: "",
+        label: "",
+    };
+}
