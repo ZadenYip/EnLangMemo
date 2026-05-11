@@ -9,7 +9,7 @@ import {
     NoteTplRef,
     NoteTemplate,
     NoteTemplateCreationResult,
-    NoteTemplateDeletionResult,
+    TemplateDeletionResult,
 } from "./nt-service.types";
 import { genCardTpl, genNoteTpl } from "./nt-service-helper";
 
@@ -103,6 +103,68 @@ export class NoteTemplateService implements INoteTemplateService {
         };
     }
 
+    /**
+     * Delete a card template under a note template.
+     */
+    async deleteCardTpl(noteTplId: string, cardTplId: string): Promise<TemplateDeletionResult> {
+        const targetId = hexToBuffer(noteTplId);
+        const originNoteTpl = await getRepDb().query.noteTypesTable.findFirst({
+            where: eq(noteTypesTable.id, targetId),
+            columns: {
+                noteTemplate: true,
+            },
+        });
+
+        if (!originNoteTpl) {
+            Logger.warn("Note template not found when deleting card template:", noteTplId);
+            return {
+                state: "not-found",
+            };
+        }
+
+        if (originNoteTpl.noteTemplate.cardtpls.length <= 1) {
+            Logger.warn("Prevented deleting the last remaining card template", {
+                noteTplId,
+                cardTplId,
+            });
+            return {
+                state: "last-one",
+            };
+        }
+
+        const newCardTpls = originNoteTpl.noteTemplate.cardtpls.filter((cardTpl) => String(cardTpl.id) !== cardTplId);
+        if (newCardTpls.length === originNoteTpl.noteTemplate.cardtpls.length) {
+            Logger.warn("Card template not found when deleting:", {
+                noteTplId,
+                cardTplId,
+            });
+            return {
+                state: "not-found",
+            };
+        }
+
+        const newNoteTemplate: NoteTemplate = {
+            ...originNoteTpl.noteTemplate,
+            cardtpls: newCardTpls,
+        };
+        await getRepDb()
+            .update(noteTypesTable)
+            .set({
+                updatedAt: Date.now(),
+                noteTemplate: newNoteTemplate,
+            })
+            .where(eq(noteTypesTable.id, targetId));
+
+        Logger.info("Card template deleted:", {
+            noteTplId,
+            cardTplId,
+        });
+        return {
+            state: "success",
+            templateId: cardTplId,
+        };
+    }
+
     async getAllNoteTplRefs(): Promise<NoteTplRef[]> {
         const rawTpls = await getRepDb().query.noteTypesTable.findMany({
             columns: {
@@ -137,7 +199,7 @@ export class NoteTemplateService implements INoteTemplateService {
     /**
      * Delete an existing note template by id.
      */
-    async deleteNoteTpl(templateId: string): Promise<NoteTemplateDeletionResult> {
+    async deleteNoteTpl(templateId: string): Promise<TemplateDeletionResult> {
         const existingTplIds = await getRepDb().query.noteTypesTable.findMany({
             columns: {
                 id: true,

@@ -4,7 +4,7 @@ import {
     NoteTplRef,
     NoteTemplate,
     NoteTemplateCreationResult,
-    NoteTemplateDeletionResult,
+    TemplateDeletionResult,
     CardTemplate,
 } from "@main/db/services/repetition/note/nt-service.types";
 import { SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
@@ -116,9 +116,25 @@ export class NoteTplService {
     }
 
     /**
+     * Delete card template under current selected note template.
+     */
+    async deleteCardTpl(cardTplId: string): Promise<TemplateDeletionResult> {
+        if (!this.curNoteTplId) {
+            return {
+                state: "not-found",
+            };
+        }
+        const result = await window.service.nt.deleteCardTpl(this.curNoteTplId, cardTplId);
+        if (result.state === "success") {
+            await this.loadNoteTplById(this.curNoteTplId);
+        }
+        return result;
+    }
+
+    /**
      * Delete a note template through IPC service.
      */
-    async deleteNoteTpl(templateId: string): Promise<NoteTemplateDeletionResult> {
+    async deleteNoteTpl(templateId: string): Promise<TemplateDeletionResult> {
         const result = await window.service.nt.deleteNoteTpl(templateId);
         await this.loadAllNoteTplRefs();
         return result;

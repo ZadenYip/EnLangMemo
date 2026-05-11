@@ -64,7 +64,8 @@
           "BACK_TEMPLATE": "Back Template",
           "CSS_TEMPLATE": "CSS Template",
           "CARD_TPL_OPS_MENU": {
-            "CREATE": "Create card template"
+            "CREATE": "Create card template",
+            "DELETE": "Delete card template"
           },
           "NOTE_TPL_OPS_MENU": {
             "CREATE": "Create note template",
@@ -91,6 +92,14 @@
             "SUCCESS": "Card template created: {{name}}",
             "DUPLICATE": "A card template with the same name already exists.",
             "NO_NOTE_SELECTED": "Please select a note template first."
+          },
+          "DELETE_CARD_DIALOG": {
+            "TITLE": "Confirm Delete",
+            "MESSAGE": "Are you sure you want to delete the card template \"{{name}}\"? This action cannot be undone.",
+            "SUCCESS": "Card template deleted: {{name}}",
+            "NOT_FOUND": "The selected card template no longer exists.",
+            "NO_SELECTION": "Please select a card template to delete.",
+            "LAST_ONE": "At least one card template must be kept."
           },
           "DELETE_NOTE_DIALOG": {
             "TITLE": "Confirm Delete",

@@ -4,7 +4,7 @@ import {
 	NoteTplRef,
 	NoteTemplate,
 	NoteTemplateCreationResult,
-	NoteTemplateDeletionResult,
+	TemplateDeletionResult,
 } from "./nt-service.types";
 
 export interface INoteTemplateService {
@@ -20,6 +20,12 @@ export interface INoteTemplateService {
 	 */
 	createCardTpl(noteTplId: string, templateName: string): Promise<CardTemplateCreationResult>;
 	/**
+	 * Delete card template under the note template id.
+	 * @param noteTplId note template id in hex string format
+	 * @param cardTplId card template id string
+	 */
+	deleteCardTpl(noteTplId: string, cardTplId: string): Promise<TemplateDeletionResult>;
+	/**
 	 * Get all note templates.
 	 */
 	getAllNoteTplRefs(): Promise<NoteTplRef[]>;
@@ -27,7 +33,7 @@ export interface INoteTemplateService {
 	 * Delete note template by id.
 	 * @param templateId note template id in hex string format
 	 */
-	deleteNoteTpl(templateId: string): Promise<NoteTemplateDeletionResult>;
+	deleteNoteTpl(templateId: string): Promise<TemplateDeletionResult>;
 	/**
 	 * Get note template detail by id.
 	 * @param templateId note template id in hex string format
@@ -40,6 +46,7 @@ export const NoteTemplateServiceIPCDescriptor = {
 	properties: {
 		createNoteTpl: ProxyPropertyType.Function,
 		createCardTpl: ProxyPropertyType.Function,
+		deleteCardTpl: ProxyPropertyType.Function,
 		getAllNoteTplRefs: ProxyPropertyType.Function,
 		deleteNoteTpl: ProxyPropertyType.Function,
 		getNoteTplById: ProxyPropertyType.Function,

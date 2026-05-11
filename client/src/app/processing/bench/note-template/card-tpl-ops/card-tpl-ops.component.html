@@ -12,5 +12,9 @@
             <mat-icon>add</mat-icon>
             <span>{{ 'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CARD_TPL_OPS_MENU.CREATE' | translate }}</span>
         </button>
+        <button mat-menu-item [disabled]="!selected.value" (click)="onMenuAction('delete')">
+            <mat-icon>delete</mat-icon>
+            <span>{{ 'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CARD_TPL_OPS_MENU.DELETE' | translate }}</span>
+        </button>
     </mat-menu>
 </div>

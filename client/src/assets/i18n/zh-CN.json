@@ -64,7 +64,8 @@
           "BACK_TEMPLATE": "背面模板",
           "CSS_TEMPLATE": "CSS 模板",
           "CARD_TPL_OPS_MENU": {
-            "CREATE": "新增卡片模板"
+            "CREATE": "新增卡片模板",
+            "DELETE": "删除卡片模板"
           },
           "NOTE_TPL_OPS_MENU": {
             "CREATE": "新增笔记模板",
@@ -91,6 +92,14 @@
             "SUCCESS": "已创建卡片模板：{{name}}",
             "DUPLICATE": "已存在同名卡片模板。",
             "NO_NOTE_SELECTED": "请先选择笔记模板。"
+          },
+          "DELETE_CARD_DIALOG": {
+            "TITLE": "确认删除",
+            "MESSAGE": "确定要删除卡片模板 \"{{name}}\" 吗？此操作不可撤销。",
+            "SUCCESS": "已删除卡片模板：{{name}}",
+            "NOT_FOUND": "所选卡片模板已不存在。",
+            "NO_SELECTION": "请先选择要删除的卡片模板。",
+            "LAST_ONE": "至少需要保留一个卡片模板。"
           },
           "DELETE_NOTE_DIALOG": {
             "TITLE": "确认删除",

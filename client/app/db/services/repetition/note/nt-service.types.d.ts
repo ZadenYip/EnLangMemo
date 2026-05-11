@@ -32,9 +32,9 @@ export type CardTemplateCreationResult =
     | { state: "not-found" };
 
 /**
- * Result of deleting an existing note template.
+ * Result of deleting a template entity.
  */
-export type NoteTemplateDeletionResult =
+export type TemplateDeletionResult =
     | { state: "success"; templateId: string }
     | { state: "last-one" }
     | { state: "not-found" };
