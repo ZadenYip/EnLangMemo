@@ -67,7 +67,7 @@
             "ADD": "Create card template"
           },
           "NOTE_TPL_OPS_MENU": {
-            "ADD": "Create note template",
+            "CREATE": "Create note template",
             "DELETE": "Delete note template",
             "DEFAULT": "Default",
             "SETTINGS": "Note template settings"
@@ -206,8 +206,9 @@
     "SYNC": "Sync",
     "SETTINGS": "Settings"
   },
-  "CONFIRM_DELETE_DIALOG": {
-    "CONFIRM": "Delete",
-    "CANCEL": "Cancel"
+  "DIALOG": {
+    "CONFIRM": "Confirm",
+    "CANCEL": "Cancel",
+    "DELETE": "Delete"
   }
 }

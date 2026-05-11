@@ -67,7 +67,7 @@
             "ADD": "新增卡片模板"
           },
           "NOTE_TPL_OPS_MENU": {
-            "ADD": "新增笔记模板",
+            "CREATE": "新增笔记模板",
             "DELETE": "删除笔记模板",
             "DEFAULT": "默认",
             "SETTINGS": "笔记模板设置"
@@ -207,8 +207,9 @@
     "SYNC": "同步",
     "SETTINGS": "设置"
   },
-  "CONFIRM_DELETE_DIALOG": {
-    "CONFIRM": "删除",
-    "CANCEL": "取消"
+  "DIALOG": {
+    "CONFIRM": "确认",
+    "CANCEL": "取消",
+    "DELETE": "删除"
   }
 }

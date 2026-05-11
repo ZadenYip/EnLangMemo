@@ -36,11 +36,11 @@ export class ConfirmDeleteDialog {
     }
 
     get confirmText(): string {
-        return this.data.confirmText ?? this.translate.instant("CONFIRM_DELETE_DIALOG.CONFIRM");
+        return this.data.confirmText ?? this.translate.instant("DIALOG.DELETE");
     }
 
     get cancelText(): string {
-        return this.data.cancelText ?? this.translate.instant("CONFIRM_DELETE_DIALOG.CANCEL");
+        return this.data.cancelText ?? this.translate.instant("DIALOG.CANCEL");
     }
 
     onCancel(): void {

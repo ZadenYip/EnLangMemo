@@ -16,7 +16,7 @@ import { CreateNoteTplDialog } from "./dialog/create-note-tpl";
 /**
  * Available actions emitted by the note template ops menu.
  */
-export type NoteTplOpsAction = "add" | "delete" | "settings";
+export type NoteTplOpsAction = "create" | "delete" | "settings";
 
 @Component({
     selector: "app-note-tpl-ops",
@@ -61,7 +61,7 @@ export class NoteTplOpsComponent {
         this.selected = selectedOpt ? {
             label: selectedOpt.name,
             value: selectedOpt.id
-        } : createEmptyOption();
+        } : opts[0];
         this.selectedChange.emit(this.selected);
     }
 
@@ -164,7 +164,7 @@ export class NoteTplOpsComponent {
      */
     onMenuAction(action: NoteTplOpsAction): void {
         switch (action) {
-            case "add":
+            case "create":
                 void this.createNoteTpl();
                 return;
             case "delete":
