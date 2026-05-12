@@ -60,6 +60,8 @@
           "EDIT_CURRENT_TEMPLATE": "Edit Selected Card Template"
         },
         "TEMPLATE_EDIT": {
+          "CARD_TEMPLATE_LABEL": "Card Template:",
+          "NOTE_TEMPLATE_LABEL": "Note Template:",
           "FRONT_TEMPLATE": "Front Template",
           "BACK_TEMPLATE": "Back Template",
           "CSS_TEMPLATE": "CSS Template",

@@ -1,14 +1,20 @@
 <div class="header">
     <div class="template-operation-area">
         <!-- card template operations    -->
-        <app-card-tpl-ops
-            (selectedChange)="onCardTplSelected($event)"
-        ></app-card-tpl-ops>
+        <div class="labeled-ops">
+            <span>{{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CARD_TEMPLATE_LABEL" | translate }}</span>
+            <app-card-tpl-ops
+                (selectedChange)="onCardTplSelected($event)"
+            ></app-card-tpl-ops>
+        </div>
 
         <!-- note template operations -->
-        <app-note-tpl-ops
-            (selectedChange)="onNoteTplSelected($event)"
-        ></app-note-tpl-ops>
+        <div class="labeled-ops">
+            <span>{{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TEMPLATE_LABEL" | translate }}</span>
+            <app-note-tpl-ops
+                (selectedChange)="onNoteTplSelected($event)"
+            ></app-note-tpl-ops>
+        </div>
     </div>
 
     <div class="tabs-save-row">

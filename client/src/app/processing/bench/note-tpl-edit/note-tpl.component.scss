@@ -25,6 +25,12 @@
   height: 2.5rem;
 }
 
+.labeled-ops {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .tabs {
   display: flex;
   align-items: center;

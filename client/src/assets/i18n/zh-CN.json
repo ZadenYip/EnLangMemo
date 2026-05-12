@@ -60,6 +60,8 @@
           "EDIT_CURRENT_TEMPLATE": "编辑当前卡片模板"
         },
         "TEMPLATE_EDIT": {
+          "CARD_TEMPLATE_LABEL": "卡片模板：",
+          "NOTE_TEMPLATE_LABEL": "笔记模板：",
           "FRONT_TEMPLATE": "正面模板",
           "BACK_TEMPLATE": "背面模板",
           "CSS_TEMPLATE": "CSS 模板",
