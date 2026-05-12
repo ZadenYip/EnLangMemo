@@ -4,7 +4,7 @@ import {
     SelectDropdownComponent,
     SelectDropdownOption,
 } from "../../shared/components/select-dropdown/select-dropdown.component";
-import { BenchTemplateEditComponent } from "./note-template/note-tpl.component";
+import { BenchTemplateEditComponent } from "./note-tpl-edit/note-tpl.component";
 
 type BenchModeValue = "note-content" | "note-template";
 interface BenchModeOption extends SelectDropdownOption {
