@@ -1,10 +1,12 @@
 import { Component, inject, signal, viewChild } from "@angular/core";
 import { MatRadioModule } from "@angular/material/radio";
-import { TranslateModule } from "@ngx-translate/core";
+import { MatButtonModule } from "@angular/material/button";
+import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { NoteTemplateEditorTextareaComponent } from "./editor-textarea/editor-textarea.component";
 import { CardTplOpsComponent } from "./card-tpl-ops/card-tpl-ops.component";
 import { NoteTplOpsComponent } from "./note-tpl-ops/note-tpl-ops.component";
 import { NoteTplService } from "./note-tpl.service";
+import { NotifyService } from "@render/shared/services/notify.service";
 import {
     SelectDropdownOption,
 } from "@render/shared/components/select-dropdown/select-dropdown.component";
@@ -17,6 +19,7 @@ type NoteTplSection = "front" | "back" | "css";
     providers: [NoteTplService],
     imports: [
         MatRadioModule,
+        MatButtonModule,
         NoteTemplateEditorTextareaComponent,
         CardTplOpsComponent,
         NoteTplOpsComponent,
@@ -28,6 +31,8 @@ type NoteTplSection = "front" | "back" | "css";
 })
 export class BenchTemplateEditComponent {
     private readonly noteTplService = inject(NoteTplService);
+    private readonly notify = inject(NotifyService);
+    private readonly translate = inject(TranslateService);
     private readonly cardTplOps = viewChild.required(CardTplOpsComponent);
 
     /**
@@ -62,6 +67,7 @@ export class BenchTemplateEditComponent {
      * Sync front/back editor areas from selected card-template cache.
      */
     private syncEditors(option: SelectDropdownOption): void {
+        this.noteTplService.setCurCardTplId(option.value);
         const curCardTpl = this.noteTplService.getCardTplById(option.value);
         this.frontTpl.set(curCardTpl!.front);
         this.backTpl.set(curCardTpl!.back);
@@ -93,8 +99,37 @@ export class BenchTemplateEditComponent {
         this.section.set(section);
     }
 
-    onEditorValueChange(_nextValue: string): void {
-        // TODO 给一个保存按钮才对而不是试试存在变化就更新缓存
+    onEditorValueChange(value: string): void {
+        switch (this.section()) {
+            case "front":
+                this.frontTpl.set(value);
+                return;
+            case "back":
+                this.backTpl.set(value);
+                return;
+            case "css":
+                this.cssTpl.set(value);
+                return;
+        }
+    }
+
+    /**
+     * Persist current edited template content.
+     */
+    async onSaveTemplate(): Promise<void> {
+        const result = await this.noteTplService.saveCurNoteTpl(
+            this.frontTpl(),
+            this.backTpl(),
+            this.cssTpl(),
+        );
+        switch (result.state) {
+            case "success":
+                this.notify.open(this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.SAVE_TEMPLATE.SUCCESS"));
+                return;
+            case "not-found":
+                this.notify.open(this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.SAVE_TEMPLATE.NOT_FOUND"));
+                return;
+        }
     }
 
 }

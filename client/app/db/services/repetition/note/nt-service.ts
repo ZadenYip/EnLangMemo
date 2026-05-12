@@ -9,6 +9,7 @@ import {
     NoteTplRef,
     NoteTemplate,
     NoteTemplateCreationResult,
+    NoteTemplateSaveResult,
     TemplateDeletionResult,
 } from "./nt-service.types";
 import { genCardTpl, genNoteTpl } from "./nt-service-helper";
@@ -194,6 +195,33 @@ export class NoteTemplateService implements INoteTemplateService {
         });
 
         return rawTpl?.noteTemplate ?? null;
+    }
+
+    /**
+     * Save note template content by id.
+     */
+    async saveNoteTpl(templateId: string, noteTemplate: NoteTemplate): Promise<NoteTemplateSaveResult> {
+        const targetId = hexToBuffer(templateId);
+        const result = await getRepDb()
+            .update(noteTypesTable)
+            .set({
+                updatedAt: Date.now(),
+                noteTemplate,
+            })
+            .where(eq(noteTypesTable.id, targetId));
+
+        if (result.changes === 0) {
+            Logger.warn("Note template not found when saving:", templateId);
+            return {
+                state: "not-found",
+            };
+        }
+
+        Logger.info("Note template saved:", templateId);
+        return {
+            state: "success",
+            templateId,
+        };
     }
 
     /**

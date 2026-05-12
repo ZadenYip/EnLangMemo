@@ -101,16 +101,21 @@
             "NO_SELECTION": "请先选择要删除的卡片模板。",
             "LAST_ONE": "至少需要保留一个卡片模板。"
           },
-          "DELETE_NOTE_DIALOG": {
-            "TITLE": "确认删除",
-            "MESSAGE": "确定要删除笔记模板 \"{{name}}\" 吗？此操作不可撤销。",
-            "SUCCESS": "已删除笔记模板：{{name}}",
-            "NOT_FOUND": "所选笔记模板已不存在。",
-            "NO_SELECTION": "请先选择要删除的笔记模板。",
-            "LAST_ONE": "至少需要保留一个笔记模板。"
+            "DELETE_NOTE_DIALOG": {
+              "TITLE": "确认删除",
+              "MESSAGE": "确定要删除笔记模板 \"{{name}}\" 吗？此操作不可撤销。",
+              "SUCCESS": "已删除笔记模板：{{name}}",
+              "NOT_FOUND": "所选笔记模板已不存在。",
+              "NO_SELECTION": "请先选择要删除的笔记模板。",
+              "LAST_ONE": "至少需要保留一个笔记模板。"
+            },
+            "SAVE_TEMPLATE": {
+              "ACTION": "保存",
+              "SUCCESS": "笔记模板已保存。",
+              "NOT_FOUND": "当前笔记模板不存在，无法保存。（这不应该发生）"
+            }
           }
-        }
-      },
+        },
       "PREVIEW": {
         "HEADER": "预览",
         "ACTIONS": {

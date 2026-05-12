@@ -101,16 +101,21 @@
             "NO_SELECTION": "Please select a card template to delete.",
             "LAST_ONE": "At least one card template must be kept."
           },
-          "DELETE_NOTE_DIALOG": {
-            "TITLE": "Confirm Delete",
-            "MESSAGE": "Are you sure you want to delete the note template \"{{name}}\"? This action cannot be undone.",
-            "SUCCESS": "Note template deleted: {{name}}",
-            "NOT_FOUND": "The selected note template no longer exists.",
-            "NO_SELECTION": "Please select a note template to delete.",
-            "LAST_ONE": "At least one note template must be kept."
+            "DELETE_NOTE_DIALOG": {
+              "TITLE": "Confirm Delete",
+              "MESSAGE": "Are you sure you want to delete the note template \"{{name}}\"? This action cannot be undone.",
+              "SUCCESS": "Note template deleted: {{name}}",
+              "NOT_FOUND": "The selected note template no longer exists.",
+              "NO_SELECTION": "Please select a note template to delete.",
+              "LAST_ONE": "At least one note template must be kept."
+            },
+            "SAVE_TEMPLATE": {
+              "ACTION": "Save",
+              "SUCCESS": "Note Template saved.",
+              "NOT_FOUND": "Current note template not found. Cannot save.（This should not happen）"
+            }
           }
-        }
-      },
+        },
       "PREVIEW": {
         "HEADER": "Preview",
         "ACTIONS": {

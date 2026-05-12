@@ -4,10 +4,12 @@ import {
     NoteTplRef,
     NoteTemplate,
     NoteTemplateCreationResult,
+    NoteTemplateSaveResult,
     TemplateDeletionResult,
     CardTemplate,
 } from "@main/db/services/repetition/note/nt-service.types";
 import { SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
+import Logger from "electron-log/renderer";
 
 @Injectable()
 export class NoteTplService {
@@ -21,6 +23,7 @@ export class NoteTplService {
     private cachedCardTplMap = new Map<string, CardTemplate>();
     private curNoteTpl: NoteTemplate | null = null;
     private curNoteTplId = "";
+    private curCardTplId = "";
 
     constructor() {
         void this.loadAllNoteTplRefs();
@@ -83,6 +86,13 @@ export class NoteTplService {
     }
 
     /**
+     * Set current selected card template id for save operation.
+     */
+    public setCurCardTplId(cardTplId: string): void {
+        this.curCardTplId = cardTplId;
+    }
+
+    /**
      * Get NoteTmplRef by id from local cache.
      */
     public getNoteTplRefById(templateId: string): NoteTplRef | null {
@@ -138,6 +148,40 @@ export class NoteTplService {
         const result = await window.service.nt.deleteNoteTpl(templateId);
         await this.loadAllNoteTplRefs();
         return result;
+    }
+
+    /**
+     * Save current note template with edited front/back/css content.
+     */
+    async saveCurNoteTpl(front: string, back: string, css: string): Promise<NoteTemplateSaveResult> {
+        if (!this.curNoteTplId || !this.curNoteTpl || !this.curCardTplId) {
+            Logger.warn(`
+                This log should not happen since save button should be disabled when no template or card is selected.
+                curNoteTplId: ${this.curNoteTplId}, curNoteTpl: ${this.curNoteTpl}, curCardTplId: ${this.curCardTplId}
+             `);
+            return {
+                state: "not-found",
+            };
+        }
+
+        const newCardTpls = this.curNoteTpl.cardtpls.map((cardTpl) =>
+            String(cardTpl.id) === this.curCardTplId ? 
+                {
+                    ...cardTpl,
+                    front,
+                    back,
+                } : cardTpl,
+        );
+
+        const newNoteTpl: NoteTemplate = {
+            ...this.curNoteTpl,
+            css,
+            cardtpls: newCardTpls,
+        };
+        this.curNoteTpl = newNoteTpl;
+        this.cachedCardTplMap = new Map(newCardTpls.map((cardTpl) => [String(cardTpl.id), cardTpl]));
+
+        return window.service.nt.saveNoteTpl(this.curNoteTplId, newNoteTpl);
     }
 
 }

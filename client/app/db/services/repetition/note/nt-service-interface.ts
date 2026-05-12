@@ -4,6 +4,7 @@ import {
 	NoteTplRef,
 	NoteTemplate,
 	NoteTemplateCreationResult,
+	NoteTemplateSaveResult,
 	TemplateDeletionResult,
 } from "./nt-service.types";
 
@@ -39,6 +40,12 @@ export interface INoteTemplateService {
 	 * @param templateId note template id in hex string format
 	 */
 	getNoteTplById(templateId: string): Promise<NoteTemplate | null>;
+	/**
+	 * Save note template content by id.
+	 * @param templateId note template id in hex string format
+	 * @param noteTemplate note template payload to persist
+	 */
+	saveNoteTpl(templateId: string, noteTemplate: NoteTemplate): Promise<NoteTemplateSaveResult>;
 }
 
 export const NoteTemplateServiceIPCDescriptor = {
@@ -50,5 +57,6 @@ export const NoteTemplateServiceIPCDescriptor = {
 		getAllNoteTplRefs: ProxyPropertyType.Function,
 		deleteNoteTpl: ProxyPropertyType.Function,
 		getNoteTplById: ProxyPropertyType.Function,
+		saveNoteTpl: ProxyPropertyType.Function,
 	},
 };

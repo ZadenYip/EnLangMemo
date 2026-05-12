@@ -11,21 +11,28 @@
         ></app-note-tpl-ops>
     </div>
 
-    <mat-radio-group
-        class="tabs"
-        [value]="section()"
-        (change)="onSectionChange($event.value)"
-    >
-        <mat-radio-button class="tab" value="front">
-            {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.FRONT_TEMPLATE" | translate }}
-        </mat-radio-button>
-        <mat-radio-button class="tab" value="back">
-            {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.BACK_TEMPLATE" | translate }}
-        </mat-radio-button>
-        <mat-radio-button class="tab" value="css">
-            {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CSS_TEMPLATE" | translate }}
-        </mat-radio-button>
-    </mat-radio-group>
+    <div class="tabs-save-row">
+        <!-- section tabs -->
+        <mat-radio-group
+            class="tabs"
+            [value]="section()"
+            (change)="onSectionChange($event.value)"
+        >
+            <mat-radio-button class="tab" value="front">
+                {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.FRONT_TEMPLATE" | translate }}
+            </mat-radio-button>
+            <mat-radio-button class="tab" value="back">
+                {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.BACK_TEMPLATE" | translate }}
+            </mat-radio-button>
+            <mat-radio-button class="tab" value="css">
+                {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CSS_TEMPLATE" | translate }}
+            </mat-radio-button>
+        </mat-radio-group>
+
+        <button type="button" mat-flat-button (click)="onSaveTemplate()">
+            {{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.SAVE_TEMPLATE.ACTION" | translate }}
+        </button>
+    </div>
 </div>
 
 <div class="editor">

@@ -32,6 +32,13 @@ export type CardTemplateCreationResult =
     | { state: "not-found" };
 
 /**
+ * Result of saving note template content.
+ */
+export type NoteTemplateSaveResult =
+    | { state: "success"; templateId: string }
+    | { state: "not-found" };
+
+/**
  * Result of deleting a template entity.
  */
 export type TemplateDeletionResult =
