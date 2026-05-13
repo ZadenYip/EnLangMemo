@@ -4,7 +4,7 @@ import {
     SelectDropdownComponent,
     SelectDropdownOption,
 } from "../../shared/components/select-dropdown/select-dropdown.component";
-import { BenchTemplateEditComponent } from "./note-tpl-edit/note-tpl.component";
+import { TplEditComponent } from "./note-tpl-edit/tpl-edit.component";
 import { NoteTplOpsComponent } from "./note-tpl-edit/note-tpl-ops/note-tpl-ops.component";
 import { BenchStateService } from "./bench-state.service";
 import { CardTplOpsComponent } from "./note-tpl-edit/card-tpl-ops/card-tpl-ops.component";
@@ -20,7 +20,7 @@ interface BenchModeOption extends SelectDropdownOption {
     standalone: true,
     providers: [BenchStateService],
     imports: [
-        BenchTemplateEditComponent,
+        TplEditComponent,
         SelectDropdownComponent,
         CardTplOpsComponent,
         NoteTplOpsComponent,

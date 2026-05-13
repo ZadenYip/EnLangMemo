@@ -18,10 +18,10 @@ type NoteTplSection = "front" | "back" | "css";
         TranslateModule,
 
     ],
-    templateUrl: "./note-tpl.component.html",
-    styleUrl: "./note-tpl.component.scss",
+    templateUrl: "./tpl-edit.component.html",
+    styleUrl: "./tpl-edit.component.scss",
 })
-export class BenchTemplateEditComponent {
+export class TplEditComponent {
     readonly benchState = inject(BenchStateService);
     private readonly notify = inject(NotifyService);
     private readonly translate = inject(TranslateService);
