@@ -1,10 +1,13 @@
-import { Component, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
 import {
     SelectDropdownComponent,
     SelectDropdownOption,
 } from "../../shared/components/select-dropdown/select-dropdown.component";
 import { BenchTemplateEditComponent } from "./note-tpl-edit/note-tpl.component";
+import { NoteTplOpsComponent } from "./note-tpl-edit/note-tpl-ops/note-tpl-ops.component";
+import { BenchStateService } from "./bench-state.service";
+import { CardTplOpsComponent } from "./note-tpl-edit/card-tpl-ops/card-tpl-ops.component";
 
 type BenchModeValue = "note-content" | "note-template";
 interface BenchModeOption extends SelectDropdownOption {
@@ -15,11 +18,20 @@ interface BenchModeOption extends SelectDropdownOption {
 @Component({
     selector: "app-processing-bench",
     standalone: true,
-    imports: [BenchTemplateEditComponent, SelectDropdownComponent, TranslateModule],
+    providers: [BenchStateService],
+    imports: [
+        BenchTemplateEditComponent,
+        SelectDropdownComponent,
+        CardTplOpsComponent,
+        NoteTplOpsComponent,
+        TranslateModule,
+    ],
     templateUrl: "./bench.component.html",
     styleUrl: "./bench.component.scss",
 })
 export class ProcessingBenchComponent {
+    private readonly benchState = inject(BenchStateService);
+
     /**
      * Available edit modes for the bench dropdown.
      */
@@ -45,6 +57,20 @@ export class ProcessingBenchComponent {
      */
     selectMode(option: SelectDropdownOption): void {
         this.editMode.set(option as BenchModeOption);
+    }
+
+    /**
+     * Forward card template selection to the active template editor.
+     */
+    onCardTplSelected(option: SelectDropdownOption): void {
+        this.benchState.selectCardTpl(option);
+    }
+
+    /**
+     * Forward note template selection to the active template editor.
+     */
+    onNoteTplSelected(option: SelectDropdownOption): void {
+        void this.benchState.selectNoteTpl(option);
     }
   
 }

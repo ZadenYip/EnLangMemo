@@ -1,28 +1,20 @@
-import { Component, inject, signal, viewChild } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { MatRadioModule } from "@angular/material/radio";
 import { MatButtonModule } from "@angular/material/button";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { NoteTemplateEditorTextareaComponent } from "./editor-textarea/editor-textarea.component";
-import { CardTplOpsComponent } from "./card-tpl-ops/card-tpl-ops.component";
-import { NoteTplOpsComponent } from "./note-tpl-ops/note-tpl-ops.component";
-import { NoteTplService } from "./note-tpl.service";
 import { NotifyService } from "@render/shared/services/notify.service";
-import {
-    SelectDropdownOption,
-} from "@render/shared/components/select-dropdown/select-dropdown.component";
+import { BenchStateService } from "../bench-state.service";
 
 type NoteTplSection = "front" | "back" | "css";
 
 @Component({
     selector: "app-bench-template-edit",
     standalone: true,
-    providers: [NoteTplService],
     imports: [
         MatRadioModule,
         MatButtonModule,
         NoteTemplateEditorTextareaComponent,
-        CardTplOpsComponent,
-        NoteTplOpsComponent,
         TranslateModule,
 
     ],
@@ -30,67 +22,15 @@ type NoteTplSection = "front" | "back" | "css";
     styleUrl: "./note-tpl.component.scss",
 })
 export class BenchTemplateEditComponent {
-    private readonly noteTplService = inject(NoteTplService);
+    readonly benchState = inject(BenchStateService);
     private readonly notify = inject(NotifyService);
     private readonly translate = inject(TranslateService);
-    private readonly cardTplOps = viewChild.required(CardTplOpsComponent);
 
     /**
      * Currently selected editor section.
+     * Editor textarea will switch content based on this value.
      */
     section = signal<NoteTplSection>("front");
-
-    /**
-     * Front template editor content.
-     */
-    frontTpl = signal("");
-
-    /**
-     * Back template editor content.
-     */
-    backTpl = signal("");
-
-    /**
-     * Note-template css editor content.
-     */
-    cssTpl = signal("");
-
-    /**
-     * Handle card template selection change to sync editor content.
-     * @param cardTplOption - The selected card template option to sync editors with.
-     */
-    onCardTplSelected(cardTplOption: SelectDropdownOption): void {
-        this.syncEditors(cardTplOption);
-    }
-
-    /**
-     * Sync front/back editor areas from selected card-template cache.
-     */
-    private syncEditors(option: SelectDropdownOption): void {
-        this.noteTplService.setCurCardTplId(option.value);
-        const curCardTpl = this.noteTplService.getCardTplById(option.value);
-        this.frontTpl.set(curCardTpl!.front);
-        this.backTpl.set(curCardTpl!.back);
-    }
-
-    /**
-     * Handle note template selection change to sync state.
-     * @param _noteTplOption - The selected note template option to sync state with.
-     */
-    onNoteTplSelected(_noteTplOption: SelectDropdownOption): void {
-        this.syncStateCurNoteTpl();
-    }
-
-    /**
-     * Sync view state from current cached note template in service.
-     */
-    private syncStateCurNoteTpl(): void {
-        const curNoteTpl = this.noteTplService.getNoteTpl();
-        const nextCardTplOpts = this.noteTplService.getCardTplOptions();
-        this.cssTpl.set(curNoteTpl!.css);
-        this.cardTplOps().syncFromService(nextCardTplOpts);
-    }
-
 
     /**
      * Handle section switch for textarea display.
@@ -100,28 +40,14 @@ export class BenchTemplateEditComponent {
     }
 
     onEditorValueChange(value: string): void {
-        switch (this.section()) {
-            case "front":
-                this.frontTpl.set(value);
-                return;
-            case "back":
-                this.backTpl.set(value);
-                return;
-            case "css":
-                this.cssTpl.set(value);
-                return;
-        }
+        this.benchState.updateDraft(this.section(), value);
     }
 
     /**
      * Persist current edited template content.
      */
     async onSaveTemplate(): Promise<void> {
-        const result = await this.noteTplService.saveCurNoteTpl(
-            this.frontTpl(),
-            this.backTpl(),
-            this.cssTpl(),
-        );
+        const result = await this.benchState.saveTemplateDraft();
         switch (result.state) {
             case "success":
                 this.notify.open(this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.SAVE_TEMPLATE.SUCCESS"));

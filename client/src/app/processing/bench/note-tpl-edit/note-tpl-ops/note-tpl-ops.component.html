@@ -1,7 +1,7 @@
 <div class="template-operation-group">
     <app-select-dropdown
-        [options]="opts"
-        [selectedOption]="selected"
+        [options]="benchState.noteTplOptions()"
+        [selectedOption]="benchState.selectedNoteTpl()"
         (selectedOptionChange)="pickNoteTpl($event)"
     ></app-select-dropdown>
     <button mat-icon-button [matMenuTriggerFor]="menu">
@@ -12,7 +12,7 @@
             <mat-icon>add</mat-icon>
             <span>{{ 'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TPL_OPS_MENU.CREATE' | translate }}</span>
         </button>
-        <button mat-menu-item [disabled]="!selected.value" (click)="onMenuAction('delete')">
+        <button mat-menu-item [disabled]="!benchState.selectedNoteTpl().value" (click)="onMenuAction('delete')">
             <mat-icon>delete</mat-icon>
             <span>{{ 'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TPL_OPS_MENU.DELETE' | translate }}</span>
         </button>

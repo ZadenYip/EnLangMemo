@@ -1,16 +1,16 @@
 import { Component, inject, output } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
-import { createEmptyOption, SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
+import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { NoteTplService } from "../note-tpl.service";
 import { SettingsDialogService } from "@render/shared/services/settings-dialog.service";
 import { NotifyService } from "@render/shared/services/notify.service";
 import { firstValueFrom } from "rxjs";
 import { TranslateService } from "@ngx-translate/core";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfirmDeleteDialog, ConfirmDeleteDialogData, InputNameDialog, InputNameDialogData } from "@render/shared/components";
+import { BenchStateService } from "../../bench-state.service";
 
 /**
  * Available actions emitted by the note template ops menu.
@@ -25,48 +25,28 @@ export type NoteTplOpsAction = "create" | "delete" | "settings";
     standalone: true,
 })
 export class NoteTplOpsComponent {
-    /**
-     * Dropdown options for note templates.
-     */
-    opts: SelectDropdownOption[] = [];
-    /**
-     * Currently selected note template option.
-     */
-    selected = createEmptyOption();
+    private readonly translate = inject(TranslateService);
+    private readonly dialog = inject(MatDialog);
+    private readonly settingDialog = inject(SettingsDialogService);
+    private readonly notify = inject(NotifyService);
+    readonly benchState = inject(BenchStateService);
 
     /**
      * Emits when the selected note template changes.
      */
     selectedChange = output<SelectDropdownOption>();
 
-    private readonly translate = inject(TranslateService);
-    private readonly dialog = inject(MatDialog);
-    private readonly settingDialog = inject(SettingsDialogService);
-    private readonly notify = inject(NotifyService);
-    private noteTplService = inject(NoteTplService);
-
     constructor() {
         void this.loadNoteTplRefs();
     }
 
     private async loadNoteTplRefs(selectedId = ""): Promise<void> {
-        const noteTplRefs = await this.noteTplService.loadAllNoteTplRefs(selectedId);
-        const opts = noteTplRefs.map((ref) => ({
-            label: ref.name,
-            value: ref.id,
-        }));
-        this.opts = opts;
-        const selectedOpt = this.noteTplService.getNoteTplRefById(selectedId);
-        this.selected = selectedOpt ? {
-            label: selectedOpt.name,
-            value: selectedOpt.id
-        } : opts[0];
-        this.selectedChange.emit(this.selected);
+        await this.benchState.loadNoteTplRefs(selectedId);
+        this.selectedChange.emit(this.benchState.selectedNoteTpl());
     }
 
     private async selectNoteTpl(option: SelectDropdownOption): Promise<void> {
-        await this.noteTplService.loadNoteTplById(option.value);
-        this.selected = option;
+        await this.benchState.selectNoteTpl(option);
         this.selectedChange.emit(option);
     }
 
@@ -86,7 +66,7 @@ export class NoteTplOpsComponent {
             return;
         }
 
-        const result = await this.noteTplService.createNoteTpl(templateName);
+        const result = await this.benchState.createNoteTpl(templateName);
         switch (result.state) {
             case "success": {
                 const msg = this.translate.instant(
@@ -95,7 +75,7 @@ export class NoteTplOpsComponent {
                 );
                 this.notify.open(msg);
 
-                await this.loadNoteTplRefs(this.selected.value);
+                await this.loadNoteTplRefs(this.benchState.selectedNoteTpl().value);
                 return;
             }
             case "duplicate":
@@ -112,7 +92,7 @@ export class NoteTplOpsComponent {
      * Delete currently selected note template after confirmation.
      */
     async delCurNoteTpl(): Promise<void> {
-        const selectedTpl = this.selected;
+        const selectedTpl = this.benchState.selectedNoteTpl();
         if (!selectedTpl.value) {
             this.notify.open(
                 this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.NO_SELECTION"),
@@ -140,7 +120,7 @@ export class NoteTplOpsComponent {
             return;
         }
 
-        const result = await this.noteTplService.deleteNoteTpl(selectedTpl.value);
+        const result = await this.benchState.deleteSelectedNoteTpl();
         switch (result.state) {
             case "success":
                 this.notify.open(
@@ -148,7 +128,6 @@ export class NoteTplOpsComponent {
                         name: tplName,
                     }),
                 );
-                await this.loadNoteTplRefs();
                 return;
             case "not-found":
                 this.notify.open(

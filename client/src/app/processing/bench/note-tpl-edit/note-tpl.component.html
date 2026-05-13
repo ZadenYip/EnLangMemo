@@ -1,22 +1,4 @@
 <div class="header">
-    <div class="template-operation-area">
-        <!-- card template operations    -->
-        <div class="labeled-ops">
-            <span>{{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CARD_TEMPLATE_LABEL" | translate }}</span>
-            <app-card-tpl-ops
-                (selectedChange)="onCardTplSelected($event)"
-            ></app-card-tpl-ops>
-        </div>
-
-        <!-- note template operations -->
-        <div class="labeled-ops">
-            <span>{{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TEMPLATE_LABEL" | translate }}</span>
-            <app-note-tpl-ops
-                (selectedChange)="onNoteTplSelected($event)"
-            ></app-note-tpl-ops>
-        </div>
-    </div>
-
     <div class="tabs-save-row">
         <!-- section tabs -->
         <mat-radio-group
@@ -41,25 +23,27 @@
     </div>
 </div>
 
+<div class="editor-divider"></div>
+
 <div class="editor">
     @switch (section()) {
         @case ("front") {
             <app-note-template-editor-textarea
-                [value]="frontTpl()"
+                [value]="benchState.frontTpl()"
                 [placeholder]="'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.FRONT_PLACEHOLDER' | translate"
                 (valueChange)="onEditorValueChange($event)"
             ></app-note-template-editor-textarea>
         }
         @case ("back") {
             <app-note-template-editor-textarea
-                [value]="backTpl()"
+                [value]="benchState.backTpl()"
                 [placeholder]="'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.BACK_PLACEHOLDER' | translate"
                 (valueChange)="onEditorValueChange($event)"
             ></app-note-template-editor-textarea>
         }
         @case ("css") {
             <app-note-template-editor-textarea
-                [value]="cssTpl()"
+                [value]="benchState.cssTpl()"
                 [placeholder]="'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CSS_PLACEHOLDER' | translate"
                 (valueChange)="onEditorValueChange($event)"
             ></app-note-template-editor-textarea>

@@ -1,16 +1,16 @@
 import { Component, inject, output } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
-import { createEmptyOption, SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
+import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { NoteTplService } from "../note-tpl.service";
 import { SettingsDialogService } from "@render/shared/services/settings-dialog.service";
 import { NotifyService } from "@render/shared/services/notify.service";
 import { firstValueFrom } from "rxjs";
 import { TranslateService } from "@ngx-translate/core";
 import { ConfirmDeleteDialog, ConfirmDeleteDialogData, InputNameDialog, InputNameDialogData } from "@render/shared/components";
 import { MatDialog } from "@angular/material/dialog";
+import { BenchStateService } from "../../bench-state.service";
 
 /**
  * Available actions emitted by the card template ops menu.
@@ -29,33 +29,15 @@ export class CardTplOpsComponent {
     private readonly dialog = inject(MatDialog);
     private readonly settingDialog = inject(SettingsDialogService);
     private readonly notify = inject(NotifyService);
-    private readonly noteTplService = inject(NoteTplService);
-
-    /**
-     * Dropdown options for note templates.
-     */
-    opts: SelectDropdownOption[] = [];
-    /**
-     * Currently selected note template option.
-     */
-    selected = createEmptyOption();
+    readonly benchState = inject(BenchStateService);
 
     /**
      * Emits when the selected note template changes.
      */
     selectedChange = output<SelectDropdownOption>();
 
-    /**
-     * Reload card-template options from NoteTplService cache.
-     */
-    syncFromService(opts: SelectDropdownOption[]): void {
-        this.opts = opts;
-        this.selected = opts[0] ?? createEmptyOption();
-        this.selectedChange.emit(this.selected);
-    }
-
     pickCardTpl(option: SelectDropdownOption): void {
-        this.selected = option;
+        this.benchState.selectCardTpl(option);
         this.selectedChange.emit(option);
     }
 
@@ -74,7 +56,7 @@ export class CardTplOpsComponent {
             return;
         }
 
-        const result = await this.noteTplService.createCardTpl(templateName);
+        const result = await this.benchState.createCardTpl(templateName);
         switch (result.state) {
             case "success": {
                 const msg = this.translate.instant(
@@ -82,12 +64,7 @@ export class CardTplOpsComponent {
                     { name: templateName },
                 );
                 this.notify.open(msg);
-                const opts = this.noteTplService.getCardTplOptions();
-                this.syncFromService(opts);
-                const target = opts.find((opt) => opt.label === templateName);
-                if (target) {
-                    this.pickCardTpl(target);
-                }
+                this.selectedChange.emit(this.benchState.selectedCardTpl());
                 return;
             }
             case "duplicate":
@@ -107,7 +84,7 @@ export class CardTplOpsComponent {
      * Delete currently selected card template after confirmation.
      */
     async delCurCardTpl(): Promise<void> {
-        const selectedTpl = this.selected;
+        const selectedTpl = this.benchState.selectedCardTpl();
         if (!selectedTpl.value) {
             this.notify.open(
                 this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_CARD_DIALOG.NO_SELECTION"),
@@ -133,7 +110,7 @@ export class CardTplOpsComponent {
             return;
         }
 
-        const result = await this.noteTplService.deleteCardTpl(selectedTpl.value);
+        const result = await this.benchState.deleteSelectedCardTpl();
         switch (result.state) {
             case "success":
                 this.notify.open(
@@ -141,7 +118,7 @@ export class CardTplOpsComponent {
                         name: tplName,
                     }),
                 );
-                this.syncFromService(this.noteTplService.getCardTplOptions());
+                this.selectedChange.emit(this.benchState.selectedCardTpl());
                 return;
             case "last-one":
                 this.notify.open(
