@@ -2,17 +2,18 @@
     <app-select-dropdown
         [options]="benchState.cardTplOptions()"
         [selectedOption]="benchState.selectedCardTpl()"
+        [disabled]="benchState.isBusy()"
         (selectedOptionChange)="pickCardTpl($event)"
     ></app-select-dropdown>
-    <button mat-icon-button [matMenuTriggerFor]="menu">
+    <button mat-icon-button [disabled]="benchState.isBusy()" [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="onMenuAction('create')">
+        <button mat-menu-item [disabled]="benchState.isBusy()" (click)="onMenuAction('create')">
             <mat-icon>add</mat-icon>
             <span>{{ 'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CARD_TPL_OPS_MENU.CREATE' | translate }}</span>
         </button>
-        <button mat-menu-item [disabled]="!benchState.selectedCardTpl().value" (click)="onMenuAction('delete')">
+        <button mat-menu-item [disabled]="benchState.isBusy() || !benchState.selectedCardTpl().value" (click)="onMenuAction('delete')">
             <mat-icon>delete</mat-icon>
             <span>{{ 'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CARD_TPL_OPS_MENU.DELETE' | translate }}</span>
         </button>

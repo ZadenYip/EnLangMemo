@@ -4,11 +4,17 @@ import {
     createEmptyOption,
     SelectDropdownOption,
 } from "@render/shared/components/select-dropdown/select-dropdown.component";
+import Logger from "electron-log/renderer";
 
 @Injectable()
 export class BenchStateService {
     private readonly noteTplRefMap = new Map<string, SelectDropdownOption>();
     private readonly cardTplMap = new Map<string, CardTemplate>();
+
+    /**
+     * Whether template-related async operation is running.
+     */
+    readonly isBusy = signal(false);
 
     /**
      * Available note template dropdown options.
@@ -30,23 +36,173 @@ export class BenchStateService {
      * Current loaded note template detail.
      */
     readonly curNoteTpl = signal<NoteTemplate | null>(null);
-    /**
-     * Draft content for current card front.
-     */
-    readonly frontTpl = signal("");
-    /**
-     * Draft content for current card back.
-     */
-    readonly backTpl = signal("");
-    /**
-     * Draft css content for current note template.
-     */
-    readonly cssTpl = signal("");
 
     /**
      * Load note template refs and select preferred or first template.
      */
     async loadNoteTplRefs(preferredNoteTplId = ""): Promise<void> {
+        if (!this.beginBusy()) {
+            return;
+        }
+        try {
+            await this.loadNoteTplRefsCore(preferredNoteTplId);
+        } finally {
+            this.endBusy();
+        }
+    }
+
+    /**
+     * Select note template and reload dependent card template state.
+     */
+    async selectNoteTpl(option: SelectDropdownOption): Promise<void> {
+        if (!this.beginBusy()) {
+            return;
+        }
+        try {
+            await this.selectNoteTplCore(option);
+        } finally {
+            this.endBusy();
+        }
+    }
+
+    /**
+     * Select card template for current note template.
+     */
+    selectCardTpl(option: SelectDropdownOption): void {
+        this.selectedCardTpl.set(option);
+    }
+
+    /**
+     * Create card template under currently selected note template.
+     */
+    async createCardTpl(templateName: string) {
+        if (!this.beginBusy()) {
+            return {
+                state: "busy" as const,
+            };
+        }
+        try {
+            const noteTplId = this.selectedNoteTpl().value;
+            if (!noteTplId) {
+                return {
+                    state: "not-found" as const,
+                };
+            }
+            const result = await window.service.nt.createCardTpl(noteTplId, templateName);
+            if (result.state === "success") {
+                await this.selectNoteTplCore(this.selectedNoteTpl());
+                const target = this.cardTplOptions().find((option) => option.label === templateName);
+                if (target) {
+                    this.selectCardTpl(target);
+                }
+            }
+            return result;
+        } finally {
+            this.endBusy();
+        }
+    }
+
+    /**
+     * Delete currently selected card template.
+     */
+    async deleteSelectedCardTpl() {
+        if (!this.beginBusy()) {
+            return {
+                state: "busy" as const,
+            };
+        }
+        try {
+            const noteTplId = this.selectedNoteTpl().value;
+            const cardTplId = this.selectedCardTpl().value;
+            if (!noteTplId || !cardTplId) {
+                return {
+                    state: "not-found" as const,
+                };
+            }
+            const result = await window.service.nt.deleteCardTpl(noteTplId, cardTplId);
+            if (result.state === "success") {
+                await this.selectNoteTplCore(this.selectedNoteTpl());
+            }
+            return result;
+        } finally {
+            this.endBusy();
+        }
+    }
+
+    /**
+     * Create note template and refresh refs.
+     */
+    async createNoteTpl(templateName: string) {
+        if (!this.beginBusy()) {
+            return {
+                state: "busy" as const,
+            };
+        }
+        try {
+            const result = await window.service.nt.createNoteTpl(templateName);
+            if (result.state === "success") {
+                await this.loadNoteTplRefsCore(this.selectedNoteTpl().value);
+            }
+            return result;
+        } finally {
+            this.endBusy();
+        }
+    }
+
+    /**
+     * Delete selected note template and refresh refs.
+     */
+    async deleteSelectedNoteTpl() {
+        if (!this.beginBusy()) {
+            return {
+                state: "busy" as const,
+            };
+        }
+        try {
+            const selected = this.selectedNoteTpl();
+            if (!selected.value) {
+                return {
+                    state: "not-found" as const,
+                };
+            }
+            const result = await window.service.nt.deleteNoteTpl(selected.value);
+            if (result.state === "success") {
+                await this.loadNoteTplRefsCore();
+            }
+            return result;
+        } finally {
+            this.endBusy();
+        }
+    }
+
+    /**
+     * Replace current note template cache after a successful template save.
+     */
+    replaceCurNoteTpl(noteTpl: NoteTemplate): void {
+        this.curNoteTpl.set(noteTpl);
+        this.reloadCardTplState(noteTpl, this.selectedCardTpl().value);
+    }
+
+    /**
+     * Try to lock template operations synchronously before async work starts.
+     */
+    beginBusy(): boolean {
+        if (this.isBusy()) {
+            Logger.warn("Operation failed: busy，logically should not happen");
+            return false;
+        }
+        this.isBusy.set(true);
+        return true;
+    }
+
+    /**
+     * Release template operation lock after async work completes.
+     */
+    endBusy(): void {
+        this.isBusy.set(false);
+    }
+
+    private async loadNoteTplRefsCore(preferredNoteTplId = ""): Promise<void> {
         const refs = await window.service.nt.getAllNoteTplRefs();
         const options = refs.map((ref) => ({
             label: ref.name,
@@ -57,13 +213,10 @@ export class BenchStateService {
         this.noteTplOptions.set(options);
 
         const selected = this.noteTplRefMap.get(preferredNoteTplId) ?? options[0] ?? createEmptyOption();
-        await this.selectNoteTpl(selected);
+        await this.selectNoteTplCore(selected);
     }
 
-    /**
-     * Select note template and reload dependent card template state.
-     */
-    async selectNoteTpl(option: SelectDropdownOption): Promise<void> {
+    private async selectNoteTplCore(option: SelectDropdownOption): Promise<void> {
         this.selectedNoteTpl.set(option);
         if (!option.value) {
             this.resetNoteTplState();
@@ -72,141 +225,10 @@ export class BenchStateService {
 
         const noteTpl = await window.service.nt.getNoteTplById(option.value);
         this.curNoteTpl.set(noteTpl);
-        this.cssTpl.set(noteTpl?.css ?? "");
         this.reloadCardTplState(noteTpl);
     }
 
-    /**
-     * Select card template and sync editor draft.
-     */
-    selectCardTpl(option: SelectDropdownOption): void {
-        this.selectedCardTpl.set(option);
-        const cardTpl = this.cardTplMap.get(option.value);
-        this.frontTpl.set(cardTpl?.front ?? "");
-        this.backTpl.set(cardTpl?.back ?? "");
-    }
-
-    /**
-     * Update draft content by active section.
-     */
-    updateDraft(section: "front" | "back" | "css", content: string): void {
-        switch (section) {
-            case "front":
-                this.frontTpl.set(content);
-                return;
-            case "back":
-                this.backTpl.set(content);
-                return;
-            case "css":
-                this.cssTpl.set(content);
-                return;
-        }
-    }
-
-    /**
-     * Create card template under currently selected note template.
-     */
-    async createCardTpl(templateName: string) {
-        const noteTplId = this.selectedNoteTpl().value;
-        if (!noteTplId) {
-            return {
-                state: "not-found" as const,
-            };
-        }
-        const result = await window.service.nt.createCardTpl(noteTplId, templateName);
-        if (result.state === "success") {
-            await this.selectNoteTpl(this.selectedNoteTpl());
-            const target = this.cardTplOptions().find((option) => option.label === templateName);
-            if (target) {
-                this.selectCardTpl(target);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Delete currently selected card template.
-     */
-    async deleteSelectedCardTpl() {
-        const noteTplId = this.selectedNoteTpl().value;
-        const cardTplId = this.selectedCardTpl().value;
-        if (!noteTplId || !cardTplId) {
-            return {
-                state: "not-found" as const,
-            };
-        }
-        const result = await window.service.nt.deleteCardTpl(noteTplId, cardTplId);
-        if (result.state === "success") {
-            await this.selectNoteTpl(this.selectedNoteTpl());
-        }
-        return result;
-    }
-
-    /**
-     * Create note template and refresh refs.
-     */
-    async createNoteTpl(templateName: string) {
-        const result = await window.service.nt.createNoteTpl(templateName);
-        if (result.state === "success") {
-            await this.loadNoteTplRefs(this.selectedNoteTpl().value);
-        }
-        return result;
-    }
-
-    /**
-     * Delete selected note template and refresh refs.
-     */
-    async deleteSelectedNoteTpl() {
-        const selected = this.selectedNoteTpl();
-        if (!selected.value) {
-            return {
-                state: "not-found" as const,
-            };
-        }
-        const result = await window.service.nt.deleteNoteTpl(selected.value);
-        if (result.state === "success") {
-            await this.loadNoteTplRefs();
-        }
-        return result;
-    }
-
-    /**
-     * Save current template draft.
-     */
-    async saveTemplateDraft() {
-        const noteTpl = this.curNoteTpl();
-        const noteTplId = this.selectedNoteTpl().value;
-        const cardTplId = this.selectedCardTpl().value;
-        if (!noteTpl || !noteTplId || !cardTplId) {
-            return {
-                state: "not-found" as const,
-            };
-        }
-
-        const nextCardTpls = noteTpl.cardtpls.map((cardTpl) =>
-            String(cardTpl.id) === cardTplId
-                ? {
-                    ...cardTpl,
-                    front: this.frontTpl(),
-                    back: this.backTpl(),
-                }
-                : cardTpl,
-        );
-        const nextNoteTpl: NoteTemplate = {
-            ...noteTpl,
-            css: this.cssTpl(),
-            cardtpls: nextCardTpls,
-        };
-        const result = await window.service.nt.saveNoteTpl(noteTplId, nextNoteTpl);
-        if (result.state === "success") {
-            this.curNoteTpl.set(nextNoteTpl);
-            this.cardTplMap.clear();
-            nextCardTpls.forEach((cardTpl) => this.cardTplMap.set(String(cardTpl.id), cardTpl));
-        }
-        return result;
-    }
-
-    private reloadCardTplState(noteTpl: NoteTemplate | null): void {
+    private reloadCardTplState(noteTpl: NoteTemplate | null, preferredCardTplId = ""): void {
         this.cardTplMap.clear();
         const cardTplOptions = noteTpl?.cardtpls.map((cardTpl) => {
             const value = String(cardTpl.id);
@@ -217,7 +239,8 @@ export class BenchStateService {
             };
         }) ?? [];
         this.cardTplOptions.set(cardTplOptions);
-        this.selectCardTpl(cardTplOptions[0] ?? createEmptyOption());
+        const selected = cardTplOptions.find((option) => option.value === preferredCardTplId) ?? cardTplOptions[0] ?? createEmptyOption();
+        this.selectCardTpl(selected);
     }
 
     private resetNoteTplState(): void {
@@ -225,6 +248,5 @@ export class BenchStateService {
         this.cardTplMap.clear();
         this.cardTplOptions.set([]);
         this.selectCardTpl(createEmptyOption());
-        this.cssTpl.set("");
     }
 }

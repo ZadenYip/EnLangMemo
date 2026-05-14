@@ -4,9 +4,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { NoteTemplateEditorTextareaComponent } from "./editor-textarea/editor-textarea.component";
 import { NotifyService } from "@render/shared/services/notify.service";
-import { BenchStateService } from "../bench-state.service";
-
-type NoteTplSection = "front" | "back" | "css";
+import { NoteTplSection, TplEditStateService } from "./tpl-edit-state.service";
 
 @Component({
     selector: "app-bench-template-edit",
@@ -22,7 +20,7 @@ type NoteTplSection = "front" | "back" | "css";
     styleUrl: "./tpl-edit.component.scss",
 })
 export class TplEditComponent {
-    readonly benchState = inject(BenchStateService);
+    readonly tplEditState = inject(TplEditStateService);
     private readonly notify = inject(NotifyService);
     private readonly translate = inject(TranslateService);
 
@@ -40,20 +38,22 @@ export class TplEditComponent {
     }
 
     onEditorValueChange(value: string): void {
-        this.benchState.updateDraft(this.section(), value);
+        this.tplEditState.updateDraft(this.section(), value);
     }
 
     /**
      * Persist current edited template content.
      */
     async onSaveTemplate(): Promise<void> {
-        const result = await this.benchState.saveTemplateDraft();
+        const result = await this.tplEditState.saveDraft();
         switch (result.state) {
             case "success":
                 this.notify.open(this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.SAVE_TEMPLATE.SUCCESS"));
                 return;
             case "not-found":
                 this.notify.open(this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.SAVE_TEMPLATE.NOT_FOUND"));
+                return;
+            case "busy":
                 return;
         }
     }

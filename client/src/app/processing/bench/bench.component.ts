@@ -1,4 +1,4 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
 import {
     SelectDropdownComponent,
@@ -8,6 +8,8 @@ import { TplEditComponent } from "./note-tpl-edit/tpl-edit.component";
 import { NoteTplOpsComponent } from "./note-tpl-edit/note-tpl-ops/note-tpl-ops.component";
 import { BenchStateService } from "./bench-state.service";
 import { CardTplOpsComponent } from "./note-tpl-edit/card-tpl-ops/card-tpl-ops.component";
+import { NoteContentEditComponent } from "./note-content-edit/note-content-edit.component";
+import { TplEditStateService } from "./note-tpl-edit/tpl-edit-state.service";
 
 type BenchModeValue = "note-content" | "note-template";
 interface BenchModeOption extends SelectDropdownOption {
@@ -18,19 +20,20 @@ interface BenchModeOption extends SelectDropdownOption {
 @Component({
     selector: "app-processing-bench",
     standalone: true,
-    providers: [BenchStateService],
+    providers: [BenchStateService, TplEditStateService],
     imports: [
         TplEditComponent,
         SelectDropdownComponent,
         CardTplOpsComponent,
+        NoteContentEditComponent,
         NoteTplOpsComponent,
         TranslateModule,
     ],
     templateUrl: "./bench.component.html",
     styleUrl: "./bench.component.scss",
 })
-export class ProcessingBenchComponent {
-    private readonly benchState = inject(BenchStateService);
+export class ProcessingBenchComponent implements OnInit {
+    readonly benchState = inject(BenchStateService);
 
     /**
      * Available edit modes for the bench dropdown.
@@ -51,26 +54,18 @@ export class ProcessingBenchComponent {
      */
     editMode = signal<BenchModeOption>(this.modeOptions[0]);
 
+    /**
+     * Load initial note template context for bench child components.
+     */
+    ngOnInit(): void {
+        void this.benchState.loadNoteTplRefs();
+    }
 
     /**
      * Switch bench editing mode and close the dropdown.
      */
     selectMode(option: SelectDropdownOption): void {
         this.editMode.set(option as BenchModeOption);
-    }
-
-    /**
-     * Forward card template selection to the active template editor.
-     */
-    onCardTplSelected(option: SelectDropdownOption): void {
-        this.benchState.selectCardTpl(option);
-    }
-
-    /**
-     * Forward note template selection to the active template editor.
-     */
-    onNoteTplSelected(option: SelectDropdownOption): void {
-        void this.benchState.selectNoteTpl(option);
     }
   
 }

@@ -1,4 +1,4 @@
-import { Component, inject, output } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { MatMenuModule } from "@angular/material/menu";
@@ -31,20 +31,14 @@ export class CardTplOpsComponent {
     private readonly notify = inject(NotifyService);
     readonly benchState = inject(BenchStateService);
 
-    /**
-     * Emits when the selected note template changes.
-     */
-    selectedChange = output<SelectDropdownOption>();
-
     pickCardTpl(option: SelectDropdownOption): void {
         this.benchState.selectCardTpl(option);
-        this.selectedChange.emit(option);
     }
 
     /**
      * Create card template from dialog input and refresh current options.
      */
-    async createCardTpl(): Promise<void> {
+    private async createCardTpl(): Promise<void> {
         const dialogRef = this.settingDialog.open<InputNameDialog, InputNameDialogData, string>(InputNameDialog, {
             data: {
                 title: this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CREATE_CARD_DIALOG.TITLE"),
@@ -64,7 +58,6 @@ export class CardTplOpsComponent {
                     { name: templateName },
                 );
                 this.notify.open(msg);
-                this.selectedChange.emit(this.benchState.selectedCardTpl());
                 return;
             }
             case "duplicate":
@@ -77,13 +70,15 @@ export class CardTplOpsComponent {
                     this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CREATE_CARD_DIALOG.NO_NOTE_SELECTED"),
                 );
                 return;
+            case "busy":
+                return;
         }
     }
 
     /**
      * Delete currently selected card template after confirmation.
      */
-    async delCurCardTpl(): Promise<void> {
+    private async delCurCardTpl(): Promise<void> {
         const selectedTpl = this.benchState.selectedCardTpl();
         if (!selectedTpl.value) {
             this.notify.open(
@@ -118,7 +113,6 @@ export class CardTplOpsComponent {
                         name: tplName,
                     }),
                 );
-                this.selectedChange.emit(this.benchState.selectedCardTpl());
                 return;
             case "last-one":
                 this.notify.open(
@@ -129,6 +123,8 @@ export class CardTplOpsComponent {
                 this.notify.open(
                     this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_CARD_DIALOG.NOT_FOUND"),
                 );
+                return;
+            case "busy":
                 return;
         }
     }

@@ -1,4 +1,4 @@
-import { Component, inject, output } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { TranslateModule } from "@ngx-translate/core";
 import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { MatMenuModule } from "@angular/material/menu";
@@ -32,26 +32,6 @@ export class NoteTplOpsComponent {
     readonly benchState = inject(BenchStateService);
 
     /**
-     * Emits when the selected note template changes.
-     */
-    selectedChange = output<SelectDropdownOption>();
-
-    constructor() {
-        void this.loadNoteTplRefs();
-    }
-
-    private async loadNoteTplRefs(selectedId = ""): Promise<void> {
-        await this.benchState.loadNoteTplRefs(selectedId);
-        this.selectedChange.emit(this.benchState.selectedNoteTpl());
-    }
-
-    private async selectNoteTpl(option: SelectDropdownOption): Promise<void> {
-        await this.benchState.selectNoteTpl(option);
-        this.selectedChange.emit(option);
-    }
-
-
-    /**
      * Create a note template from dialog input and refresh current options.
      */
     async createNoteTpl(): Promise<void> {
@@ -74,8 +54,6 @@ export class NoteTplOpsComponent {
                     { name: templateName },
                 );
                 this.notify.open(msg);
-
-                await this.loadNoteTplRefs(this.benchState.selectedNoteTpl().value);
                 return;
             }
             case "duplicate":
@@ -84,6 +62,8 @@ export class NoteTplOpsComponent {
                         "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CREATE_NOTE_DIALOG.DUPLICATE",
                     ),
                 );
+                return;
+            case "busy":
                 return;
         }
     }
@@ -139,6 +119,8 @@ export class NoteTplOpsComponent {
                     this.translate.instant("PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.DELETE_NOTE_DIALOG.LAST_ONE"),
                 );
                 return;
+            case "busy":
+                return;
         }
     }
 
@@ -160,7 +142,7 @@ export class NoteTplOpsComponent {
     }
 
     pickNoteTpl(option: SelectDropdownOption): void {
-        void this.selectNoteTpl(option);
+        void this.benchState.selectNoteTpl(option);
     }
 
 }
