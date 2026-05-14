@@ -4,6 +4,7 @@
   height: 2.5rem;
   display: flex;
   align-items: center;
+  z-index: var(--select-dropdown-z-index, 10);
 }
 
 .trigger {
@@ -58,7 +59,7 @@
   font-size: 0.875rem;
   display: flex;
   align-items: center;
-
+  
   &:focus {
     outline: none;
     box-shadow: inset 0 0 0 0.125rem rgba(0, 98, 255, 0.45);

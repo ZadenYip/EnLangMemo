@@ -15,6 +15,10 @@
   justify-content: space-between;
 }
 
+.mode-select {
+  --select-dropdown-z-index: 20;
+}
+
 .bench-title {
   font-weight: bold;
 }
