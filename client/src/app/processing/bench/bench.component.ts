@@ -8,8 +8,9 @@ import { TplEditComponent } from "./note-tpl-edit/tpl-edit.component";
 import { NoteTplOpsComponent } from "./note-tpl-edit/note-tpl-ops/note-tpl-ops.component";
 import { BenchStateService } from "./bench-state.service";
 import { CardTplOpsComponent } from "./note-tpl-edit/card-tpl-ops/card-tpl-ops.component";
-import { NoteContentEditComponent } from "./note-content-edit/note-content-edit.component";
+import { NoteContEditComponent } from "./note-cont-edit/note-cont-edit.component";
 import { TplEditStateService } from "./note-tpl-edit/tpl-edit-state.service";
+import { NoteContEditStateService } from "./note-cont-edit/note-cont-edit-state.service";
 
 type BenchModeValue = "note-content" | "note-template";
 interface BenchModeOption extends SelectDropdownOption {
@@ -20,12 +21,12 @@ interface BenchModeOption extends SelectDropdownOption {
 @Component({
     selector: "app-processing-bench",
     standalone: true,
-    providers: [BenchStateService, TplEditStateService],
+    providers: [BenchStateService, TplEditStateService, NoteContEditStateService],
     imports: [
         TplEditComponent,
         SelectDropdownComponent,
         CardTplOpsComponent,
-        NoteContentEditComponent,
+        NoteContEditComponent,
         NoteTplOpsComponent,
         TranslateModule,
     ],

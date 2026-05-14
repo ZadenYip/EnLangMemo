@@ -1,0 +1,40 @@
+<div class="header">
+    <div class="rich-text-toolbar">
+        <app-tool-icon
+            iconName="format_bold"
+            [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.TOOLS.BOLD' | translate"
+        ></app-tool-icon>
+        <app-tool-icon
+            iconName="format_italic"
+            [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.TOOLS.ITALIC' | translate"
+        ></app-tool-icon>
+        <app-tool-icon
+            iconName="format_underlined"
+            [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.TOOLS.UNDERLINE' | translate"
+        ></app-tool-icon>
+        <app-tool-icon
+            iconName="code"
+            [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.TOOLS.CODE' | translate"
+        ></app-tool-icon>
+    </div>
+
+    <button type="button" mat-flat-button (click)="onSaveNoteContent()">
+        {{ "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE.ACTION" | translate }}
+    </button>
+</div>
+
+<div class="editor-divider"></div>
+
+<div class="fields-editor">
+    @for (field of noteContEditState.fields(); track field.id) {
+        <div class="field-group">
+            <span class="field-name">{{ field.name }}</span>
+            <app-auto-resize-textarea
+                class="field-input"
+                [value]="noteContEditState.fieldValue(field.id)"
+                [placeholder]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.FIELD_PLACEHOLDER' | translate: { name: field.name }"
+                (valueChange)="onFieldValueChange(field.id, $event)"
+            ></app-auto-resize-textarea>
+        </div>
+    }
+</div>
