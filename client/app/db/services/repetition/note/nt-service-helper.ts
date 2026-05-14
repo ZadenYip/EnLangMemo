@@ -3,12 +3,15 @@ import { CardTemplate, NoteTemplate, TemplateField } from "./nt-service.types";
 
 export function genNoteTpl(): NoteTemplate {
     const dateTime = Date.now();
-    const questionField = createField(dateTime, "Question Field");
-    const answerField = createField(dateTime + 1, "Answer");
+    const ctxField = createField(dateTime, "Context");
+    const phonetic = createField(dateTime + 1, "Phonetic");
+    const srcDefinition = createField(dateTime + 2, "Source Definition");
+    const tgtDefinition = createField(dateTime + 3, "Target Definition");
+    const audio = createField(dateTime + 4, "Audio");
     return {
         css: "",
-        sortField: questionField.id,
-        fields: [questionField, answerField],
+        sortField: ctxField.id,
+        fields: [ctxField, phonetic, srcDefinition, tgtDefinition, audio],
         cardtpls: [genCardTpl()],
     };
 }
@@ -18,8 +21,8 @@ export function genCardTpl(name = "Default Card Template"): CardTemplate {
     return {
         name,
         id: idTime,
-        front: "Question: {{Question Field}}",
-        back: "Answer: {{Answer}}",
+        front: "Question: {{Context}}",
+        back: "Answer: {{Phonetic}}",
     };
 }
 
