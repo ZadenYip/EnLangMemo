@@ -48,6 +48,11 @@ export class SelectDropdownComponent {
     selectedOption = input.required<SelectDropdownOption>();
 
     /**
+     * Whether dropdown interaction is disabled.
+     */
+    disabled = input(false);
+
+    /**
      * Emits when the selected option changes.
      */
     selectedOptionChange = output<SelectDropdownOption>();
@@ -62,6 +67,10 @@ export class SelectDropdownComponent {
      * Toggle the dropdown menu state.
      */
     toggleMenu(): void {
+        if (this.disabled()) {
+            this.isMenuOpen.set(false);
+            return;
+        }
         this.isMenuOpen.update((open) => !open);
     }
 
@@ -84,6 +93,9 @@ export class SelectDropdownComponent {
      * Select an option and close the dropdown menu.
      */
     selectOption(option: SelectDropdownOption): void {
+        if (this.disabled()) {
+            return;
+        }
         this.selectedOptionChange.emit(option);
         this.isMenuOpen.set(false);
     }

@@ -25,6 +25,17 @@
     outline: none;
     box-shadow: 0 0 0 0.125rem rgba(0, 98, 255, 0.45);
   }
+
+  &[aria-disabled="true"] {
+    cursor: default;
+    color: rgba(0, 0, 0, 0.38);
+    border-color: rgba(0, 0, 0, 0.12);
+    background-color: rgba(0, 0, 0, 0.03);
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
 }
 
 .caret {
@@ -34,6 +45,10 @@
   border-bottom: 2px solid rgba(0, 0, 0, 0.5);
   transform: rotate(45deg);
   margin-top: -0.2rem;
+}
+
+.trigger[aria-disabled="true"] .caret {
+  border-color: rgba(0, 0, 0, 0.26);
 }
 
 .menu {
