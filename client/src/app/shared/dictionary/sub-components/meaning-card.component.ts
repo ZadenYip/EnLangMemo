@@ -22,6 +22,7 @@ export class MeaningCardComponent {
     index = input(0);
     posLabel = input("");
     item = input<Definition>({
+        defId: "",
         definition: { src: "", target: "" },
         examples: [],
     });

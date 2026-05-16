@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { lemmatize } from "@main/lemmatization";
 import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
 import { ImportResult } from "../../import/dictionary/dic-import-type";
+import { bufferToHex } from "../../import/utils";
 
 export class DictionaryService implements IDictionaryService {
     /**
@@ -37,7 +38,7 @@ export class DictionaryService implements IDictionaryService {
                     columns: { poseId: false, wordId: false, createdAt: false, updatedAt: false },
                     with: {
                         definitions: {
-                            columns: { defId: false, wordPosId: false, createdAt: false, updatedAt: false },
+                            columns: { wordPosId: false, createdAt: false, updatedAt: false },
                             with: {
                                 examples: {
                                     columns: { expId: false, defId: false, createdAt: false, updatedAt: false },
@@ -77,6 +78,7 @@ export class DictionaryService implements IDictionaryService {
             senses: row.poses.map<Sense>((pose) => ({
                 partOfSpeech: pose.partOfSpeech ?? "",
                 definitions: pose.definitions.map<Definition>((def) => ({
+                    defId: bufferToHex(def.defId),
                     definition: {
                         src: def.defSrc ?? "",
                         target: def.defTgt ?? "",
