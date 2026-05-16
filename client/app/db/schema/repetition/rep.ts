@@ -12,6 +12,7 @@ import { relations } from "drizzle-orm";
 import type { NoteTemplate } from "@main/db/services/repetition/note/nt-service.types";
 import type { CollectionConfig } from "@main/db/services/repetition/collection/col-service-types";
 import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
+import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping.types";
 
 
 // More information see in https://dbdiagram.io/d/EnLangMemo-69aafcb1a3f0aa31e1146507
@@ -94,6 +95,18 @@ export const noteTypesTable = sqliteTable("note_types", {
       ]
      */
     noteTemplate: jsonb<NoteTemplate>("note_template").notNull(),
+});
+
+/**
+ * Dictionary add-card mapping config, currently only one row is supported.
+ */
+export const dicNoteMapTable = sqliteTable("dic_note_map", {
+    mapId: blob("map_id", { mode: "buffer" }).primaryKey(),
+    noteTypeId: blob("note_type_id", { mode: "buffer" })
+        .notNull()
+        .references(() => noteTypesTable.id, { onDelete: "cascade" }),
+    usn: int("usn").notNull(),
+    mapping: jsonb<DicNoteMapping>("mapping").notNull(),
 });
 
 export const notesTable = sqliteTable(

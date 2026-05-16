@@ -11,6 +11,8 @@ import { DeckService } from "../db/services/repetition/deck/deck-service";
 import { DeckServiceIPCDescriptor } from "../db/services/repetition/deck/deck-service-interface";
 import { NoteTemplateService } from "../db/services/repetition/note/nt-service";
 import { NoteTemplateServiceIPCDescriptor } from "../db/services/repetition/note/nt-service-interface";
+import { DicNoteMappingService } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service";
+import { DicNoteMappingServiceIPCDescriptor } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service-interface";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
@@ -34,4 +36,7 @@ function registerDatabaseHandlers() {
 
     const noteTemplateService = new NoteTemplateService();
     registerProxy(noteTemplateService, NoteTemplateServiceIPCDescriptor);
+
+    const dicNoteMappingService = new DicNoteMappingService();
+    registerProxy(dicNoteMappingService, DicNoteMappingServiceIPCDescriptor);
 }
