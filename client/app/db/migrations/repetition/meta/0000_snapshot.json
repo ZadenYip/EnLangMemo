@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "2ed3c7d5-c6cd-4a33-bfcc-e5915da1bc64",
+  "id": "d4a45e04-34fb-4523-a7d9-f0a776cb37bd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -283,6 +283,58 @@
       },
       "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "dic_note_map": {
+      "name": "dic_note_map",
+      "columns": {
+        "map_id": {
+          "name": "map_id",
+          "type": "blob",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "note_type_id": {
+          "name": "note_type_id",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "usn": {
+          "name": "usn",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mapping": {
+          "name": "mapping",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "dic_note_map_note_type_id_note_types_id_fk": {
+          "name": "dic_note_map_note_type_id_note_types_id_fk",
+          "tableFrom": "dic_note_map",
+          "tableTo": "note_types",
+          "columnsFrom": [
+            "note_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}

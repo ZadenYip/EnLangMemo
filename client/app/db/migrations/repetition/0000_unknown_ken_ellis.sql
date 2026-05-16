@@ -41,6 +41,14 @@ CREATE TABLE `decks` (
 	`config` jsonb NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `dic_note_map` (
+	`map_id` blob PRIMARY KEY NOT NULL,
+	`note_type_id` blob NOT NULL,
+	`usn` integer NOT NULL,
+	`mapping` jsonb NOT NULL,
+	FOREIGN KEY (`note_type_id`) REFERENCES `note_types`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `note_types` (
 	`id` blob PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,

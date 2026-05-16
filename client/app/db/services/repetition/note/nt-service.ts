@@ -89,6 +89,7 @@ export class NoteTemplateService implements INoteTemplateService {
         await getRepDb()
             .update(noteTypesTable)
             .set({
+                usn: -1,
                 updatedAt: Date.now(),
                 noteTemplate: newNoteTpl,
             })
