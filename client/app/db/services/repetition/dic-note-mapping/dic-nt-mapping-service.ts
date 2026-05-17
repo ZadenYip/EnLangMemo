@@ -6,6 +6,7 @@ import {
 } from "./dic-nt-mapping.types";
 import { IDicNoteMappingService } from "./dic-nt-mapping-service-interface";
 import { eq } from "drizzle-orm";
+import Logger from "electron-log/main";
 
 /**
  * Service for the single dictionary note mapping config.
@@ -44,13 +45,14 @@ export class DicNoteMappingService implements IDicNoteMappingService {
     async saveMappingConfig(config: DicNoteMapWithNoteType): Promise<void> {
         const existingRow = await getRepDb().query.dicNoteMapTable.findFirst();
         const noteTypeId = hexToBuffer(config.noteTypeId);
-
+        
         if (existingRow) {
             await getRepDb().update(dicNoteMapTable).set({
                 noteTypeId,
                 usn: -1,
                 mapping: config.dicNoteMapping,
             }).where(eq(dicNoteMapTable.mapId, existingRow.mapId));
+            Logger.info(`Updated dictionary note mapping config for noteTypeId ${config.noteTypeId}`);
         } else {
             await getRepDb().insert(dicNoteMapTable).values({
                 mapId: generateUUIDV7(),
@@ -58,6 +60,7 @@ export class DicNoteMappingService implements IDicNoteMappingService {
                 usn: -1,
                 mapping: config.dicNoteMapping,
             });
+            Logger.info(`Inserted new dictionary note mapping config for noteTypeId ${config.noteTypeId}`);
         }
     }
 
