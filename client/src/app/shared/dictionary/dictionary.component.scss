@@ -1,4 +1,6 @@
-﻿.dictionary-page {
+﻿@use "src/styles.scss" as *;
+
+.dictionary-page {
   position: fixed;
   left: 24px;
   top: 24px;
@@ -41,6 +43,25 @@
   cursor: move;
   user-select: none;
   touch-action: none;
+}
+
+.note-template-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: default;
+  touch-action: auto;
+
+  .note-template-label {
+    @include global-font-style;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  app-select-dropdown {
+    --select-dropdown-trigger-z-index: 1001;
+    --select-dropdown-menu-z-index: 1002;
+  }
 }
 
 .window-resize-handle {

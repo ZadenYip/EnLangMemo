@@ -1,6 +1,7 @@
 import { Directive, ElementRef, HostListener, inject } from "@angular/core";
 import { DictionarySelectionService } from "./selection.service";
 import { DictionaryWindowService } from "../dictionary-window.service";
+import { DictionaryNoteService } from "../dictionary-note.service";
 
 /**
  * It should be attached to any element that contains text
@@ -16,6 +17,7 @@ export class DictionarySelectionSourceDirective {
     private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
     private readonly selectionService = inject(DictionarySelectionService);
     private readonly dictionaryWindowService = inject(DictionaryWindowService);
+    private readonly dicNoteService = inject(DictionaryNoteService);
 
     @HostListener("mouseup")
     onMouseUp(): void {
@@ -49,6 +51,7 @@ export class DictionarySelectionSourceDirective {
             contextSentence || selectedText,
         );
         this.dictionaryWindowService.show();
+        void this.dicNoteService.reload();
     }
 
     /**

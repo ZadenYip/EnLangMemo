@@ -59,6 +59,19 @@
         "ACTIONS": {
           "EDIT_CURRENT_TEMPLATE": "Edit Selected Card Template"
         },
+        "NOTE_CONTENT_EDIT": {
+          "TOOLS": {
+            "BOLD": "Bold",
+            "ITALIC": "Italic",
+            "UNDERLINE": "Underline",
+            "CODE": "Code"
+          },
+          "FIELD_PLACEHOLDER": "Enter {{name}}",
+          "SAVE": {
+            "ACTION": "Save Note",
+            "SUCCESS": "Note content draft saved."
+          }
+        },
         "TEMPLATE_EDIT": {
           "CARD_TEMPLATE_LABEL": "Card Template:",
           "NOTE_TEMPLATE_LABEL": "Note Template:",
@@ -112,7 +125,7 @@
               "LAST_ONE": "At least one note template must be kept."
             },
             "SAVE_TEMPLATE": {
-              "ACTION": "Save",
+              "ACTION": "Save Template",
               "SUCCESS": "Note Template saved.",
               "NOT_FOUND": "Current note template not found. Cannot save.（This should not happen）"
             }
@@ -217,9 +230,22 @@
     "NO_RESULTS": "No search results",
     "CONTEXT_SENTENCE": "Context Sentence",
     "MEANINGS_TITLE": "Meanings List",
-    "ADD_CARD": "Add Card",
+    "ADD_TO_PROCESSING_POOL": "Add to Processing Pool",
     "EXAMPLE_SENTENCE": "Example Sentence",
-    "FOLD/UNFOLD": "Fold/Unfold"
+    "FOLD/UNFOLD": "Fold/Unfold",
+    "NOTE_MAPPING": {
+      "TITLE": "Dictionary Note Mapping",
+      "NOTE_TEMPLATE_SETTING": "Note Template",
+      "NO_MAPPING": "No Mapping",
+      "SELECTED_TEXT": "Target Word(required)",
+      "CONTEXT": "Context",
+      "SRC_DEFINITION": "Source Definition(required)",
+      "TARGET_DEFINITION": "Target Definition",
+      "PHONETIC": "Phonetic",
+      "INCOMPLETE": "Please select a note template and configure field mapping first.",
+      "SAVE_SUCCESS": "Dictionary note mapping saved.",
+      "PAYLOAD_READY": "Note content has been prepared."
+    }
   },
   "HEADER": {
     "DECKS": "Decks",

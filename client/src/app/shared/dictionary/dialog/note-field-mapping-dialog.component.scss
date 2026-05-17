@@ -1,0 +1,33 @@
+@use "src/styles.scss" as global;
+
+:host {
+  display: flex;
+  flex-direction: column;
+
+  h2 {
+    height: auto;
+  }
+
+  p {
+    @include global.h2-p;
+  }
+}
+
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 60vh;
+}
+
+.mapping-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.25rem;
+
+  span {
+    min-width: 8rem;
+  }
+}

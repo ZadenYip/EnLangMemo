@@ -7,11 +7,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { DictionaryWindowService } from "./dictionary-window.service";
 import { DictionarySelectionService } from "./selection/selection.service";
 import { MeaningCardComponent } from "./sub-components/meaning-card.component";
-import Logger from "electron-log/renderer";
 import { TranslatePipe } from "@ngx-translate/core";
 import { Definition, DictionaryEntry } from "@main/db/services/dictionary/dic-service-types";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { debounceTime, distinctUntilChanged, from, map, switchMap } from "rxjs";
+import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
+import { DictionaryNoteService } from "./dictionary-note.service";
 
 @Component({
     selector: "app-dictionary",
@@ -21,6 +22,7 @@ import { debounceTime, distinctUntilChanged, from, map, switchMap } from "rxjs";
         MatDividerModule,
         MatButtonModule,
         MeaningCardComponent,
+        SelectDropdownComponent,
         TranslatePipe,
     ],
     templateUrl: "./dictionary.component.html",
@@ -28,7 +30,8 @@ import { debounceTime, distinctUntilChanged, from, map, switchMap } from "rxjs";
 })
 export class DictionaryComponent implements AfterViewInit {
     private readonly selectionService = inject(DictionarySelectionService);
-    private readonly dictionaryWindowService = inject(DictionaryWindowService);
+    private readonly dicWindowService = inject(DictionaryWindowService);
+    readonly dicNoteService = inject(DictionaryNoteService);
     readonly dictionaryWindow =
         viewChild<ElementRef<HTMLElement>>("dictionaryWindow");
 
@@ -71,11 +74,12 @@ export class DictionaryComponent implements AfterViewInit {
             ? "DICTIONARY.NO_RESULTS"
             : "DICTIONARY.NO_SELECTION",
     );
-    readonly visible = computed(() => this.dictionaryWindowService.visible());
+    readonly visible = computed(() => this.dicWindowService.visible());
 
     hideWindow(): void {
-        this.dictionaryWindowService.hide();
+        this.dicWindowService.hide();
     }
+
 
     ngAfterViewInit(): void {
         // Read initial rendered rect and sync it into reactive state.
@@ -263,17 +267,15 @@ export class DictionaryComponent implements AfterViewInit {
         };
     }
 
-    addCard(definition: Definition, partOfSpeech: string): void {
-        // TODO: implement add card logic
-        Logger.info("add card", { partOfSpeech, definition });
-    }
-
     readonly dummyEntry: DictionaryEntry = {
         word: "",
         phoneticSymbol: { bre: "-", ame: "-" },
         senses: [],
     };
 
+    /**
+     * Current dictionary entry for the selected text.
+     */
     readonly entry = toSignal(
         toObservable(this.selectedText).pipe(
             debounceTime(50),
@@ -293,7 +295,27 @@ export class DictionaryComponent implements AfterViewInit {
             initialValue: this.dummyEntry
         }
     );
+
+    // Here are methods for interacting with external services
+
+    async openNoteMappingDialog(): Promise<void> {
+        await this.dicNoteService.openFieldMappingDialog();
+    }
+
+    selectNoteTpl(option: SelectDropdownOption): void {
+        void this.dicNoteService.selectNoteTpl(option);
+    }
+
+    /**
+     * Add selected definition into dictionary processing pool.
+     */
+    addItemToProcessingPool(definition: Definition, partOfSpeech: string): void {
+        this.dicNoteService.addToBench(definition, this.entry(), partOfSpeech);
+    }
+
 }
+
+
 
 
 
