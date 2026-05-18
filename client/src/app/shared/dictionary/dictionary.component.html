@@ -72,7 +72,7 @@
                     [item]="def"
                     [index]="$index + 1"
                     [posLabel]="sense.partOfSpeech"
-                    (addToProcessingPool)="addItemToProcessingPool($event, sense.partOfSpeech)"
+                    (addToProcessingPool)="onAddItem($event)"
                   ></app-meaning-card>
                 }
               </div>

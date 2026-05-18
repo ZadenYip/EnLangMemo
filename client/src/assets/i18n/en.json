@@ -231,6 +231,7 @@
     "CONTEXT_SENTENCE": "Context Sentence",
     "MEANINGS_TITLE": "Meanings List",
     "ADD_TO_PROCESSING_POOL": "Add to Processing Pool",
+    "ADD_TO_PROCESSING_POOL_SUCCESS": "Added to processing pool.",
     "EXAMPLE_SENTENCE": "Example Sentence",
     "FOLD/UNFOLD": "Fold/Unfold",
     "NOTE_MAPPING": {
@@ -243,8 +244,7 @@
       "TARGET_DEFINITION": "Target Definition",
       "PHONETIC": "Phonetic",
       "INCOMPLETE": "Please select a note template and configure field mapping first.",
-      "SAVE_SUCCESS": "Dictionary note mapping saved.",
-      "PAYLOAD_READY": "Note content has been prepared."
+      "SAVE_SUCCESS": "Dictionary note mapping saved."
     }
   },
   "HEADER": {

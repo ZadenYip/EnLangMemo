@@ -19,6 +19,10 @@ import {
     DicNoteFieldMapping,
     DicNoteMapWithNoteType,
 } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
+import {
+    NoteField,
+    ProcessingNote,
+} from "@main/db/services/repetition/dic-note-adding/dic-nt-adding-types";
 
 type DraftDicNoteFieldMapping = Partial<DicNoteFieldMapping>;
 
@@ -159,7 +163,7 @@ export class DictionaryNoteService {
     /**
      * Prepare note payload from dictionary definition and notify result.
      */
-    addToBench(entry: DictionaryEntry, def: Definition): void {
+    async addToBench(entry: DictionaryEntry, def: Definition): Promise<void> {
         const payload = this.buildNotePayload(entry, def);
         if (!payload) {
             this.notify.open(this.translate.instant("DICTIONARY.NOTE_MAPPING.INCOMPLETE"));
@@ -167,15 +171,15 @@ export class DictionaryNoteService {
         }
 
         Logger.info("Adding to processing pool with payload:", payload);
-        
-        // TODO: persist payload after adding note/processing-note IPC service.
-        this.notify.open(this.translate.instant("DICTIONARY.NOTE_MAPPING.PAYLOAD_READY"));
+
+        await window.service.dicNoteAdding.addProcessingNote(payload);
+        this.notify.open(this.translate.instant("DICTIONARY.ADD_TO_PROCESSING_POOL_SUCCESS"));
     }
 
     /**
      * Build note payload from selected dictionary definition and current mapping.
      */
-    private buildNotePayload(entry: DictionaryEntry, def: Definition): { noteTplId: string; fields: Record<string, string> } | null {
+    private buildNotePayload(entry: DictionaryEntry, def: Definition): ProcessingNote | null {
         const mapping = this.fieldMapping();
         if (!this.hasValidMapping()) {
             return null;
@@ -183,6 +187,7 @@ export class DictionaryNoteService {
 
         return {
             noteTplId: this.selectedNoteTpl().value,
+            senseId: def.defId,
             fields: this.buildMappedFields(mapping, def, entry),
         };
     }
@@ -194,12 +199,16 @@ export class DictionaryNoteService {
         mapping: DraftDicNoteFieldMapping,
         definition: Definition,
         entry: DictionaryEntry,
-    ): Record<string, string> {
+    ): NoteField[] {
+        /** Current dictionary text selection used to fill mapped fields. */
         const selection = this.selectionService.selection();
+        /** Combined phonetic text written when a phonetic target field is mapped. */
         const phonetic = [entry.phoneticSymbol.bre, entry.phoneticSymbol.ame]
             .filter(Boolean)
             .join(" / ");
-        const fields: Record<string, string> = {};
+        /** Processing note fields mapped by note template field business id. */
+        const fields: NoteField[] = [];
+        /** Dictionary values paired with selected note template field business ids. */
         const mappings: [number | undefined, string][] = [
             [mapping.wordFieldId, selection.selectedText],
             [mapping.contextFieldId, selection.contextSentence],
@@ -217,11 +226,14 @@ export class DictionaryNoteService {
     /**
      * Set a mapped field only when the target field is selected.
      */
-    private setMappedField(fields: Record<string, string>, fieldId: number | undefined, value: string): void {
+    private setMappedField(fields: NoteField[], fieldId: number | undefined, value: string): void {
         if (fieldId === undefined) {
             return;
         }
-        fields[String(fieldId)] = value;
+        fields.push({
+            id: String(fieldId),
+            value,
+        });
     }
 
 }

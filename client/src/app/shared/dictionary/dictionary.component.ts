@@ -1,5 +1,6 @@
-﻿import { Component, computed, inject } from "@angular/core";
+import { Component, computed, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { DestroyRef } from "@angular/core";
 import { AfterViewInit, ElementRef, HostListener, signal, viewChild } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from "@angular/material/divider";
@@ -9,10 +10,12 @@ import { DictionarySelectionService } from "./selection/selection.service";
 import { MeaningCardComponent } from "./sub-components/meaning-card.component";
 import { TranslatePipe } from "@ngx-translate/core";
 import { Definition, DictionaryEntry } from "@main/db/services/dictionary/dic-service-types";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { debounceTime, distinctUntilChanged, from, map, switchMap } from "rxjs";
+import { catchError, EMPTY, exhaustMap, Subject } from "rxjs";
 import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { DictionaryNoteService } from "./dictionary-note.service";
+import Logger from "electron-log/renderer";
 
 @Component({
     selector: "app-dictionary",
@@ -29,6 +32,7 @@ import { DictionaryNoteService } from "./dictionary-note.service";
     styleUrl: "./dictionary.component.scss",
 })
 export class DictionaryComponent implements AfterViewInit {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly selectionService = inject(DictionarySelectionService);
     private readonly dicWindowService = inject(DictionaryWindowService);
     readonly dicNoteService = inject(DictionaryNoteService);
@@ -59,6 +63,31 @@ export class DictionaryComponent implements AfterViewInit {
     private resizeStartHeight = 0;
     private resizeStartLeft = 0;
     private resizeStartTop = 0;
+    /**
+     * Add-to-processing click stream that prevents overlapping writes.
+     */
+    private readonly addItem$ = new Subject<{
+        /** Dictionary entry snapshot captured at click time. */
+        entry: DictionaryEntry;
+        /** Definition snapshot captured at click time. */
+        definition: Definition;
+    }>();
+
+    constructor() {
+        this.addItem$
+            .pipe(
+                exhaustMap(({ entry, definition }) =>
+                    from(this.dicNoteService.addToBench(entry, definition)).pipe(
+                        catchError((error: unknown) => {
+                            Logger.error("Failed to add dictionary item to processing pool:", error);
+                            return EMPTY;
+                        }),
+                    ),
+                ),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+    }
 
     readonly selectedText = computed(
         () => this.selectionService.selection().selectedText,
@@ -309,8 +338,16 @@ export class DictionaryComponent implements AfterViewInit {
     /**
      * Add selected definition into dictionary processing pool.
      */
-    addItemToProcessingPool(definition: Definition, partOfSpeech: string): void {
-        this.dicNoteService.addToBench(definition, this.entry(), partOfSpeech);
+    onAddItem(definition: Definition): void {
+        /** Snapshot of the current dictionary entry when user clicks add. */
+        const entrySnapshot = structuredClone(this.entry());
+        /** Snapshot of the selected definition when user clicks add. */
+        const definitionSnapshot = structuredClone(definition);
+
+        this.addItem$.next({
+            entry: entrySnapshot,
+            definition: definitionSnapshot,
+        });
     }
 
 }
