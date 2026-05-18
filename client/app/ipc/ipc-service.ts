@@ -9,7 +9,7 @@ import { CollectionServiceIPCDescriptor, ICollectionService } from "../db/servic
 import { DeckServiceIPCDescriptor, IDeckService } from "../db/services/repetition/deck/deck-service-interface";
 import { INoteTplService, NoteTplServiceIPCDescriptor } from "../db/services/repetition/note-template/nt-tpl-service-interface";
 import { DicNoteMappingServiceIPCDescriptor, IDicNoteMappingService } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service-interface";
-import { DicNoteAddingServiceIPCDescriptor, IDicNoteAddingService } from "../db/services/repetition/dic-note-adding/dic-nt-adding-service-interface";
+import { IPcsNoteService, PcsNoteServiceIPCDescriptor } from "../db/services/repetition/processing-note/pcs-note-service-interface";
 
 export const dic = createProxy<AsyncifyProxy<IDatabaseService>>(DicServiceIPCDescriptor);
 export const dialog = createProxy<AsyncifyProxy<IDialogService>>(DialogServiceIPCDescriptor);
@@ -18,7 +18,7 @@ export const collection = createProxy<AsyncifyProxy<ICollectionService>>(Collect
 export const deck = createProxy<AsyncifyProxy<IDeckService>>(DeckServiceIPCDescriptor);
 export const ntTpl = createProxy<AsyncifyProxy<INoteTplService>>(NoteTplServiceIPCDescriptor);
 export const dicNoteMap = createProxy<AsyncifyProxy<IDicNoteMappingService>>(DicNoteMappingServiceIPCDescriptor);
-export const dicNoteAdding = createProxy<AsyncifyProxy<IDicNoteAddingService>>(DicNoteAddingServiceIPCDescriptor);
+export const pcsNote = createProxy<AsyncifyProxy<IPcsNoteService>>(PcsNoteServiceIPCDescriptor);
 
 export const descriptors = {
     dic: DicServiceIPCDescriptor,
@@ -28,5 +28,5 @@ export const descriptors = {
     deck: DeckServiceIPCDescriptor,
     ntTpl: NoteTplServiceIPCDescriptor,
     dicNoteMap: DicNoteMappingServiceIPCDescriptor,
-    dicNoteAdding: DicNoteAddingServiceIPCDescriptor,
+    pcsNote: PcsNoteServiceIPCDescriptor,
 };

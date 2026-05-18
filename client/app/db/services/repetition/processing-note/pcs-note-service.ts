@@ -1,14 +1,15 @@
 import Logger from "electron-log/main";
+import { eq } from "drizzle-orm";
 import { getRepDb } from "@main/db/db";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import { processingNotesTable } from "@main/db/schema/repetition/rep";
-import { ProcessingNote, ProcessingNoteRef } from "./dic-nt-adding-types";
-import { IDicNoteAddingService } from "./dic-nt-adding-service-interface";
+import { ProcessingNote, ProcessingNoteRef } from "./pcs-note-types";
+import { IPcsNoteService } from "./pcs-note-service-interface";
 
 /**
- * Service for dictionary-created processing notes.
+ * Service for processing notes waiting in the bench pool.
  */
-export class DicNoteAddingService implements IDicNoteAddingService {
+export class PcsNoteService implements IPcsNoteService {
     /**
      * Add a new processing note and return its reference id.
      */
@@ -38,6 +39,31 @@ export class DicNoteAddingService implements IDicNoteAddingService {
         };
 
         return result;
+    }
+
+    /**
+     * Get a processing note by its reference id.
+     */
+    async getProcessingNoteById(noteId: string): Promise<ProcessingNote | null> {
+        const rawNote = await getRepDb().query.processingNotesTable.findFirst({
+            where: eq(processingNotesTable.id, hexToBuffer(noteId)),
+        });
+
+        if (!rawNote) {
+            return null;
+        }
+
+        /** Parsed processing note fields stored as JSON text. */
+        const fields = rawNote.fields
+            ? JSON.parse(rawNote.fields) as ProcessingNote["fields"]
+            : undefined;
+
+        return {
+            id: bufferToHex(rawNote.id),
+            noteTplId: bufferToHex(rawNote.noteTypeId),
+            senseId: rawNote.senseId ? bufferToHex(rawNote.senseId) : undefined,
+            fields,
+        };
     }
 
     /**
