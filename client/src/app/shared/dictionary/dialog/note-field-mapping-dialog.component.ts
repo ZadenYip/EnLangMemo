@@ -9,7 +9,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { TranslateModule } from "@ngx-translate/core";
 import { SelectDropdownComponent, SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
-import { DicNoteFieldMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping.types";
+import { DicNoteFieldMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
 
 type DraftDicNoteFieldMapping = Partial<DicNoteFieldMapping>;
 

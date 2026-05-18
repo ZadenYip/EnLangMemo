@@ -18,7 +18,7 @@ import { DictionarySelectionService } from "./selection/selection.service";
 import {
     DicNoteFieldMapping,
     DicNoteMapWithNoteType,
-} from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping.types";
+} from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
 
 type DraftDicNoteFieldMapping = Partial<DicNoteFieldMapping>;
 
@@ -159,31 +159,31 @@ export class DictionaryNoteService {
     /**
      * Prepare note payload from dictionary definition and notify result.
      */
-    addToBench(definition: Definition, entry: DictionaryEntry, partOfSpeech: string): void {
-        const payload = this.buildNotePayload(definition, entry);
+    addToBench(entry: DictionaryEntry, def: Definition): void {
+        const payload = this.buildNotePayload(entry, def);
         if (!payload) {
             this.notify.open(this.translate.instant("DICTIONARY.NOTE_MAPPING.INCOMPLETE"));
             return;
         }
 
+        Logger.info("Adding to processing pool with payload:", payload);
+        
         // TODO: persist payload after adding note/processing-note IPC service.
-        Logger.info("add dictionary note", { partOfSpeech, definition, payload });
         this.notify.open(this.translate.instant("DICTIONARY.NOTE_MAPPING.PAYLOAD_READY"));
     }
 
     /**
      * Build note payload from selected dictionary definition and current mapping.
      */
-    private buildNotePayload(definition: Definition, entry: DictionaryEntry): { noteTplId: string; fields: Record<string, string> } | null {
-        const noteTplId = this.selectedNoteTpl().value;
+    private buildNotePayload(entry: DictionaryEntry, def: Definition): { noteTplId: string; fields: Record<string, string> } | null {
         const mapping = this.fieldMapping();
-        if (!noteTplId || !this.hasValidMapping()) {
+        if (!this.hasValidMapping()) {
             return null;
         }
 
         return {
-            noteTplId,
-            fields: this.buildMappedFields(mapping, definition, entry),
+            noteTplId: this.selectedNoteTpl().value,
+            fields: this.buildMappedFields(mapping, def, entry),
         };
     }
 

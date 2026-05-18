@@ -1,5 +1,5 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { DicNoteMapWithNoteType } from "./dic-nt-mapping.types";
+import { DicNoteMapWithNoteType } from "./dic-nt-mapping-types";
 
 export interface IDicNoteMappingService {
     /**
