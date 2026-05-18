@@ -9,15 +9,16 @@ describe("ProcessingComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ProcessingComponent, TranslateModule.forRoot()],
+            imports: [
+                ProcessingComponent,
+                TranslateModule.forRoot(),
+            ],
         }).compileComponents();
-
+    });
+    
+    it("should create", () => {
         fixture = TestBed.createComponent(ProcessingComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
-
-    it("should create", () => {
         expect(component).toBeTruthy();
     });
 });
