@@ -14,7 +14,6 @@ import { NoteTplSection, TplEditStateService } from "./tpl-edit-state.service";
         MatButtonModule,
         NoteTemplateEditorTextareaComponent,
         TranslateModule,
-
     ],
     templateUrl: "./tpl-edit.component.html",
     styleUrl: "./tpl-edit.component.scss",
