@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, input, output, viewChild } from "@angular/core";
+import { Component, ElementRef, input, linkedSignal, output, viewChild } from "@angular/core";
 
 @Component({
     selector: "app-auto-resize-textarea",
@@ -6,7 +6,7 @@ import { AfterViewInit, Component, ElementRef, input, output, viewChild } from "
     templateUrl: "./auto-resize-textarea.component.html",
     styleUrl: "./auto-resize-textarea.component.scss",
 })
-export class AutoResizeTextareaComponent implements AfterViewInit {
+export class AutoResizeTextareaComponent {
     /**
      * Placeholder text shown when textarea is empty.
      */
@@ -16,6 +16,13 @@ export class AutoResizeTextareaComponent implements AfterViewInit {
      * Current textarea value controlled by parent component.
      */
     readonly value = input("");
+    
+    internalValue = linkedSignal(() => {
+        const externalValue = this.value();
+        this.textarea()!.nativeElement.value = externalValue;
+        this.fitTextareaHeight();
+        return externalValue;
+    });
 
     /**
      * Emits changed textarea value.
@@ -25,14 +32,8 @@ export class AutoResizeTextareaComponent implements AfterViewInit {
     /**
      * Textarea element used for height calculation.
      */
-    private readonly textarea = viewChild<ElementRef<HTMLTextAreaElement>>("textarea");
-
-    /**
-     * Fit initial textarea height after view is created.
-     */
-    ngAfterViewInit(): void {
-        this.fitTextareaHeight();
-    }
+    private readonly textarea =
+        viewChild<ElementRef<HTMLTextAreaElement>>("textarea");
 
     /**
      * Emit value changes and expand textarea to fit content.

@@ -1,7 +1,7 @@
 <textarea
     #textarea
     class="auto-resize-textarea"
-    [value]="value()"
+    [value]="internalValue()"
     [placeholder]="placeholder()"
     (input)="onInput($event)"
 ></textarea>
