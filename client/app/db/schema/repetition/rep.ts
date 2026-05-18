@@ -135,7 +135,6 @@ export const processingNotesTable = sqliteTable(
     {
         id: blob("id", { mode: "buffer" }).primaryKey(),
         noteTypeId: blob("note_type_id", { mode: "buffer" }).notNull(),
-        deckId: blob("deck_id", { mode: "buffer" }),
         usn: int("usn").notNull(),
         createdAt: int("created_at").notNull(),
         updatedAt: int("updated_at").notNull(),
@@ -216,7 +215,6 @@ export const tombstonesTable = sqliteTable(
 
 export const decksRelations = relations(decksTable, ({ many }) => ({
     notes: many(notesTable),
-    processingNotes: many(processingNotesTable),
 }));
 
 export const noteTypesRelations = relations(noteTypesTable, ({ many }) => ({
@@ -242,11 +240,7 @@ export const processingNotesRelations = relations(
         noteType: one(noteTypesTable, {
             fields: [processingNotesTable.noteTypeId],
             references: [noteTypesTable.id],
-        }),
-        deck: one(decksTable, {
-            fields: [processingNotesTable.deckId],
-            references: [decksTable.id],
-        }),
+        })
     }),
 );
 

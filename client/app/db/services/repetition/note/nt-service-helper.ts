@@ -3,15 +3,16 @@ import { CardTemplate, NoteTemplate, TemplateField } from "./nt-service.types";
 
 export function genNoteTpl(): NoteTemplate {
     const dateTime = Date.now();
-    const ctxField = createField(dateTime, "Context");
-    const phonetic = createField(dateTime + 1, "Phonetic");
-    const srcDefinition = createField(dateTime + 2, "Source Definition");
-    const tgtDefinition = createField(dateTime + 3, "Target Definition");
-    const audio = createField(dateTime + 4, "Audio");
+    const word = createField(dateTime, "Word");
+    const ctxField = createField(dateTime + 1, "Context");
+    const phonetic = createField(dateTime + 2, "Phonetic");
+    const srcDefinition = createField(dateTime + 3, "Source Definition");
+    const tgtDefinition = createField(dateTime + 4, "Target Definition");
+    const audio = createField(dateTime + 5, "Audio");
     return {
         css: "",
         sortField: ctxField.id,
-        fields: [ctxField, phonetic, srcDefinition, tgtDefinition, audio],
+        fields: [word, ctxField, phonetic, srcDefinition, tgtDefinition, audio],
         cardtpls: [genCardTpl()],
     };
 }

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "d4a45e04-34fb-4523-a7d9-f0a776cb37bd",
+  "id": "cf4e8712-fd21-4c5c-b33d-08dc559cbda5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -514,13 +514,6 @@
           "type": "blob",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "deck_id": {
-          "name": "deck_id",
-          "type": "blob",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         },
         "usn": {

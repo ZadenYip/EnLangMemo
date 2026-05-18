@@ -76,7 +76,6 @@ CREATE INDEX `ix_notes_usn` ON `notes` (`usn`);--> statement-breakpoint
 CREATE TABLE `processing_notes` (
 	`id` blob PRIMARY KEY NOT NULL,
 	`note_type_id` blob NOT NULL,
-	`deck_id` blob,
 	`usn` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,

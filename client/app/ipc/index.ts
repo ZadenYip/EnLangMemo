@@ -13,6 +13,8 @@ import { NoteTemplateService } from "../db/services/repetition/note/nt-service";
 import { NoteTemplateServiceIPCDescriptor } from "../db/services/repetition/note/nt-service-interface";
 import { DicNoteMappingService } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service";
 import { DicNoteMappingServiceIPCDescriptor } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service-interface";
+import { DicNoteAddingService } from "../db/services/repetition/dic-note-adding/dic-nt-adding-service";
+import { DicNoteAddingServiceIPCDescriptor } from "../db/services/repetition/dic-note-adding/dic-nt-adding-service-interface";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
@@ -39,4 +41,7 @@ function registerDatabaseHandlers() {
 
     const dicNoteMappingService = new DicNoteMappingService();
     registerProxy(dicNoteMappingService, DicNoteMappingServiceIPCDescriptor);
+
+    const dicNoteAddingService = new DicNoteAddingService();
+    registerProxy(dicNoteAddingService, DicNoteAddingServiceIPCDescriptor);
 }
