@@ -11,7 +11,7 @@ import { getAccountDir } from "@main/paths";
 import { CollectionConfig } from "./services/repetition/collection/col-service-types";
 import { noteTypesTable } from "./schema/repetition/rep";
 import { generateUUIDV7 } from "./import/utils";
-import { genNoteTpl } from "./services/repetition/note/nt-service-helper";
+import { genNoteTpl } from "./services/repetition/note-template/nt-tpl-service-helper";
 
 export const dictionarySchema = dic_schema;
 export const repetitionSchema = rep_schema;

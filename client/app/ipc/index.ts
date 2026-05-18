@@ -9,8 +9,8 @@ import { CollectionService } from "../db/services/repetition/collection/col-serv
 import { CollectionServiceIPCDescriptor } from "../db/services/repetition/collection/col-service-interface";
 import { DeckService } from "../db/services/repetition/deck/deck-service";
 import { DeckServiceIPCDescriptor } from "../db/services/repetition/deck/deck-service-interface";
-import { NoteTemplateService } from "../db/services/repetition/note/nt-service";
-import { NoteTemplateServiceIPCDescriptor } from "../db/services/repetition/note/nt-service-interface";
+import { NoteTplService } from "../db/services/repetition/note-template/nt-tpl-service";
+import { NoteTplServiceIPCDescriptor } from "../db/services/repetition/note-template/nt-tpl-service-interface";
 import { DicNoteMappingService } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service";
 import { DicNoteMappingServiceIPCDescriptor } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service-interface";
 import { DicNoteAddingService } from "../db/services/repetition/dic-note-adding/dic-nt-adding-service";
@@ -36,8 +36,8 @@ function registerDatabaseHandlers() {
     const deckService = new DeckService();
     registerProxy(deckService, DeckServiceIPCDescriptor);
 
-    const noteTemplateService = new NoteTemplateService();
-    registerProxy(noteTemplateService, NoteTemplateServiceIPCDescriptor);
+    const noteTplService = new NoteTplService();
+    registerProxy(noteTplService, NoteTplServiceIPCDescriptor);
 
     const dicNoteMappingService = new DicNoteMappingService();
     registerProxy(dicNoteMappingService, DicNoteMappingServiceIPCDescriptor);

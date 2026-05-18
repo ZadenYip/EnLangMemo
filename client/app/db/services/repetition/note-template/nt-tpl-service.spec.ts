@@ -4,7 +4,7 @@ import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { getRepDb, repetitionSchema } from "@main/db/db";
 import { hexToBuffer } from "@main/db/import/utils";
-import { NoteTemplateService } from "./nt-service";
+import { NoteTplService } from "./nt-tpl-service";
 
 vi.mock(import("@main/db/db"), async () => {
     const actual = await vi.importActual<typeof import("@main/db/db")>("@main/db/db");
@@ -53,12 +53,12 @@ interface IndexXInfoRow {
  */
 const DEBUG_EXPLAIN = false;
 
-describe("NoteTemplateService", () => {
+describe("NoteTplService", () => {
     const mockedGetRepDb = vi.mocked(getRepDb);
 
     let sqlite!: Database.Database;
     let db: BetterSQLite3Database<typeof repetitionSchema>;
-    let service: NoteTemplateService;
+    let service: NoteTplService;
 
     beforeEach(() => {
         sqlite = new Database(":memory:");
@@ -68,7 +68,7 @@ describe("NoteTemplateService", () => {
             migrationsFolder: path.resolve(__dirname, "../../../migrations/repetition"),
         });
         mockedGetRepDb.mockReturnValue(db);
-        service = new NoteTemplateService();
+        service = new NoteTplService();
     });
 
     afterEach(() => {

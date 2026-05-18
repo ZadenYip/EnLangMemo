@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Definition, DictionaryEntry } from "@main/db/services/dictionary/dic-service-types";
-import { NoteTemplate } from "@main/db/services/repetition/note/nt-service.types";
+import { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
 import {
     createEmptyOption,
     SelectDropdownOption,
@@ -77,7 +77,7 @@ export class DictionaryNoteService {
      * Load note template references and saved dictionary note mapping config.
      */
     async reload(): Promise<void> {
-        const refs = await window.service.nt.getAllNoteTplRefs();
+        const refs = await window.service.ntTpl.getAllNoteTplRefs();
         const options = refs.map((ref) => ({
             label: ref.name,
             value: ref.id,
@@ -106,7 +106,7 @@ export class DictionaryNoteService {
             return;
         }
 
-        const noteTpl = await window.service.nt.getNoteTplById(option.value);
+        const noteTpl = await window.service.ntTpl.getNoteTplById(option.value);
         this.curNoteTpl.set(noteTpl);
         this.fieldMapping.set({});
     }

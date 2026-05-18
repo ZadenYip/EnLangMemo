@@ -1,5 +1,5 @@
 import { Injectable, signal } from "@angular/core";
-import { CardTemplate, NoteTemplate } from "@main/db/services/repetition/note/nt-service.types";
+import { CardTemplate, NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
 import {
     createEmptyOption,
     SelectDropdownOption,
@@ -88,7 +88,7 @@ export class BenchStateService {
                     state: "not-found" as const,
                 };
             }
-            const result = await window.service.nt.createCardTpl(noteTplId, templateName);
+            const result = await window.service.ntTpl.createCardTpl(noteTplId, templateName);
             if (result.state === "success") {
                 await this.selectNoteTplCore(this.selectedNoteTpl());
                 const target = this.cardTplOptions().find((option) => option.label === templateName);
@@ -119,7 +119,7 @@ export class BenchStateService {
                     state: "not-found" as const,
                 };
             }
-            const result = await window.service.nt.deleteCardTpl(noteTplId, cardTplId);
+            const result = await window.service.ntTpl.deleteCardTpl(noteTplId, cardTplId);
             if (result.state === "success") {
                 await this.selectNoteTplCore(this.selectedNoteTpl());
             }
@@ -139,7 +139,7 @@ export class BenchStateService {
             };
         }
         try {
-            const result = await window.service.nt.createNoteTpl(templateName);
+            const result = await window.service.ntTpl.createNoteTpl(templateName);
             if (result.state === "success") {
                 await this.loadNoteTplRefsCore(this.selectedNoteTpl().value);
             }
@@ -165,7 +165,7 @@ export class BenchStateService {
                     state: "not-found" as const,
                 };
             }
-            const result = await window.service.nt.deleteNoteTpl(selected.value);
+            const result = await window.service.ntTpl.deleteNoteTpl(selected.value);
             if (result.state === "success") {
                 await this.loadNoteTplRefsCore();
             }
@@ -203,7 +203,7 @@ export class BenchStateService {
     }
 
     private async loadNoteTplRefsCore(preferredNoteTplId = ""): Promise<void> {
-        const refs = await window.service.nt.getAllNoteTplRefs();
+        const refs = await window.service.ntTpl.getAllNoteTplRefs();
         const options = refs.map((ref) => ({
             label: ref.name,
             value: ref.id,
@@ -223,7 +223,7 @@ export class BenchStateService {
             return;
         }
 
-        const noteTpl = await window.service.nt.getNoteTplById(option.value);
+        const noteTpl = await window.service.ntTpl.getNoteTplById(option.value);
         this.curNoteTpl.set(noteTpl);
         this.reloadCardTplState(noteTpl);
     }

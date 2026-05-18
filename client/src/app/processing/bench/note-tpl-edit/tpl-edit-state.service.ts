@@ -2,7 +2,7 @@ import { inject, Injectable, linkedSignal } from "@angular/core";
 import {
     NoteTemplate,
     NoteTemplateSaveResult,
-} from "@main/db/services/repetition/note/nt-service.types";
+} from "@main/db/services/repetition/note-template/nt-tpl-service.types";
 import { BenchStateService } from "../bench-state.service";
 import Logger from "electron-log/renderer";
 
@@ -76,7 +76,7 @@ export class TplEditStateService {
             }
 
             const nextNoteTpl = this.createNextNoteTpl(noteTpl, cardTplId);
-            const result = await window.service.nt.saveNoteTpl(noteTplId, nextNoteTpl);
+            const result = await window.service.ntTpl.saveNoteTpl(noteTplId, nextNoteTpl);
             if (result.state === "success") {
                 this.benchState.replaceCurNoteTpl(nextNoteTpl);
             }

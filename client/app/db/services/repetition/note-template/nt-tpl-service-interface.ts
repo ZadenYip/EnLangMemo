@@ -6,9 +6,9 @@ import {
 	NoteTemplateCreationResult,
 	NoteTemplateSaveResult,
 	TemplateDeletionResult,
-} from "./nt-service.types";
+} from "./nt-tpl-service.types";
 
-export interface INoteTemplateService {
+export interface INoteTplService {
 	/**
 	 * Create a new note template with a unique name.
 	 * @param templateName template name entered by user
@@ -48,7 +48,7 @@ export interface INoteTemplateService {
 	saveNoteTpl(templateId: string, noteTemplate: NoteTemplate): Promise<NoteTemplateSaveResult>;
 }
 
-export const NoteTemplateServiceIPCDescriptor = {
+export const NoteTplServiceIPCDescriptor = {
 	channel: "noteTemplateService",
 	properties: {
 		createNoteTpl: ProxyPropertyType.Function,

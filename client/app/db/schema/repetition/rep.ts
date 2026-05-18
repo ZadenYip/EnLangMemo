@@ -9,7 +9,7 @@ import {
     text,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
-import type { NoteTemplate } from "@main/db/services/repetition/note/nt-service.types";
+import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
 import type { CollectionConfig } from "@main/db/services/repetition/collection/col-service-types";
 import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
 import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";

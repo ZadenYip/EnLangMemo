@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import { getRepDb } from "@main/db/db";
 import { noteTypesTable } from "@main/db/schema/repetition/rep";
-import { INoteTemplateService } from "./nt-service-interface";
+import { INoteTplService } from "./nt-tpl-service-interface";
 import {
     CardTemplateCreationResult,
     NoteTplRef,
@@ -11,11 +11,11 @@ import {
     NoteTemplateCreationResult,
     NoteTemplateSaveResult,
     TemplateDeletionResult,
-} from "./nt-service.types";
-import { genCardTpl, genNoteTpl } from "./nt-service-helper";
+} from "./nt-tpl-service.types";
+import { genCardTpl, genNoteTpl } from "./nt-tpl-service-helper";
 
 
-export class NoteTemplateService implements INoteTemplateService {
+export class NoteTplService implements INoteTplService {
     /**
      * Create a new note template with a unique name.
      */

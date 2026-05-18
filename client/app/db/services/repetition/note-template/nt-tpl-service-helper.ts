@@ -1,4 +1,4 @@
-import { CardTemplate, NoteTemplate, TemplateField } from "./nt-service.types";
+import { CardTemplate, NoteTemplate, TemplateField } from "./nt-tpl-service.types";
 
 
 export function genNoteTpl(): NoteTemplate {
