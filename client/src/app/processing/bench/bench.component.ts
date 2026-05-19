@@ -35,6 +35,7 @@ interface BenchModeOption extends SelectDropdownOption {
 })
 export class ProcessingBenchComponent implements OnInit {
     readonly benchState = inject(BenchStateService);
+    private readonly noteContEditState = inject(NoteContEditStateService);
 
     /**
      * Available edit modes for the bench dropdown.
@@ -59,7 +60,15 @@ export class ProcessingBenchComponent implements OnInit {
      * Load initial note template context for bench child components.
      */
     ngOnInit(): void {
-        void this.benchState.loadNoteTplRefs();
+        void this.initBench();
+    }
+
+    /**
+     * Load bench template context before opening the processing note queue.
+     */
+    private async initBench(): Promise<void> {
+        await this.benchState.loadNoteTplRefs();
+        await this.noteContEditState.reloadProcessingNotes();
     }
 
     /**

@@ -67,6 +67,8 @@
             "CODE": "代码"
           },
           "FIELD_PLACEHOLDER": "请输入 {{name}}",
+          "REMAINING_NOTES": "笔记：还剩 {{count}} 条",
+          "EMPTY": "加工池里没有待处理笔记。",
           "SAVE": {
             "ACTION": "保存笔记",
             "SUCCESS": "笔记内容草稿已保存。"
@@ -233,6 +235,7 @@
     "MEANINGS_TITLE": "释义列表",
     "ADD_TO_PROCESSING_POOL": "加进加工池",
     "ADD_TO_PROCESSING_POOL_SUCCESS": "已添加到加工池。",
+    "ADD_TO_PROCESSING_POOL_FAILED": "添加到加工池失败。",
     "EXAMPLE_SENTENCE": "例句",
     "FOLD/UNFOLD": "展开/收起",
     "NOTE_MAPPING": {

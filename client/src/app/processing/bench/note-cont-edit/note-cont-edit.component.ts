@@ -31,6 +31,6 @@ export class NoteContEditComponent {
      * Save current note content draft.
      */
     onSaveNoteContent(): void {
-        this.noteContEditState.saveDraft();
+        void this.noteContEditState.saveDraft();
     }
 }

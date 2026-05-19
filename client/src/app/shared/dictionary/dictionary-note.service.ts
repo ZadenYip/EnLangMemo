@@ -22,7 +22,7 @@ import {
 import {
     NoteField,
     ProcessingNote,
-} from "@main/db/services/repetition/dic-note-adding/dic-nt-adding-types";
+} from "@main/db/services/repetition/processing-note/pcs-note-types";
 
 type DraftDicNoteFieldMapping = Partial<DicNoteFieldMapping>;
 
@@ -172,7 +172,13 @@ export class DictionaryNoteService {
 
         Logger.info("Adding to processing pool with payload:", payload);
 
-        await window.service.dicNoteAdding.addProcessingNote(payload);
+        const result = await window.service.pcsNote.addProcessingNote(payload);
+        if (result.state !== "success") {
+            Logger.warn("Adding to processing pool failed:", result.state);
+            this.notify.open(this.translate.instant("DICTIONARY.ADD_TO_PROCESSING_POOL_FAILED"));
+            return;
+        }
+
         this.notify.open(this.translate.instant("DICTIONARY.ADD_TO_PROCESSING_POOL_SUCCESS"));
     }
 
@@ -181,21 +187,25 @@ export class DictionaryNoteService {
      */
     private buildNotePayload(entry: DictionaryEntry, def: Definition): ProcessingNote | null {
         const mapping = this.fieldMapping();
-        if (!this.hasValidMapping()) {
+        const noteTpl = this.curNoteTpl();
+        if (!this.hasValidMapping() || !noteTpl) {
             return null;
         }
 
         return {
+            // id will be assigned by backend, so can be left empty here
+            id: "",
             noteTplId: this.selectedNoteTpl().value,
             senseId: def.defId,
-            fields: this.buildMappedFields(mapping, def, entry),
+            fields: this.buildMappedFields(noteTpl.fields, mapping, def, entry),
         };
     }
 
     /**
-     * Build note fields from mapping and skip no-mapping fields.
+     * Build all note template fields and fill unmapped fields with empty text.
      */
     private buildMappedFields(
+        noteFields: NoteTemplate["fields"],
         mapping: DraftDicNoteFieldMapping,
         definition: Definition,
         entry: DictionaryEntry,
@@ -206,34 +216,28 @@ export class DictionaryNoteService {
         const phonetic = [entry.phoneticSymbol.bre, entry.phoneticSymbol.ame]
             .filter(Boolean)
             .join(" / ");
-        /** Processing note fields mapped by note template field business id. */
-        const fields: NoteField[] = [];
-        /** Dictionary values paired with selected note template field business ids. */
-        const mappings: [number | undefined, string][] = [
-            [mapping.wordFieldId, selection.selectedText],
-            [mapping.contextFieldId, selection.contextSentence],
-            [mapping.srcDefFieldId, definition.definition.src],
-            [mapping.tgtDefFieldId, definition.definition.target],
-            [mapping.phoneticFieldId, phonetic],
-        ];
+        /** Dictionary values paired with mapped note template field business ids. */
+        const mappedValues = new Map<number, string>();
+        this.setMappedValue(mappedValues, mapping.wordFieldId, selection.selectedText);
+        this.setMappedValue(mappedValues, mapping.contextFieldId, selection.contextSentence);
+        this.setMappedValue(mappedValues, mapping.srcDefFieldId, definition.definition.src);
+        this.setMappedValue(mappedValues, mapping.tgtDefFieldId, definition.definition.target);
+        this.setMappedValue(mappedValues, mapping.phoneticFieldId, phonetic);
 
-        for (const [fieldId, value] of mappings) {
-            this.setMappedField(fields, fieldId, value);
-        }
-        return fields;
+        return noteFields.map((field) => ({
+            id: String(field.id),
+            value: mappedValues.get(field.id) ?? "",
+        }));
     }
 
     /**
-     * Set a mapped field only when the target field is selected.
+     * Set a dictionary value only when a target note template field is mapped.
      */
-    private setMappedField(fields: NoteField[], fieldId: number | undefined, value: string): void {
+    private setMappedValue(mappedValues: Map<number, string>, fieldId: number | undefined, value: string): void {
         if (fieldId === undefined) {
             return;
         }
-        fields.push({
-            id: String(fieldId),
-            value,
-        });
+        mappedValues.set(fieldId, value);
     }
 
 }

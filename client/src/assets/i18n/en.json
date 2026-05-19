@@ -67,6 +67,8 @@
             "CODE": "Code"
           },
           "FIELD_PLACEHOLDER": "Enter {{name}}",
+          "REMAINING_NOTES": "Notes: {{count}} remaining",
+          "EMPTY": "No processing notes in the queue.",
           "SAVE": {
             "ACTION": "Save Note",
             "SUCCESS": "Note content draft saved."
@@ -232,6 +234,7 @@
     "MEANINGS_TITLE": "Meanings List",
     "ADD_TO_PROCESSING_POOL": "Add to Processing Pool",
     "ADD_TO_PROCESSING_POOL_SUCCESS": "Added to processing pool.",
+    "ADD_TO_PROCESSING_POOL_FAILED": "Failed to add to processing pool.",
     "EXAMPLE_SENTENCE": "Example Sentence",
     "FOLD/UNFOLD": "Fold/Unfold",
     "NOTE_MAPPING": {
