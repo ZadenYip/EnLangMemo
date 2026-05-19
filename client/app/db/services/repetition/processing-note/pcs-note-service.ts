@@ -2,8 +2,8 @@ import Logger from "electron-log/main";
 import { eq } from "drizzle-orm";
 import { getRepDb } from "@main/db/db";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { processingNotesTable } from "@main/db/schema/repetition/rep";
-import { ProcessingNote, ProcessingNoteRef } from "./pcs-note-types";
+import { noteTypesTable, processingNotesTable } from "@main/db/schema/repetition/rep";
+import { ProcessingNote, ProcessingNoteCreationResult, ProcessingNoteRef } from "./pcs-note-types";
 import { IPcsNoteService } from "./pcs-note-service-interface";
 
 /**
@@ -11,22 +11,61 @@ import { IPcsNoteService } from "./pcs-note-service-interface";
  */
 export class PcsNoteService implements IPcsNoteService {
     /**
-     * Add a new processing note and return its reference id.
+     * Add a new processing note and return the creation state.
      */
-    async addProcessingNote(note: ProcessingNote): Promise<ProcessingNoteRef> {
+    async addProcessingNote(note: ProcessingNote): Promise<ProcessingNoteCreationResult> {
+        if (!Array.isArray(note.fields) || note.fields.length === 0) {
+            Logger.warn("Processing note creation failed: invalid fields", {
+                noteTplId: note.noteTplId,
+            });
+            return {
+                state: "invalid-fields",
+            };
+        }
+
+        /** Note template id converted to database blob primary key. */
+        const noteTypeId = hexToBuffer(note.noteTplId);
+        /** Existing note template row used to validate foreign business state. */
+        const noteType = await getRepDb().query.noteTypesTable.findFirst({
+            where: eq(noteTypesTable.id, noteTypeId),
+            columns: {
+                noteTemplate: true,
+            },
+        });
+
+        if (!noteType) {
+            Logger.warn("Processing note creation failed: note template not found", {
+                noteTplId: note.noteTplId,
+            });
+            return {
+                state: "note-template-not-found",
+            };
+        }
+
+        if (!this.hasValidTemplateFields(note, noteType.noteTemplate.fields)) {
+            Logger.warn("Processing note creation failed: fields do not match note template", {
+                noteTplId: note.noteTplId,
+            });
+            return {
+                state: "invalid-fields",
+            };
+        }
+
+        /** Generated processing note primary key. */
         const id = generateUUIDV7();
+        /** Current timestamp used for created/updated metadata. */
         const now = Date.now();
 
         await getRepDb()
             .insert(processingNotesTable)
             .values({
                 id,
-                noteTypeId: hexToBuffer(note.noteTplId),
+                noteTypeId,
                 usn: -1,
                 createdAt: now,
                 updatedAt: now,
                 senseId: note.senseId ? hexToBuffer(note.senseId) : null,
-                fields: note.fields ? JSON.stringify(note.fields) : null,
+                fields: note.fields,
             });
 
         Logger.info("Processing note added:", {
@@ -34,11 +73,29 @@ export class PcsNoteService implements IPcsNoteService {
             noteTplId: note.noteTplId,
         });
 
-        const result: ProcessingNoteRef = {
-            id: bufferToHex(id),
+        return {
+            state: "success",
         };
+    }
 
-        return result;
+    /**
+     * Check processing note fields cover exactly all fields defined by the note template.
+     */
+    private hasValidTemplateFields(
+        note: ProcessingNote,
+        templateFields: { id: number }[],
+    ): boolean {
+        const expectedFieldIds = new Set(templateFields.map((field) => String(field.id)));
+        const actualFieldIds = new Set(note.fields.map((field) => field.id));
+
+        if (actualFieldIds.size !== note.fields.length) {
+            return false;
+        }
+        if (actualFieldIds.size !== expectedFieldIds.size) {
+            return false;
+        }
+
+        return [...expectedFieldIds].every((fieldId) => actualFieldIds.has(fieldId));
     }
 
     /**
@@ -53,16 +110,11 @@ export class PcsNoteService implements IPcsNoteService {
             return null;
         }
 
-        /** Parsed processing note fields stored as JSON text. */
-        const fields = rawNote.fields
-            ? JSON.parse(rawNote.fields) as ProcessingNote["fields"]
-            : undefined;
-
         return {
             id: bufferToHex(rawNote.id),
             noteTplId: bufferToHex(rawNote.noteTypeId),
             senseId: rawNote.senseId ? bufferToHex(rawNote.senseId) : undefined,
-            fields,
+            fields: rawNote.fields,
         };
     }
 

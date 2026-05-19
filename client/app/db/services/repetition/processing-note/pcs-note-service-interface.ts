@@ -1,12 +1,12 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { ProcessingNote, ProcessingNoteRef } from "./pcs-note-types";
+import { ProcessingNote, ProcessingNoteCreationResult, ProcessingNoteRef } from "./pcs-note-types";
 
 export interface IPcsNoteService {
     /**
-     * Add a new processing note and return its reference id.
+     * Add a new processing note and return the creation state.
      * @param note processing note payload from renderer
      */
-    addProcessingNote(note: ProcessingNote): Promise<ProcessingNoteRef>;
+    addProcessingNote(note: ProcessingNote): Promise<ProcessingNoteCreationResult>;
 
     /**
      * Get a processing note by its reference id.

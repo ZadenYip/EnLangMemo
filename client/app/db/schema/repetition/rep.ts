@@ -13,6 +13,7 @@ import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt
 import type { CollectionConfig } from "@main/db/services/repetition/collection/col-service-types";
 import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
 import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
+import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types";
 
 
 // More information see in https://dbdiagram.io/d/EnLangMemo-69aafcb1a3f0aa31e1146507
@@ -125,7 +126,7 @@ export const notesTable = sqliteTable(
         senseId: blob("sense_id", { mode: "buffer" }), // 释义追踪 ID
         sortField: text("sort_field"), // 用来排序的字段
         searchFields: text("search_fields"), // 所有字段值拼凑的搜索字符串
-        fields: text("fields").notNull(), // JSON: {"TargetWord": "Apple", ...}
+        fields: jsonb<NoteField[]>("fields").notNull(), // JSON: [{"TargetWord": "Apple"}, {...}]
     },
     (table) => [index("ix_notes_usn").on(table.usn)],
 );
@@ -139,7 +140,7 @@ export const processingNotesTable = sqliteTable(
         createdAt: int("created_at").notNull(),
         updatedAt: int("updated_at").notNull(),
         senseId: blob("sense_id", { mode: "buffer" }),
-        fields: text("fields"),
+        fields: jsonb<NoteField[]>("fields").notNull(),
     },
     (table) => [index("ix_processing_usn").on(table.usn)],
 );
