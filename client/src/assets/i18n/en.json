@@ -135,6 +135,7 @@
         },
       "PREVIEW": {
         "HEADER": "Preview",
+        "EMPTY": "No preview available.",
         "ACTIONS": {
           "FRONT": "Front",
           "BACK": "Back"

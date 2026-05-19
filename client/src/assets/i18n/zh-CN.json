@@ -135,6 +135,7 @@
         },
       "PREVIEW": {
         "HEADER": "预览",
+        "EMPTY": "当前没有可预览的内容",
         "ACTIONS": {
           "FRONT": "正面",
           "BACK": "背面"

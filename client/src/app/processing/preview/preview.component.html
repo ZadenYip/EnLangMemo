@@ -17,5 +17,15 @@
 </div>
 
 <div class="preview-body">
-  {{ "PAGES.PROCESSING.PREVIEW.PLACEHOLDER" | translate }}
+  @if (previewDocument()) {
+    <iframe
+      class="preview-frame"
+      sandbox=""
+      [srcdoc]="previewDocument()"
+    ></iframe>
+  } @else {
+    <div class="preview-placeholder">
+      {{ "PAGES.PROCESSING.PREVIEW.EMPTY" | translate }}
+    </div>
+  }
 </div>
