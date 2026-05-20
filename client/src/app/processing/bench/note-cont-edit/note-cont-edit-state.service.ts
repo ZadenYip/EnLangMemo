@@ -89,7 +89,7 @@ import { BenchStateService } from "../bench-state.service";
     async reloadDeckOptions(): Promise<void> {
         const decks = await window.service.deck.listDecks();
         const options = decks.map((deck) => ({
-            value: deck.name,
+            value: deck.id,
             label: deck.name,
         }));
         this.deckOptions.set(options);

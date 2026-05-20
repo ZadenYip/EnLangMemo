@@ -121,9 +121,10 @@ export class HomeComponent implements OnInit {
             return;
         }
         try {
-            await window.service.deck.deleteDeck(deck.name);
+            await window.service.deck.deleteDeck(deck.id);
         } catch (error) {
             Logger.error("Failed to delete deck", {
+                deckId: deck.id,
                 deckName: deck.name,
                 error,
             });

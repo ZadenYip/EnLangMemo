@@ -9,7 +9,16 @@ export interface DeckConfig {
 }
 
 export interface Deck {
+    /**
+     * Deck primary id in hex string format.
+     */
+    id: string;
+
+    /**
+     * Deck display name.
+     */
     name: string;
+
     /**
      * The number of cards can learn today in this deck.
      */

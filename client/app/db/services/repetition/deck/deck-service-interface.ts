@@ -4,7 +4,7 @@ import { Deck, DeckConfig, DeckCreationResult } from "./deck-service-types";
 export interface IDeckService {
     listDecks(): Promise<Deck[]>;
     createDeck(deckName: string): Promise<DeckCreationResult>;
-    deleteDeck(deckName: string): Promise<void>;
+    deleteDeck(deckId: string): Promise<void>;
     getDeckConfig(deckName: string): Promise<DeckConfig>;
     updateDeckConfig(deckName: string, config: DeckConfig): Promise<void>;
 }

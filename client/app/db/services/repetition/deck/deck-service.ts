@@ -2,7 +2,7 @@ import { getRepDb } from "@main/db/db";
 import { decksTable } from "@main/db/schema/repetition/rep";
 import { Deck, DeckConfig, DeckCreationResult } from "./deck-service-types";
 import { eq } from "drizzle-orm";
-import { generateUUIDV7 } from "@main/db/import/utils";
+import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import Logger from "electron-log";
 
 export class DeckService {
@@ -12,6 +12,7 @@ export class DeckService {
     async listDecks(): Promise<Deck[]> {
         const deckRows = await getRepDb().query.decksTable.findMany({
             columns: {
+                id: true,
                 name: true,
                 learnedToday: true,
                 reviewedToday: true,
@@ -25,6 +26,7 @@ export class DeckService {
             const canReviewToday = this.calcCanReviewToday(deckRow.name);
 
             const deck: Deck = {
+                id: bufferToHex(deckRow.id),
                 name: deckRow.name,
                 canLearnToday,
                 canReviewToday,
@@ -71,13 +73,13 @@ export class DeckService {
 
     /**
      * 
-     * @param deckName - deleting deck name
+     * @param deckId - deleting deck id
      * 
      */
-    async deleteDeck(deckName: string): Promise<void> {
-        Logger.info("Deleting deck with name:", deckName);
-        await getRepDb().delete(decksTable).where(eq(decksTable.name, deckName));
-        Logger.info("Deck deleted successfully:", deckName);
+    async deleteDeck(deckId: string): Promise<void> {
+        Logger.info("Deleting deck with id:", deckId);
+        await getRepDb().delete(decksTable).where(eq(decksTable.id, hexToBuffer(deckId)));
+        Logger.info("Deck deleted successfully:", deckId);
         return;
     }
 
