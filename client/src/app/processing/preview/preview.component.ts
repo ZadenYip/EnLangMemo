@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { MatRadioModule } from "@angular/material/radio";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { TranslateModule } from "@ngx-translate/core";
 import { BenchStateService } from "../bench/bench-state.service";
 import { NoteContEditStateService } from "../bench/note-cont-edit/note-cont-edit-state.service";
@@ -16,6 +17,7 @@ type PreviewSide = "front" | "back";
 export class ProcessingPreviewComponent {
     private readonly benchState = inject(BenchStateService);
     private readonly noteContEditState = inject(NoteContEditStateService);
+    private readonly sanitizer = inject(DomSanitizer);
 
     /**
      * Current side shown in the preview.
@@ -58,14 +60,26 @@ export class ProcessingPreviewComponent {
             "<meta charset=\"utf-8\">",
             "<style>",
             "html, body { margin: 0; min-height: 100%; }",
-            noteTpl.css,
+            "body { box-sizing: border-box; }",
+            this.normalizeTemplateCss(noteTpl.css),
             "</style>",
             "</head>",
-            "<body>",
+            "<body class=\"card\">",
             renderedCard,
             "</body>",
             "</html>",
         ].join("");
+    });
+
+    /**
+     * Trusted iframe srcdoc so Angular keeps style tags in the preview document.
+     */
+    readonly trustedPreviewDoc = computed<SafeHtml | "">(() => {
+        const document = this.previewDocument();
+        if (!document) {
+            return "";
+        }
+        return this.sanitizer.bypassSecurityTrustHtml(document);
     });
 
     /**
@@ -76,14 +90,37 @@ export class ProcessingPreviewComponent {
     }
 
     /**
-     * Replace note template placeholders with current processing note field values.
+     * Render conditional blocks first, then replace note template placeholders.
      */
     private renderCardTemplate(template: string): string {
         const fieldValueMap = this.createFieldValueMap();
-        return template.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (_match, fieldName: string) => {
+        const tplWithConditionals = this.renderConditionalBlocks(template, fieldValueMap);
+        return tplWithConditionals.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (_match, fieldName: string) => {
             const value = fieldValueMap.get(fieldName.trim());
             return value ?? "";
         });
+    }
+
+    /**
+     * Render Anki-style field condition blocks: {{#Field}}...{{/Field}}.
+     */
+    private renderConditionalBlocks(template: string, fieldValueMap: Map<string, string>): string {
+        return template.replace(
+            /\{\{#\s*([^}]+?)\s*\}\}([\s\S]*?)\{\{\/\s*\1\s*\}\}/g,
+            (_match, fieldName: string, content: string) => {
+                const value = fieldValueMap.get(fieldName.trim())?.trim();
+                return value ? content : "";
+            },
+        );
+    }
+
+    /**
+     * Normalize Anki-style CSS snippets before injecting them into a style element.
+     */
+    private normalizeTemplateCss(css: string): string {
+        return css
+            .replace(/<\/?style[^>]*>/gi, "")
+            .replace(/<script[\s\S]*?<\/script>/gi, "");
     }
 
     /**

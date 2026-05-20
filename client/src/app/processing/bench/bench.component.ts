@@ -73,7 +73,11 @@ export class ProcessingBenchComponent implements OnInit {
      * Switch bench editing mode and close the dropdown.
      */
     selectMode(option: SelectDropdownOption): void {
-        this.editMode.set(option as BenchModeOption);
+        const nextMode = option as BenchModeOption;
+        this.editMode.set(nextMode);
+        if (nextMode.value === "note-content") {
+            void this.noteContEditState.reloadCurNoteTpl();
+        }
     }
   
 }

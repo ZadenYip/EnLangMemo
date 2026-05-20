@@ -3,7 +3,6 @@ import { ProcessingNote, ProcessingNoteRef } from "@main/db/services/repetition/
 import { TranslateService } from "@ngx-translate/core";
 import { NotifyService } from "@render/shared/services/notify.service";
 import { BenchStateService } from "../bench-state.service";
-import Logger from "electron-log/renderer";
 
 @Injectable()
 export class NoteContEditStateService {
@@ -63,6 +62,17 @@ export class NoteContEditStateService {
     }
 
     /**
+     * Reload the note template that belongs to the current processing note.
+     */
+    async reloadCurNoteTpl(): Promise<void> {
+        const note = this.curNote();
+        if (!note) {
+            return;
+        }
+        await this.benchState.loadNoteTplRefs(note.noteTplId);
+    }
+
+    /**
      * Read a field draft value for textarea binding.
      */
     fieldValue(fieldId: number): string {
@@ -86,9 +96,6 @@ export class NoteContEditStateService {
             const fields = note.fields;
             const nextFields = fields.map((field) => {
                 if (field.id !== targetFieldId) {
-                    Logger.error(
-                        `Field id mismatch when updating field value, expected: ${targetFieldId}, actual: ${field.id}`,
-                    );
                     return field;
                 }
                 return {
