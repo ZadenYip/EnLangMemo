@@ -154,7 +154,7 @@ export const cardsTable = sqliteTable(
             .references(() => notesTable.id, { onDelete: "cascade" }),
         usn: int("usn").notNull(),
         updatedAt: int("updated_at").notNull(),
-        ordinal: int("ordinal"),
+        cardTemplateId: int("card_template_id").notNull(),
         difficulty: real("difficulty").notNull(),
         stability: real("stability").notNull(),
         scheduledDays: int("scheduled_days").notNull(),
