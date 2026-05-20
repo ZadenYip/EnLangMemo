@@ -3,7 +3,12 @@ import { eq } from "drizzle-orm";
 import { getRepDb } from "@main/db/db";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import { noteTypesTable, processingNotesTable } from "@main/db/schema/repetition/rep";
-import { ProcessingNote, ProcessingNoteCreationResult, ProcessingNoteRef } from "./pcs-note-types";
+import {
+    ProcessingNote,
+    ProcessingNoteCreationResult,
+    ProcessingNoteRef,
+    ProcessingNoteSaveResult,
+} from "./pcs-note-types";
 import { IPcsNoteService } from "./pcs-note-service-interface";
 
 /**
@@ -73,6 +78,66 @@ export class PcsNoteService implements IPcsNoteService {
             noteTplId: note.noteTplId,
         });
 
+        return {
+            state: "success",
+        };
+    }
+
+    /**
+     * Save current processing note content.
+     */
+    async saveProcessingNote(note: ProcessingNote): Promise<ProcessingNoteSaveResult> {
+        /** Note template id converted to database blob primary key. */
+        const noteTypeId = hexToBuffer(note.noteTplId);
+        /** Existing note template row used to validate processing note fields. */
+        const noteType = await getRepDb().query.noteTypesTable.findFirst({
+            where: eq(noteTypesTable.id, noteTypeId),
+            columns: {
+                noteTemplate: true,
+            },
+        });
+
+        if (!noteType) {
+            Logger.warn("Processing note save failed: note template not found", {
+                noteTplId: note.noteTplId,
+                noteId: note.id,
+            });
+            return {
+                state: "note-template-not-found",
+            };
+        }
+
+        if (!this.hasValidTemplateFields(note, noteType.noteTemplate.fields)) {
+            Logger.warn("Processing note save failed: fields do not match note template", {
+                noteTplId: note.noteTplId,
+                noteId: note.id,
+            });
+            return {
+                state: "invalid-fields",
+            };
+        }
+
+        const result = await getRepDb()
+            .update(processingNotesTable)
+            .set({
+                usn: -1,
+                updatedAt: Date.now(),
+                fields: note.fields,
+            })
+            .where(eq(processingNotesTable.id, hexToBuffer(note.id)));
+
+        if (result.changes === 0) {
+            Logger.warn("Processing note save failed: note not found", {
+                noteId: note.id,
+            });
+            return {
+                state: "not-found",
+            };
+        }
+
+        Logger.info("Processing note saved:", {
+            noteId: note.id,
+        });
         return {
             state: "success",
         };

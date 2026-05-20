@@ -7,7 +7,15 @@ export type ProcessingNoteCreationResult =
         state: "success";
     }
     | {
-        state: "invalid-fields" | "note-template-not-found" | "error";
+        state: "invalid-fields" | "note-template-not-found";
+    };
+
+export type ProcessingNoteSaveResult =
+    | {
+        state: "success";
+    }
+    | {
+        state: "not-found" | "invalid-fields" | "note-template-not-found";
     };
 
 export interface ProcessingNote {

@@ -71,7 +71,8 @@
           "EMPTY": "加工池里没有待处理笔记。",
           "SAVE": {
             "ACTION": "保存笔记",
-            "SUCCESS": "笔记内容草稿已保存。"
+            "SUCCESS": "笔记内容草稿已保存。",
+            "FAILED": "保存笔记内容失败。"
           }
         },
         "TEMPLATE_EDIT": {

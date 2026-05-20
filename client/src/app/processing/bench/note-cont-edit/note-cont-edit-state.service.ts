@@ -128,16 +128,32 @@ export class NoteContEditStateService {
     }
 
     /**
-     * Save current note content draft and advance to the next queued note.
+     * Save current note content draft to database.
      */
     async saveDraft(): Promise<void> {
-        // TODO
+        const note = this.curNote();
+        if (!note) {
+            return;
+        }
+
+        const result = await window.service.pcsNote.saveProcessingNote(note);
+        switch (result.state) {
+            case "success":
+                break;
+            default:
+                this.notify.open(
+                    this.translate.instant(
+                        "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE.FAILED",
+                    ),
+                );
+            return;
+        }
+
         this.notify.open(
             this.translate.instant(
                 "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE.SUCCESS",
             ),
         );
-        await this.moveToNextNote();
     }
 
     /**

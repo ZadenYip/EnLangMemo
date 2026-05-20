@@ -1,5 +1,10 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { ProcessingNote, ProcessingNoteCreationResult, ProcessingNoteRef } from "./pcs-note-types";
+import {
+    ProcessingNote,
+    ProcessingNoteCreationResult,
+    ProcessingNoteRef,
+    ProcessingNoteSaveResult,
+} from "./pcs-note-types";
 
 export interface IPcsNoteService {
     /**
@@ -7,6 +12,12 @@ export interface IPcsNoteService {
      * @param note processing note payload from renderer
      */
     addProcessingNote(note: ProcessingNote): Promise<ProcessingNoteCreationResult>;
+
+    /**
+     * Save current processing note content.
+     * @param note processing note payload with existing id
+     */
+    saveProcessingNote(note: ProcessingNote): Promise<ProcessingNoteSaveResult>;
 
     /**
      * Get a processing note by its reference id.
@@ -24,6 +35,7 @@ export const PcsNoteServiceIPCDescriptor = {
     channel: "pcsNoteService",
     properties: {
         addProcessingNote: ProxyPropertyType.Function,
+        saveProcessingNote: ProxyPropertyType.Function,
         getProcessingNoteById: ProxyPropertyType.Function,
         getAllProcessingNoteRefs: ProxyPropertyType.Function,
     },

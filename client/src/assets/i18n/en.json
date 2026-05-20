@@ -71,7 +71,8 @@
           "EMPTY": "No processing notes in the queue.",
           "SAVE": {
             "ACTION": "Save Note",
-            "SUCCESS": "Note content draft saved."
+            "SUCCESS": "Note content draft saved.",
+            "FAILED": "Failed to save note content."
           }
         },
         "TEMPLATE_EDIT": {
