@@ -69,6 +69,12 @@
           "FIELD_PLACEHOLDER": "Enter {{name}}",
           "REMAINING_NOTES": "Notes: {{count}} remaining",
           "EMPTY": "No processing notes in the queue.",
+          "DECK_SELECT": {
+            "PLACEHOLDER": "Select deck"
+          },
+          "SAVE_AND_ADD": {
+            "ACTION": "Save to deck"
+          },
           "SAVE": {
             "ACTION": "Save Note",
             "SUCCESS": "Note content draft saved.",

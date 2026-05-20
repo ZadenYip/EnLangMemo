@@ -1,11 +1,15 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { ProcessingNote, ProcessingNoteRef } from "@main/db/services/repetition/processing-note/pcs-note-types";
 import { TranslateService } from "@ngx-translate/core";
+import {
+    createEmptyOption,
+    SelectDropdownOption,
+} from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { NotifyService } from "@render/shared/services/notify.service";
 import { BenchStateService } from "../bench-state.service";
 
 @Injectable()
-export class NoteContEditStateService {
+    export class NoteContEditStateService {
     private readonly benchState = inject(BenchStateService);
     private readonly notify = inject(NotifyService);
     private readonly translate = inject(TranslateService);
@@ -24,6 +28,19 @@ export class NoteContEditStateService {
      * Whether processing note loading is running.
      */
     readonly isLoading = signal(false);
+
+    /**
+     * Available deck options for saving edited notes as cards.
+     */
+    readonly deckOptions = signal<SelectDropdownOption[]>([]);
+
+    /**
+     * Currently selected deck option for card creation.
+     */
+    readonly selectedDeck = signal<SelectDropdownOption>({
+        value: "",
+        labelKey: "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.DECK_SELECT.PLACEHOLDER",
+    });
 
     /**
      * Current note template fields used to build the note content form.
@@ -45,6 +62,11 @@ export class NoteContEditStateService {
     readonly remainingNoteCount = computed(() => this.pcsNoteRefs().length);
 
     /**
+     * Whether a deck can be selected for saving current note as a card.
+     */
+    readonly canSelectDeck = computed(() => this.deckOptions().length > 0);
+
+    /**
      * Load all processing note references and open the first pending note.
      */
     async reloadProcessingNotes(): Promise<void> {
@@ -59,6 +81,31 @@ export class NoteContEditStateService {
         } finally {
             this.endLoading();
         }
+    }
+
+    /**
+     * Load deck options and keep a valid deck selection.
+     */
+    async reloadDeckOptions(): Promise<void> {
+        const decks = await window.service.deck.listDecks();
+        const options = decks.map((deck) => ({
+            value: deck.name,
+            label: deck.name,
+        }));
+        this.deckOptions.set(options);
+
+        const selectedDeck = this.selectedDeck();
+        const newSelectedDeck = options.find((option) => option.value === selectedDeck.value)
+            ?? options[0]
+            ?? createEmptyOption();
+        this.selectedDeck.set(newSelectedDeck);
+    }
+
+    /**
+     * Select the target deck for card creation.
+     */
+    selectDeck(option: SelectDropdownOption): void {
+        this.selectedDeck.set(option);
     }
 
     /**
@@ -155,6 +202,8 @@ export class NoteContEditStateService {
             ),
         );
     }
+
+
 
     /**
      * Load current processing note detail and its note template.

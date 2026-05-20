@@ -69,6 +69,12 @@
           "FIELD_PLACEHOLDER": "请输入 {{name}}",
           "REMAINING_NOTES": "笔记：还剩 {{count}} 条",
           "EMPTY": "加工池里没有待处理笔记。",
+          "DECK_SELECT": {
+            "PLACEHOLDER": "选择牌组"
+          },
+          "SAVE_AND_ADD": {
+            "ACTION": "保存入组"
+          },
           "SAVE": {
             "ACTION": "保存笔记",
             "SUCCESS": "笔记内容草稿已保存。",
