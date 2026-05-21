@@ -1,9 +1,10 @@
 CREATE TABLE `cards` (
 	`id` blob PRIMARY KEY NOT NULL,
 	`note_id` blob NOT NULL,
+	`deck_id` blob NOT NULL,
 	`usn` integer NOT NULL,
 	`updated_at` integer NOT NULL,
-	`ordinal` integer,
+	`card_template_id` integer NOT NULL,
 	`difficulty` real NOT NULL,
 	`stability` real NOT NULL,
 	`scheduled_days` integer NOT NULL,
@@ -14,10 +15,11 @@ CREATE TABLE `cards` (
 	`repetitions` integer NOT NULL,
 	`state` integer NOT NULL,
 	`queue` integer NOT NULL,
-	FOREIGN KEY (`note_id`) REFERENCES `notes`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`note_id`) REFERENCES `notes`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`deck_id`) REFERENCES `decks`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE INDEX `ix_cards_sched` ON `cards` (`queue`,`state`,`due`);--> statement-breakpoint
+CREATE INDEX `ix_cards_sched` ON `cards` (`deck_id`,`queue`,`due`);--> statement-breakpoint
 CREATE INDEX `ix_cards_usn` ON `cards` (`usn`);--> statement-breakpoint
 CREATE INDEX `ix_cards_nid` ON `cards` (`note_id`);--> statement-breakpoint
 CREATE TABLE `collection` (
@@ -60,16 +62,14 @@ CREATE TABLE `note_types` (
 CREATE TABLE `notes` (
 	`id` blob PRIMARY KEY NOT NULL,
 	`note_type_id` blob NOT NULL,
-	`deck_id` blob NOT NULL,
 	`usn` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`sense_id` blob,
 	`sort_field` text,
 	`search_fields` text,
-	`fields` text NOT NULL,
-	FOREIGN KEY (`note_type_id`) REFERENCES `note_types`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`deck_id`) REFERENCES `decks`(`id`) ON UPDATE no action ON DELETE cascade
+	`fields` jsonb NOT NULL,
+	FOREIGN KEY (`note_type_id`) REFERENCES `note_types`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE INDEX `ix_notes_usn` ON `notes` (`usn`);--> statement-breakpoint
@@ -80,7 +80,7 @@ CREATE TABLE `processing_notes` (
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`sense_id` blob,
-	`fields` text
+	`fields` jsonb NOT NULL
 );
 --> statement-breakpoint
 CREATE INDEX `ix_processing_usn` ON `processing_notes` (`usn`);--> statement-breakpoint

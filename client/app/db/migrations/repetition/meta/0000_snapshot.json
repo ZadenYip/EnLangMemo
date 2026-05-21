@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "cf4e8712-fd21-4c5c-b33d-08dc559cbda5",
+  "id": "ced6e228-0ffb-479e-93f1-ce79b4f5ab5b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -21,6 +21,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "deck_id": {
+          "name": "deck_id",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "usn": {
           "name": "usn",
           "type": "integer",
@@ -35,11 +42,11 @@
           "notNull": true,
           "autoincrement": false
         },
-        "ordinal": {
-          "name": "ordinal",
+        "card_template_id": {
+          "name": "card_template_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "difficulty": {
@@ -118,8 +125,8 @@
         "ix_cards_sched": {
           "name": "ix_cards_sched",
           "columns": [
+            "deck_id",
             "queue",
-            "state",
             "due"
           ],
           "isUnique": false
@@ -151,6 +158,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "cards_deck_id_decks_id_fk": {
+          "name": "cards_deck_id_decks_id_fk",
+          "tableFrom": "cards",
+          "tableTo": "decks",
+          "columnsFrom": [
+            "deck_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -401,13 +421,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "deck_id": {
-          "name": "deck_id",
-          "type": "blob",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "usn": {
           "name": "usn",
           "type": "integer",
@@ -452,7 +465,7 @@
         },
         "fields": {
           "name": "fields",
-          "type": "text",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -474,19 +487,6 @@
           "tableTo": "note_types",
           "columnsFrom": [
             "note_type_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "notes_deck_id_decks_id_fk": {
-          "name": "notes_deck_id_decks_id_fk",
-          "tableFrom": "notes",
-          "tableTo": "decks",
-          "columnsFrom": [
-            "deck_id"
           ],
           "columnsTo": [
             "id"
@@ -546,9 +546,9 @@
         },
         "fields": {
           "name": "fields",
-          "type": "text",
+          "type": "jsonb",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },

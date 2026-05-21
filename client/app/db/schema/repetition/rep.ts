@@ -117,9 +117,6 @@ export const notesTable = sqliteTable(
         noteTypeId: blob("note_type_id", { mode: "buffer" })
             .notNull()
             .references(() => noteTypesTable.id, { onDelete: "cascade" }),
-        deckId: blob("deck_id", { mode: "buffer" })
-            .notNull()
-            .references(() => decksTable.id, { onDelete: "cascade" }),
         usn: int("usn").notNull(),
         createdAt: int("created_at").notNull(),
         updatedAt: int("updated_at").notNull(),
@@ -152,6 +149,9 @@ export const cardsTable = sqliteTable(
         noteId: blob("note_id", { mode: "buffer" })
             .notNull()
             .references(() => notesTable.id, { onDelete: "cascade" }),
+        deckId: blob("deck_id", { mode: "buffer" })
+            .notNull()
+            .references(() => decksTable.id),
         usn: int("usn").notNull(),
         updatedAt: int("updated_at").notNull(),
         cardTemplateId: int("card_template_id").notNull(),
@@ -167,7 +167,7 @@ export const cardsTable = sqliteTable(
         queue: int("queue").notNull(),
     },
     (table) => [
-        index("ix_cards_sched").on(table.queue, table.state, table.due),
+        index("ix_cards_sched").on(table.deckId, table.queue, table.due),
         index("ix_cards_usn").on(table.usn),
         index("ix_cards_nid").on(table.noteId),
     ],
@@ -207,7 +207,7 @@ export const tombstonesTable = sqliteTable(
         unitId: blob("unit_id", { mode: "buffer" }).primaryKey(), // 对应卡片、笔记、牌组或笔记模板的 UUID
         usn: int("usn").notNull(), // -1 表示本地删除
         deletedAt: int("deleted_at").notNull(), // 删除时间戳
-        unitType: int("unit_type").notNull(), // 0=card, 1=note, 2=deck, 3=note_type
+        unitType: int("unit_type").notNull(), // 0=card, 1=note, 2=deck, 3=note_type, 4=processing_note
     },
     (table) => [index("ix_tombstones_usn").on(table.usn)],
 );
@@ -215,7 +215,7 @@ export const tombstonesTable = sqliteTable(
 // ================== Relations ==================
 
 export const decksRelations = relations(decksTable, ({ many }) => ({
-    notes: many(notesTable),
+    cards: many(cardsTable),
 }));
 
 export const noteTypesRelations = relations(noteTypesTable, ({ many }) => ({
@@ -227,10 +227,6 @@ export const notesRelations = relations(notesTable, ({ one, many }) => ({
     noteType: one(noteTypesTable, {
         fields: [notesTable.noteTypeId],
         references: [noteTypesTable.id],
-    }),
-    deck: one(decksTable, {
-        fields: [notesTable.deckId],
-        references: [decksTable.id],
     }),
     cards: many(cardsTable),
 }));
@@ -249,6 +245,10 @@ export const cardsRelations = relations(cardsTable, ({ one, many }) => ({
     note: one(notesTable, {
         fields: [cardsTable.noteId],
         references: [notesTable.id],
+    }),
+    deck: one(decksTable, {
+        fields: [cardsTable.deckId],
+        references: [decksTable.id],
     }),
     reviewLogs: many(reviewLogTable),
 }));
