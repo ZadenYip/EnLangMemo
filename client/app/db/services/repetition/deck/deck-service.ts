@@ -84,25 +84,25 @@ export class DeckService {
     }
 
     /**
-     * Get deck config by deck name.
-     * @param deckName - target deck name
+     * Get deck config by deck id.
+     * @param deckId - target deck id
      */
-    async getDeckConfig(deckName: string): Promise<DeckConfig> {
-        Logger.info("Getting deck config for deck:", deckName);
+    async getDeckConfig(deckId: string): Promise<DeckConfig> {
+        Logger.info("Getting deck config for deck:", deckId);
         const deckRow = await getRepDb().query.decksTable.findFirst({
-            where: eq(decksTable.name, deckName),
+            where: eq(decksTable.id, hexToBuffer(deckId)),
             columns: {
                 config: true,
             },
         });
         
         if (!deckRow) {
-            Logger.error("Deck not found when getting config:", deckName);
-            throw new Error(`Deck with name "${deckName}" not found.`);
+            Logger.error("Deck not found when getting config:", deckId);
+            throw new Error(`Deck with id "${deckId}" not found.`);
         }
 
         Logger.info("Deck config retrieved:", {
-            deckName,
+            deckId,
             config: deckRow.config,
         });
 
@@ -110,20 +110,20 @@ export class DeckService {
     }
 
     /**
-     * Update deck config by deck name.
-     * @param deckName - target deck name
+     * Update deck config by deck id.
+     * @param deckId - target deck id
      * @param config - updated config
      */
-    async updateDeckConfig(deckName: string, config: DeckConfig): Promise<void> {
-        Logger.info("Updating deck config:", deckName);
+    async updateDeckConfig(deckId: string, config: DeckConfig): Promise<void> {
+        Logger.info("Updating deck config:", deckId);
         await getRepDb()
             .update(decksTable)
             .set({
                 config,
                 updatedAt: Date.now(),
             })
-            .where(eq(decksTable.name, deckName));
-        Logger.info("Deck config updated successfully:", deckName);
+            .where(eq(decksTable.id, hexToBuffer(deckId)));
+        Logger.info("Deck config updated successfully:", deckId);
         Logger.info("Updated config:", config);
     }
 

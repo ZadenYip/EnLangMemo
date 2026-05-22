@@ -79,7 +79,7 @@ export class HomeComponent implements OnInit {
     
     // TODO
     async openDeckSettings(deck: Deck): Promise<void> {
-        const config = await window.service.deck.getDeckConfig(deck.name);
+        const config = await window.service.deck.getDeckConfig(deck.id);
     
 
         const result = await firstValueFrom(
@@ -97,7 +97,7 @@ export class HomeComponent implements OnInit {
             return;
         }
         const newConfig = result as DeckConfig;
-        await window.service.deck.updateDeckConfig(deck.name, newConfig);
+        await window.service.deck.updateDeckConfig(deck.id, newConfig);
     }
 
     /**

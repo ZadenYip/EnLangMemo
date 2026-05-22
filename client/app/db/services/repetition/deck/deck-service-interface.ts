@@ -5,8 +5,8 @@ export interface IDeckService {
     listDecks(): Promise<Deck[]>;
     createDeck(deckName: string): Promise<DeckCreationResult>;
     deleteDeck(deckId: string): Promise<void>;
-    getDeckConfig(deckName: string): Promise<DeckConfig>;
-    updateDeckConfig(deckName: string, config: DeckConfig): Promise<void>;
+    getDeckConfig(deckId: string): Promise<DeckConfig>;
+    updateDeckConfig(deckId: string, config: DeckConfig): Promise<void>;
 }
 
 export const DeckServiceIPCDescriptor = {
