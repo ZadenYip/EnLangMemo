@@ -1,9 +1,9 @@
 import {
-    ProcessingNote,
-    ProcessingNoteCreationResult,
+    PcsNote,
+    PcsNoteCreationResult,
     ProcessingNoteRef,
-    ProcessingNoteSaveResult,
-    ProcessingNoteSaveToDeckResult,
+    PcsNoteSaveResult,
+    PcsNoteSaveToDeckResult,
 } from "./pcs-note-types";
 import { IPcsNoteService } from "./pcs-note-service-interface";
 import { PcsNoteService } from "./pcs-note-service";
@@ -20,14 +20,14 @@ export class PcsNoteIpcService implements IPcsNoteService {
     /**
      * Add a processing note.
      */
-    addProcessingNote(note: ProcessingNote): Promise<ProcessingNoteCreationResult> {
+    addProcessingNote(note: PcsNote): Promise<PcsNoteCreationResult> {
         return this.pcsNoteService.addProcessingNote(note);
     }
 
     /**
      * Save current processing note content.
      */
-    saveProcessingNote(note: ProcessingNote): Promise<ProcessingNoteSaveResult> {
+    saveProcessingNote(note: PcsNote): Promise<PcsNoteSaveResult> {
         return this.pcsNoteService.saveProcessingNote(note);
     }
 
@@ -35,9 +35,9 @@ export class PcsNoteIpcService implements IPcsNoteService {
      * Save current processing note content and create cards in the target deck.
      */
     saveProcessingNoteToDeck(
-        note: ProcessingNote,
+        note: PcsNote,
         deckId: string,
-    ): Promise<ProcessingNoteSaveToDeckResult> {
+    ): Promise<PcsNoteSaveToDeckResult> {
         return this.pcsNoteService.saveProcessingNoteToDeck(note, deckId);
     }
 

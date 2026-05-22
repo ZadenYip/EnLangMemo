@@ -2,7 +2,7 @@ export interface ProcessingNoteRef {
     id: string;
 }
 
-export type ProcessingNoteCreationResult =
+export type PcsNoteCreationResult =
     | {
         state: "success";
     }
@@ -10,7 +10,7 @@ export type ProcessingNoteCreationResult =
         state: "invalid-fields" | "note-template-not-found";
     };
 
-export type ProcessingNoteSaveResult =
+export type PcsNoteSaveResult =
     | {
         state: "success";
     }
@@ -18,7 +18,7 @@ export type ProcessingNoteSaveResult =
         state: "not-found" | "invalid-fields" | "note-template-not-found";
     };
 
-export interface ProcessingNote {
+export interface PcsNote {
     id: string;
     noteTplId: string;
     senseId?: string;

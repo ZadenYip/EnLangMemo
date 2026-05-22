@@ -21,7 +21,7 @@ import {
 } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
 import {
     NoteField,
-    ProcessingNote,
+    PcsNote,
 } from "@main/db/services/repetition/processing-note/pcs-note-types";
 
 type DraftDicNoteFieldMapping = Partial<DicNoteFieldMapping>;
@@ -185,7 +185,7 @@ export class DictionaryNoteService {
     /**
      * Build note payload from selected dictionary definition and current mapping.
      */
-    private buildNotePayload(entry: DictionaryEntry, def: Definition): ProcessingNote | null {
+    private buildNotePayload(entry: DictionaryEntry, def: Definition): PcsNote | null {
         const mapping = this.fieldMapping();
         const noteTpl = this.curNoteTpl();
         if (!this.hasValidMapping() || !noteTpl) {

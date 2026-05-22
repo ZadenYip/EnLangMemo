@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
-import { ProcessingNote, ProcessingNoteRef } from "@main/db/services/repetition/processing-note/pcs-note-types";
+import { PcsNote, ProcessingNoteRef } from "@main/db/services/repetition/processing-note/pcs-note-types";
 import { TranslateService } from "@ngx-translate/core";
 import { SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { NotifyService } from "@render/shared/services/notify.service";
@@ -27,7 +27,7 @@ export class NoteContEditStateService {
     /**
      * Current loaded processing note detail.
      */
-    readonly curNote = signal<ProcessingNote | null>(null);
+    readonly curNote = signal<PcsNote | null>(null);
 
     /**
      * Whether processing note loading is running.

@@ -4,10 +4,11 @@ import { getRepDb } from "@main/db/db";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import { noteTypesTable, processingNotesTable } from "@main/db/schema/repetition/rep";
 import {
-    ProcessingNote,
-    ProcessingNoteCreationResult,
+    PcsNote,
+    PcsNoteCreationResult,
     ProcessingNoteRef,
-    ProcessingNoteSaveResult,
+    PcsNoteSaveResult,
+    PcsNoteSaveToDeckResult,
 } from "./pcs-note-types";
 
 /**
@@ -17,7 +18,7 @@ export class PcsNoteService {
     /**
      * Add a new processing note and return the creation state.
      */
-    async addProcessingNote(note: ProcessingNote): Promise<ProcessingNoteCreationResult> {
+    async addPcsNote(note: PcsNote): Promise<PcsNoteCreationResult> {
         if (!Array.isArray(note.fields) || note.fields.length === 0) {
             Logger.warn("Processing note creation failed: invalid fields", {
                 noteTplId: note.noteTplId,
@@ -85,7 +86,7 @@ export class PcsNoteService {
     /**
      * Save current processing note content.
      */
-    async saveProcessingNote(note: ProcessingNote): Promise<ProcessingNoteSaveResult> {
+    async saveProcessingNote(note: PcsNote): Promise<PcsNoteSaveResult> {
         /** Note template id converted to database blob primary key. */
         const noteTypeId = hexToBuffer(note.noteTplId);
         /** Existing note template row used to validate processing note fields. */
@@ -146,7 +147,7 @@ export class PcsNoteService {
      * Check processing note fields cover exactly all fields defined by the note template.
      */
     private hasValidTemplateFields(
-        note: ProcessingNote,
+        note: PcsNote,
         templateFields: { id: number }[],
     ): boolean {
         const expectedFieldIds = new Set(templateFields.map((field) => String(field.id)));
@@ -165,7 +166,7 @@ export class PcsNoteService {
     /**
      * Get a processing note by its reference id.
      */
-    async getProcessingNoteById(noteId: string): Promise<ProcessingNote | null> {
+    async getProcessingNoteById(noteId: string): Promise<PcsNote | null> {
         const rawNote = await getRepDb().query.processingNotesTable.findFirst({
             where: eq(processingNotesTable.id, hexToBuffer(noteId)),
         });

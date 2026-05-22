@@ -11,19 +11,29 @@ export interface IPcsNoteService {
      * Add a new processing note and return the creation state.
      * @param note processing note payload from renderer
      */
-    addProcessingNote(note: ProcessingNote): Promise<ProcessingNoteCreationResult>;
+    addProcessingNote(note: PcsNote): Promise<PcsNoteCreationResult>;
 
     /**
      * Save current processing note content.
      * @param note processing note payload with existing id
      */
-    saveProcessingNote(note: ProcessingNote): Promise<ProcessingNoteSaveResult>;
+    saveProcessingNote(note: PcsNote): Promise<PcsNoteSaveResult>;
+
+    /**
+     * Save current processing note content and create cards in the target deck.
+     * @param note processing note payload with existing id
+     * @param deckId target deck id in hex string format
+     */
+    saveProcessingNoteToDeck(
+        note: PcsNote,
+        deckId: string,
+    ): Promise<PcsNoteSaveToDeckResult>;
 
     /**
      * Get a processing note by its reference id.
      * @param noteId processing note id in hex string format
      */
-    getProcessingNoteById(noteId: string): Promise<ProcessingNote | null>;
+    getProcessingNoteById(noteId: string): Promise<PcsNote | null>;
 
     /**
      * Get all processing note references.
