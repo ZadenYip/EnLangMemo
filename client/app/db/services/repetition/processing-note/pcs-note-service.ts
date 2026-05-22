@@ -2,7 +2,12 @@ import Logger from "electron-log/main";
 import { eq } from "drizzle-orm";
 import { getRepDb } from "@main/db/db";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { noteTypesTable, processingNotesTable } from "@main/db/schema/repetition/rep";
+import {
+    decksTable,
+    noteTypesTable,
+    processingNotesTable,
+} from "@main/db/schema/repetition/rep";
+import { creaCardsFromPcsNote as createCardsFromPcsNote } from "@main/db/services/repetition/cards/card-service";
 import {
     PcsNote,
     PcsNoteCreationResult,
@@ -79,6 +84,75 @@ export class PcsNoteService {
         });
 
         return {
+            state: "success",
+        };
+    }
+
+    /**
+     * Save current processing note content and create cards in the target deck.
+     */
+    async savePcsNoteToDeck(
+        note: PcsNote,
+        deckId: string,
+    ): Promise<PcsNoteSaveToDeckResult> {
+        /** Result of saving the latest processing note draft before card creation. */
+        const saveResult = await this.savePcsNote(note);
+        if (saveResult.state !== "success") {
+            return saveResult;
+        }
+
+        /** Target deck row used by future note/card creation. */
+        const deck = await getRepDb().query.decksTable.findFirst({
+            where: eq(decksTable.id, hexToBuffer(deckId)),
+            columns: {
+                id: true,
+                name: true,
+            },
+        });
+
+        if (!deck) {
+            Logger.warn("Processing note save-to-deck failed: deck not found", {
+                noteId: note .id,
+                deckId,
+            });
+            return {
+                state: "deck-not-found",
+            };
+        }
+
+        /** Note template row used to enumerate card templates. */
+        const noteType = await getRepDb().query.noteTypesTable.findFirst({
+            where: eq(noteTypesTable.id, hexToBuffer(note.noteTplId)),
+            columns: {
+                noteTemplate: true,
+            },
+        });
+
+        if (!noteType) {
+            Logger.warn("Processing note save-to-deck failed: note template not found", {
+                noteId: note.id,
+                noteTplId: note.noteTplId,
+            });
+            return {
+                state: "note-template-not-found",
+            };
+        }
+
+        const cardCount = createCardsFromPcsNote(
+            note,
+            deck.id,
+            noteType.noteTemplate,
+        );
+
+        Logger.info("Processing note saved and cards created:", {
+            noteId: note.id,
+            deckId,
+            deckName: deck.name,
+            cardCount,
+        });
+
+        return {
+            cardCount,
             state: "success",
         };
     }

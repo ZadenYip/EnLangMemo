@@ -74,8 +74,17 @@ export interface LangCard {
     /**
      * -1 = suspended, 0, 1, 2, 3 same as state
      */
-    queue: number;
+    queue: CardQueue;
 }
+
+export enum CardQueue {
+    SUSPENDED = -1,
+    NEW = 0,
+    LEARNING = 1,
+    REVIEW = 2,
+    RELEARNING = 3,
+}
+
 
 export type FSRSCard = Pick<
     LangCard,

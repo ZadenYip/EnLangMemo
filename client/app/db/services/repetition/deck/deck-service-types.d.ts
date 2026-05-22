@@ -1,3 +1,4 @@
+import { FSRSParameters } from "ts-fsrs";
 
 export interface DeckConfig {
     /**
@@ -5,7 +6,10 @@ export interface DeckConfig {
      * -1 means no limit
      */
     newCardsPerDay: number;
-    // TODO FSRS algorithm parameters
+    /**
+     * Persisted FSRS scheduler parameters for this deck.
+     */
+    fsrsParams: FSRSParameters;
 }
 
 export interface Deck {

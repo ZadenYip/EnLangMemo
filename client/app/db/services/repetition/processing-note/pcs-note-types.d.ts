@@ -18,6 +18,15 @@ export type PcsNoteSaveResult =
         state: "not-found" | "invalid-fields" | "note-template-not-found";
     };
 
+export type PcsNoteSaveToDeckResult =
+    | {
+        state: "success";
+        cardCount: number;
+    }
+    | {
+        state: "not-found" | "invalid-fields" | "note-template-not-found" | "deck-not-found";
+    };
+
 export interface PcsNote {
     id: string;
     noteTplId: string;

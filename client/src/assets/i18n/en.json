@@ -74,7 +74,7 @@
           },
           "SAVE_AND_ADD": {
             "ACTION": "Save to deck",
-            "SUCCESS": "Note saved and save-to-deck flow finished.",
+            "SUCCESS": "Note saved and {{count}} cards created.",
             "FAILED": "Failed to save note to deck."
           },
           "SAVE": {
