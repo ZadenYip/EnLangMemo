@@ -159,7 +159,7 @@ export const cardsTable = sqliteTable(
         stability: real("stability").notNull(),
         scheduledDays: int("scheduled_days").notNull(),
         due: int("due").notNull(),
-        lastReview: int("last_review").default(0),
+        lastReview: int("last_review"),
         lapses: int("lapses").notNull(),
         learningSteps: int("learning_steps").notNull(),
         repetitions: int("repetitions").notNull(),

@@ -9,7 +9,7 @@ CREATE TABLE `cards` (
 	`stability` real NOT NULL,
 	`scheduled_days` integer NOT NULL,
 	`due` integer NOT NULL,
-	`last_review` integer DEFAULT 0,
+	`last_review` integer,
 	`lapses` integer NOT NULL,
 	`learning_steps` integer NOT NULL,
 	`repetitions` integer NOT NULL,

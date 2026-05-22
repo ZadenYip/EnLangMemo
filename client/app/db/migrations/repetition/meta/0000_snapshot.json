@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ced6e228-0ffb-479e-93f1-ce79b4f5ab5b",
+  "id": "f0589e17-087d-41c5-adc1-148c07d8e3bd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -82,8 +82,7 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         },
         "lapses": {
           "name": "lapses",
