@@ -73,7 +73,9 @@
             "PLACEHOLDER": "Select deck"
           },
           "SAVE_AND_ADD": {
-            "ACTION": "Save to deck"
+            "ACTION": "Save to deck",
+            "SUCCESS": "Note saved and save-to-deck flow finished.",
+            "FAILED": "Failed to save note to deck."
           },
           "SAVE": {
             "ACTION": "Save Note",

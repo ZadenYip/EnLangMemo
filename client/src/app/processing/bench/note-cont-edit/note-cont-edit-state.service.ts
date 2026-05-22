@@ -1,18 +1,23 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { ProcessingNote, ProcessingNoteRef } from "@main/db/services/repetition/processing-note/pcs-note-types";
 import { TranslateService } from "@ngx-translate/core";
-import {
-    createEmptyOption,
-    SelectDropdownOption,
-} from "@render/shared/components/select-dropdown/select-dropdown.component";
+import { SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { NotifyService } from "@render/shared/services/notify.service";
 import { BenchStateService } from "../bench-state.service";
 
 @Injectable()
-    export class NoteContEditStateService {
+export class NoteContEditStateService {
     private readonly benchState = inject(BenchStateService);
     private readonly notify = inject(NotifyService);
     private readonly translate = inject(TranslateService);
+
+    /**
+     * Empty deck option shown when no deck can be selected.
+     */
+    private readonly emptyDeckOption: SelectDropdownOption = {
+        value: "",
+        labelKey: "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.DECK_SELECT.PLACEHOLDER",
+    };
 
     /**
      * Processing note references waiting to be edited.
@@ -37,10 +42,7 @@ import { BenchStateService } from "../bench-state.service";
     /**
      * Currently selected deck option for card creation.
      */
-    readonly selectedDeck = signal<SelectDropdownOption>({
-        value: "",
-        labelKey: "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.DECK_SELECT.PLACEHOLDER",
-    });
+    readonly selectedDeck = signal<SelectDropdownOption>(this.emptyDeckOption);
 
     /**
      * Current note template fields used to build the note content form.
@@ -97,7 +99,7 @@ import { BenchStateService } from "../bench-state.service";
         const selectedDeck = this.selectedDeck();
         const newSelectedDeck = options.find((option) => option.value === selectedDeck.value)
             ?? options[0]
-            ?? createEmptyOption();
+            ?? this.emptyDeckOption;
         this.selectedDeck.set(newSelectedDeck);
     }
 
@@ -193,7 +195,7 @@ import { BenchStateService } from "../bench-state.service";
                         "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE.FAILED",
                     ),
                 );
-            return;
+                return;
         }
 
         this.notify.open(
@@ -203,7 +205,39 @@ import { BenchStateService } from "../bench-state.service";
         );
     }
 
+    /**
+     * Save current note content and run the save-to-deck service flow.
+     */
+    async saveToDeck(): Promise<void> {
+        const note = this.curNote();
+        const deckId = this.selectedDeck().value;
+        if (!note || !deckId || !this.beginLoading()) {
+            return;
+        }
 
+        try {
+            const result = await window.service.pcsNote.saveProcessingNoteToDeck(
+                note,
+                deckId,
+            );
+            if (result.state !== "success") {
+                this.notify.open(
+                    this.translate.instant(
+                        "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE_AND_ADD.FAILED",
+                    ),
+                );
+                return;
+            }
+
+            this.notify.open(
+                this.translate.instant(
+                    "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE_AND_ADD.SUCCESS",
+                ),
+            );
+        } finally {
+            this.endLoading();
+        }
+    }
 
     /**
      * Load current processing note detail and its note template.

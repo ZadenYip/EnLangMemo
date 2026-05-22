@@ -54,10 +54,9 @@ export class NoteContEditComponent implements OnInit {
     }
 
     /**
-     * Save current note content before the card creation flow is wired.
+     * Save current note content and start the save-to-deck flow.
      */
     onSaveAndAddToDeck(): void {
-        // TODO 加进卡池
-        void this.noteContEditState.saveDraft();
+        void this.noteContEditState.saveToDeck();
     }
 }

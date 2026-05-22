@@ -73,7 +73,9 @@
             "PLACEHOLDER": "选择牌组"
           },
           "SAVE_AND_ADD": {
-            "ACTION": "保存入组"
+            "ACTION": "保存入组",
+            "SUCCESS": "笔记已保存，入组流程已执行。",
+            "FAILED": "保存入组失败。"
           },
           "SAVE": {
             "ACTION": "保存笔记",
