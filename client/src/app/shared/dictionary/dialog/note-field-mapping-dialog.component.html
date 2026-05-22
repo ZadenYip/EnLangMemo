@@ -21,6 +21,15 @@
     </div>
 
     <div class="mapping-row">
+        <span>{{ "DICTIONARY.NOTE_MAPPING.PHONETIC" | translate }}</span>
+        <app-select-dropdown
+            [options]="fieldOptions"
+            [selectedOption]="phoneticOption()"
+            (selectedOptionChange)="selectPhonetic($event)"
+        ></app-select-dropdown>
+    </div>
+
+    <div class="mapping-row">
         <span>
             {{ "DICTIONARY.NOTE_MAPPING.SRC_DEFINITION" | translate }}
         </span>
@@ -39,15 +48,7 @@
             (selectedOptionChange)="selectTargetDefinition($event)"
         ></app-select-dropdown>
     </div>
-
-    <div class="mapping-row">
-        <span>{{ "DICTIONARY.NOTE_MAPPING.PHONETIC" | translate }}</span>
-        <app-select-dropdown
-            [options]="fieldOptions"
-            [selectedOption]="phoneticOption()"
-            (selectedOptionChange)="selectPhonetic($event)"
-        ></app-select-dropdown>
-    </div>
+    
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
