@@ -9,12 +9,11 @@ import {
     ProcessingNoteRef,
     ProcessingNoteSaveResult,
 } from "./pcs-note-types";
-import { IPcsNoteService } from "./pcs-note-service-interface";
 
 /**
  * Service for processing notes waiting in the bench pool.
  */
-export class PcsNoteService implements IPcsNoteService {
+export class PcsNoteService {
     /**
      * Add a new processing note and return the creation state.
      */

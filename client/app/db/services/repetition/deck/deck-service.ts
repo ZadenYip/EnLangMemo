@@ -4,6 +4,7 @@ import { Deck, DeckConfig, DeckCreationResult } from "./deck-service-types";
 import { eq } from "drizzle-orm";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import Logger from "electron-log";
+import { generatorParameters } from "ts-fsrs";
 
 export class DeckService {
     /**
@@ -128,9 +129,10 @@ export class DeckService {
     }
 
     private generateDeckConfig(): DeckConfig {
+        const params = generatorParameters();
         const defaultConfig: DeckConfig = {
             newCardsPerDay: 20,
-            // TODO: 在此设置 FSRS 算法相关参数的默认值。
+            fsrsParams: params
         };
         return defaultConfig;
     }

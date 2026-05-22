@@ -7,13 +7,13 @@ import { SubtitleService } from "../subtitle-handler/subtitle-service";
 import { SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service.interface";
 import { CollectionService } from "../db/services/repetition/collection/col-service";
 import { CollectionServiceIPCDescriptor } from "../db/services/repetition/collection/col-service-interface";
-import { DeckService } from "../db/services/repetition/deck/deck-service";
+import { DeckIpcService } from "../db/services/repetition/deck/deck-ipc-service";
 import { DeckServiceIPCDescriptor } from "../db/services/repetition/deck/deck-service-interface";
 import { NoteTplService } from "../db/services/repetition/note-template/nt-tpl-service";
 import { NoteTplServiceIPCDescriptor } from "../db/services/repetition/note-template/nt-tpl-service-interface";
 import { DicNoteMappingService } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service";
 import { DicNoteMappingServiceIPCDescriptor } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service-interface";
-import { PcsNoteService } from "../db/services/repetition/processing-note/pcs-note-service";
+import { PcsNoteIpcService } from "../db/services/repetition/processing-note/pcs-note-ipc-service";
 import { PcsNoteServiceIPCDescriptor } from "../db/services/repetition/processing-note/pcs-note-service-interface";
 
 export function registerAllIPCHandlers() {
@@ -33,7 +33,7 @@ function registerDatabaseHandlers() {
     const collectionService = new CollectionService();
     registerProxy(collectionService, CollectionServiceIPCDescriptor);
 
-    const deckService = new DeckService();
+    const deckService = new DeckIpcService();
     registerProxy(deckService, DeckServiceIPCDescriptor);
 
     const noteTplService = new NoteTplService();
@@ -42,6 +42,6 @@ function registerDatabaseHandlers() {
     const dicNoteMappingService = new DicNoteMappingService();
     registerProxy(dicNoteMappingService, DicNoteMappingServiceIPCDescriptor);
 
-    const pcsNoteService = new PcsNoteService();
+    const pcsNoteService = new PcsNoteIpcService();
     registerProxy(pcsNoteService, PcsNoteServiceIPCDescriptor);
 }
