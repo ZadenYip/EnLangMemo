@@ -77,14 +77,16 @@ export interface LangCard {
     queue: CardQueue;
 }
 
-export enum CardQueue {
-    SUSPENDED = -1,
-    NEW = 0,
-    LEARNING = 1,
-    REVIEW = 2,
-    RELEARNING = 3,
-}
 
+// card-service-constants.ts
+export const CARD_QUEUE = {
+    SUSPENDED: -1,
+    NEW: 0,
+    LEARNING: 1,
+    REVIEW: 2,
+    RELEARNING: 3,
+} as const satisfies Record<string, CardQueue>;
+type CardQueue = -1 | 0 | 1 | 2 | 3;
 
 export type FSRSCard = Pick<
     LangCard,

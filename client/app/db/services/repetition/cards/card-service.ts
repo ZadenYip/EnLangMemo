@@ -5,7 +5,7 @@ import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt
 import type { PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types";
 import { createEmptyCard } from "ts-fsrs";
 import { createEmptyCardHandler } from "./card-service-helper";
-import { CardQueue } from "./card-service-types";
+import { CARD_QUEUE } from "./card-service-types";
 
 /**
  * Create a real note and one card per card template from a processing note.
@@ -58,7 +58,7 @@ export function creaCardsFromPcsNote(
                     learningSteps: card.learningSteps,
                     repetitions: card.repetitions,
                     state: card.state,
-                    queue: CardQueue.NEW,
+                    queue: CARD_QUEUE.NEW,
                 })
                 .run();
         }
