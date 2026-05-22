@@ -172,7 +172,7 @@ export class DictionaryNoteService {
 
         Logger.info("Adding to processing pool with payload:", payload);
 
-        const result = await window.service.pcsNote.addProcessingNote(payload);
+        const result = await window.service.pcsNote.addPcsNote(payload);
         if (result.state !== "success") {
             Logger.warn("Adding to processing pool failed:", result.state);
             this.notify.open(this.translate.instant("DICTIONARY.ADD_TO_PROCESSING_POOL_FAILED"));

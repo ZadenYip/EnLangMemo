@@ -1,7 +1,7 @@
 import {
     PcsNote,
     PcsNoteCreationResult,
-    ProcessingNoteRef,
+    PcsNoteRef,
     PcsNoteSaveResult,
     PcsNoteSaveToDeckResult,
 } from "./pcs-note-types";
@@ -20,38 +20,38 @@ export class PcsNoteIpcService implements IPcsNoteService {
     /**
      * Add a processing note.
      */
-    addProcessingNote(note: PcsNote): Promise<PcsNoteCreationResult> {
-        return this.pcsNoteService.addProcessingNote(note);
+    addPcsNote(note: PcsNote): Promise<PcsNoteCreationResult> {
+        return this.pcsNoteService.addPcsNote(note);
     }
 
     /**
      * Save current processing note content.
      */
-    saveProcessingNote(note: PcsNote): Promise<PcsNoteSaveResult> {
-        return this.pcsNoteService.saveProcessingNote(note);
+    savePcsNote(note: PcsNote): Promise<PcsNoteSaveResult> {
+        return this.pcsNoteService.savePcsNote(note);
     }
 
     /**
      * Save current processing note content and create cards in the target deck.
      */
-    saveProcessingNoteToDeck(
+    savePcsNoteToDeck(
         note: PcsNote,
         deckId: string,
     ): Promise<PcsNoteSaveToDeckResult> {
-        return this.pcsNoteService.saveProcessingNoteToDeck(note, deckId);
+        return this.pcsNoteService.savePcsNoteToDeck(note, deckId);
     }
 
     /**
      * Get a processing note by id.
      */
-    getProcessingNoteById(noteId: string): Promise<ProcessingNote | null> {
-        return this.pcsNoteService.getProcessingNoteById(noteId);
+    getPcsNoteById(noteId: string): Promise<PcsNote | null> {
+        return this.pcsNoteService.getPcsNoteById(noteId);
     }
 
     /**
      * Get all processing note references.
      */
-    getAllProcessingNoteRefs(): Promise<ProcessingNoteRef[]> {
-        return this.pcsNoteService.getAllProcessingNoteRefs();
+    getAllPcsNoteRefs(): Promise<PcsNoteRef[]> {
+        return this.pcsNoteService.getAllPcsNoteRefs();
     }
 }

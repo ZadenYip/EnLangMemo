@@ -1,4 +1,4 @@
-export interface ProcessingNoteRef {
+export interface PcsNoteRef {
     id: string;
 }
 

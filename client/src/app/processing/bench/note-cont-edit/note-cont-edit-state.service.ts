@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
-import { PcsNote, ProcessingNoteRef } from "@main/db/services/repetition/processing-note/pcs-note-types";
+import { PcsNote, PcsNoteRef } from "@main/db/services/repetition/processing-note/pcs-note-types";
 import { TranslateService } from "@ngx-translate/core";
 import { SelectDropdownOption } from "@render/shared/components/select-dropdown/select-dropdown.component";
 import { NotifyService } from "@render/shared/services/notify.service";
@@ -22,7 +22,7 @@ export class NoteContEditStateService {
     /**
      * Processing note references waiting to be edited.
      */
-    readonly pcsNoteRefs = signal<ProcessingNoteRef[]>([]);
+    readonly pcsNoteRefs = signal<PcsNoteRef[]>([]);
 
     /**
      * Current loaded processing note detail.
@@ -77,7 +77,7 @@ export class NoteContEditStateService {
         }
 
         try {
-            const refs = await window.service.pcsNote.getAllProcessingNoteRefs();
+            const refs = await window.service.pcsNote.getAllPcsNoteRefs();
             this.pcsNoteRefs.set(refs);
             await this.loadCurPcsNote();
         } finally {
@@ -185,7 +185,7 @@ export class NoteContEditStateService {
             return;
         }
 
-        const result = await window.service.pcsNote.saveProcessingNote(note);
+        const result = await window.service.pcsNote.savePcsNote(note);
         switch (result.state) {
             case "success":
                 break;
@@ -216,7 +216,7 @@ export class NoteContEditStateService {
         }
 
         try {
-            const result = await window.service.pcsNote.saveProcessingNoteToDeck(
+            const result = await window.service.pcsNote.savePcsNoteToDeck(
                 note,
                 deckId,
             );
@@ -249,7 +249,7 @@ export class NoteContEditStateService {
             return;
         }
 
-        const note = await window.service.pcsNote.getProcessingNoteById(ref.id);
+        const note = await window.service.pcsNote.getPcsNoteById(ref.id);
         this.curNote.set(note);
 
         if (!note) {

@@ -6,7 +6,7 @@ import { noteTypesTable, processingNotesTable } from "@main/db/schema/repetition
 import {
     PcsNote,
     PcsNoteCreationResult,
-    ProcessingNoteRef,
+    PcsNoteRef,
     PcsNoteSaveResult,
     PcsNoteSaveToDeckResult,
 } from "./pcs-note-types";
@@ -86,7 +86,7 @@ export class PcsNoteService {
     /**
      * Save current processing note content.
      */
-    async saveProcessingNote(note: PcsNote): Promise<PcsNoteSaveResult> {
+    async savePcsNote(note: PcsNote): Promise<PcsNoteSaveResult> {
         /** Note template id converted to database blob primary key. */
         const noteTypeId = hexToBuffer(note.noteTplId);
         /** Existing note template row used to validate processing note fields. */
@@ -166,7 +166,7 @@ export class PcsNoteService {
     /**
      * Get a processing note by its reference id.
      */
-    async getProcessingNoteById(noteId: string): Promise<PcsNote | null> {
+    async getPcsNoteById(noteId: string): Promise<PcsNote | null> {
         const rawNote = await getRepDb().query.processingNotesTable.findFirst({
             where: eq(processingNotesTable.id, hexToBuffer(noteId)),
         });
@@ -186,7 +186,7 @@ export class PcsNoteService {
     /**
      * Get all processing note references.
      */
-    async getAllProcessingNoteRefs(): Promise<ProcessingNoteRef[]> {
+    async getAllPcsNoteRefs(): Promise<PcsNoteRef[]> {
         /** Raw processing note rows containing only primary keys. */
         const rawProcessingNotes =
             await getRepDb().query.processingNotesTable.findMany({
