@@ -6,11 +6,10 @@
     "HOME": {
       "DECKS": {
         "NAME": "Name",
-        "NEW_LEARNED": "New Cards Learned Today",
         "CAN_LEARN_TODAY": "New Today",
         "SHOULD_REVIEW_TODAY": "To Review Today",        
         "REVIEWED_TODAY": "Reviewed Today",
-        "LEARNED_TODAY": "Learned Today",
+        "NEW_LEARNED_TODAY": "New Learned Today",
         "SETTINGS": "Settings",
         "CREATE_PLACEHOLDER": "Click to add a deck",
         "DELETE_TITLE": "Delete Deck",

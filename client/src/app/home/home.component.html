@@ -2,9 +2,8 @@
   <div class="deck-header">
     <span>{{ "PAGES.HOME.DECKS.NAME" | translate }}</span>
     <span>{{ "PAGES.HOME.DECKS.CAN_LEARN_TODAY" | translate }}</span>
-    <span>{{ "PAGES.HOME.DECKS.SHOULD_REVIEW_TODAY" | translate }}</span>
     <span>{{ "PAGES.HOME.DECKS.REVIEWED_TODAY" | translate }}</span>
-    <span>{{ "PAGES.HOME.DECKS.LEARNED_TODAY" | translate }}</span>
+    <span>{{ "PAGES.HOME.DECKS.NEW_LEARNED_TODAY" | translate }}</span>
     <span>{{ "PAGES.HOME.DECKS.SETTINGS" | translate }}</span>
   </div>
 
@@ -14,9 +13,8 @@
         {{ deck.name }}
       </a>
       <span>{{ deck.canLearnToday }}</span>
-      <span>{{ deck.canReviewToday }}</span>
       <span>{{ deck.reviewedToday }}</span>
-      <span>{{ deck.learnedToday }}</span>
+      <span>{{ deck.newLearnedToday }}</span>
       <app-deck-settings-menu
         [deck]="deck"
         (configure)="openDeckSettings($event)"
@@ -33,7 +31,6 @@
         (input)="onInputDeckName($event)"
         placeholder="{{ 'PAGES.HOME.DECKS.CREATE_PLACEHOLDER' | translate }}"
       />
-      <span>-</span>
       <span>-</span>
       <span>-</span>
       <span>-</span>

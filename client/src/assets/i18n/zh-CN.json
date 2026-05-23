@@ -6,11 +6,10 @@
     "HOME": {
       "DECKS": {
         "NAME": "名称",
-        "NEW_LEARNED": "今日已学新卡片",
         "CAN_LEARN_TODAY": "今日可新学",
         "SHOULD_REVIEW_TODAY": "今日应复习",
         "REVIEWED_TODAY": "今日已复习",
-        "LEARNED_TODAY": "今日已学",
+        "NEW_LEARNED_TODAY": "今日已学新卡",
         "SETTINGS": "设置",
         "CREATE_PLACEHOLDER": "点击添加牌组",
         "DELETE_TITLE": "删除牌组",

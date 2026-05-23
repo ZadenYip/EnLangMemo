@@ -65,6 +65,8 @@ export const decksTable = sqliteTable("decks", {
     usn: int("usn").notNull(),
     name: text("name").notNull(),
     updatedAt: int("updated_at").notNull(),
+    newCardsPerDay: int("new_cards_per_day").notNull().default(20),
+    newLearnedToday: int("new_learned_today").notNull().default(0),
     learnedToday: int("learned_today").notNull().default(0),
     reviewedToday: int("reviewed_today").notNull().default(0),
     /**
@@ -115,8 +117,7 @@ export const notesTable = sqliteTable(
     {
         id: blob("id", { mode: "buffer" }).primaryKey(),
         noteTypeId: blob("note_type_id", { mode: "buffer" })
-            .notNull()
-            .references(() => noteTypesTable.id, { onDelete: "cascade" }),
+            .notNull(),
         usn: int("usn").notNull(),
         createdAt: int("created_at").notNull(),
         updatedAt: int("updated_at").notNull(),
@@ -147,11 +148,9 @@ export const cardsTable = sqliteTable(
     {
         id: blob("id", { mode: "buffer" }).primaryKey(),
         noteId: blob("note_id", { mode: "buffer" })
-            .notNull()
-            .references(() => notesTable.id, { onDelete: "cascade" }),
+            .notNull(),
         deckId: blob("deck_id", { mode: "buffer" })
-            .notNull()
-            .references(() => decksTable.id),
+            .notNull(),
         usn: int("usn").notNull(),
         updatedAt: int("updated_at").notNull(),
         cardTemplateId: int("card_template_id").notNull(),

@@ -1,4 +1,4 @@
-import { Deck, DeckConfig, DeckCreationResult } from "./deck-service-types";
+import { Deck, DeckCreationResult, DeckSettings } from "./deck-service-types";
 import { IDeckService } from "./deck-service-interface";
 import { DeckService } from "./deck-service";
 
@@ -35,14 +35,14 @@ export class DeckIpcService implements IDeckService {
     /**
      * Get deck config by id.
      */
-    getDeckConfig(deckId: string): Promise<DeckConfig> {
-        return this.deckService.getDeckConfig(deckId);
+    getDeckSettings(deckId: string): Promise<DeckSettings> {
+        return this.deckService.getDeckSettings(deckId);
     }
 
     /**
      * Update deck config by id.
      */
-    updateDeckConfig(deckId: string, config: DeckConfig): Promise<void> {
-        return this.deckService.updateDeckConfig(deckId, config);
+    updateDeckSettings(deckId: string, settings: DeckSettings): Promise<void> {
+        return this.deckService.updateDeckSettings(deckId, settings);
     }
 }

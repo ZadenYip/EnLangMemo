@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 import Logger from "electron-log";
-import { Deck, DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
+import { Deck, DeckSettings } from "@main/db/services/repetition/deck/deck-service-types";
 import { ConfirmDeleteDialog, ConfirmDeleteDialogData } from "../shared/components";
 import { NotifyService } from "../shared/services/notify.service";
 import { SettingsDialogService } from "../shared/services/settings-dialog.service";
@@ -48,9 +48,9 @@ export class HomeComponent implements OnInit {
     pendingDeckName = "";
     createInputElem = viewChild<ElementRef<HTMLInputElement>>("createInput");
 
-    async ngOnInit(): Promise<void> {
+    ngOnInit(): Promise<void> {
         Logger.info("Home deck material view initialized");
-        await this.loadDecks();
+        return this.loadDecks();
     }
 
     /**
@@ -79,15 +79,13 @@ export class HomeComponent implements OnInit {
     
     // TODO
     async openDeckSettings(deck: Deck): Promise<void> {
-        const config = await window.service.deck.getDeckConfig(deck.id);
-    
-
+        const settings = await window.service.deck.getDeckSettings(deck.id);
         const result = await firstValueFrom(
             this.settingsDialog
                 .open(DeckConfigComponent, {
                     data: {
                         deckName: deck.name,
-                        config,
+                        settings,
                     },
                 })
                 .afterClosed()
@@ -96,8 +94,8 @@ export class HomeComponent implements OnInit {
         if (!result) {
             return;
         }
-        const newConfig = result as DeckConfig;
-        await window.service.deck.updateDeckConfig(deck.id, newConfig);
+        const newSettings = result as DeckSettings;
+        await window.service.deck.updateDeckSettings(deck.id, newSettings);
     }
 
     /**

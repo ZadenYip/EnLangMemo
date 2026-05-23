@@ -14,9 +14,7 @@ CREATE TABLE `cards` (
 	`learning_steps` integer NOT NULL,
 	`repetitions` integer NOT NULL,
 	`state` integer NOT NULL,
-	`queue` integer NOT NULL,
-	FOREIGN KEY (`note_id`) REFERENCES `notes`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`deck_id`) REFERENCES `decks`(`id`) ON UPDATE no action ON DELETE no action
+	`queue` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE INDEX `ix_cards_sched` ON `cards` (`deck_id`,`queue`,`due`);--> statement-breakpoint
@@ -38,6 +36,8 @@ CREATE TABLE `decks` (
 	`usn` integer NOT NULL,
 	`name` text NOT NULL,
 	`updated_at` integer NOT NULL,
+	`new_cards_per_day` integer DEFAULT 20 NOT NULL,
+	`new_learned_today` integer DEFAULT 0 NOT NULL,
 	`learned_today` integer DEFAULT 0 NOT NULL,
 	`reviewed_today` integer DEFAULT 0 NOT NULL,
 	`config` jsonb NOT NULL
@@ -68,8 +68,7 @@ CREATE TABLE `notes` (
 	`sense_id` blob,
 	`sort_field` text,
 	`search_fields` text,
-	`fields` jsonb NOT NULL,
-	FOREIGN KEY (`note_type_id`) REFERENCES `note_types`(`id`) ON UPDATE no action ON DELETE cascade
+	`fields` jsonb NOT NULL
 );
 --> statement-breakpoint
 CREATE INDEX `ix_notes_usn` ON `notes` (`usn`);--> statement-breakpoint

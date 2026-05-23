@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "f0589e17-087d-41c5-adc1-148c07d8e3bd",
+  "id": "bf271013-3834-4b80-88e3-1667d201089e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -145,34 +145,7 @@
           "isUnique": false
         }
       },
-      "foreignKeys": {
-        "cards_note_id_notes_id_fk": {
-          "name": "cards_note_id_notes_id_fk",
-          "tableFrom": "cards",
-          "tableTo": "notes",
-          "columnsFrom": [
-            "note_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "cards_deck_id_decks_id_fk": {
-          "name": "cards_deck_id_decks_id_fk",
-          "tableFrom": "cards",
-          "tableTo": "decks",
-          "columnsFrom": [
-            "deck_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -275,6 +248,22 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "new_cards_per_day": {
+          "name": "new_cards_per_day",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 20
+        },
+        "new_learned_today": {
+          "name": "new_learned_today",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "learned_today": {
           "name": "learned_today",
@@ -479,21 +468,7 @@
           "isUnique": false
         }
       },
-      "foreignKeys": {
-        "notes_note_type_id_note_types_id_fk": {
-          "name": "notes_note_type_id_note_types_id_fk",
-          "tableFrom": "notes",
-          "tableTo": "note_types",
-          "columnsFrom": [
-            "note_type_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
