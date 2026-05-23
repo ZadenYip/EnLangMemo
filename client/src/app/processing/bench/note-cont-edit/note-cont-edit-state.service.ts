@@ -169,8 +169,7 @@ export class NoteContEditStateService {
         }
 
         try {
-            this.pcsNoteRefs.update((refs) => refs.slice(1));
-            await this.loadCurPcsNote();
+            await this.moveToNextNoteCore();
         } finally {
             this.endLoading();
         }
@@ -228,7 +227,8 @@ export class NoteContEditStateService {
                 );
                 return;
             }
-
+            
+            await this.moveToNextNoteCore();
             this.notify.open(
                 this.translate.instant(
                     "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE_AND_ADD.SUCCESS",
@@ -240,6 +240,14 @@ export class NoteContEditStateService {
         } finally {
             this.endLoading();
         }
+    }
+
+    /**
+     * Move queue head forward without acquiring the loading lock.
+     */
+    private async moveToNextNoteCore(): Promise<void> {
+        this.pcsNoteRefs.update((refs) => refs.slice(1));
+        await this.loadCurPcsNote();
     }
 
     /**

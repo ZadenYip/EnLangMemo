@@ -7,62 +7,63 @@ import { createEmptyCard } from "ts-fsrs";
 import { createEmptyCardHandler } from "./card-service-helper";
 import { CARD_QUEUE } from "./card-service-types";
 
+type RepTx = Parameters<Parameters<ReturnType<typeof getRepDb>["transaction"]>[0]>[0];
+
 /**
  * Create a real note and one card per card template from a processing note.
  */
-export function creaCardsFromPcsNote(
+export function createCardsFromPcsNote(
     note: PcsNote,
     deckId: Buffer,
     noteTemplate: NoteTemplate,
+    tx: RepTx,
 ): number {
     /** Number of cards created from the note template. */
     const cardCount = noteTemplate.cardtpls.length;
 
-    getRepDb().transaction((tx) => {
-        /** Current timestamp shared by the generated note and cards. */
-        const now = Date.now();
-        /** Generated permanent note id derived from the processing note content. */
-        const noteId = generateUUIDV7();
+    /** Current timestamp shared by the generated note and cards. */
+    const now = Date.now();
+    /** Generated permanent note id derived from the processing note content. */
+    const noteId = generateUUIDV7();
 
-        tx.insert(notesTable)
+    tx.insert(notesTable)
+        .values({
+            id: noteId,
+            noteTypeId: hexToBuffer(note.noteTplId),
+            usn: -1,
+            createdAt: now,
+            updatedAt: now,
+            senseId: note.senseId ? hexToBuffer(note.senseId) : null,
+            sortField: resolveSortField(note, noteTemplate.sortField),
+            searchFields: buildSearchFields(note),
+            fields: note.fields,
+        })
+        .run();
+
+    for (const cardTemplate of noteTemplate.cardtpls) {
+        /** Initial card scheduling values reserved for the final FSRS implementation. */
+        const card = createEmptyCard(new Date(), createEmptyCardHandler);
+        tx.insert(cardsTable)
             .values({
-                id: noteId,
-                noteTypeId: hexToBuffer(note.noteTplId),
+                id: generateUUIDV7(),
+                noteId,
+                deckId,
                 usn: -1,
-                createdAt: now,
                 updatedAt: now,
-                senseId: note.senseId ? hexToBuffer(note.senseId) : null,
-                sortField: resolveSortField(note, noteTemplate.sortField),
-                searchFields: buildSearchFields(note),
-                fields: note.fields,
+                cardTemplateId: cardTemplate.id,
+                difficulty: card.difficulty,
+                stability: card.stability,
+                scheduledDays: card.scheduledDays,
+                due: card.due.getTime(),
+                lastReview: card.lastReview ? card.lastReview.getTime() : null,
+                lapses: card.lapses,
+                learningSteps: card.learningSteps,
+                repetitions: card.repetitions,
+                state: card.state,
+                queue: CARD_QUEUE.NEW,
             })
             .run();
-
-        for (const cardTemplate of noteTemplate.cardtpls) {
-            /** Initial card scheduling values reserved for the final FSRS implementation. */
-            const card = createEmptyCard(new Date(), createEmptyCardHandler);
-            tx.insert(cardsTable)
-                .values({
-                    id: generateUUIDV7(),
-                    noteId,
-                    deckId,
-                    usn: -1,
-                    updatedAt: now,
-                    cardTemplateId: cardTemplate.id,
-                    difficulty: card.difficulty,
-                    stability: card.stability,
-                    scheduledDays: card.scheduledDays,
-                    due: card.due.getTime(),
-                    lastReview: card.lastReview ? card.lastReview.getTime() : null,
-                    lapses: card.lapses,
-                    learningSteps: card.learningSteps,
-                    repetitions: card.repetitions,
-                    state: card.state,
-                    queue: CARD_QUEUE.NEW,
-                })
-                .run();
-        }
-    });
+    }
 
     return cardCount;
 }

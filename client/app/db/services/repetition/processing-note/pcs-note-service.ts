@@ -7,7 +7,7 @@ import {
     noteTypesTable,
     processingNotesTable,
 } from "@main/db/schema/repetition/rep";
-import { creaCardsFromPcsNote as createCardsFromPcsNote } from "@main/db/services/repetition/cards/card-service";
+import { createCardsFromPcsNote as createCardsFromPcsNote } from "@main/db/services/repetition/cards/card-service";
 import {
     PcsNote,
     PcsNoteCreationResult,
@@ -112,7 +112,7 @@ export class PcsNoteService {
 
         if (!deck) {
             Logger.warn("Processing note save-to-deck failed: deck not found", {
-                noteId: note .id,
+                noteId: note.id,
                 deckId,
             });
             return {
@@ -138,13 +138,20 @@ export class PcsNoteService {
             };
         }
 
-        const cardCount = createCardsFromPcsNote(
-            note,
-            deck.id,
-            noteType.noteTemplate,
-        );
+        const cardCount = getRepDb().transaction((tx) => {
+            const createdCardCount = createCardsFromPcsNote(
+                note,
+                deck.id,
+                noteType.noteTemplate,
+                tx,
+            );
+            tx.delete(processingNotesTable)
+                .where(eq(processingNotesTable.id, hexToBuffer(note.id)))
+                .run();
+            return createdCardCount;
+        });
 
-        Logger.info("Processing note saved and cards created:", {
+        Logger.info("Processing note saved, cards created, and processing note deleted:", {
             noteId: note.id,
             deckId,
             deckName: deck.name,
