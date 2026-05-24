@@ -5,6 +5,8 @@ import { eq } from "drizzle-orm";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import Logger from "electron-log";
 import { generatorParameters } from "ts-fsrs";
+import { countCardsByDeckAndQueues } from "../cards/card-service";
+import { CARD_QUEUE } from "../cards/card-service-types";
 
 export class DeckService {
     /**
@@ -22,20 +24,30 @@ export class DeckService {
             }
         })
 
-        return deckRows.map((deckRow) => {
+        return Promise.all(deckRows.map(async (deckRow) => {
             const canLearnToday = this.calcCanLearnToday(deckRow);
+            const [newCards, shouldReviewToday, learning, relearning] = await Promise.all([
+                countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.NEW]),
+                countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.REVIEW], new Date()),
+                countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.LEARNING]),
+                countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.RELEARNING]),
+            ]);
 
             const deck: Deck = {
                 id: bufferToHex(deckRow.id),
                 name: deckRow.name,
                 newCardsPerDay: deckRow.newCardsPerDay,
                 canLearnToday,
+                newCards,
+                shouldReviewToday,
+                learning,
+                relearning,
                 newLearnedToday: deckRow.newLearnedToday,
                 learnedToday: deckRow.learnedToday,
                 reviewedToday: deckRow.reviewedToday,
             };
             return deck;
-        });
+        }));
     }
 
     /**
@@ -126,11 +138,11 @@ export class DeckService {
      */
     async updateDeckSettings(deckId: string, settings: DeckSettings): Promise<void> {
         Logger.info("Updating deck settings:", deckId);
-        const deckConfig = settings as DeckConfig;
+        const { newCardsPerDay, ...deckConfig } = settings;
         await getRepDb()
             .update(decksTable)
             .set({
-                newCardsPerDay: settings.newCardsPerDay,
+                newCardsPerDay,
                 config: deckConfig,
                 updatedAt: Date.now(),
             })

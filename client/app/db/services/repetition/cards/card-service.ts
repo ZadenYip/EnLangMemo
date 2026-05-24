@@ -5,7 +5,8 @@ import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt
 import type { PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types";
 import { createEmptyCard } from "ts-fsrs";
 import { createEmptyCardHandler } from "./card-service-helper";
-import { CARD_QUEUE } from "./card-service-types";
+import { CARD_QUEUE, CardQueue } from "./card-service-types";
+import { and, count, inArray, lte, eq } from "drizzle-orm";
 
 type RepTx = Parameters<Parameters<ReturnType<typeof getRepDb>["transaction"]>[0]>[0];
 
@@ -66,6 +67,34 @@ export function createCardsFromPcsNote(
     }
 
     return cardCount;
+}
+
+/**
+ * Count cards in the specified queues for one deck.
+ */
+export async function countCardsByDeckAndQueues(
+    deckId: Buffer,
+    queues: CardQueue[],
+    dueBefore?: Date,
+): Promise<number> {
+    /** Query filters shared by card queue statistics. */
+    const filters = [
+        eq(cardsTable.deckId, deckId),
+        inArray(cardsTable.queue, queues),
+    ];
+    if (dueBefore !== undefined) {
+        filters.push(lte(cardsTable.due, dueBefore.getTime()));
+    }
+    const rows = await getRepDb()
+        .select({
+            value: count(),
+        })
+        .from(cardsTable)
+        .where(
+            and(...filters),
+        );
+
+    return rows[0]?.value ?? 0;
 }
 
 /**

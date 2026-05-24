@@ -7,7 +7,10 @@
       "DECKS": {
         "NAME": "Name",
         "CAN_LEARN_TODAY": "New Today",
+        "NEW_CARDS": "New Cards",
         "SHOULD_REVIEW_TODAY": "To Review Today",        
+        "LEARNING": "Learning",
+        "RELEARNING": "Relearning",
         "REVIEWED_TODAY": "Reviewed Today",
         "NEW_LEARNED_TODAY": "New Learned Today",
         "SETTINGS": "Settings",

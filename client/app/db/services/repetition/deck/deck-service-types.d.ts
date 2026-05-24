@@ -37,6 +37,26 @@ export interface Deck {
     canLearnToday: number;
 
     /**
+     * The number of cards currently in the new queue.
+     */
+    newCards: number;
+
+    /**
+     * The number of due cards that should be reviewed now in this deck.
+     */
+    shouldReviewToday: number;
+
+    /**
+     * The number of cards currently in the learning queue.
+     */
+    learning: number;
+
+    /**
+     * The number of cards currently in the relearning queue.
+     */
+    relearning: number;
+
+    /**
      * The number of new cards learned today in this deck.
      * If the card don't already step into review stage, it wouldn't be counted.
      */

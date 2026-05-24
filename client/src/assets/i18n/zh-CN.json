@@ -7,7 +7,10 @@
       "DECKS": {
         "NAME": "名称",
         "CAN_LEARN_TODAY": "今日可新学",
+        "NEW_CARDS": "新卡",
         "SHOULD_REVIEW_TODAY": "今日应复习",
+        "LEARNING": "学习中",
+        "RELEARNING": "重学习中",
         "REVIEWED_TODAY": "今日已复习",
         "NEW_LEARNED_TODAY": "今日已学新卡",
         "SETTINGS": "设置",

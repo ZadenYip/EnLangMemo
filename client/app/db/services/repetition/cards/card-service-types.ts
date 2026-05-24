@@ -86,7 +86,7 @@ export const CARD_QUEUE = {
     REVIEW: 2,
     RELEARNING: 3,
 } as const satisfies Record<string, CardQueue>;
-type CardQueue = -1 | 0 | 1 | 2 | 3;
+export type CardQueue = -1 | 0 | 1 | 2 | 3;
 
 export type FSRSCard = Pick<
     LangCard,
