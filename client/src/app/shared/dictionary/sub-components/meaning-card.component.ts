@@ -22,12 +22,19 @@ export class MeaningCardComponent {
     index = input(0);
     posLabel = input("");
     item = input<Definition>({
+        defId: "",
         definition: { src: "", target: "" },
         examples: [],
     });
-    add = output<Definition>();
+    /**
+     * Emits the selected definition to add into the processing pool.
+     */
+    addToProcessingPool = output<Definition>();
 
-    pressAddCard(): void {
-        this.add.emit(this.item());
+    /**
+     * Emit current definition when user adds it to processing pool.
+     */
+    addCurrentToProcessingPool(): void {
+        this.addToProcessingPool.emit(this.item());
     }
 }

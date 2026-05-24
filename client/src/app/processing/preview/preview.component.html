@@ -1,0 +1,31 @@
+<div class="preview-header">
+  <div class="preview-title">
+    {{ "PAGES.PROCESSING.PREVIEW.HEADER" | translate }}
+  </div>
+  <mat-radio-group
+    class="preview-controls"
+    [value]="previewSide()"
+    (change)="setPreviewSide($event.value)"
+  >
+    <mat-radio-button value="front">
+      {{ "PAGES.PROCESSING.PREVIEW.ACTIONS.FRONT" | translate }}
+    </mat-radio-button>
+    <mat-radio-button value="back">
+      {{ "PAGES.PROCESSING.PREVIEW.ACTIONS.BACK" | translate }}
+    </mat-radio-button>
+  </mat-radio-group>
+</div>
+
+<div class="preview-body">
+  @if (previewDocument()) {
+    <iframe
+      class="preview-frame"
+      sandbox=""
+      [srcdoc]="trustedPreviewDoc()"
+    ></iframe>
+  } @else {
+    <div class="preview-placeholder">
+      {{ "PAGES.PROCESSING.PREVIEW.EMPTY" | translate }}
+    </div>
+  }
+</div>

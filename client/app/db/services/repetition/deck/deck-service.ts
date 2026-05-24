@@ -1,33 +1,36 @@
 import { getRepDb } from "@main/db/db";
 import { decksTable } from "@main/db/schema/repetition/rep";
-import { Deck, DeckConfig, DeckCreationResult } from "./deck-service-types";
+import { Deck, DeckConfig, DeckCreationResult, DeckSettings } from "./deck-service-types";
 import { eq } from "drizzle-orm";
-import { generateUUIDV7 } from "@main/db/import/utils";
+import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import Logger from "electron-log";
+import { generatorParameters } from "ts-fsrs";
 
 export class DeckService {
     /**
-     * 获取当前 collection 下的所有牌组，并转换为前端需要的 Deck 模型。
+     * get all decks in current collection and transform them to Deck model needed by frontend.
      */
     async listDecks(): Promise<Deck[]> {
         const deckRows = await getRepDb().query.decksTable.findMany({
             columns: {
+                id: true,
                 name: true,
+                newCardsPerDay: true,
+                newLearnedToday: true,
                 learnedToday: true,
                 reviewedToday: true,
             }
         })
 
         return deckRows.map((deckRow) => {
-            // TODO: 实现今日可学新卡数量计算逻辑。
-            const canLearnToday = this.calcCanLearnToday(deckRow.name);
-            // TODO: 实现今日可复习数量计算逻辑。
-            const canReviewToday = this.calcCanReviewToday(deckRow.name);
+            const canLearnToday = this.calcCanLearnToday(deckRow);
 
             const deck: Deck = {
+                id: bufferToHex(deckRow.id),
                 name: deckRow.name,
+                newCardsPerDay: deckRow.newCardsPerDay,
                 canLearnToday,
-                canReviewToday,
+                newLearnedToday: deckRow.newLearnedToday,
                 learnedToday: deckRow.learnedToday,
                 reviewedToday: deckRow.reviewedToday,
             };
@@ -46,8 +49,7 @@ export class DeckService {
 
         if (response) {
             const result: DeckCreationResult = {
-                isSuccess: false,
-                errorMessage: "A deck with the same name already exists.",
+                state: "duplicate",
             }
             return result;
         }
@@ -58,6 +60,8 @@ export class DeckService {
             usn: -1,
             name: deckName,
             updatedAt: Date.now(),
+            newCardsPerDay: 20,
+            newLearnedToday: 0,
             learnedToday: 0,
             reviewedToday: 0,
             config: this.generateDeckConfig(),
@@ -65,83 +69,88 @@ export class DeckService {
         Logger.info("Deck created successfully:", deckName);
 
         const result: DeckCreationResult = {
-            isSuccess: true,
-            errorMessage: ""
+            state: "success",
         }
         return result;
     }
 
     /**
      * 
-     * @param deckName - deleting deck name
+     * @param deckId - deleting deck id
      * 
      */
-    async deleteDeck(deckName: string): Promise<void> {
-        Logger.info("Deleting deck with name:", deckName);
-        await getRepDb().delete(decksTable).where(eq(decksTable.name, deckName));
-        Logger.info("Deck deleted successfully:", deckName);
+    async deleteDeck(deckId: string): Promise<void> {
+        Logger.info("Deleting deck with id:", deckId);
+        await getRepDb().delete(decksTable).where(eq(decksTable.id, hexToBuffer(deckId)));
+        Logger.info("Deck deleted successfully:", deckId);
         return;
     }
 
     /**
-     * Get deck config by deck name.
-     * @param deckName - target deck name
+     * Get deck editable settings by deck id.
+     * @param deckId - target deck id
      */
-    async getDeckConfig(deckName: string): Promise<DeckConfig> {
-        Logger.info("Getting deck config for deck:", deckName);
+    async getDeckSettings(deckId: string): Promise<DeckSettings> {
+        Logger.info("Getting deck settings for deck:", deckId);
         const deckRow = await getRepDb().query.decksTable.findFirst({
-            where: eq(decksTable.name, deckName),
+            where: eq(decksTable.id, hexToBuffer(deckId)),
             columns: {
+                newCardsPerDay: true,
                 config: true,
             },
         });
         
         if (!deckRow) {
-            Logger.error("Deck not found when getting config:", deckName);
-            throw new Error(`Deck with name "${deckName}" not found.`);
+            Logger.error("Deck not found when getting settings:", deckId);
+            throw new Error(`Deck with id "${deckId}" not found.`);
         }
 
-        Logger.info("Deck config retrieved:", {
-            deckName,
-            config: deckRow.config,
+        Logger.info("Deck settings retrieved:", {
+            deckId,
+            settings: {
+                ...deckRow.config,
+                newCardsPerDay: deckRow.newCardsPerDay,
+            },
         });
 
-        return deckRow.config as DeckConfig;
+        return {
+            ...deckRow.config,
+            newCardsPerDay: deckRow.newCardsPerDay,
+        };
     }
 
     /**
-     * Update deck config by deck name.
-     * @param deckName - target deck name
-     * @param config - updated config
+     * Update deck editable settings by deck id.
+     * @param deckId - target deck id
+     * @param settings - updated settings
      */
-    async updateDeckConfig(deckName: string, config: DeckConfig): Promise<void> {
-        Logger.info("Updating deck config:", deckName);
+    async updateDeckSettings(deckId: string, settings: DeckSettings): Promise<void> {
+        Logger.info("Updating deck settings:", deckId);
+        const deckConfig = settings as DeckConfig;
         await getRepDb()
             .update(decksTable)
             .set({
-                config,
+                newCardsPerDay: settings.newCardsPerDay,
+                config: deckConfig,
                 updatedAt: Date.now(),
             })
-            .where(eq(decksTable.name, deckName));
-        Logger.info("Deck config updated successfully:", deckName);
-        Logger.info("Updated config:", config);
+            .where(eq(decksTable.id, hexToBuffer(deckId)));
+        Logger.info("Deck settings updated successfully:", deckId);
+        Logger.info("Updated settings:", settings);
     }
 
     private generateDeckConfig(): DeckConfig {
+        const params = generatorParameters();
         const defaultConfig: DeckConfig = {
-            newCardsPerDay: 20,
-            // TODO: 在此设置 FSRS 算法相关参数的默认值。
+            fsrsParams: params
         };
         return defaultConfig;
     }
 
-    private calcCanLearnToday(_deckName: string): number {
-        // TODO: 在此实现 canLearnToday 的真实计算。
-        return 0;
-    }
-
-    private calcCanReviewToday(_deckName: string): number {
-        // TODO: 在此实现 canReviewToday 的真实计算。
-        return 0;
+    private calcCanLearnToday(deck: { newCardsPerDay: number; newLearnedToday: number }): number {
+        if (deck.newCardsPerDay < 0) {
+            return -1;
+        }
+        return Math.max(0, deck.newCardsPerDay - deck.newLearnedToday);
     }
 }

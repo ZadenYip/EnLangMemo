@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content>
+    @if (message; as msg) {
+        <p>{{ msg }}</p>
+    }
+    <mat-form-field appearance="outline">
+        <mat-label>{{ label }}</mat-label>
+        <input matInput type="text" [(ngModel)]="name" />
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button type="button" mat-flat-button [disabled]="isNameEmpty" (click)="onConfirm()">
+        {{ confirmText }}
+    </button>
+    <button type="button" mat-button (click)="onCancel()">
+        {{ cancelText }}
+    </button>
+</mat-dialog-actions>

@@ -33,7 +33,7 @@ jobs:
           cache-dependency-path: client/pnpm-lock.yaml
       - name: Install Dependencies
         run: pnpm install
-      - name: Run Main Process Unit Test
+      - name: Run Test
         run: pnpm test
       - name: Run eslint
         run: pnpm lint

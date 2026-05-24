@@ -9,8 +9,8 @@ import { Router } from "@angular/router";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 import Logger from "electron-log";
-import { Deck, DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
-import { ConfirmDeleteDialogComponent } from "../shared/components";
+import { Deck, DeckSettings } from "@main/db/services/repetition/deck/deck-service-types";
+import { ConfirmDeleteDialog, ConfirmDeleteDialogData } from "../shared/components";
 import { NotifyService } from "../shared/services/notify.service";
 import { SettingsDialogService } from "../shared/services/settings-dialog.service";
 import { DeckConfigComponent } from "./sub/deck-config/config.component";
@@ -48,9 +48,9 @@ export class HomeComponent implements OnInit {
     pendingDeckName = "";
     createInputElem = viewChild<ElementRef<HTMLInputElement>>("createInput");
 
-    async ngOnInit(): Promise<void> {
+    ngOnInit(): Promise<void> {
         Logger.info("Home deck material view initialized");
-        await this.loadDecks();
+        return this.loadDecks();
     }
 
     /**
@@ -79,15 +79,13 @@ export class HomeComponent implements OnInit {
     
     // TODO
     async openDeckSettings(deck: Deck): Promise<void> {
-        const config = await window.service.deck.getDeckConfig(deck.name);
-    
-
+        const settings = await window.service.deck.getDeckSettings(deck.id);
         const result = await firstValueFrom(
             this.settingsDialog
                 .open(DeckConfigComponent, {
                     data: {
                         deckName: deck.name,
-                        config,
+                        settings,
                     },
                 })
                 .afterClosed()
@@ -96,8 +94,8 @@ export class HomeComponent implements OnInit {
         if (!result) {
             return;
         }
-        const newConfig = result as DeckConfig;
-        await window.service.deck.updateDeckConfig(deck.name, newConfig);
+        const newSettings = result as DeckSettings;
+        await window.service.deck.updateDeckSettings(deck.id, newSettings);
     }
 
     /**
@@ -105,17 +103,15 @@ export class HomeComponent implements OnInit {
      * @param deck the deck to be deleted emitted from subcomponent.
      */
     async confirmDeleteDeck(deck: Deck): Promise<void> {
-        const title = this.translateService.instant("PAGES.HOME.DECKS.DELETE_DIALOG.TITLE");
+        const title = this.translateService.instant("PAGES.HOME.DECKS.DELETE_TITLE");
         const message = this.translateService.instant("PAGES.HOME.DECKS.DELETE_CONFIRM", {
             name: deck.name,
         });
-        const confirmText = this.translateService.instant("PAGES.HOME.DECKS.DELETE_DIALOG.CONFIRM");
         const confirmed = await firstValueFrom(
-            this.dialog.open(ConfirmDeleteDialogComponent, {
+            this.dialog.open<ConfirmDeleteDialog, ConfirmDeleteDialogData>(ConfirmDeleteDialog, {
                 data: {
                     title,
                     message,
-                    confirmText,
                 },
             }).afterClosed()
         );
@@ -123,9 +119,10 @@ export class HomeComponent implements OnInit {
             return;
         }
         try {
-            await window.service.deck.deleteDeck(deck.name);
+            await window.service.deck.deleteDeck(deck.id);
         } catch (error) {
             Logger.error("Failed to delete deck", {
+                deckId: deck.id,
                 deckName: deck.name,
                 error,
             });
@@ -178,9 +175,9 @@ export class HomeComponent implements OnInit {
             return;
         }
         Logger.info(`confirm create deck with name: ${deckName}`);
-        try {
-            const result = await window.service.deck.createDeck(deckName);
-            if (result.isSuccess) {
+        const result = await window.service.deck.createDeck(deckName);
+        switch (result.state) {
+            case "success": {
                 Logger.info("Deck created successfully", {
                     deckName,
                 });
@@ -189,16 +186,23 @@ export class HomeComponent implements OnInit {
                 });
                 this.notify.open(successMsg);
                 await this.loadDecks();
-            } else {
+                break;
+            }
+            case "duplicate": {
+                Logger.info("Deck creation failed due to duplicate name", {
+                    deckName,
+                });
+                const duplicateMsg = this.translateService.instant("PAGES.HOME.DECKS.CREATE_DUPLICATE");
+                this.notify.open(duplicateMsg);
+                break;
+            }
+            case "error": {
                 Logger.error("Failed to create deck", {
                     deckName,
                     errorMessage: result.errorMessage,
                 });
-                return;
+                break;
             }
-        } catch (error) {
-            Logger.error("Failed to create deck (unknown error)", error);
-            return;
         }
         this.pendingDeckName = "";
     }

@@ -1,12 +1,12 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { Deck, DeckConfig, DeckCreationResult } from "./deck-service-types";
+import { Deck, DeckCreationResult, DeckSettings } from "./deck-service-types";
 
 export interface IDeckService {
     listDecks(): Promise<Deck[]>;
     createDeck(deckName: string): Promise<DeckCreationResult>;
-    deleteDeck(deckName: string): Promise<void>;
-    getDeckConfig(deckName: string): Promise<DeckConfig>;
-    updateDeckConfig(deckName: string, config: DeckConfig): Promise<void>;
+    deleteDeck(deckId: string): Promise<void>;
+    getDeckSettings(deckId: string): Promise<DeckSettings>;
+    updateDeckSettings(deckId: string, settings: DeckSettings): Promise<void>;
 }
 
 export const DeckServiceIPCDescriptor = {
@@ -15,7 +15,7 @@ export const DeckServiceIPCDescriptor = {
         listDecks: ProxyPropertyType.Function,
         createDeck: ProxyPropertyType.Function,
         deleteDeck: ProxyPropertyType.Function,
-        getDeckConfig: ProxyPropertyType.Function,
-        updateDeckConfig: ProxyPropertyType.Function,
+        getDeckSettings: ProxyPropertyType.Function,
+        updateDeckSettings: ProxyPropertyType.Function,
     },
 };

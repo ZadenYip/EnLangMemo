@@ -1,0 +1,9 @@
+<button
+  type="button"
+  [matTooltip]="tooltip()"
+  [matTooltipShowDelay]="tooltipDelay()"
+  [matTooltipDisabled]="!tooltip()"
+  (click)="emitClick()"
+>
+  <mat-icon>{{ iconName() }}</mat-icon>
+</button>

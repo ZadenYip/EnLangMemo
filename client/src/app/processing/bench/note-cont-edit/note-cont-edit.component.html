@@ -1,0 +1,76 @@
+<div class="header">
+    <div class="remaining-notes">
+        {{ "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.REMAINING_NOTES" | translate: { count: noteContEditState.remainingNoteCount() } }}
+    </div>
+
+    <div class="rich-text-toolbar">
+        <app-select-dropdown
+            class="deck-select"
+            [options]="noteContEditState.deckOptions()"
+            [selectedOption]="noteContEditState.selectedDeck()"
+            [disabled]="noteContEditState.isLoading() || !noteContEditState.canSelectDeck()"
+            (selectedOptionChange)="onDeckSelected($event)"
+        ></app-select-dropdown>
+
+        <div class="format-tool-icons">
+            <app-tool-icon
+                iconName="format_bold"
+                [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.TOOLS.BOLD' | translate"
+            ></app-tool-icon>
+            <app-tool-icon
+                iconName="format_italic"
+                [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.TOOLS.ITALIC' | translate"
+            ></app-tool-icon>
+            <app-tool-icon
+                iconName="format_underlined"
+                [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.TOOLS.UNDERLINE' | translate"
+            ></app-tool-icon>
+            <app-tool-icon
+                iconName="code"
+                [tooltip]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.TOOLS.CODE' | translate"
+            ></app-tool-icon>
+        </div>
+
+        <div class="save-actions">
+            <button
+                type="button"
+                mat-stroked-button
+                [disabled]="noteContEditState.isLoading() || !noteContEditState.curNote() || !noteContEditState.selectedDeck().value"
+                (click)="onSaveAndAddToDeck()"
+            >
+                {{ "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE_AND_ADD.ACTION" | translate }}
+            </button>
+
+            <button
+                type="button"
+                mat-stroked-button
+                [disabled]="noteContEditState.isLoading() || !noteContEditState.curNote()"
+                (click)="onSaveNoteContent()"
+            >
+                {{ "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE.ACTION" | translate }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="editor-divider"></div>
+
+<div class="fields-editor">
+    @if (noteContEditState.curNote()) {
+        @for (field of noteContEditState.fields(); track field.id) {
+            <div class="field-group">
+                <span class="field-name">{{ field.name }}</span>
+                <app-auto-resize-textarea
+                    class="field-input"
+                    [value]="noteContEditState.fieldValue(field.id)"
+                    [placeholder]="'PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.FIELD_PLACEHOLDER' | translate: { name: field.name }"
+                    (valueChange)="onFieldValueChange(field.id, $event)"
+                ></app-auto-resize-textarea>
+            </div>
+        }
+    } @else {
+        <span class="field-name">
+            {{ "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.EMPTY" | translate }}
+        </span>
+    }
+</div>

@@ -1,25 +1,49 @@
+import { FSRSParameters } from "ts-fsrs";
 
 export interface DeckConfig {
     /**
+     * Persisted FSRS scheduler parameters for this deck.
+     */
+    fsrsParams: FSRSParameters;
+}
+
+export interface DeckSettings extends DeckConfig {
+    /**
      * The maximum number of new cards can be learned per day in this deck.
-     * -1 means no limit
+     * -1 means no limit.
      */
     newCardsPerDay: number;
-    // TODO FSRS algorithm parameters
 }
 
 export interface Deck {
+    /**
+     * Deck primary id in hex string format.
+     */
+    id: string;
+
+    /**
+     * Deck display name.
+     */
     name: string;
+
+    /**
+     * The maximum number of new cards can be learned per day in this deck.
+     */
+    newCardsPerDay: number;
+
     /**
      * The number of cards can learn today in this deck.
      */
     canLearnToday: number;
-    
-    canReviewToday: number;
-    
+
     /**
      * The number of new cards learned today in this deck.
      * If the card don't already step into review stage, it wouldn't be counted.
+     */
+    newLearnedToday: number;
+
+    /**
+     * The number of learning card actions today.
      */
     learnedToday: number;
 
@@ -29,7 +53,7 @@ export interface Deck {
     reviewedToday: number;
 }
 
-export interface DeckCreationResult {
-    isSuccess: boolean;
-    errorMessage: string;
-}
+export type DeckCreationResult = 
+    | { state: "success" }
+    | { state: "duplicate" }
+    | { state: "error"; errorMessage: string }

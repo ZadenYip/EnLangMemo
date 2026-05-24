@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -6,23 +5,21 @@ import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle, MAT_D
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { TranslateModule } from "@ngx-translate/core";
-import { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
+import { DeckSettings } from "@main/db/services/repetition/deck/deck-service-types";
 
-/** Dialog data for deck config editing. */
+/** Dialog data for deck settings editing. */
 export interface DeckConfigDialogData {
 	/** Current deck name. */
 	deckName: string;
-	/** Current deck config values. */
-	config: DeckConfig;
+	/** Current deck settings values. */
+	settings: DeckSettings;
 }
 
 @Component({
-	selector: "app-deck-config",
 	templateUrl: "./config.component.html",
 	styleUrls: ["./config.component.scss"],
 	standalone: true,
 	imports: [
-		CommonModule,
 		FormsModule,
 		MatButtonModule,
 		MatDialogTitle,
@@ -43,9 +40,9 @@ export class DeckConfigComponent {
 	/** Deck name for the dialog title. */
 	readonly deckName = this.data.deckName;
 
-	/** Editable deck config model. */
-	readonly config: DeckConfig = {
-		...this.data.config
+	/** Editable deck settings model. */
+	readonly settings: DeckSettings = {
+		...this.data.settings
 	};
 
 	/** Close the dialog without saving. */
@@ -53,10 +50,10 @@ export class DeckConfigComponent {
 		this.dialogRef.close(null);
 	}
 
-	/** Close the dialog and return updated config. */
+	/** Close the dialog and return updated settings. */
 	onSave(): void {
 		this.dialogRef.close(
-            this.config
+            this.settings
         );
 	}
 }

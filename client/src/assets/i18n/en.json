@@ -6,16 +6,17 @@
     "HOME": {
       "DECKS": {
         "NAME": "Name",
-        "NEW_LEARNED": "New Cards Learned Today",
         "CAN_LEARN_TODAY": "New Today",
         "SHOULD_REVIEW_TODAY": "To Review Today",        
         "REVIEWED_TODAY": "Reviewed Today",
-        "LEARNED_TODAY": "Learned Today",
+        "NEW_LEARNED_TODAY": "New Learned Today",
         "SETTINGS": "Settings",
         "CREATE_PLACEHOLDER": "Click to add a deck",
+        "DELETE_TITLE": "Delete Deck",
         "DELETE_CONFIRM": "Are you sure you want to delete the deck \"{{name}}\"? This action cannot be undone.",
         "DELETE_SUCCESS": "Deck deleted: {{name}}",
         "CREATE_SUCCESS": "Deck created: {{name}}",
+        "CREATE_DUPLICATE": "Deck already exists.",
         "CREATE_NAME_EMPTY": "Deck name cannot be empty.",
         "CONFIG_DIALOG": {
           "TITLE": "Deck Config: {{name}}",
@@ -27,10 +28,6 @@
             "CANCEL": "Cancel",
             "SAVE": "Save"
           }
-        },
-        "DELETE_DIALOG": {
-          "TITLE": "Confirm Delete",
-          "CONFIRM": "Delete"
         },
         "MENU": {
           "CONFIGURE": "Deck Config",
@@ -49,6 +46,108 @@
         "FAIL_TO_LOAD_ACTION": "Close",
         "EMPTY": "Please import a subtitle file.",
         "OFFSET_TIP": "Subtitle offset: {{offset}} ms"
+      }
+    },
+    "PROCESSING": {
+      "BENCH": {
+        "HEADER": "Processing Bench",
+        "MODES": {
+          "NOTE_CONTENT": "Edit Note Content",
+          "NOTE_TEMPLATE": "Edit Note Template"
+        },
+        "ACTIONS": {
+          "EDIT_CURRENT_TEMPLATE": "Edit Selected Card Template"
+        },
+        "NOTE_CONTENT_EDIT": {
+          "TOOLS": {
+            "BOLD": "Bold",
+            "ITALIC": "Italic",
+            "UNDERLINE": "Underline",
+            "CODE": "Code"
+          },
+          "FIELD_PLACEHOLDER": "Enter {{name}}",
+          "REMAINING_NOTES": "Notes: {{count}} remaining",
+          "EMPTY": "No processing notes in the queue.",
+          "DECK_SELECT": {
+            "PLACEHOLDER": "Select deck"
+          },
+          "SAVE_AND_ADD": {
+            "ACTION": "Save to deck",
+            "SUCCESS": "Note saved and {{count}} cards created.",
+            "FAILED": "Failed to save note to deck."
+          },
+          "SAVE": {
+            "ACTION": "Save Note",
+            "SUCCESS": "Note content draft saved.",
+            "FAILED": "Failed to save note content."
+          }
+        },
+        "TEMPLATE_EDIT": {
+          "CARD_TEMPLATE_LABEL": "Card Template:",
+          "NOTE_TEMPLATE_LABEL": "Note Template:",
+          "FRONT_TEMPLATE": "Front Template",
+          "BACK_TEMPLATE": "Back Template",
+          "CSS_TEMPLATE": "CSS Template",
+          "CARD_TPL_OPS_MENU": {
+            "CREATE": "Create card template",
+            "DELETE": "Delete card template"
+          },
+          "NOTE_TPL_OPS_MENU": {
+            "CREATE": "Create note template",
+            "DELETE": "Delete note template",
+            "DEFAULT": "Default",
+            "SETTINGS": "Note template settings"
+          },
+          "FRONT_PLACEHOLDER": "Edit front template HTML",
+          "BACK_PLACEHOLDER": "Edit back template HTML",
+          "CSS_PLACEHOLDER": "Edit CSS styles",
+          "CREATE_NOTE_DIALOG": {
+            "TITLE": "Add Note Template",
+            "FIELDS": {
+              "CREATE_NAME": "Template Name"
+            },
+            "SUCCESS": "Note template created: {{name}}",
+            "DUPLICATE": "A note template with the same name already exists."
+          },
+          "CREATE_CARD_DIALOG": {
+            "TITLE": "Add Card Template",
+            "FIELDS": {
+              "CREATE_NAME": "Template Name"
+            },
+            "SUCCESS": "Card template created: {{name}}",
+            "DUPLICATE": "A card template with the same name already exists.",
+            "NO_NOTE_SELECTED": "Please select a note template first."
+          },
+          "DELETE_CARD_DIALOG": {
+            "TITLE": "Confirm Delete",
+            "MESSAGE": "Are you sure you want to delete the card template \"{{name}}\"? This action cannot be undone.",
+            "SUCCESS": "Card template deleted: {{name}}",
+            "NOT_FOUND": "The selected card template no longer exists.",
+            "NO_SELECTION": "Please select a card template to delete.",
+            "LAST_ONE": "At least one card template must be kept."
+          },
+            "DELETE_NOTE_DIALOG": {
+              "TITLE": "Confirm Delete",
+              "MESSAGE": "Are you sure you want to delete the note template \"{{name}}\"? This action cannot be undone.",
+              "SUCCESS": "Note template deleted: {{name}}",
+              "NOT_FOUND": "The selected note template no longer exists.",
+              "NO_SELECTION": "Please select a note template to delete.",
+              "LAST_ONE": "At least one note template must be kept."
+            },
+            "SAVE_TEMPLATE": {
+              "ACTION": "Save Template",
+              "SUCCESS": "Note Template saved.",
+              "NOT_FOUND": "Current note template not found. Cannot save.（This should not happen）"
+            }
+          }
+        },
+      "PREVIEW": {
+        "HEADER": "Preview",
+        "EMPTY": "No preview available.",
+        "ACTIONS": {
+          "FRONT": "Front",
+          "BACK": "Back"
+        }
       }
     },
     "DETAIL": {
@@ -87,9 +186,8 @@
           "DESCRIPTION": "Select and delete a collection you have created.",
           "NO_DELETABLE_COLLECTIONS": "No collections available to delete (the currently active collection cannot be deleted)",
           "CONFIRM_DELETE": {
-            "TITLE": "Confirm Delete",
-            "MESSAGE": "Are you sure you want to delete the collection \"{{name}}\"? This action cannot be undone.",
-            "CONFIRM": "Delete"
+            "TITLE": "Delete Collection",
+            "MESSAGE": "Are you sure you want to delete the collection \"{{name}}\"? This action cannot be undone."
           },
           "DELETED_SUCCESS": "Collection deleted: {{name}}"
         },
@@ -143,17 +241,37 @@
     "NO_RESULTS": "No search results",
     "CONTEXT_SENTENCE": "Context Sentence",
     "MEANINGS_TITLE": "Meanings List",
-    "ADD_CARD": "Add Card",
+    "ADD_TO_PROCESSING_POOL": "Add to Processing Pool",
+    "ADD_TO_PROCESSING_POOL_SUCCESS": "Added to processing pool.",
+    "ADD_TO_PROCESSING_POOL_FAILED": "Failed to add to processing pool.",
     "EXAMPLE_SENTENCE": "Example Sentence",
-    "FOLD/UNFOLD": "Fold/Unfold"
+    "FOLD/UNFOLD": "Fold/Unfold",
+    "NOTE_MAPPING": {
+      "TITLE": "Dictionary Note Mapping",
+      "NOTE_TEMPLATE_SETTING": "Note Template",
+      "NO_MAPPING": "No Mapping",
+      "SELECTED_TEXT": "Target Word(required)",
+      "CONTEXT": "Context",
+      "SRC_DEFINITION": "Source Definition(required)",
+      "TARGET_DEFINITION": "Target Definition",
+      "PHONETIC": "Phonetic",
+      "INCOMPLETE": "Please select a note template and configure field mapping first.",
+      "SAVE_SUCCESS": "Dictionary note mapping saved."
+    }
   },
   "HEADER": {
     "DECKS": "Decks",
+    "PROCESSING": "Processing",
     "IMMERSE": "Immerse",
     "ADD": "Add",
     "BROWSE": "Browse",
     "STATS": "Stats",
     "SYNC": "Sync",
     "SETTINGS": "Settings"
+  },
+  "DIALOG": {
+    "CONFIRM": "Confirm",
+    "CANCEL": "Cancel",
+    "DELETE": "Delete"
   }
 }

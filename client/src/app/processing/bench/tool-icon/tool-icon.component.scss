@@ -1,0 +1,25 @@
+:host {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+button {
+  outline: 1px solid rgba(0, 0, 0, 0.2);
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0.25rem;
+
+  // hover effect
+  :hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  // clickd state
+  :active {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}

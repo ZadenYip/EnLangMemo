@@ -1,0 +1,23 @@
+:host {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.editor-input {
+  flex: 1;
+  min-height: 0;
+  resize: none;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  border: none;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-family: "Consolas", "Courier New", monospace;
+
+  &:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+}

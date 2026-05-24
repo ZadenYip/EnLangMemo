@@ -35,6 +35,7 @@ export class AppComponent {
 
     readonly tabs = [
         { label: "HEADER.DECKS", path: `${APP_PATHS.home}` },
+        { label: "HEADER.PROCESSING", path: `${APP_PATHS.processing}` },
         { label: "HEADER.IMMERSE", path: `${APP_PATHS.immerse}` },
         { label: "HEADER.BROWSE", path: `${APP_PATHS.browse}` },
         { label: "HEADER.STATS", path: `${APP_PATHS.stats}` },
@@ -43,7 +44,7 @@ export class AppComponent {
 
     /**
      *
-     * @param path - The path to check for active state锛坋.g., "/home"锛?
+     * @param path - The path to check for activeness. e.g. "/home" or "/settings/profile".
      * @returns True if the path is active, false otherwise
      */
     isActive = (path: string): boolean => {

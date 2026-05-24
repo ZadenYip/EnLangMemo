@@ -6,7 +6,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
-import { ConfirmDeleteDialogComponent } from "../../../shared/components";
+import { ConfirmDeleteDialog, ConfirmDeleteDialogData } from "../../../shared/components";
 import Logger from "electron-log";
 import { NotifyService } from "../../../shared/services/notify.service";
 
@@ -39,16 +39,14 @@ export class DeleteComponent {
 
         const title = this.translate.instant("PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.CONFIRM_DELETE.TITLE");
         const message = this.translate.instant("PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.CONFIRM_DELETE.MESSAGE", { name });
-        const confirmText = this.translate.instant("PAGES.SETTINGS.COLLECTIONS_MANAGER.DELETE.CONFIRM_DELETE.CONFIRM");
 
         // Open confirmation dialog
         const confirmed = await firstValueFrom(
-            this.dialog.open(ConfirmDeleteDialogComponent, {
+            this.dialog.open<ConfirmDeleteDialog, ConfirmDeleteDialogData>(ConfirmDeleteDialog, {
                 data: {
                     title,
                     message,
-                    confirmText,
-                },
+                }
             }).afterClosed()
         );
 

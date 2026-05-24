@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>{{ "DICTIONARY.NOTE_MAPPING.TITLE" | translate }}</h2>
+<mat-dialog-content>
+    <div class="mapping-row">
+        <span>
+            {{ "DICTIONARY.NOTE_MAPPING.SELECTED_TEXT" | translate }}
+        </span>
+        <app-select-dropdown
+            [options]="fieldOptions"
+            [selectedOption]="selectedTextOption()"
+            (selectedOptionChange)="selectSelectedText($event)"
+        ></app-select-dropdown>
+    </div>
+
+    <div class="mapping-row">
+        <span>{{ "DICTIONARY.NOTE_MAPPING.CONTEXT" | translate }}</span>
+        <app-select-dropdown
+            [options]="fieldOptions"
+            [selectedOption]="contextOption()"
+            (selectedOptionChange)="selectContext($event)"
+        ></app-select-dropdown>
+    </div>
+
+    <div class="mapping-row">
+        <span>{{ "DICTIONARY.NOTE_MAPPING.PHONETIC" | translate }}</span>
+        <app-select-dropdown
+            [options]="fieldOptions"
+            [selectedOption]="phoneticOption()"
+            (selectedOptionChange)="selectPhonetic($event)"
+        ></app-select-dropdown>
+    </div>
+
+    <div class="mapping-row">
+        <span>
+            {{ "DICTIONARY.NOTE_MAPPING.SRC_DEFINITION" | translate }}
+        </span>
+        <app-select-dropdown
+            [options]="fieldOptions"
+            [selectedOption]="srcDefOption()"
+            (selectedOptionChange)="selectSrcDefinition($event)"
+        ></app-select-dropdown>
+    </div>
+
+    <div class="mapping-row">
+        <span>{{ "DICTIONARY.NOTE_MAPPING.TARGET_DEFINITION" | translate }}</span>
+        <app-select-dropdown
+            [options]="fieldOptions"
+            [selectedOption]="tgtDefOption()"
+            (selectedOptionChange)="selectTargetDefinition($event)"
+        ></app-select-dropdown>
+    </div>
+    
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button type="button" mat-flat-button [disabled]="!canConfirm()" (click)="confirm()">
+        {{ "DIALOG.CONFIRM" | translate }}
+    </button>
+    <button type="button" mat-button (click)="cancel()">
+        {{ "DIALOG.CANCEL" | translate }}
+    </button>
+</mat-dialog-actions>

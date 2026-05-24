@@ -11,6 +11,24 @@
     <button mat-icon-button type="button" (click)="hideWindow(); $event.stopPropagation()">
       <mat-icon>close</mat-icon>
     </button>
+    <div class="note-template-controls" (pointerdown)="$event.stopPropagation()">
+      <span class="note-template-label">
+        {{ "DICTIONARY.NOTE_MAPPING.NOTE_TEMPLATE_SETTING" | translate }}
+      </span>
+      <app-select-dropdown
+        [options]="dicNoteService.noteTplOptions()"
+        [selectedOption]="dicNoteService.selectedNoteTpl()"
+        (selectedOptionChange)="selectNoteTpl($event)"
+      ></app-select-dropdown>
+      <button
+        mat-icon-button
+        type="button"
+        [disabled]="!dicNoteService.curNoteTpl()"
+        (click)="openNoteMappingDialog(); $event.stopPropagation()"
+      >
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
   </div>
   <mat-card class="context-card">
     <mat-card-header>
@@ -54,7 +72,7 @@
                     [item]="def"
                     [index]="$index + 1"
                     [posLabel]="sense.partOfSpeech"
-                    (add)="addCard($event, sense.partOfSpeech)"
+                    (addToProcessingPool)="onAddItem($event)"
                   ></app-meaning-card>
                 }
               </div>

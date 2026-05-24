@@ -1,0 +1,43 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.editor-divider {
+  height: 1px;
+  margin-top: 0.25rem;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tabs-save-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tab {
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.editor {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+

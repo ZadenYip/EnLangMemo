@@ -1,0 +1,50 @@
+@use "src/styles.scss" as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  @include global-font-style;
+}
+
+.bench-header {
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mode-select {
+  --select-dropdown-trigger-z-index: 20;
+  --select-dropdown-menu-z-index: 21;
+}
+
+.bench-title {
+  font-weight: bold;
+}
+
+.bench-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  gap: 0.25rem;
+}
+
+.template-operation-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 2.5rem;
+}
+
+.labeled-ops {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}

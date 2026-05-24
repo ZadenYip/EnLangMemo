@@ -1,0 +1,34 @@
+<div class="bench-header">
+    <div class="bench-title">
+        {{ "PAGES.PROCESSING.BENCH.HEADER" | translate }}
+    </div>
+    <app-select-dropdown
+        class="mode-select"
+        [options]="modeOptions"
+        [selectedOption]="editMode()"
+        [disabled]="benchState.isBusy()"
+        (selectedOptionChange)="selectMode($event)"
+    ></app-select-dropdown>
+</div>
+
+<div class="bench-body">
+    <div class="template-operation-area">
+        <!-- card template operations -->
+        <div class="labeled-ops">
+            <span>{{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.CARD_TEMPLATE_LABEL" | translate }}</span>
+            <app-card-tpl-ops></app-card-tpl-ops>
+        </div>
+
+        <!-- note template operations -->
+        <div class="labeled-ops">
+            <span>{{ "PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TEMPLATE_LABEL" | translate }}</span>
+            <app-note-tpl-ops></app-note-tpl-ops>
+        </div>
+    </div>
+
+    @if (editMode().value === 'note-content') {
+        <app-note-cont-edit></app-note-cont-edit>
+    } @else {
+        <app-bench-template-edit></app-bench-template-edit>
+    }
+</div>

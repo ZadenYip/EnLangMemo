@@ -9,6 +9,9 @@ import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { AppConfig } from "./config/config";
 import { getAccountDir } from "@main/paths";
 import { CollectionConfig } from "./services/repetition/collection/col-service-types";
+import { noteTypesTable } from "./schema/repetition/rep";
+import { generateUUIDV7 } from "./import/utils";
+import { genNoteTpl } from "./services/repetition/note-template/nt-tpl-service-helper";
 
 export const dictionarySchema = dic_schema;
 export const repetitionSchema = rep_schema;
@@ -83,6 +86,15 @@ function collectionInit(): void {
             config: collectionConfig
         }
     ).run();
+
+    repDb.insert(noteTypesTable).values({
+                id: generateUUIDV7(),
+                name: "Default Note Template",
+                usn: -1,
+                updatedAt: Date.now(),
+                noteTemplate: genNoteTpl(),
+    }).run();
+    Logger.info("Database tables initialized with default values.");
 }
 
 export function reInitDatabase(appConfig: AppConfig): void {

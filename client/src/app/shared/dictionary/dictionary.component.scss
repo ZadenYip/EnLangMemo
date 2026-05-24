@@ -1,4 +1,6 @@
-﻿.dictionary-page {
+﻿@use "src/styles.scss" as *;
+
+.dictionary-page {
   position: fixed;
   left: 24px;
   top: 24px;
@@ -14,13 +16,15 @@
   display: grid;
   gap: 0;
   // first row auto height for toolbar, second row takes the rest of the space
-  grid-template-rows: auto 1fr; 
+  grid-template-rows: auto 1fr;
   grid-template-columns: 1fr 1.4fr;
   grid-template-areas:
     "toolbar toolbar"
     "context meanings";
   padding: 16px;
-  transition: opacity 120ms ease, visibility 120ms ease;
+  transition:
+    opacity 120ms ease,
+    visibility 120ms ease;
   z-index: 1000;
 }
 
@@ -39,6 +43,25 @@
   cursor: move;
   user-select: none;
   touch-action: none;
+}
+
+.note-template-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: default;
+  touch-action: auto;
+
+  .note-template-label {
+    @include global-font-style;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  app-select-dropdown {
+    --select-dropdown-trigger-z-index: 1001;
+    --select-dropdown-menu-z-index: 1002;
+  }
 }
 
 .window-resize-handle {
@@ -230,4 +253,3 @@ mat-card-title {
     border-radius: 16px;
   }
 }
-

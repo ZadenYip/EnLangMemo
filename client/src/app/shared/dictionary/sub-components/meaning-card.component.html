@@ -11,8 +11,8 @@
           <div class="gloss-target">{{ item().definition.target }}</div>
         }
       </div>
-      <button mat-stroked-button color="primary" class="add-card-btn" (click)="pressAddCard()">
-        {{ 'DICTIONARY.ADD_CARD' | translate }}
+      <button mat-stroked-button color="primary" class="add-card-btn" (click)="addCurrentToProcessingPool()">
+        {{ 'DICTIONARY.ADD_TO_PROCESSING_POOL' | translate }}
       </button>
     </div>
     @if ((item().examples ?? []).length) {

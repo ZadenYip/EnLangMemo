@@ -9,6 +9,11 @@ import {
     text,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
+import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
+import type { CollectionConfig } from "@main/db/services/repetition/collection/col-service-types";
+import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
+import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
+import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types";
 
 
 // More information see in https://dbdiagram.io/d/EnLangMemo-69aafcb1a3f0aa31e1146507
@@ -49,7 +54,7 @@ export const collectionTable = sqliteTable("collection", {
      * see app/db/services/repetition/collection/col-service-types.d.ts 
      * CollectionConfig
      */
-    config: jsonb("config").notNull(),
+    config: jsonb<CollectionConfig>("config").notNull(),
 });
 
 /**
@@ -60,12 +65,14 @@ export const decksTable = sqliteTable("decks", {
     usn: int("usn").notNull(),
     name: text("name").notNull(),
     updatedAt: int("updated_at").notNull(),
+    newCardsPerDay: int("new_cards_per_day").notNull().default(20),
+    newLearnedToday: int("new_learned_today").notNull().default(0),
     learnedToday: int("learned_today").notNull().default(0),
     reviewedToday: int("reviewed_today").notNull().default(0),
     /**
      * 
      */
-    config: jsonb("config").notNull(),
+    config: jsonb<DeckConfig>("config").notNull(),
 });
 
 /**
@@ -78,20 +85,31 @@ export const noteTypesTable = sqliteTable("note_types", {
     usn: int("usn").notNull(),
     updatedAt: int("updated_at").notNull(),
     /**
-     * JSON 配置：
-     * {
-     *   "css": "CSS...",
-     *   "sort_field": "TargetWord",
-     *   "fields": [{"name": "TargetWord"}, {"name": "Translation"}],
-     *   "templates": [{
-     *     "ordinal": 0,
-     *     "name": "默认卡",
-     *     "question": "{{TargetWord}}",
-     *     "answer": "{{Translation}}"
-     *   }]
-     * }
+      "css": "CSS content",
+      "sortField": timestamp,
+      "fields": [{"id": timestamp, "name": "TargetWord"}], 
+      "cardTpls": [
+        {
+          "id": timestamp
+          "name": "默认卡", 
+          "question": "{{TargetWord}}", 
+          "answer": "xxx"
+        }
+      ]
      */
-    config: jsonb("config").notNull(),
+    noteTemplate: jsonb<NoteTemplate>("note_template").notNull(),
+});
+
+/**
+ * Dictionary add-card mapping config, currently only one row is supported.
+ */
+export const dicNoteMapTable = sqliteTable("dic_note_map", {
+    mapId: blob("map_id", { mode: "buffer" }).primaryKey(),
+    noteTypeId: blob("note_type_id", { mode: "buffer" })
+        .notNull()
+        .references(() => noteTypesTable.id, { onDelete: "cascade" }),
+    usn: int("usn").notNull(),
+    mapping: jsonb<DicNoteMapping>("mapping").notNull(),
 });
 
 export const notesTable = sqliteTable(
@@ -99,18 +117,14 @@ export const notesTable = sqliteTable(
     {
         id: blob("id", { mode: "buffer" }).primaryKey(),
         noteTypeId: blob("note_type_id", { mode: "buffer" })
-            .notNull()
-            .references(() => noteTypesTable.id, { onDelete: "cascade" }),
-        deckId: blob("deck_id", { mode: "buffer" })
-            .notNull()
-            .references(() => decksTable.id, { onDelete: "cascade" }),
+            .notNull(),
         usn: int("usn").notNull(),
         createdAt: int("created_at").notNull(),
         updatedAt: int("updated_at").notNull(),
         senseId: blob("sense_id", { mode: "buffer" }), // 释义追踪 ID
         sortField: text("sort_field"), // 用来排序的字段
         searchFields: text("search_fields"), // 所有字段值拼凑的搜索字符串
-        fields: text("fields").notNull(), // JSON: {"TargetWord": "Apple", ...}
+        fields: jsonb<NoteField[]>("fields").notNull(), // JSON: [{"TargetWord": "Apple"}, {...}]
     },
     (table) => [index("ix_notes_usn").on(table.usn)],
 );
@@ -120,12 +134,11 @@ export const processingNotesTable = sqliteTable(
     {
         id: blob("id", { mode: "buffer" }).primaryKey(),
         noteTypeId: blob("note_type_id", { mode: "buffer" }).notNull(),
-        deckId: blob("deck_id", { mode: "buffer" }),
         usn: int("usn").notNull(),
         createdAt: int("created_at").notNull(),
         updatedAt: int("updated_at").notNull(),
         senseId: blob("sense_id", { mode: "buffer" }),
-        fields: text("fields"),
+        fields: jsonb<NoteField[]>("fields").notNull(),
     },
     (table) => [index("ix_processing_usn").on(table.usn)],
 );
@@ -135,16 +148,17 @@ export const cardsTable = sqliteTable(
     {
         id: blob("id", { mode: "buffer" }).primaryKey(),
         noteId: blob("note_id", { mode: "buffer" })
-            .notNull()
-            .references(() => notesTable.id, { onDelete: "cascade" }),
+            .notNull(),
+        deckId: blob("deck_id", { mode: "buffer" })
+            .notNull(),
         usn: int("usn").notNull(),
         updatedAt: int("updated_at").notNull(),
-        ordinal: int("ordinal"),
+        cardTemplateId: int("card_template_id").notNull(),
         difficulty: real("difficulty").notNull(),
         stability: real("stability").notNull(),
         scheduledDays: int("scheduled_days").notNull(),
         due: int("due").notNull(),
-        lastReview: int("last_review").default(0),
+        lastReview: int("last_review"),
         lapses: int("lapses").notNull(),
         learningSteps: int("learning_steps").notNull(),
         repetitions: int("repetitions").notNull(),
@@ -152,7 +166,7 @@ export const cardsTable = sqliteTable(
         queue: int("queue").notNull(),
     },
     (table) => [
-        index("ix_cards_sched").on(table.queue, table.state, table.due),
+        index("ix_cards_sched").on(table.deckId, table.queue, table.due),
         index("ix_cards_usn").on(table.usn),
         index("ix_cards_nid").on(table.noteId),
     ],
@@ -192,7 +206,7 @@ export const tombstonesTable = sqliteTable(
         unitId: blob("unit_id", { mode: "buffer" }).primaryKey(), // 对应卡片、笔记、牌组或笔记模板的 UUID
         usn: int("usn").notNull(), // -1 表示本地删除
         deletedAt: int("deleted_at").notNull(), // 删除时间戳
-        unitType: int("unit_type").notNull(), // 0=card, 1=note, 2=deck, 3=note_type
+        unitType: int("unit_type").notNull(), // 0=card, 1=note, 2=deck, 3=note_type, 4=processing_note
     },
     (table) => [index("ix_tombstones_usn").on(table.usn)],
 );
@@ -200,8 +214,7 @@ export const tombstonesTable = sqliteTable(
 // ================== Relations ==================
 
 export const decksRelations = relations(decksTable, ({ many }) => ({
-    notes: many(notesTable),
-    processingNotes: many(processingNotesTable),
+    cards: many(cardsTable),
 }));
 
 export const noteTypesRelations = relations(noteTypesTable, ({ many }) => ({
@@ -214,10 +227,6 @@ export const notesRelations = relations(notesTable, ({ one, many }) => ({
         fields: [notesTable.noteTypeId],
         references: [noteTypesTable.id],
     }),
-    deck: one(decksTable, {
-        fields: [notesTable.deckId],
-        references: [decksTable.id],
-    }),
     cards: many(cardsTable),
 }));
 
@@ -227,11 +236,7 @@ export const processingNotesRelations = relations(
         noteType: one(noteTypesTable, {
             fields: [processingNotesTable.noteTypeId],
             references: [noteTypesTable.id],
-        }),
-        deck: one(decksTable, {
-            fields: [processingNotesTable.deckId],
-            references: [decksTable.id],
-        }),
+        })
     }),
 );
 
@@ -239,6 +244,10 @@ export const cardsRelations = relations(cardsTable, ({ one, many }) => ({
     note: one(notesTable, {
         fields: [cardsTable.noteId],
         references: [notesTable.id],
+    }),
+    deck: one(decksTable, {
+        fields: [cardsTable.deckId],
+        references: [decksTable.id],
     }),
     reviewLogs: many(reviewLogTable),
 }));

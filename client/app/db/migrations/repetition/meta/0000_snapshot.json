@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "55d9db09-b386-4fb2-a2e6-21845a73e686",
+  "id": "bf271013-3834-4b80-88e3-1667d201089e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -21,6 +21,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "deck_id": {
+          "name": "deck_id",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "usn": {
           "name": "usn",
           "type": "integer",
@@ -35,11 +42,11 @@
           "notNull": true,
           "autoincrement": false
         },
-        "ordinal": {
-          "name": "ordinal",
+        "card_template_id": {
+          "name": "card_template_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "difficulty": {
@@ -75,8 +82,7 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         },
         "lapses": {
           "name": "lapses",
@@ -118,8 +124,8 @@
         "ix_cards_sched": {
           "name": "ix_cards_sched",
           "columns": [
+            "deck_id",
             "queue",
-            "state",
             "due"
           ],
           "isUnique": false
@@ -139,21 +145,7 @@
           "isUnique": false
         }
       },
-      "foreignKeys": {
-        "cards_note_id_notes_id_fk": {
-          "name": "cards_note_id_notes_id_fk",
-          "tableFrom": "cards",
-          "tableTo": "notes",
-          "columnsFrom": [
-            "note_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -257,6 +249,22 @@
           "notNull": true,
           "autoincrement": false
         },
+        "new_cards_per_day": {
+          "name": "new_cards_per_day",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 20
+        },
+        "new_learned_today": {
+          "name": "new_learned_today",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
         "learned_today": {
           "name": "learned_today",
           "type": "integer",
@@ -283,6 +291,58 @@
       },
       "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "dic_note_map": {
+      "name": "dic_note_map",
+      "columns": {
+        "map_id": {
+          "name": "map_id",
+          "type": "blob",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "note_type_id": {
+          "name": "note_type_id",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "usn": {
+          "name": "usn",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mapping": {
+          "name": "mapping",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "dic_note_map_note_type_id_note_types_id_fk": {
+          "name": "dic_note_map_note_type_id_note_types_id_fk",
+          "tableFrom": "dic_note_map",
+          "tableTo": "note_types",
+          "columnsFrom": [
+            "note_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -318,8 +378,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "config": {
-          "name": "config",
+        "note_template": {
+          "name": "note_template",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": true,
@@ -344,13 +404,6 @@
         },
         "note_type_id": {
           "name": "note_type_id",
-          "type": "blob",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "deck_id": {
-          "name": "deck_id",
           "type": "blob",
           "primaryKey": false,
           "notNull": true,
@@ -400,7 +453,7 @@
         },
         "fields": {
           "name": "fields",
-          "type": "text",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -415,34 +468,7 @@
           "isUnique": false
         }
       },
-      "foreignKeys": {
-        "notes_note_type_id_note_types_id_fk": {
-          "name": "notes_note_type_id_note_types_id_fk",
-          "tableFrom": "notes",
-          "tableTo": "note_types",
-          "columnsFrom": [
-            "note_type_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "notes_deck_id_decks_id_fk": {
-          "name": "notes_deck_id_decks_id_fk",
-          "tableFrom": "notes",
-          "tableTo": "decks",
-          "columnsFrom": [
-            "deck_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -462,13 +488,6 @@
           "type": "blob",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "deck_id": {
-          "name": "deck_id",
-          "type": "blob",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         },
         "usn": {
@@ -501,9 +520,9 @@
         },
         "fields": {
           "name": "fields",
-          "type": "text",
+          "type": "jsonb",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },

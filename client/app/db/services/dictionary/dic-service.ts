@@ -1,11 +1,12 @@
 import { getDicDb } from "../../db";
 import { IDatabaseService as IDictionaryService } from "./dic-service-interface";
 import type { Definition, DictionaryEntry, Sense } from "./dic-service-types";
-import { wordsTable } from "../../schema/dictionary/dic";
+import { definitionsTable, examplesTable, wordPosesTable, wordsTable } from "../../schema/dictionary/dic";
 import { eq } from "drizzle-orm";
 import { lemmatize } from "@main/lemmatization";
 import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
 import { ImportResult } from "../../import/dictionary/dic-import-type";
+import { bufferToHex } from "../../import/utils";
 
 export class DictionaryService implements IDictionaryService {
     /**
@@ -18,38 +19,87 @@ export class DictionaryService implements IDictionaryService {
      * @param spelling the word spelling to query, e.g. "running"
      * @returns complete word data structure (with pos, definitions, examples), null if not found
      */
-    private async getEntry(spelling: string) {
+    private async getEntry(spelling: string): Promise<DictionaryEntry | null> {
         if (!spelling) {
             return null;
         }
-        
-        
-        const row = await getDicDb().query.wordsTable.findFirst({
-            where: eq(wordsTable.spelling, spelling),
-            columns: {
-                wordId: false,
-                fingerprint: false,
-                createdAt: false,
-                updatedAt: false,
-            },
-            with: {
-                poses: {
-                    columns: { poseId: false, wordId: false, createdAt: false, updatedAt: false },
-                    with: {
-                        definitions: {
-                            columns: { defId: false, wordPosId: false, createdAt: false, updatedAt: false },
-                            with: {
-                                examples: {
-                                    columns: { expId: false, defId: false, createdAt: false, updatedAt: false },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        });
 
-        return row;
+        const rows = await getDicDb()
+            .select({
+                spelling: wordsTable.spelling,
+                phoneticBre: wordsTable.phoneticBre,
+                phoneticAme: wordsTable.phoneticAme,
+                poseId: wordPosesTable.poseId,
+                partOfSpeech: wordPosesTable.partOfSpeech,
+                defId: definitionsTable.defId,
+                defSrc: definitionsTable.defSrc,
+                defTgt: definitionsTable.defTgt,
+                exSrc: examplesTable.exSrc,
+                exTgt: examplesTable.exTgt,
+            })
+            .from(wordsTable)
+            .leftJoin(wordPosesTable, eq(wordPosesTable.wordId, wordsTable.wordId))
+            .leftJoin(definitionsTable, eq(definitionsTable.wordPosId, wordPosesTable.poseId))
+            .leftJoin(examplesTable, eq(examplesTable.defId, definitionsTable.defId))
+            .where(eq(wordsTable.spelling, spelling));
+
+        if (rows.length === 0) {
+            return null;
+        }
+
+        const sensesByPoseId = new Map<string, Sense>();
+        const definitionsByDefId = new Map<string, Definition>();
+
+        for (const row of rows) {
+            if (!row.poseId) {
+                continue;
+            }
+
+            const poseId = bufferToHex(row.poseId);
+            let sense = sensesByPoseId.get(poseId);
+            if (!sense) {
+                sense = {
+                    partOfSpeech: row.partOfSpeech ?? "",
+                    definitions: [],
+                };
+                sensesByPoseId.set(poseId, sense);
+            }
+
+            if (!row.defId) {
+                continue;
+            }
+
+            const defId = bufferToHex(row.defId);
+            let definition = definitionsByDefId.get(defId);
+            if (!definition) {
+                definition = {
+                    defId,
+                    definition: {
+                        src: row.defSrc ?? "",
+                        target: row.defTgt ?? "",
+                    },
+                    examples: [],
+                };
+                definitionsByDefId.set(defId, definition);
+                sense.definitions.push(definition);
+            }
+
+            if (row.exSrc) {
+                definition.examples?.push({
+                    src: row.exSrc,
+                    target: row.exTgt ?? "",
+                });
+            }
+        }
+
+        return {
+            word: rows[0].spelling,
+            phoneticSymbol: {
+                bre: rows[0].phoneticAme ?? "",
+                ame: rows[0].phoneticBre ?? "",
+            },
+            senses: Array.from(sensesByPoseId.values()),
+        };
     }
 
     /**
@@ -58,38 +108,17 @@ export class DictionaryService implements IDictionaryService {
      * @returns the dictionary entry if found, otherwise null
      */
     public async queryWord(spelling: string): Promise<DictionaryEntry | null> {
-        let row = await this.getEntry(spelling);
+        let entry = await this.getEntry(spelling);
 
-        if (!row) {
+        if (!entry) {
             // Try lemmatized form if the original spelling is not found.
-            row = await this.getEntry(lemmatize(spelling));
-            if (!row) {
+            entry = await this.getEntry(lemmatize(spelling));
+            if (!entry) {
                 return null;
             }
         }
 
-        const result: DictionaryEntry = {
-            word: row.spelling,
-            phoneticSymbol: {
-                bre: row.phoneticAme ?? "",
-                ame: row.phoneticBre ?? "",
-            },
-            senses: row.poses.map<Sense>((pose) => ({
-                partOfSpeech: pose.partOfSpeech ?? "",
-                definitions: pose.definitions.map<Definition>((def) => ({
-                    definition: {
-                        src: def.defSrc ?? "",
-                        target: def.defTgt ?? "",
-                    },
-                    examples: def.examples.map((exp) => ({
-                        src: exp.exSrc ?? "",
-                        target: exp.exTgt ?? "",
-                    })),
-                })),
-            })),
-        };
-
-        return result;
+        return entry;
     }
 
     public async importWords(path: string): Promise<ImportResult> {
