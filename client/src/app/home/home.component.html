@@ -13,7 +13,7 @@
 
     @for (deck of deckOverviewList; track deck.name) {
     <div class="deck-row">
-      <a class="deck-link" routerLink="/deck/{{ deck.id }}">
+      <a class="deck-link" [routerLink]="['/deck', deck.id, 'start']">
         {{ deck.name }}
       </a>
       <span>{{ deck.canLearnToday }}</span>
