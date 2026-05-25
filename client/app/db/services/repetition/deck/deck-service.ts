@@ -24,30 +24,30 @@ export class DeckService {
             }
         })
 
-        return Promise.all(deckRows.map(async (deckRow) => {
-            const canLearnToday = this.calcCanLearnToday(deckRow);
-            const [newCards, shouldReviewToday, learning, relearning] = await Promise.all([
-                countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.NEW]),
-                countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.REVIEW], new Date()),
-                countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.LEARNING]),
-                countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.RELEARNING]),
-            ]);
+        return Promise.all(deckRows.map((deckRow) => this.toDeck(deckRow)));
+    }
 
-            const deck: Deck = {
-                id: bufferToHex(deckRow.id),
-                name: deckRow.name,
-                newCardsPerDay: deckRow.newCardsPerDay,
-                canLearnToday,
-                newCards,
-                shouldReviewToday,
-                learning,
-                relearning,
-                newLearnedToday: deckRow.newLearnedToday,
-                learnedToday: deckRow.learnedToday,
-                reviewedToday: deckRow.reviewedToday,
-            };
-            return deck;
-        }));
+    /**
+     * Get one deck overview in the current collection by id.
+     */
+    async getDeckById(deckId: string): Promise<Deck | null> {
+        const deckRow = await getRepDb().query.decksTable.findFirst({
+            where: eq(decksTable.id, hexToBuffer(deckId)),
+            columns: {
+                id: true,
+                name: true,
+                newCardsPerDay: true,
+                newLearnedToday: true,
+                learnedToday: true,
+                reviewedToday: true,
+            },
+        });
+
+        if (!deckRow) {
+            return null;
+        }
+
+        return this.toDeck(deckRow);
     }
 
     /**
@@ -164,5 +164,40 @@ export class DeckService {
             return -1;
         }
         return Math.max(0, deck.newCardsPerDay - deck.newLearnedToday);
+    }
+
+    /**
+     * Convert one deck database row to the frontend deck overview model.
+     */
+    private async toDeck(deckRow: {
+        id: Buffer;
+        name: string;
+        newCardsPerDay: number;
+        newLearnedToday: number;
+        learnedToday: number;
+        reviewedToday: number;
+    }): Promise<Deck> {
+        const canLearnToday = this.calcCanLearnToday(deckRow);
+        const [newCards, shouldReviewToday, learning, relearning] = await Promise.all([
+            countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.NEW]),
+            countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.REVIEW], new Date()),
+            countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.LEARNING]),
+            countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.RELEARNING]),
+        ]);
+
+        const deck: Deck = {
+            id: bufferToHex(deckRow.id),
+            name: deckRow.name,
+            newCardsPerDay: deckRow.newCardsPerDay,
+            canLearnToday,
+            newCards,
+            shouldReviewToday,
+            learning,
+            relearning,
+            newLearnedToday: deckRow.newLearnedToday,
+            learnedToday: deckRow.learnedToday,
+            reviewedToday: deckRow.reviewedToday,
+        };
+        return deck;
     }
 }
