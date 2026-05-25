@@ -38,6 +38,14 @@
         }
       }
     },
+    "LEARN": {
+      "OVERVIEW": {
+        "DECK_NAME": "牌组名称：{{name}}",
+        "NEW_AVAILABLE": "可新学 {{count}} 张卡片",
+        "REVIEW_AVAILABLE": "可复习 {{count}} 张卡片",
+        "LEARNING": "正学习 {{count}} 张卡片"
+      },
+      },
     "IMMERSE": {
       "SUBTITLE": {
         "HEADER": "字幕内容",

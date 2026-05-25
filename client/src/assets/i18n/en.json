@@ -38,6 +38,14 @@
         }
       }
     },
+    "LEARN": {
+      "OVERVIEW": {
+        "DECK_NAME": "Deck: {{name}}",
+        "NEW_AVAILABLE": "{{count}} new cards available",
+        "REVIEW_AVAILABLE": "{{count}} cards available for review",
+        "LEARNING": "{{count}} cards learning"
+      },
+      },
     "IMMERSE": {
       "SUBTITLE": {
         "HEADER": "Subtitle Content",

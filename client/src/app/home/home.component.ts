@@ -5,7 +5,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 import Logger from "electron-log";
@@ -22,15 +22,16 @@ import { DeckSettingsComponent } from "./sub/settings/settings.component";
     styleUrls: ["./home.component.scss"],
     standalone: true,
     imports: [
-        CommonModule,
-        TranslateModule,
-        MatButtonModule,
-        MatCardModule,
-        MatDialogModule,
-        MatIconModule,
-        FormsModule,
-        DeckSettingsComponent,
-    ],
+    CommonModule,
+    TranslateModule,
+    MatButtonModule,
+    MatCardModule,
+    MatDialogModule,
+    MatIconModule,
+    FormsModule,
+    DeckSettingsComponent,
+    RouterLink
+],
 })
 export class HomeComponent implements OnInit {
     private readonly router = inject(Router);
@@ -69,13 +70,6 @@ export class HomeComponent implements OnInit {
         });
     }
 
-    // TODO
-    openDeckReview(deck: Deck): void {
-        Logger.info("TODO: open deck review page", {
-            deck,
-            currentUrl: this.router.url,
-        });
-    }
     
     // TODO
     async openDeckSettings(deck: Deck): Promise<void> {
