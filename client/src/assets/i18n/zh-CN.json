@@ -39,6 +39,7 @@
       }
     },
     "LEARN": {
+      "LOAD_FAILED": "加载牌组学习页面失败",
       "OVERVIEW": {
         "DECK_NAME": "牌组名称：{{name}}",
         "NEW_AVAILABLE": "可新学 {{count}} 张卡片",

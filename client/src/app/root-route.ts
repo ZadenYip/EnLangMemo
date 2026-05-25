@@ -8,6 +8,7 @@ import { PageNotFoundComponent } from "@render/shared/components";
 import { BROWSE_ROUTES } from "@render/browse/route";
 import { ProcessingComponent } from "./processing/processing.component";
 import { LearnComponent } from "./home/sub/learn/learn.component";
+import { LearnStartComponent } from "./home/sub/learn/learn-start.component";
 
 export const APP_PATHS = {
     deck: "deck",
@@ -35,6 +36,17 @@ export const APP_ROUTES: Routes = [
     {
         path: `${APP_PATHS.deck}/:deck-id`,
         component: LearnComponent,
+        children: [
+            {
+                path: "",
+                redirectTo: "start",
+                pathMatch: "full",
+            },
+            {
+                path: "start",
+                component: LearnStartComponent,
+            },
+        ],
     },
     {
         path: APP_PATHS.immerse,

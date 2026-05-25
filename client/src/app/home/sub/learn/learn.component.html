@@ -1,0 +1,14 @@
+@if (learnState.isLoading()) {
+<div class="loading-state">
+  {{ "PAGES.LEARN.LOADING" | translate }}
+</div>
+} @else if (learnState.loadFailed()) {
+<div class="load-failed-state">
+  <div>{{ "PAGES.LEARN.LOAD_FAILED" | translate }}</div>
+  <button type="button" mat-stroked-button (click)="backToDecks()">
+    {{ "PAGES.LEARN.ACTIONS.BACK_TO_DECKS" | translate }}
+  </button>
+</div>
+} @else {
+<router-outlet></router-outlet>
+}

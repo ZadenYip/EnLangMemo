@@ -39,6 +39,8 @@
       }
     },
     "LEARN": {
+      "LOADING": "Loading deck...",
+      "LOAD_FAILED": "Failed to load the deck learning page",
       "OVERVIEW": {
         "DECK_NAME": "Deck: {{name}}",
         "NEW_AVAILABLE": "{{count}} new cards available",

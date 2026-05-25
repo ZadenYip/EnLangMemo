@@ -1,7 +1,8 @@
-import { Component, computed, input, output } from "@angular/core";
+import { Component, computed, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { ActivatedRoute, Router } from "@angular/router";
 import { TranslateModule } from "@ngx-translate/core";
-import { Deck } from "@main/db/services/repetition/deck/deck-service-types";
+import { LearnStateService } from "./learn-state.service";
 
 @Component({
     selector: "app-learn-start",
@@ -14,8 +15,17 @@ import { Deck } from "@main/db/services/repetition/deck/deck-service-types";
     styleUrl: "./learn-start.component.scss",
 })
 export class LearnStartComponent {
+    /** Shared learning route state loaded by the parent route. */
+    private readonly learnState = inject(LearnStateService);
+
+    /** Router used to enter the active learning child route. */
+    private readonly router = inject(Router);
+
+    /** Current child route used for relative navigation. */
+    private readonly route = inject(ActivatedRoute);
+
     /** Deck overview shown before starting a learning session. */
-    readonly deck = input.required<Deck>();
+    readonly deck = computed(() => this.learnState.deck()!);
 
     /** Total cards currently in learning or relearning queues. */
     readonly learningCards = computed(() => {
@@ -32,6 +42,10 @@ export class LearnStartComponent {
         return Math.min(deck.canLearnToday, deck.newCards);
     });
 
-    /** Emitted when user confirms starting the learning session. */
-    readonly startRequested = output<void>();
+    /** Navigate to the active learning route. */
+    startLearning(): void {
+        void this.router.navigate(["../learning"], {
+            relativeTo: this.route,
+        });
+    }
 }
