@@ -1,12 +1,12 @@
 @if (learnState.isLoading()) {
 <div class="loading-state">
-  {{ "PAGES.LEARN.LOADING" | translate }}
+  {{ "PAGES.LEARN.SHELL.LOADING" | translate }}
 </div>
 } @else if (learnState.loadFailed()) {
 <div class="load-failed-state">
-  <div>{{ "PAGES.LEARN.LOAD_FAILED" | translate }}</div>
-  <button type="button" mat-stroked-button (click)="backToDecks()">
-    {{ "PAGES.LEARN.ACTIONS.BACK_TO_DECKS" | translate }}
+  <div>{{ "PAGES.LEARN.SHELL.LOAD_FAILED" | translate }}</div>
+  <button type="button" mat-stroked-button (click)="backToHome()">
+    {{ "PAGES.LEARN.SHELL.BACK_TO_HOME" | translate }}
   </button>
 </div>
 } @else {

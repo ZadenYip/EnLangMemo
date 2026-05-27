@@ -39,15 +39,22 @@
       }
     },
     "LEARN": {
+      "SHELL": {
       "LOADING": "Loading deck...",
       "LOAD_FAILED": "Failed to load the deck learning page",
-      "COMPLETED": "Current deck: {{name}} has completed learning",
-      "OVERVIEW": {
+        "BACK_TO_HOME": "Back to Home"
+      },
+      "START": {
         "DECK_NAME": "Deck: {{name}}",
         "NEW_AVAILABLE": "{{count}} new cards available",
         "REVIEW_AVAILABLE": "{{count}} cards available for review",
-        "LEARNING": "{{count}} cards learning"
+        "LEARNING": "{{count}} cards learning",
+        "START": "Start Learning"
       },
+      "COMPLETED": {
+        "MESSAGE": "Current deck: {{name}} has completed learning",
+        "BACK_TO_HOME": "Back to Home"
+      }
       },
     "IMMERSE": {
       "SUBTITLE": {
