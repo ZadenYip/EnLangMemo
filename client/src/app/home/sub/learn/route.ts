@@ -13,21 +13,21 @@ export const LEARN_PATHS = {
 export type LearnPath = (typeof LEARN_PATHS)[keyof typeof LEARN_PATHS];
 
 export const LEARN_ROUTES: Routes = [
-        {
-            path: "",
+    {
+        path: "",
         redirectTo: LEARN_PATHS.start,
-            pathMatch: "full",
-        },
-        {
+        pathMatch: "full",
+    },
+    {
         path: LEARN_PATHS.start,
-            component: LearnStartComponent,
-        },
-        {
+        component: LearnStartComponent,
+    },
+    {
         path: LEARN_PATHS.learning,
-            component: LearnCardComponent,
-        },
-        {
+        component: LearnCardComponent,
+    },
+    {
         path: LEARN_PATHS.completed,
-            component: LearnCompletedComponent,
-        },
+        component: LearnCompletedComponent,
+    },
 ];

@@ -5,6 +5,7 @@ import { TranslateModule } from "@ngx-translate/core";
 import { APP_PATHS } from "../../../root-route";
 import { LearnStateService } from "./learn-state.service";
 import Logger from "electron-log/renderer";
+import { LEARN_PATHS, LearnPath } from "./route";
 
 @Component({
     selector: "app-learn",
@@ -35,19 +36,35 @@ export class LearnComponent implements OnInit {
             Logger.error(`No deck id provided in learn route, 
                 it shouldn't be possible to reach this page without a deck id.
                 Returning to deck list.`);
-            this.backToDecks();
+            this.backToHome();
             return;
         }
-        void this.loadDeck(deckId);
+        void this.initPage(deckId);
     }
 
-    /** Return to the deck list page. */
-    backToDecks(): void {
+    /** Return to the main deck page. */
+    backToHome(): void {
         void this.router.navigate([APP_PATHS.deck]);
     }
 
-    /** Load current deck state and leave the learning route if no deck is found. */
-    private async loadDeck(deckId: string): Promise<void> {
+    /** Load current deck state and redirect completed decks to the completed route. */
+    private async initPage(deckId: string): Promise<void> {
         await this.learnState.loadDeck(deckId);
+        if (this.learnState.loadFailed()) {
+            return;
+        }
+
+        // Redirect to the completed page if the deck is already completed.
+        if (this.learnState.isDeckCompleted()) {
+            void this.navigateTo(LEARN_PATHS.completed);
+        }
     }
+
+    /** Navigate to one of the learning child routes. */
+    public async navigateTo(path: LearnPath): Promise<void> {
+        await this.router.navigate([path], {
+            relativeTo: this.route,
+        });
+    }
+    
 }

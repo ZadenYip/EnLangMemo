@@ -41,7 +41,7 @@
     "LEARN": {
       "SHELL": {
         "LOADING": "正在加载牌组...",
-      "LOAD_FAILED": "加载牌组学习页面失败",
+        "LOAD_FAILED": "加载牌组学习页面失败",
         "BACK_TO_HOME": "返回主界面"
       },
       "START": {
@@ -55,7 +55,7 @@
         "MESSAGE": "当前牌组：{{name}} 已经完成学习",
         "BACK_TO_HOME": "返回主界面"
       }
-      },
+    },
     "IMMERSE": {
       "SUBTITLE": {
         "HEADER": "字幕内容",

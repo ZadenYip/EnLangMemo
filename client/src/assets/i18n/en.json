@@ -40,8 +40,8 @@
     },
     "LEARN": {
       "SHELL": {
-      "LOADING": "Loading deck...",
-      "LOAD_FAILED": "Failed to load the deck learning page",
+        "LOADING": "Loading deck...",
+        "LOAD_FAILED": "Failed to load the deck learning page",
         "BACK_TO_HOME": "Back to Home"
       },
       "START": {
@@ -55,7 +55,7 @@
         "MESSAGE": "Current deck: {{name}} has completed learning",
         "BACK_TO_HOME": "Back to Home"
       }
-      },
+    },
     "IMMERSE": {
       "SUBTITLE": {
         "HEADER": "Subtitle Content",
