@@ -4,28 +4,30 @@ import { LearnCardComponent } from "./learn-card.component";
 import { LearnCompletedComponent } from "./learn-completed.component";
 
 
-const ROUTES = {
+export const LEARN_PATHS = {
     start: "start",
     learning: "learning",
     completed: "completed",
 } as const;
 
+export type LearnPath = (typeof LEARN_PATHS)[keyof typeof LEARN_PATHS];
+
 export const LEARN_ROUTES: Routes = [
         {
             path: "",
-            redirectTo: ROUTES.start,
+        redirectTo: LEARN_PATHS.start,
             pathMatch: "full",
         },
         {
-            path: ROUTES.start,
+        path: LEARN_PATHS.start,
             component: LearnStartComponent,
         },
         {
-            path: ROUTES.learning,
+        path: LEARN_PATHS.learning,
             component: LearnCardComponent,
         },
         {
-            path: ROUTES.completed,
+        path: LEARN_PATHS.completed,
             component: LearnCompletedComponent,
         },
-]
+];

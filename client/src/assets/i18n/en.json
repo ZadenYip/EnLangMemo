@@ -41,6 +41,7 @@
     "LEARN": {
       "LOADING": "Loading deck...",
       "LOAD_FAILED": "Failed to load the deck learning page",
+      "COMPLETED": "Current deck: {{name}} has completed learning",
       "OVERVIEW": {
         "DECK_NAME": "Deck: {{name}}",
         "NEW_AVAILABLE": "{{count}} new cards available",
