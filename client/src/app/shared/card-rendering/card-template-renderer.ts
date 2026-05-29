@@ -3,7 +3,7 @@
  */
 export interface CardRenderField {
     /**
-     * Field name referenced by template placeholders, for example {{Word}}.
+     * Field name used in template placeholders, for example "Word" in {{Word}}.
      */
     name: string;
     /**
