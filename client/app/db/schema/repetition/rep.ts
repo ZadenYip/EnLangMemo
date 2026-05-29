@@ -157,12 +157,22 @@ export const cardsTable = sqliteTable(
         difficulty: real("difficulty").notNull(),
         stability: real("stability").notNull(),
         scheduledDays: int("scheduled_days").notNull(),
+        /**
+         * Due timestamp in milliseconds.
+         * - new: card introduction ordering timestamp
+         * - learning/relearning: exact due timestamp
+         * - review: collection-timezone daily reset timestamp for the due day
+         */
         due: int("due").notNull(),
         lastReview: int("last_review"),
         lapses: int("lapses").notNull(),
         learningSteps: int("learning_steps").notNull(),
         repetitions: int("repetitions").notNull(),
         state: int("state").notNull(),
+        /**
+         * -1 = suspended, 0 = new, 1 = learning/relearning, 2 = review.
+         * Use state to distinguish learning and relearning.
+         */
         queue: int("queue").notNull(),
     },
     (table) => [

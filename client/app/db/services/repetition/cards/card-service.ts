@@ -77,11 +77,26 @@ export async function countCardsByDeckAndQueues(
     queues: CardQueue[],
     dueBefore?: Date,
 ): Promise<number> {
+    return countCardsByDeckQueuesAndStates(deckId, queues, undefined, dueBefore);
+}
+
+/**
+ * Count cards in the specified queues and optional states for one deck.
+ */
+export async function countCardsByDeckQueuesAndStates(
+    deckId: Buffer,
+    queues: CardQueue[],
+    states?: CardState[],
+    dueBefore?: Date,
+): Promise<number> {
     /** Query filters shared by card queue statistics. */
-    const filters = [
+    const filters: SQL[] = [
         eq(cardsTable.deckId, deckId),
         inArray(cardsTable.queue, queues),
     ];
+    if (states !== undefined) {
+        filters.push(inArray(cardsTable.state, states));
+    }
     if (dueBefore !== undefined) {
         filters.push(lte(cardsTable.due, dueBefore.getTime()));
     }
@@ -96,6 +111,27 @@ export async function countCardsByDeckAndQueues(
 
     return rows[0]?.value ?? 0;
 }
+
+/**
+ * Get the next study cards for one deck.
+ */
+export async function getStudyCards(deckId: string, limit: number): Promise<StudyCard[]> {
+    if (limit <= 0) {
+        return [];
+    }
+
+    const deckIdBuffer = hexToBuffer(deckId);
+    const deck = await getRepDb().query.decksTable.findFirst({
+        where: eq(decksTable.id, deckIdBuffer),
+        columns: {
+            newCardsPerDay: true,
+            newLearnedToday: true,
+        },
+    });
+    if (!deck) {
+        return [];
+    }
+
 
 /**
  * Resolve sort field text from processing note fields.

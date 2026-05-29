@@ -5,8 +5,8 @@ import { eq } from "drizzle-orm";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import Logger from "electron-log";
 import { generatorParameters } from "ts-fsrs";
-import { countCardsByDeckAndQueues } from "../cards/card-service";
-import { CARD_QUEUE } from "../cards/card-service-types";
+import { countCardsByDeckAndQueues, countCardsByDeckQueuesAndStates } from "../cards/card-service";
+import { CARD_QUEUE, CARD_STATE } from "../cards/card-service-types";
 
 export class DeckService {
     /**
@@ -181,8 +181,8 @@ export class DeckService {
         const [newCards, shouldReviewToday, learning, relearning] = await Promise.all([
             countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.NEW]),
             countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.REVIEW], new Date()),
-            countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.LEARNING]),
-            countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.RELEARNING]),
+            countCardsByDeckQueuesAndStates(deckRow.id, [CARD_QUEUE.LEARNING], [CARD_STATE.LEARNING]),
+            countCardsByDeckQueuesAndStates(deckRow.id, [CARD_QUEUE.LEARNING], [CARD_STATE.RELEARNING]),
         ]);
 
         const deck: Deck = {

@@ -1,5 +1,5 @@
-import { Card, IPreview, RecordLog, RecordLogItem, ReviewLog } from "ts-fsrs";
-import { FSRSCard, FSRSIPreview, FSRSRecordLog, FSRSRecordLogItem, FSRSReviewLog } from "./card-service-types";
+import { Card, IPreview, RecordLog, RecordLogItem, ReviewLog, State } from "ts-fsrs";
+import { CARD_QUEUE, CardQueue, FSRSCard, FSRSIPreview, FSRSRecordLog, FSRSRecordLogItem, FSRSReviewLog } from "./card-service-types";
 import { CollectionConfig } from "../collection/col-service-types";
 
 export function createEmptyCardHandler(card: Card): FSRSCard {
@@ -37,24 +37,65 @@ export function toCard(fsrsCard: FSRSCard, config: CollectionConfig): Card {
     }
     return card;
 }
+/**
+ * Get the next review reset boundary after the given timestamp.
+ * This is used as the upper due bound for "today's" learning/review cards.
+ * Example when dailyResetTime = 4:
+ * - 2026-05-31 03:52 -> 2026-05-31 04:00.
+ * - 2026-05-31 22:06 -> 2026-06-01 04:00.
+ * - 2026-05-31 04:00 -> 2026-06-01 04:00.
+ * @returns Epoch timestamp in milliseconds for the next reset boundary.
+ */
+export function getNextRstBoundaryTimestamp(config: CollectionConfig, now = new Date()): number {
+    const oneDayInMs = 86_400_000;
+    return toAssignedReviewDateRstTimestamp(new Date(now.getTime() + oneDayInMs), config);
+}
 
 function calcElapsedDays(card: FSRSCard, config: CollectionConfig): number {
     if (card.lastReview === undefined) {
         return 0;
     }
 
-    const currentReviewDay = toResetDayNumber(new Date(), config);
-    const lastReviewDay = toResetDayNumber(card.lastReview, config);
-    return Math.max(0, currentReviewDay - lastReviewDay);
+    const oneDayInMs = 86_400_000;
+    const currentReviewDateRst = toAssignedReviewDateRstTimestamp(new Date(), config);
+    const lastReviewDateRst = toAssignedReviewDateRstTimestamp(card.lastReview, config);
+    /** Milliseconds between the current review day and the card's last review day. */
+    const elapsedMs = currentReviewDateRst - lastReviewDateRst;
+    if (elapsedMs <= 0) {
+        return 0;
+    }
+
+    return Math.round(elapsedMs / oneDayInMs);
 }
 
-function toResetDayNumber(date: Date, config: CollectionConfig): number {
-    /** Date shifted so dailyResetTime becomes the review day boundary. */
+/**
+ * Convert a timestamp to the reset boundary of the review date it belongs to.
+ * The app's review date starts at dailyResetTime in the collection timezone.
+ * Example when dailyResetTime = 4:
+ * - 2026-05-31 03:52 belongs to 2026-05-30, returns 2026-05-30 04:00.
+ * - 2026-05-31 04:01 belongs to 2026-05-31, returns 2026-05-31 04:00.
+ * @returns Epoch timestamp in milliseconds of the assigned review date's reset boundary.
+ */
+export function toAssignedReviewDateRstTimestamp(date: Date, config: CollectionConfig): number {
     const shiftedDate = new Date(date.getTime() - config.dailyResetTime * 60 * 60 * 1000);
-    /** Calendar date parts in the collection timezone after boundary shifting. */
-    const parts = getTimeZoneDateParts(shiftedDate, config.timeZone);
-    const oneDayInMs = 86_400_000;
-    return Date.UTC(parts.year, parts.month - 1, parts.day) / oneDayInMs;
+    /** Calendar date parts in the collection timezone after review-day shifting. */
+    const dateParts = getTimeZoneDateParts(shiftedDate, config.timeZone);
+    /** Reset boundary that wrongly treats the collection timezone's reset time as UTC. */
+    const fakeUtcRstTimestamp = Date.UTC(dateParts.year, dateParts.month - 1, dateParts.day, config.dailyResetTime);
+    /** Local date-time parts of the fake UTC reset time in the collection timezone. */
+    const fakeUtcRstInTimeZoneParts = getTimeZoneDateTimeParts(new Date(fakeUtcRstTimestamp), config.timeZone);
+    /** The same displayed local time rebuilt as UTC, used only to calculate timezone offset. */
+    const fakeUtcRstInTimeZoneTimestamp = Date.UTC(
+        fakeUtcRstInTimeZoneParts.year,
+        fakeUtcRstInTimeZoneParts.month - 1,
+        fakeUtcRstInTimeZoneParts.day,
+        fakeUtcRstInTimeZoneParts.hour,
+        fakeUtcRstInTimeZoneParts.minute,
+        fakeUtcRstInTimeZoneParts.second,
+    );
+    /** Timezone offset in milliseconds at this reset boundary. */
+    const timeZoneOffsetMs = fakeUtcRstInTimeZoneTimestamp - fakeUtcRstTimestamp;
+    return fakeUtcRstTimestamp - timeZoneOffsetMs;
 }
 
 function getTimeZoneDateParts(date: Date, timeZone: string) {
@@ -69,6 +110,28 @@ function getTimeZoneDateParts(date: Date, timeZone: string) {
         year: Number(parts.find((part) => part.type === "year")!.value),
         month: Number(parts.find((part) => part.type === "month")!.value),
         day: Number(parts.find((part) => part.type === "day")!.value),
+    };
+}
+
+function getTimeZoneDateTimeParts(date: Date, timeZone: string) {
+    const parts = new Intl.DateTimeFormat("zh-CN", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+    }).formatToParts(date);
+
+    return {
+        year: Number(parts.find((part) => part.type === "year")!.value),
+        month: Number(parts.find((part) => part.type === "month")!.value),
+        day: Number(parts.find((part) => part.type === "day")!.value),
+        hour: Number(parts.find((part) => part.type === "hour")!.value),
+        minute: Number(parts.find((part) => part.type === "minute")!.value),
+        second: Number(parts.find((part) => part.type === "second")!.value),
     };
 }
 
