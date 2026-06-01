@@ -161,7 +161,7 @@ export const cardsTable = sqliteTable(
          * Due timestamp in milliseconds.
          * - new: card introduction ordering timestamp
          * - learning/relearning: exact due timestamp
-         * - review: collection-timezone daily reset timestamp for the due day
+         * - review: FSRS due timestamp
          */
         due: int("due").notNull(),
         lastReview: int("last_review"),
