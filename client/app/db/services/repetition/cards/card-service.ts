@@ -1,12 +1,15 @@
 import { getRepDb } from "@main/db/db";
-import { generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { cardsTable, notesTable } from "@main/db/schema/repetition/rep";
+import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
+import { cardsTable, collectionTable, decksTable, notesTable, noteTypesTable, reviewLogTable } from "@main/db/schema/repetition/rep";
 import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
 import type { PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types";
-import { createEmptyCard } from "ts-fsrs";
-import { createEmptyCardHandler } from "./card-service-helper";
-import { CARD_QUEUE, CardQueue } from "./card-service-types";
-import { and, count, inArray, lte, eq } from "drizzle-orm";
+import { createEmptyCard, fsrs, Grade, Rating } from "ts-fsrs";
+import { createEmptyCardHandler, getNextRstBoundaryTimestamp, nextHandler, toCard, toCardQueue } from "./card-service-helper";
+import { CardReviewResult, CardState, FSRSCard, LangCard, StudyCard } from "./card-service-types";
+import { and, asc, count, eq, inArray, lte, SQL } from "drizzle-orm";
+import { CollectionConfig } from "../collection/col-service-types";
+import { resolveNewCardLimit } from "../deck/deck-service-helper";
+import { CardQueue } from "./card-service-types";
 
 type RepTx = Parameters<Parameters<ReturnType<typeof getRepDb>["transaction"]>[0]>[0];
 
@@ -61,7 +64,7 @@ export function createCardsFromPcsNote(
                 learningSteps: card.learningSteps,
                 repetitions: card.repetitions,
                 state: card.state,
-                queue: CARD_QUEUE.NEW,
+                queue: CardQueue.NEW,
             })
             .run();
     }
@@ -132,6 +135,124 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
         return [];
     }
 
+    const collectionConfig = await getCurrentCollectionConfig();
+    const todayDueUpperBound = getNextRstBoundaryTimestamp(collectionConfig);
+
+    const newCardLimit = resolveNewCardLimit(deck, limit);
+    // TODO review
+    const [learningCards, reviewCards, newCards] = await Promise.all([
+        queryStudyCardsByQueue(deckIdBuffer, CardQueue.LEARNING, limit, todayDueUpperBound),
+        queryStudyCardsByQueue(deckIdBuffer, CardQueue.REVIEW, limit, todayDueUpperBound),
+        queryStudyCardsByQueue(deckIdBuffer, CardQueue.NEW, newCardLimit, todayDueUpperBound),
+    ]);
+
+    return mergeStudyCardsByDue(
+        [
+            ...learningCards,
+            ...reviewCards,
+            ...newCards,
+        ],
+        limit,
+    );
+}
+
+// TODO 查询性能测试
+async function queryStudyCardsByQueue(
+    deckId: Buffer,
+    queue: CardQueue,
+    limit: number,
+    dueUpperBound: number,
+): Promise<StudyCard[]> {
+    const filters: SQL[] = [
+        eq(cardsTable.deckId, deckId),
+        eq(cardsTable.queue, queue),
+    ];
+    if (dueUpperBound !== undefined) {
+        filters.push(lte(cardsTable.due, dueUpperBound));
+    }
+
+    const rows = await getRepDb()
+        .select({
+            card: {
+                id: cardsTable.id,
+                queue: cardsTable.queue,
+                cardTemplateId: cardsTable.cardTemplateId,
+                difficulty: cardsTable.difficulty,
+                stability: cardsTable.stability,
+                scheduledDays: cardsTable.scheduledDays,
+                due: cardsTable.due,
+                lastReview: cardsTable.lastReview,
+                lapses: cardsTable.lapses,
+                learningSteps: cardsTable.learningSteps,
+                repetitions: cardsTable.repetitions,
+                state: cardsTable.state,
+            },
+            note: {
+                id: notesTable.id,
+                noteTypeId: notesTable.noteTypeId,
+                fields: notesTable.fields,
+            },
+            noteTemplate: noteTypesTable.noteTemplate,
+        })
+        .from(cardsTable)
+        .innerJoin(notesTable, eq(cardsTable.noteId, notesTable.id))
+        .innerJoin(noteTypesTable, eq(notesTable.noteTypeId, noteTypesTable.id))
+        .where(and(...filters))
+        .orderBy(asc(cardsTable.due))
+        .limit(limit);
+
+    return rows.map((row) => toStudyCard(row));
+}
+
+interface StudyCardRow {
+    card: Pick<
+        typeof cardsTable.$inferSelect,
+        | "id"
+        | "queue"
+        | "cardTemplateId"
+        | "difficulty"
+        | "stability"
+        | "scheduledDays"
+        | "due"
+        | "lastReview"
+        | "lapses"
+        | "learningSteps"
+        | "repetitions"
+        | "state"
+    >;
+    note: Pick<typeof notesTable.$inferSelect, "id" | "noteTypeId" | "fields">;
+    noteTemplate: NoteTemplate;
+}
+
+function toStudyCard(row: StudyCardRow): StudyCard {
+    const card = toFSRSCard(row.card);
+    const cardTemplate = row.noteTemplate.cardtpls.find((cardTpl) => cardTpl.id === row.card.cardTemplateId);
+    if (!cardTemplate) {
+        throw new Error(`Card template "${row.card.cardTemplateId}" not found.`);
+    }
+
+    return {
+        cardId: bufferToHex(row.card.id),
+        queue: row.card.queue as CardQueue,
+        card,
+        note: {
+            id: bufferToHex(row.note.id),
+            noteTplId: bufferToHex(row.note.noteTypeId),
+            fields: row.note.fields,
+        },
+        noteTpl: {
+            css: row.noteTemplate.css,
+            fields: row.noteTemplate.fields,
+        },
+        cardTpl: cardTemplate,
+    };
+}
+
+function mergeStudyCardsByDue(cards: StudyCard[], limit: number): StudyCard[] {
+    return [...cards]
+        .sort((left: StudyCard, right: StudyCard) => left.card.due.getTime() - right.card.due.getTime())
+        .slice(0, limit);
+}
 
 /**
  * Resolve sort field text from processing note fields.

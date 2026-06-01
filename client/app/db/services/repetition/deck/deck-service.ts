@@ -6,7 +6,8 @@ import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils"
 import Logger from "electron-log";
 import { generatorParameters } from "ts-fsrs";
 import { countCardsByDeckAndQueues, countCardsByDeckQueuesAndStates } from "../cards/card-service";
-import { CARD_QUEUE, CARD_STATE } from "../cards/card-service-types";
+import { CardQueue, CardState } from "../cards/card-service-types";
+import { calcCanLearnToday } from "./deck-service-helper";
 
 export class DeckService {
     /**
@@ -159,13 +160,6 @@ export class DeckService {
         return defaultConfig;
     }
 
-    private calcCanLearnToday(deck: { newCardsPerDay: number; newLearnedToday: number }): number {
-        if (deck.newCardsPerDay < 0) {
-            return -1;
-        }
-        return Math.max(0, deck.newCardsPerDay - deck.newLearnedToday);
-    }
-
     /**
      * Convert one deck database row to the frontend deck overview model.
      */
@@ -177,12 +171,12 @@ export class DeckService {
         learnedToday: number;
         reviewedToday: number;
     }): Promise<Deck> {
-        const canLearnToday = this.calcCanLearnToday(deckRow);
+        const canLearnToday = calcCanLearnToday(deckRow);
         const [newCards, shouldReviewToday, learning, relearning] = await Promise.all([
-            countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.NEW]),
-            countCardsByDeckAndQueues(deckRow.id, [CARD_QUEUE.REVIEW], new Date()),
-            countCardsByDeckQueuesAndStates(deckRow.id, [CARD_QUEUE.LEARNING], [CARD_STATE.LEARNING]),
-            countCardsByDeckQueuesAndStates(deckRow.id, [CARD_QUEUE.LEARNING], [CARD_STATE.RELEARNING]),
+            countCardsByDeckAndQueues(deckRow.id, [CardQueue.NEW]),
+            countCardsByDeckAndQueues(deckRow.id, [CardQueue.REVIEW], new Date()),
+            countCardsByDeckQueuesAndStates(deckRow.id, [CardQueue.LEARNING], [CardState.LEARNING]),
+            countCardsByDeckQueuesAndStates(deckRow.id, [CardQueue.LEARNING], [CardState.RELEARNING]),
         ]);
 
         const deck: Deck = {

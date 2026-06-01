@@ -1,10 +1,26 @@
 import { Grade } from "ts-fsrs";
+import { CardTemplate, TemplateField } from "../note-template/nt-tpl-service.types";
+import { NoteField } from "../processing-note/pcs-note-types";
 
 export interface CardRef {
     /**
      * Card primary id in hex string format.
      */
     id: string;
+}
+
+export const enum CardQueue {
+    SUSPENDED = -1,
+    NEW = 0,
+    LEARNING = 1,
+    REVIEW = 2,
+}
+
+export const enum CardState {
+    NEW = 0,
+    LEARNING = 1,
+    REVIEW = 2,
+    RELEARNING = 3,
 }
 
 export interface LangCard {
@@ -72,21 +88,55 @@ export interface LangCard {
      */
     state: number;
     /**
-     * -1 = suspended, 0, 1, 2, 3 same as state
+     * -1 = suspended, 0 = new, 1 = learning/relearning, 2 = review.
      */
     queue: CardQueue;
 }
 
+export interface StudyNoteTemplate {
+    /**
+     * Shared CSS from the note template.
+     */
+    css: string;
+    /**
+     * Field definitions needed to map note field values to template names.
+     */
+    fields: TemplateField[];
+}
 
-// card-service-constants.ts
-export const CARD_QUEUE = {
-    SUSPENDED: -1,
-    NEW: 0,
-    LEARNING: 1,
-    REVIEW: 2,
-    RELEARNING: 3,
-} as const satisfies Record<string, CardQueue>;
-export type CardQueue = -1 | 0 | 1 | 2 | 3;
+/**
+ * Card, note, and template data needed by the learning page to render one card.
+ */
+export interface StudyCard {
+    /**
+     * Card primary id in hex string format, used when submitting review.
+     */
+    cardId: string;
+    /**
+     * Queue this card was selected from.
+     */
+    queue: CardQueue;
+    /**
+     * FSRS scheduling card selected for study.
+     */
+    card: FSRSCard;
+    /**
+     * Note field values owned by the card.
+     */
+    note: {
+        id: string;
+        noteTplId: string;
+        fields: NoteField[];
+    };
+    /**
+     * Lightweight note template data needed for rendering.
+     */
+    noteTpl: StudyNoteTemplate;
+    /**
+     * Card template used to render the current card.
+     */
+    cardTpl: CardTemplate;
+}
 
 export type FSRSCard = Pick<
     LangCard,

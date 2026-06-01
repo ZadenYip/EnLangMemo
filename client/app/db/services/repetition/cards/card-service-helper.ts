@@ -1,5 +1,5 @@
 import { Card, IPreview, RecordLog, RecordLogItem, ReviewLog, State } from "ts-fsrs";
-import { CARD_QUEUE, CardQueue, FSRSCard, FSRSIPreview, FSRSRecordLog, FSRSRecordLogItem, FSRSReviewLog } from "./card-service-types";
+import { CardQueue, FSRSCard, FSRSIPreview, FSRSRecordLog, FSRSRecordLogItem, FSRSReviewLog } from "./card-service-types";
 import { CollectionConfig } from "../collection/col-service-types";
 
 export function createEmptyCardHandler(card: Card): FSRSCard {
