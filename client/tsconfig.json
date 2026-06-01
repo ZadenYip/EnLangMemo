@@ -7,7 +7,6 @@
     { "path": "./src/tsconfig.spec.json" }
   ],
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@render/*": [
         "./src/app/*"
