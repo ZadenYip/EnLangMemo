@@ -1,8 +1,8 @@
-@if (learnState.isLoading()) {
+@if (learnSession.isLoading()) {
 <div class="loading-state">
   {{ "PAGES.LEARN.SHELL.LOADING" | translate }}
 </div>
-} @else if (learnState.loadFailed()) {
+} @else if (learnSession.loadFailed()) {
 <div class="load-failed-state">
   <div>{{ "PAGES.LEARN.SHELL.LOAD_FAILED" | translate }}</div>
   <button type="button" mat-stroked-button (click)="backToHome()">

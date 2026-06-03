@@ -3,7 +3,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { ActivatedRoute, Router, RouterOutlet } from "@angular/router";
 import { TranslateModule } from "@ngx-translate/core";
 import { APP_PATHS } from "../../../root-route";
-import { LearnStateService } from "./learn-state.service";
+import { LearnSessionService } from "./learn-session.service";
 import Logger from "electron-log/renderer";
 import { LEARN_PATHS, LearnPath } from "./route";
 
@@ -16,7 +16,7 @@ import { LEARN_PATHS, LearnPath } from "./route";
         TranslateModule,
     ],
     providers: [
-        LearnStateService,
+        LearnSessionService,
     ],
     templateUrl: "./learn.component.html",
     styleUrl: "./learn.component.scss",
@@ -25,8 +25,8 @@ export class LearnComponent implements OnInit {
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
 
-    /** Shared learning route state loaded once by the parent route. */
-    readonly learnState = inject(LearnStateService);
+    /** Shared learning session loaded once by the parent route. */
+    readonly learnSession = inject(LearnSessionService);
 
     /** Load the deck overview when entering /deck/:deck-id/*. */
     ngOnInit(): void {
@@ -49,13 +49,13 @@ export class LearnComponent implements OnInit {
 
     /** Load current deck state and redirect completed decks to the completed route. */
     private async initPage(deckId: string): Promise<void> {
-        await this.learnState.loadDeck(deckId);
-        if (this.learnState.loadFailed()) {
+        await this.learnSession.loadDeck(deckId);
+        if (this.learnSession.loadFailed()) {
             return;
         }
 
         // Redirect to the completed page if the deck is already completed.
-        if (this.learnState.isDeckCompleted()) {
+        if (this.learnSession.isDeckCompleted()) {
             void this.navigateTo(LEARN_PATHS.completed);
         }
     }

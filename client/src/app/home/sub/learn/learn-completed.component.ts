@@ -3,7 +3,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { Router } from "@angular/router";
 import { TranslateModule } from "@ngx-translate/core";
 import { APP_PATHS } from "../../../root-route";
-import { LearnStateService } from "./learn-state.service";
+import { LearnSessionService } from "./learn-session.service";
 
 @Component({
     selector: "app-learn-completed",
@@ -19,11 +19,11 @@ export class LearnCompletedComponent {
     /** Router used to return to the main deck page. */
     private readonly router = inject(Router);
 
-    /** Shared learning route state loaded by the parent route. */
-    private readonly learnState = inject(LearnStateService);
+    /** Shared learning session loaded by the parent route. */
+    private readonly learnSession = inject(LearnSessionService);
 
     /** Deck overview used in the completion message. */
-    readonly deck = this.learnState.deck;
+    readonly deck = this.learnSession.deck;
 
     /** Return to the main deck page. */
     backToHome(): void {

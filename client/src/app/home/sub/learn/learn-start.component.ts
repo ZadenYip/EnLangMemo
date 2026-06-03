@@ -2,7 +2,7 @@ import { Component, computed, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslateModule } from "@ngx-translate/core";
-import { LearnStateService } from "./learn-state.service";
+import { LearnSessionService } from "./learn-session.service";
 
 @Component({
     selector: "app-learn-start",
@@ -15,8 +15,8 @@ import { LearnStateService } from "./learn-state.service";
     styleUrl: "./learn-start.component.scss",
 })
 export class LearnStartComponent {
-    /** Shared learning route state loaded by the parent route. */
-    private readonly learnState = inject(LearnStateService);
+    /** Shared learning session loaded by the parent route. */
+    private readonly learnSession = inject(LearnSessionService);
 
     /** Router used to enter the active learning child route. */
     private readonly router = inject(Router);
@@ -25,7 +25,7 @@ export class LearnStartComponent {
     private readonly route = inject(ActivatedRoute);
 
     /** Deck overview shown before starting a learning session. */
-    readonly deck = computed(() => this.learnState.deck()!);
+    readonly deck = computed(() => this.learnSession.deck()!);
 
     /** Total cards currently in learning or relearning queues. */
     readonly learningCards = computed(() => {
