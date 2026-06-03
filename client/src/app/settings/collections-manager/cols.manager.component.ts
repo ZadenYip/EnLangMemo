@@ -26,7 +26,7 @@ export class CollectionsManagerComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         // Get current collection first, then load all collections
         this.curAppColName.set(
-            await window.service.collection.getCurrentCollection()
+            await window.service.collection.getCurCol()
         );
         await this.loadCollections();
     }

@@ -143,7 +143,7 @@ describe("CollectionService", () => {
             const mockConfig = { selectedAccount: "my-collection" };
             vi.mocked(getAppConfig).mockReturnValue(mockConfig);
 
-            const result = await service.getCurrentCollection();
+            const result = await service.getCurCol();
 
             expect(result).toBe("my-collection");
 

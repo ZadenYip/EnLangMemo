@@ -10,7 +10,7 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
-import type { CollectionConfig } from "@main/db/services/repetition/collection/col-service-types";
+import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types";
 import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
 import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
 import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types";
@@ -54,7 +54,7 @@ export const collectionTable = sqliteTable("collection", {
      * see app/db/services/repetition/collection/col-service-types.d.ts 
      * CollectionConfig
      */
-    config: jsonb<CollectionConfig>("config").notNull(),
+    config: jsonb<ColConfig>("config").notNull(),
 });
 
 /**

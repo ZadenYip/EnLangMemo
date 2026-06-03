@@ -1,4 +1,3 @@
-import { Grade } from "ts-fsrs";
 import { CardTemplate, TemplateField } from "../note-template/nt-tpl-service.types";
 import { NoteField } from "../processing-note/pcs-note-types";
 
@@ -22,6 +21,19 @@ export const enum CardState {
     REVIEW = 2,
     RELEARNING = 3,
 }
+
+export const enum CardRating {
+    AGAIN = 1,
+    HARD = 2,
+    GOOD = 3,
+    EASY = 4,
+}
+
+export type CardReviewRating =
+    | CardRating.AGAIN
+    | CardRating.HARD
+    | CardRating.GOOD
+    | CardRating.EASY;
 
 export interface LangCard {
     /**
@@ -104,6 +116,19 @@ export interface StudyNoteTemplate {
     fields: TemplateField[];
 }
 
+export interface StudyCardRatingPreview {
+    /**
+     * Next due time if this rating is selected.
+     */
+    due: Date;
+    /**
+     * Exact interval from preview time to the next due time in milliseconds.
+     */
+    intervalMs: number;
+}
+
+export type StudyCardRatingPreviews = Record<CardReviewRating, StudyCardRatingPreview>;
+
 /**
  * Card, note, and template data needed by the learning page to render one card.
  */
@@ -137,6 +162,15 @@ export interface StudyCard {
      */
     cardTpl: CardTemplate;
 }
+
+export type CardReviewResult =
+    | {
+        state: "success";
+        card: LangCard;
+    }
+    | {
+        state: "card-not-found" | "deck-not-found" | "invalid-rating";
+    };
 
 export type FSRSCard = Pick<
     LangCard,
@@ -173,7 +207,7 @@ export interface FSRSRecordLogItem {
     log: FSRSReviewLog;
 }
 
-export type FSRSRecordLog = Record<Grade, FSRSRecordLogItem>;
+export type FSRSRecordLog = Record<CardReviewRating, FSRSRecordLogItem>;
 
 export interface FSRSIPreview extends FSRSRecordLog {
     [Symbol.iterator](): IterableIterator<FSRSRecordLogItem>;

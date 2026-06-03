@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { CollectionConfig } from "../collection/col-service-types";
+import { ColConfig } from "../collection/col-service-types";
 import type { FSRSCard } from "./card-service-types";
 import { getNextRstBoundaryTimestamp, toAssignedReviewDateRstTimestamp, toCard } from "./card-service-helper";
 
-const shanghaiConfig: CollectionConfig = {
+const shanghaiConfig: ColConfig = {
     timeZone: "Asia/Shanghai",
     dailyResetTime: 4,
     lastRolloverAt: 0,

@@ -1,15 +1,20 @@
 import { getRepDb } from "@main/db/db";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { cardsTable, collectionTable, decksTable, notesTable, noteTypesTable, reviewLogTable } from "@main/db/schema/repetition/rep";
+import { cardsTable, collectionTable, decksTable, notesTable, reviewLogTable } from "@main/db/schema/repetition/rep";
 import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
 import type { PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types";
-import { createEmptyCard, fsrs, Grade, Rating } from "ts-fsrs";
-import { createEmptyCardHandler, getNextRstBoundaryTimestamp, nextHandler, toCard, toCardQueue } from "./card-service-helper";
-import { CardReviewResult, CardState, FSRSCard, LangCard, StudyCard } from "./card-service-types";
-import { and, asc, count, eq, inArray, lte, SQL } from "drizzle-orm";
-import { CollectionConfig } from "../collection/col-service-types";
+import { and, count, eq, inArray, lte, SQL } from "drizzle-orm";
+import { createEmptyCard } from "ts-fsrs";
+import { getColConfig } from "../collection/col-service-helper";
+import { ColConfig } from "../collection/col-service-types";
 import { resolveNewCardLimit } from "../deck/deck-service-helper";
-import { CardQueue } from "./card-service-types";
+import { mergeStudyCardsByDue, toFSRSCard, toLangCard } from "./card-mapper";
+import { queryStudyCardsByQueue } from "./card-query";
+import { createEmptyCardHandler, getNextRstBoundaryTimestamp, nextHandler, toCard, toCardQueue } from "./card-service-helper";
+import { CardQueue, CardReviewRating, CardReviewResult, CardState, StudyCard, StudyCardRatingPreviews } from "./card-service-types";
+import { buildRatingPreviews, getFsrsScheduler, toFsrsGrade } from "./card-scheduler";
+
+export { clearFsrsSchedulerCache } from "./card-scheduler";
 
 type RepTx = Parameters<Parameters<ReturnType<typeof getRepDb>["transaction"]>[0]>[0];
 
@@ -103,14 +108,13 @@ export async function countCardsByDeckQueuesAndStates(
     if (dueBefore !== undefined) {
         filters.push(lte(cardsTable.due, dueBefore.getTime()));
     }
+
     const rows = await getRepDb()
         .select({
             value: count(),
         })
         .from(cardsTable)
-        .where(
-            and(...filters),
-        );
+        .where(and(...filters));
 
     return rows[0]?.value ?? 0;
 }
@@ -135,11 +139,9 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
         return [];
     }
 
-    const collectionConfig = await getCurrentCollectionConfig();
+    const collectionConfig = await getColConfig();
     const todayDueUpperBound = getNextRstBoundaryTimestamp(collectionConfig);
-
     const newCardLimit = resolveNewCardLimit(deck, limit);
-    // TODO review
     const [learningCards, reviewCards, newCards] = await Promise.all([
         queryStudyCardsByQueue(deckIdBuffer, CardQueue.LEARNING, limit, todayDueUpperBound),
         queryStudyCardsByQueue(deckIdBuffer, CardQueue.REVIEW, limit, todayDueUpperBound),
@@ -156,27 +158,14 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
     );
 }
 
-// TODO 查询性能测试
-async function queryStudyCardsByQueue(
-    deckId: Buffer,
-    queue: CardQueue,
-    limit: number,
-    dueUpperBound: number,
-): Promise<StudyCard[]> {
-    const filters: SQL[] = [
-        eq(cardsTable.deckId, deckId),
-        eq(cardsTable.queue, queue),
-    ];
-    if (dueUpperBound !== undefined) {
-        filters.push(lte(cardsTable.due, dueUpperBound));
-    }
-
-    const rows = await getRepDb()
+/**
+ * Get the four FSRS rating previews for one card at the current review time.
+ */
+export async function getStudyCardRatingPreviews(cardId: string): Promise<StudyCardRatingPreviews | null> {
+    const cardRow = await getRepDb()
         .select({
             card: {
-                id: cardsTable.id,
-                queue: cardsTable.queue,
-                cardTemplateId: cardsTable.cardTemplateId,
+                deckId: cardsTable.deckId,
                 difficulty: cardsTable.difficulty,
                 stability: cardsTable.stability,
                 scheduledDays: cardsTable.scheduledDays,
@@ -187,71 +176,46 @@ async function queryStudyCardsByQueue(
                 repetitions: cardsTable.repetitions,
                 state: cardsTable.state,
             },
-            note: {
-                id: notesTable.id,
-                noteTypeId: notesTable.noteTypeId,
-                fields: notesTable.fields,
-            },
-            noteTemplate: noteTypesTable.noteTemplate,
+            deckConfig: decksTable.config,
         })
         .from(cardsTable)
-        .innerJoin(notesTable, eq(cardsTable.noteId, notesTable.id))
-        .innerJoin(noteTypesTable, eq(notesTable.noteTypeId, noteTypesTable.id))
-        .where(and(...filters))
-        .orderBy(asc(cardsTable.due))
-        .limit(limit);
+        .innerJoin(decksTable, eq(cardsTable.deckId, decksTable.id))
+        .where(eq(cardsTable.id, hexToBuffer(cardId)))
+        .get();
 
-    return rows.map((row) => toStudyCard(row));
-}
-
-interface StudyCardRow {
-    card: Pick<
-        typeof cardsTable.$inferSelect,
-        | "id"
-        | "queue"
-        | "cardTemplateId"
-        | "difficulty"
-        | "stability"
-        | "scheduledDays"
-        | "due"
-        | "lastReview"
-        | "lapses"
-        | "learningSteps"
-        | "repetitions"
-        | "state"
-    >;
-    note: Pick<typeof notesTable.$inferSelect, "id" | "noteTypeId" | "fields">;
-    noteTemplate: NoteTemplate;
-}
-
-function toStudyCard(row: StudyCardRow): StudyCard {
-    const card = toFSRSCard(row.card);
-    const cardTemplate = row.noteTemplate.cardtpls.find((cardTpl) => cardTpl.id === row.card.cardTemplateId);
-    if (!cardTemplate) {
-        throw new Error(`Card template "${row.card.cardTemplateId}" not found.`);
+    if (!cardRow) {
+        return null;
     }
 
-    return {
-        cardId: bufferToHex(row.card.id),
-        queue: row.card.queue as CardQueue,
-        card,
-        note: {
-            id: bufferToHex(row.note.id),
-            noteTplId: bufferToHex(row.note.noteTypeId),
-            fields: row.note.fields,
-        },
-        noteTpl: {
-            css: row.noteTemplate.css,
-            fields: row.noteTemplate.fields,
-        },
-        cardTpl: cardTemplate,
-    };
+    const collectionConfig = await getColConfig();
+    const deckId = bufferToHex(cardRow.card.deckId);
+    const scheduler = getFsrsScheduler(deckId, cardRow.deckConfig.fsrsParams);
+    return buildRatingPreviews(toFSRSCard(cardRow.card), collectionConfig, scheduler);
 }
 
-function mergeStudyCardsByDue(cards: StudyCard[], limit: number): StudyCard[] {
-    return [...cards]
-        .sort((left: StudyCard, right: StudyCard) => left.card.due.getTime() - right.card.due.getTime())
-        .slice(0, limit);
+
+async function getCurCollectionConfig(): Promise<CollectionConfig> {
+    const collectionRecord = await getRepDb().query.collectionTable.findFirst({
+        columns: {
+            config: true,
+        },
+    });
+    if (!collectionRecord) {
+        throw new Error("Collection config not found.");
+    }
+    return collectionRecord.config;
+}
+
+function getCollectionConfigInTx(tx: RepTx): CollectionConfig {
+    const collectionRecord = tx.select({
+        config: collectionTable.config,
+    })
+        .from(collectionTable)
+        .get();
+    if (!collectionRecord) {
+        throw new Error("Collection config not found.");
+    }
+    return collectionRecord.config;
 }
 
 /**
