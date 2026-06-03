@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
 import { LearnStartComponent } from "./learn-start.component";
-import { LearnCardComponent } from "./learn-card.component";
+import { LearningComponent } from "./learning.component";
 import { LearnCompletedComponent } from "./learn-completed.component";
 
 
@@ -24,7 +24,7 @@ export const LEARN_ROUTES: Routes = [
     },
     {
         path: LEARN_PATHS.learning,
-        component: LearnCardComponent,
+        component: LearningComponent,
     },
     {
         path: LEARN_PATHS.completed,
