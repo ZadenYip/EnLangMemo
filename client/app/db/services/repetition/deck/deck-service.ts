@@ -5,6 +5,9 @@ import { eq } from "drizzle-orm";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import Logger from "electron-log";
 import { generatorParameters } from "ts-fsrs";
+import { countCardsByDeckAndQueues, countCardsByDeckQueuesAndStates } from "../cards/card-service";
+import { CardQueue, CardState } from "../cards/card-service-types";
+import { calcCanLearnToday } from "./deck-service-helper";
 
 export class DeckService {
     /**
@@ -22,20 +25,30 @@ export class DeckService {
             }
         })
 
-        return deckRows.map((deckRow) => {
-            const canLearnToday = this.calcCanLearnToday(deckRow);
+        return Promise.all(deckRows.map((deckRow) => this.toDeck(deckRow)));
+    }
 
-            const deck: Deck = {
-                id: bufferToHex(deckRow.id),
-                name: deckRow.name,
-                newCardsPerDay: deckRow.newCardsPerDay,
-                canLearnToday,
-                newLearnedToday: deckRow.newLearnedToday,
-                learnedToday: deckRow.learnedToday,
-                reviewedToday: deckRow.reviewedToday,
-            };
-            return deck;
+    /**
+     * Get one deck overview in the current collection by id.
+     */
+    async getDeckById(deckId: string): Promise<Deck | null> {
+        const deckRow = await getRepDb().query.decksTable.findFirst({
+            where: eq(decksTable.id, hexToBuffer(deckId)),
+            columns: {
+                id: true,
+                name: true,
+                newCardsPerDay: true,
+                newLearnedToday: true,
+                learnedToday: true,
+                reviewedToday: true,
+            },
         });
+
+        if (!deckRow) {
+            return null;
+        }
+
+        return this.toDeck(deckRow);
     }
 
     /**
@@ -126,11 +139,11 @@ export class DeckService {
      */
     async updateDeckSettings(deckId: string, settings: DeckSettings): Promise<void> {
         Logger.info("Updating deck settings:", deckId);
-        const deckConfig = settings as DeckConfig;
+        const { newCardsPerDay, ...deckConfig } = settings;
         await getRepDb()
             .update(decksTable)
             .set({
-                newCardsPerDay: settings.newCardsPerDay,
+                newCardsPerDay,
                 config: deckConfig,
                 updatedAt: Date.now(),
             })
@@ -147,10 +160,38 @@ export class DeckService {
         return defaultConfig;
     }
 
-    private calcCanLearnToday(deck: { newCardsPerDay: number; newLearnedToday: number }): number {
-        if (deck.newCardsPerDay < 0) {
-            return -1;
-        }
-        return Math.max(0, deck.newCardsPerDay - deck.newLearnedToday);
+    /**
+     * Convert one deck database row to the frontend deck overview model.
+     */
+    private async toDeck(deckRow: {
+        id: Buffer;
+        name: string;
+        newCardsPerDay: number;
+        newLearnedToday: number;
+        learnedToday: number;
+        reviewedToday: number;
+    }): Promise<Deck> {
+        const canLearnToday = calcCanLearnToday(deckRow);
+        const [newCards, shouldReviewToday, learning, relearning] = await Promise.all([
+            countCardsByDeckAndQueues(deckRow.id, [CardQueue.NEW]),
+            countCardsByDeckAndQueues(deckRow.id, [CardQueue.REVIEW], new Date()),
+            countCardsByDeckQueuesAndStates(deckRow.id, [CardQueue.LEARNING], [CardState.LEARNING]),
+            countCardsByDeckQueuesAndStates(deckRow.id, [CardQueue.LEARNING], [CardState.RELEARNING]),
+        ]);
+
+        const deck: Deck = {
+            id: bufferToHex(deckRow.id),
+            name: deckRow.name,
+            newCardsPerDay: deckRow.newCardsPerDay,
+            canLearnToday,
+            newCards,
+            shouldReviewToday,
+            learning,
+            relearning,
+            newLearnedToday: deckRow.newLearnedToday,
+            learnedToday: deckRow.learnedToday,
+            reviewedToday: deckRow.reviewedToday,
+        };
+        return deck;
     }
 }

@@ -133,10 +133,10 @@ export class NoteTplOpsComponent {
                 void this.createNoteTpl();
                 return;
             case "delete":
-                void this.delCurNoteTpl();
+                // TODO 处理删除笔记模板对应处理已经依赖卡片的问题
                 return;
             case "settings":
-                // TODO implement note template settings ?
+                // TODO 实现设置界面
                 return;
         }
     }

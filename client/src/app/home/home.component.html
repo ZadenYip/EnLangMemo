@@ -2,6 +2,10 @@
   <div class="deck-header">
     <span>{{ "PAGES.HOME.DECKS.NAME" | translate }}</span>
     <span>{{ "PAGES.HOME.DECKS.CAN_LEARN_TODAY" | translate }}</span>
+    <span>{{ "PAGES.HOME.DECKS.NEW_CARDS" | translate }}</span>
+    <span>{{ "PAGES.HOME.DECKS.SHOULD_REVIEW_TODAY" | translate }}</span>
+    <span>{{ "PAGES.HOME.DECKS.LEARNING" | translate }}</span>
+    <span>{{ "PAGES.HOME.DECKS.RELEARNING" | translate }}</span>
     <span>{{ "PAGES.HOME.DECKS.REVIEWED_TODAY" | translate }}</span>
     <span>{{ "PAGES.HOME.DECKS.NEW_LEARNED_TODAY" | translate }}</span>
     <span>{{ "PAGES.HOME.DECKS.SETTINGS" | translate }}</span>
@@ -9,10 +13,14 @@
 
     @for (deck of deckOverviewList; track deck.name) {
     <div class="deck-row">
-      <a class="deck-link" href="" (click)="$event.preventDefault(); openDeckReview(deck)">
+      <a class="deck-link" [routerLink]="['/deck', deck.id, 'start']">
         {{ deck.name }}
       </a>
       <span>{{ deck.canLearnToday }}</span>
+      <span>{{ deck.newCards }}</span>
+      <span>{{ deck.shouldReviewToday }}</span>
+      <span>{{ deck.learning }}</span>
+      <span>{{ deck.relearning }}</span>
       <span>{{ deck.reviewedToday }}</span>
       <span>{{ deck.newLearnedToday }}</span>
       <app-deck-settings-menu
@@ -31,6 +39,10 @@
         (input)="onInputDeckName($event)"
         placeholder="{{ 'PAGES.HOME.DECKS.CREATE_PLACEHOLDER' | translate }}"
       />
+      <span>-</span>
+      <span>-</span>
+      <span>-</span>
+      <span>-</span>
       <span>-</span>
       <span>-</span>
       <span>-</span>

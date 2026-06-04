@@ -15,6 +15,8 @@ import { DicNoteMappingService } from "../db/services/repetition/dic-note-mappin
 import { DicNoteMappingServiceIPCDescriptor } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service-interface";
 import { PcsNoteIpcService } from "../db/services/repetition/processing-note/pcs-note-ipc-service";
 import { PcsNoteServiceIPCDescriptor } from "../db/services/repetition/processing-note/pcs-note-service-interface";
+import { CardIpcService } from "../db/services/repetition/cards/card-ipc-service";
+import { CardServiceIPCDescriptor } from "../db/services/repetition/cards/card-service-interface";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
@@ -44,4 +46,7 @@ function registerDatabaseHandlers() {
 
     const pcsNoteService = new PcsNoteIpcService();
     registerProxy(pcsNoteService, PcsNoteServiceIPCDescriptor);
+
+    const cardService = new CardIpcService();
+    registerProxy(cardService, CardServiceIPCDescriptor);
 }

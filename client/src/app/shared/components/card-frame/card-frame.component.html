@@ -1,0 +1,11 @@
+@if (document()) {
+  <iframe
+    class="card-frame"
+    sandbox=""
+    [srcdoc]="trustedDocument()"
+  ></iframe>
+} @else {
+  <div class="card-placeholder">
+    {{ emptyText() }}
+  </div>
+}

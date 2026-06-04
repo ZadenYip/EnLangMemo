@@ -32,9 +32,30 @@ export interface Deck {
     newCardsPerDay: number;
 
     /**
+     * The number of cards currently in the new queue.
+     */
+    newCards: number;
+
+    /**
      * The number of cards can learn today in this deck.
+     * deck.newCardsPerDay - deck.newLearnedToday
      */
     canLearnToday: number;
+
+    /**
+     * The number of due cards that should be reviewed now in this deck.
+     */
+    shouldReviewToday: number;
+
+    /**
+     * The number of cards currently in the learning queue.
+     */
+    learning: number;
+
+    /**
+     * The number of cards currently in the relearning queue.
+     */
+    relearning: number;
 
     /**
      * The number of new cards learned today in this deck.

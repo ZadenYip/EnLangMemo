@@ -1,0 +1,14 @@
+@if (learnSession.isLoading()) {
+<div class="loading-state">
+  {{ "PAGES.LEARN.SHELL.LOADING" | translate }}
+</div>
+} @else if (learnSession.loadFailed()) {
+<div class="load-failed-state">
+  <div>{{ "PAGES.LEARN.SHELL.LOAD_FAILED" | translate }}</div>
+  <button type="button" mat-stroked-button (click)="backToHome()">
+    {{ "PAGES.LEARN.SHELL.BACK_TO_HOME" | translate }}
+  </button>
+</div>
+} @else {
+<router-outlet></router-outlet>
+}

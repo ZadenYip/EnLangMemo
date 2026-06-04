@@ -10,7 +10,7 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
-import type { CollectionConfig } from "@main/db/services/repetition/collection/col-service-types";
+import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types";
 import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
 import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
 import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types";
@@ -54,7 +54,7 @@ export const collectionTable = sqliteTable("collection", {
      * see app/db/services/repetition/collection/col-service-types.d.ts 
      * CollectionConfig
      */
-    config: jsonb<CollectionConfig>("config").notNull(),
+    config: jsonb<ColConfig>("config").notNull(),
 });
 
 /**
@@ -157,12 +157,22 @@ export const cardsTable = sqliteTable(
         difficulty: real("difficulty").notNull(),
         stability: real("stability").notNull(),
         scheduledDays: int("scheduled_days").notNull(),
+        /**
+         * Due timestamp in milliseconds.
+         * - new: card introduction ordering timestamp
+         * - learning/relearning: exact due timestamp
+         * - review: FSRS due timestamp
+         */
         due: int("due").notNull(),
         lastReview: int("last_review"),
         lapses: int("lapses").notNull(),
         learningSteps: int("learning_steps").notNull(),
         repetitions: int("repetitions").notNull(),
         state: int("state").notNull(),
+        /**
+         * -1 = suspended, 0 = new, 1 = learning/relearning, 2 = review.
+         * Use state to distinguish learning and relearning.
+         */
         queue: int("queue").notNull(),
     },
     (table) => [

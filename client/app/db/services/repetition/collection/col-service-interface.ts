@@ -1,4 +1,5 @@
 ﻿import { ProxyPropertyType } from "electron-ipc-cat/common";
+import { ColConfig } from "./col-service-types";
 
 export interface ICollectionService {
     /**
@@ -23,12 +24,12 @@ export interface ICollectionService {
      * Get current active collection name
      * @returns the name of the currently selected account/collection
      */
-    getCurrentCollection(): Promise<string>;
+    getCurCol(): Promise<string>;
 
     /**
      * Read collection config from database
      */
-    getCollectionConfig(): Promise<import("./col-service-types").CollectionConfig>;
+    getColConfig(): Promise<ColConfig>;
 
     /**
      * Switch to a different collection by name
@@ -49,8 +50,8 @@ export const CollectionServiceIPCDescriptor = {
         listCollections: ProxyPropertyType.Function,
         createCollection: ProxyPropertyType.Function,
         deleteCollection: ProxyPropertyType.Function,
-        getCurrentCollection: ProxyPropertyType.Function,
-        getCollectionConfig: ProxyPropertyType.Function,
+        getCurCol: ProxyPropertyType.Function,
+        getColConfig: ProxyPropertyType.Function,
         switchCollection: ProxyPropertyType.Function,
         changeColReviewRstTime: ProxyPropertyType.Function,
     },

@@ -1,0 +1,19 @@
+<div class="study-overview">
+  <div class="deck-name">
+    {{ "PAGES.LEARN.START.DECK_NAME" | translate:{ name: deck().name } }}
+  </div>
+  <div class="overview-row">
+    {{ "PAGES.LEARN.START.NEW_AVAILABLE" | translate:{ count: learnableNewCards() } }}
+  </div>
+  <div class="overview-row action-row">
+    {{ "PAGES.LEARN.START.REVIEW_AVAILABLE" | translate:{ count: deck().shouldReviewToday } }}
+  </div>
+  <div class="overview-row">
+    {{ "PAGES.LEARN.START.LEARNING" | translate:{ count: learningCards() } }}
+  </div>
+  <div class="action">
+    <button type="button" mat-flat-button (click)="startLearning()">
+      {{ "PAGES.LEARN.START.START" | translate }}
+    </button>
+  </div>
+</div>

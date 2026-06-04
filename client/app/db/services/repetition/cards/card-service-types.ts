@@ -1,4 +1,5 @@
-import { Grade } from "ts-fsrs";
+import { CardTemplate, TemplateField } from "../note-template/nt-tpl-service.types";
+import { NoteField } from "../processing-note/pcs-note-types";
 
 export interface CardRef {
     /**
@@ -6,6 +7,33 @@ export interface CardRef {
      */
     id: string;
 }
+
+export const enum CardQueue {
+    SUSPENDED = -1,
+    NEW = 0,
+    LEARNING = 1,
+    REVIEW = 2,
+}
+
+export const enum CardState {
+    NEW = 0,
+    LEARNING = 1,
+    REVIEW = 2,
+    RELEARNING = 3,
+}
+
+export const enum CardRating {
+    AGAIN = 1,
+    HARD = 2,
+    GOOD = 3,
+    EASY = 4,
+}
+
+export type CardReviewRating =
+    | CardRating.AGAIN
+    | CardRating.HARD
+    | CardRating.GOOD
+    | CardRating.EASY;
 
 export interface LangCard {
     /**
@@ -72,21 +100,96 @@ export interface LangCard {
      */
     state: number;
     /**
-     * -1 = suspended, 0, 1, 2, 3 same as state
+     * -1 = suspended, 0 = new, 1 = learning/relearning, 2 = review.
      */
     queue: CardQueue;
 }
 
+export interface StudyNoteTemplate {
+    /**
+     * Shared CSS from the note template.
+     */
+    css: string;
+    /**
+     * Field definitions needed to map note field values to template names.
+     */
+    fields: TemplateField[];
+}
 
-// card-service-constants.ts
-export const CARD_QUEUE = {
-    SUSPENDED: -1,
-    NEW: 0,
-    LEARNING: 1,
-    REVIEW: 2,
-    RELEARNING: 3,
-} as const satisfies Record<string, CardQueue>;
-type CardQueue = -1 | 0 | 1 | 2 | 3;
+export interface StudyCardRatingPreview {
+    /**
+     * Next due time if this rating is selected.
+     */
+    due: Date;
+    /**
+     * Exact interval from preview time to the next due time in milliseconds.
+     */
+    intervalMs: number;
+}
+
+export type StudyCardRatingPreviews = Record<CardReviewRating, StudyCardRatingPreview>;
+
+/**
+ * Card, note, and template data needed by the learning page to render one card.
+ */
+export interface StudyCard {
+    /**
+     * Card primary id in hex string format, used when submitting review.
+     */
+    cardId: string;
+    /**
+     * Queue this card was selected from.
+     */
+    queue: CardQueue;
+    /**
+     * FSRS scheduling card selected for study.
+     */
+    card: FSRSCard;
+    /**
+     * Note field values owned by the card.
+     */
+    note: {
+        id: string;
+        noteTplId: string;
+        fields: NoteField[];
+    };
+    /**
+     * Lightweight note template data needed for rendering.
+     */
+    noteTpl: StudyNoteTemplate;
+    /**
+     * Card template used to render the current card.
+     */
+    cardTpl: CardTemplate;
+}
+
+export interface ReviewedCardState {
+    /**
+     * Reviewed card id in hex string format.
+     */
+    cardId: string;
+    /**
+     * Queue after the review result is applied.
+     */
+    queue: CardQueue;
+    /**
+     * Card state after the review result is applied.
+     */
+    state: CardState;
+    /**
+     * Next due timestamp in milliseconds.
+     */
+    due: number;
+}
+
+export type CardReviewResult =
+    | {
+        state: "success";
+        card: ReviewedCardState;
+    }
+    | {
+        state: "card-not-found" | "deck-not-found" | "invalid-rating";
+    };
 
 export type FSRSCard = Pick<
     LangCard,
@@ -123,7 +226,7 @@ export interface FSRSRecordLogItem {
     log: FSRSReviewLog;
 }
 
-export type FSRSRecordLog = Record<Grade, FSRSRecordLogItem>;
+export type FSRSRecordLog = Record<CardReviewRating, FSRSRecordLogItem>;
 
 export interface FSRSIPreview extends FSRSRecordLog {
     [Symbol.iterator](): IterableIterator<FSRSRecordLogItem>;

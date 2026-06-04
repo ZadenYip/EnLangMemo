@@ -19,6 +19,13 @@ export class DeckIpcService implements IDeckService {
     }
 
     /**
+     * Get one deck overview by id.
+     */
+    getDeckById(deckId: string): Promise<Deck | null> {
+        return this.deckService.getDeckById(deckId);
+    }
+
+    /**
      * Create a deck by name.
      */
     createDeck(deckName: string): Promise<DeckCreationResult> {

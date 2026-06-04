@@ -7,9 +7,11 @@ import { SETTINGS_ROUTES } from "@render/settings/route";
 import { PageNotFoundComponent } from "@render/shared/components";
 import { BROWSE_ROUTES } from "@render/browse/route";
 import { ProcessingComponent } from "./processing/processing.component";
+import { LearnComponent } from "./home/sub/learn/learn.component";
+import { LEARN_ROUTES } from "./home/sub/learn/route";
 
 export const APP_PATHS = {
-    home: "home",
+    deck: "deck",
     processing: "processing",
     immerse: "immerse",
     browse: "browse",
@@ -20,7 +22,7 @@ export const APP_PATHS = {
 export const APP_ROUTES: Routes = [
     {
         path: "",
-        redirectTo: APP_PATHS.home,
+        redirectTo: APP_PATHS.deck,
         pathMatch: "full",
     },
     {
@@ -28,8 +30,13 @@ export const APP_ROUTES: Routes = [
         component: ProcessingComponent,
     },
     {
-        path: APP_PATHS.home,
+        path: APP_PATHS.deck,
         component: HomeComponent,
+    },
+    {
+        path: `${APP_PATHS.deck}/:deck-id`,
+        component: LearnComponent,
+        children: LEARN_ROUTES
     },
     {
         path: APP_PATHS.immerse,

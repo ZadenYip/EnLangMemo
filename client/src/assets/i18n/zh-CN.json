@@ -7,7 +7,10 @@
       "DECKS": {
         "NAME": "名称",
         "CAN_LEARN_TODAY": "今日可新学",
+        "NEW_CARDS": "新卡",
         "SHOULD_REVIEW_TODAY": "今日应复习",
+        "LEARNING": "学习中",
+        "RELEARNING": "重学习中",
         "REVIEWED_TODAY": "今日已复习",
         "NEW_LEARNED_TODAY": "今日已学新卡",
         "SETTINGS": "设置",
@@ -33,6 +36,42 @@
           "CONFIGURE": "牌组配置",
           "DELETE": "删除牌组"
         }
+      }
+    },
+    "LEARN": {
+      "SHELL": {
+        "LOADING": "正在加载牌组...",
+        "LOAD_FAILED": "加载牌组学习页面失败",
+        "BACK_TO_HOME": "返回主界面"
+      },
+      "START": {
+        "DECK_NAME": "牌组名称：{{name}}",
+        "NEW_AVAILABLE": "可新学 {{count}} 张卡片",
+        "REVIEW_AVAILABLE": "可复习 {{count}} 张卡片",
+        "LEARNING": "正学习 {{count}} 张卡片",
+        "START": "开始学习"
+      },
+      "CARD": {
+        "FRONT_PLACEHOLDER": "卡片正面",
+        "BACK_PLACEHOLDER": "卡片背面",
+        "EDIT": "编辑",
+        "SHOW_ANSWER": "显示答案",
+        "MORE": "更多操作",
+        "RATING": {
+          "AGAIN": "重来",
+          "HARD": "困难",
+          "GOOD": "良好",
+          "EASY": "简单"
+        },
+        "INTERVAL": {
+          "MINUTE": "{{count}}分钟",
+          "HOUR": "{{count}}小时",
+          "DAY": "{{count}}天"
+        }
+      },
+      "COMPLETED": {
+        "MESSAGE": "当前牌组：{{name}} 已经完成学习",
+        "BACK_TO_HOME": "返回主界面"
       }
     },
     "IMMERSE": {

@@ -8,7 +8,7 @@ import * as rep_schema from "./schema/repetition/rep";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { AppConfig } from "./config/config";
 import { getAccountDir } from "@main/paths";
-import { CollectionConfig } from "./services/repetition/collection/col-service-types";
+import { ColConfig } from "./services/repetition/collection/col-service-types";
 import { noteTypesTable } from "./schema/repetition/rep";
 import { generateUUIDV7 } from "./import/utils";
 import { genNoteTpl } from "./services/repetition/note-template/nt-tpl-service-helper";
@@ -72,7 +72,7 @@ function collectionInit(): void {
         timeZone,
         dailyResetTime: 4,
         lastRolloverAt: zeroTime,
-    } as CollectionConfig;
+    } as ColConfig;
 
     repDb.insert(rep_schema.collectionTable).values(
         {

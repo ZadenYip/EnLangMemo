@@ -1,0 +1,45 @@
+  <app-card-frame
+    class="card-content"
+    [document]="cardDocument()"
+    [emptyText]="(answerVisible()
+      ? 'PAGES.LEARN.CARD.BACK_PLACEHOLDER'
+      : 'PAGES.LEARN.CARD.FRONT_PLACEHOLDER') | translate"
+  ></app-card-frame>
+
+  <div class="card-toolbar" [class.answer-toolbar]="answerVisible()">
+    <button type="button" mat-stroked-button>
+      {{ "PAGES.LEARN.CARD.EDIT" | translate }}
+    </button>
+
+    <div class="toolbar-center">
+      @if (answerVisible()) {
+        <div class="rating-actions">
+          <button type="button" mat-stroked-button (click)="rateCurCard(CardRating.AGAIN)">
+            {{ "PAGES.LEARN.CARD.RATING.AGAIN" | translate }} / {{ ratingInterval(CardRating.AGAIN) }}
+          </button>
+          <button type="button" mat-stroked-button (click)="rateCurCard(CardRating.HARD)">
+            {{ "PAGES.LEARN.CARD.RATING.HARD" | translate }} / {{ ratingInterval(CardRating.HARD) }}
+          </button>
+          <button type="button" mat-stroked-button (click)="rateCurCard(CardRating.GOOD)">
+            {{ "PAGES.LEARN.CARD.RATING.GOOD" | translate }} / {{ ratingInterval(CardRating.GOOD) }}
+          </button>
+          <button type="button" mat-stroked-button (click)="rateCurCard(CardRating.EASY)">
+            {{ "PAGES.LEARN.CARD.RATING.EASY" | translate }} / {{ ratingInterval(CardRating.EASY) }}
+          </button>
+        </div>
+      } @else {
+        <div class="queue-counts">
+          <span class="queue-count new-count">{{ queueCounts().new }}</span>
+          <span class="queue-count learning-count">{{ queueCounts().learning }}</span>
+          <span class="queue-count review-count">{{ queueCounts().review }}</span>
+        </div>
+        <button type="button" mat-stroked-button class="show-answer-btn" (click)="showAnswer()">
+          {{ "PAGES.LEARN.CARD.SHOW_ANSWER" | translate }}
+        </button>
+      }
+    </div>
+
+    <button type="button" mat-stroked-button>
+      {{ "PAGES.LEARN.CARD.MORE" | translate }}
+    </button>
+  </div>

@@ -7,7 +7,10 @@
       "DECKS": {
         "NAME": "Name",
         "CAN_LEARN_TODAY": "New Today",
+        "NEW_CARDS": "New Cards",
         "SHOULD_REVIEW_TODAY": "To Review Today",        
+        "LEARNING": "Learning",
+        "RELEARNING": "Relearning",
         "REVIEWED_TODAY": "Reviewed Today",
         "NEW_LEARNED_TODAY": "New Learned Today",
         "SETTINGS": "Settings",
@@ -33,6 +36,42 @@
           "CONFIGURE": "Deck Config",
           "DELETE": "Delete Deck"
         }
+      }
+    },
+    "LEARN": {
+      "SHELL": {
+        "LOADING": "Loading deck...",
+        "LOAD_FAILED": "Failed to load the deck learning page",
+        "BACK_TO_HOME": "Back to Home"
+      },
+      "START": {
+        "DECK_NAME": "Deck: {{name}}",
+        "NEW_AVAILABLE": "{{count}} new cards available",
+        "REVIEW_AVAILABLE": "{{count}} cards available for review",
+        "LEARNING": "{{count}} cards learning",
+        "START": "Start Learning"
+      },
+      "CARD": {
+        "FRONT_PLACEHOLDER": "Card front",
+        "BACK_PLACEHOLDER": "Card back",
+        "EDIT": "Edit",
+        "SHOW_ANSWER": "Show Answer",
+        "MORE": "More",
+        "RATING": {
+          "AGAIN": "Again",
+          "HARD": "Hard",
+          "GOOD": "Good",
+          "EASY": "Easy"
+        },
+        "INTERVAL": {
+          "MINUTE": "{{count}}m",
+          "HOUR": "{{count}}h",
+          "DAY": "{{count}}d"
+        }
+      },
+      "COMPLETED": {
+        "MESSAGE": "Current deck: {{name}} has completed learning",
+        "BACK_TO_HOME": "Back to Home"
       }
     },
     "IMMERSE": {

@@ -13,6 +13,7 @@
   "include": [
     "**/*.ts",
     "**/*.d.ts",
+    "**/*-types.ts",
     "../app/ipc/ipc-api.d.ts",
     "../app/db/services/**/*.d.ts",
     "../app/subtitle-handler/**/*.d.ts"

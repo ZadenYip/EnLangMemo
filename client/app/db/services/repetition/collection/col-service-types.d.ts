@@ -1,5 +1,8 @@
 
-export interface CollectionConfig {
+/**
+ * Collection Config
+ */
+export interface ColConfig {
     /**
      * IANA
      */

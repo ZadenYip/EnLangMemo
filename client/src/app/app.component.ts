@@ -34,7 +34,7 @@ export class AppComponent {
     private readonly dictionaryWindowService = inject(DictionaryWindowService);
 
     readonly tabs = [
-        { label: "HEADER.DECKS", path: `${APP_PATHS.home}` },
+        { label: "HEADER.DECKS", path: `${APP_PATHS.deck}` },
         { label: "HEADER.PROCESSING", path: `${APP_PATHS.processing}` },
         { label: "HEADER.IMMERSE", path: `${APP_PATHS.immerse}` },
         { label: "HEADER.BROWSE", path: `${APP_PATHS.browse}` },
@@ -44,7 +44,7 @@ export class AppComponent {
 
     /**
      *
-     * @param path - The path to check for activeness. e.g. "/home" or "/settings/profile".
+     * @param path - The path to check for activeness. e.g. "/deck" or "/settings/profile".
      * @returns True if the path is active, false otherwise
      */
     isActive = (path: string): boolean => {

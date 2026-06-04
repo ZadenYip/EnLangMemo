@@ -5,8 +5,9 @@ import { ICollectionService } from "./col-service-interface";
 import { getAppConfig, saveAppConfig } from "@main/db/config/config";
 import { getRepDb, reInitDatabase } from "@main/db/db";
 import Logger from "electron-log/main";
-import { CollectionConfig } from "./col-service-types";
+import { ColConfig } from "./col-service-types";
 import { collectionTable } from "@main/db/schema/repetition/rep";
+import { getColConfig } from "./col-service-helper";
 
 export class CollectionService implements ICollectionService {
     /**
@@ -67,7 +68,7 @@ export class CollectionService implements ICollectionService {
     /**
      * Get current active collection name
      */
-    async getCurrentCollection(): Promise<string> {
+    async getCurCol(): Promise<string> {
         const config = getAppConfig();
         return config.selectedAccount;
     }
@@ -97,15 +98,8 @@ export class CollectionService implements ICollectionService {
         Logger.info(`Switched to collection: ${collectionName}`);
     }
     
-    async getCollectionConfig(): Promise<CollectionConfig> {
-        const collectionRecords = await getRepDb()
-            .select({
-                config: collectionTable.config,
-            })
-            .from(collectionTable);
-
-        const collectionRecord = collectionRecords[0];
-        return collectionRecord.config;
+    async getColConfig(): Promise<ColConfig> {
+        return getColConfig();
     }
 
 
@@ -123,7 +117,7 @@ export class CollectionService implements ICollectionService {
         const collectionRecord = collectionRecords[0];
 
         const collectionConfig = collectionRecord.config;
-        const nextConfig: CollectionConfig = {
+        const nextConfig: ColConfig = {
             ...collectionConfig,
             dailyResetTime: resetTime,
         };
