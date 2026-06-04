@@ -202,31 +202,6 @@ export async function getStudyCardRatingPreviews(cardId: string): Promise<StudyC
     return buildRatingPreviews(toFSRSCard(cardRow.card), collectionConfig, scheduler);
 }
 
-
-async function getCurCollectionConfig(): Promise<CollectionConfig> {
-    const collectionRecord = await getRepDb().query.collectionTable.findFirst({
-        columns: {
-            config: true,
-        },
-    });
-    if (!collectionRecord) {
-        throw new Error("Collection config not found.");
-    }
-    return collectionRecord.config;
-}
-
-function getCollectionConfigInTx(tx: RepTx): CollectionConfig {
-    const collectionRecord = tx.select({
-        config: collectionTable.config,
-    })
-        .from(collectionTable)
-        .get();
-    if (!collectionRecord) {
-        throw new Error("Collection config not found.");
-    }
-    return collectionRecord.config;
-}
-
 /**
  * Resolve sort field text from processing note fields.
  */
