@@ -1,20 +1,21 @@
 import { getRepDb } from "@main/db/db";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { cardsTable, collectionTable, decksTable, notesTable, reviewLogTable } from "@main/db/schema/repetition/rep";
+import { cardsTable, decksTable, notesTable } from "@main/db/schema/repetition/rep";
 import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
 import type { PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types";
 import { and, count, eq, inArray, lte, SQL } from "drizzle-orm";
 import { createEmptyCard } from "ts-fsrs";
 import { getColConfig } from "../collection/col-service-helper";
-import { ColConfig } from "../collection/col-service-types";
 import { resolveNewCardLimit } from "../deck/deck-service-helper";
-import { mergeStudyCardsByDue, toFSRSCard, toLangCard } from "./card-mapper";
+import { mergeStudyCardsByDue, toFSRSCard } from "./card-mapper";
 import { queryStudyCardsByQueue } from "./card-query";
-import { createEmptyCardHandler, getNextRstBoundaryTimestamp, nextHandler, toCard, toCardQueue } from "./card-service-helper";
-import { CardQueue, CardReviewRating, CardReviewResult, CardState, StudyCard, StudyCardRatingPreviews } from "./card-service-types";
-import { buildRatingPreviews, getFsrsScheduler, toFsrsGrade } from "./card-scheduler";
+import { createEmptyCardHandler, getNextReviewDayStart as calcNextReviewDayStart } from "./card-service-helper";
+import { CardQueue, CardState, StudyCard, StudyCardRatingPreviews } from "./card-service-types";
+import { buildRatingPreviews, getFsrsScheduler } from "./card-scheduler";
 
+// implementation of card service methods
 export { clearFsrsSchedulerCache } from "./card-scheduler";
+export { reviewCard } from "./card-review";
 
 type RepTx = Parameters<Parameters<ReturnType<typeof getRepDb>["transaction"]>[0]>[0];
 
@@ -140,7 +141,7 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
     }
 
     const collectionConfig = await getColConfig();
-    const todayDueUpperBound = getNextRstBoundaryTimestamp(collectionConfig);
+    const todayDueUpperBound = calcNextReviewDayStart(collectionConfig);
     const newCardLimit = resolveNewCardLimit(deck, limit);
     const [learningCards, reviewCards, newCards] = await Promise.all([
         queryStudyCardsByQueue(deckIdBuffer, CardQueue.LEARNING, limit, todayDueUpperBound),
@@ -156,6 +157,14 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
         ],
         limit,
     );
+}
+
+/**
+ * Get the next review-day start timestamp for the current collection.
+ */
+export async function getNextReviewDayStart(): Promise<number> {
+    const collectionConfig = await getColConfig();
+    return calcNextReviewDayStart(collectionConfig);
 }
 
 /**

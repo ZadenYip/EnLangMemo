@@ -1,5 +1,5 @@
 import { ICardService } from "./card-service-interface";
-import { clearFsrsSchedulerCache, getStudyCardRatingPreviews, getStudyCards, reviewCard } from "./card-service";
+import { clearFsrsSchedulerCache, getNextReviewDayStart, getStudyCardRatingPreviews, getStudyCards, reviewCard } from "./card-service";
 import { CardReviewRating, CardReviewResult, StudyCard, StudyCardRatingPreviews } from "./card-service-types";
 
 /**
@@ -11,6 +11,13 @@ export class CardIpcService implements ICardService {
      */
     getStudyCards(deckId: string, limit: number): Promise<StudyCard[]> {
         return getStudyCards(deckId, limit);
+    }
+
+    /**
+     * Get the next review-day start timestamp for the current collection.
+     */
+    getNextReviewDayStart(): Promise<number> {
+        return getNextReviewDayStart();
     }
 
     /**

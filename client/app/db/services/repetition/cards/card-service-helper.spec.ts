@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ColConfig } from "../collection/col-service-types";
 import type { FSRSCard } from "./card-service-types";
-import { getNextRstBoundaryTimestamp, toAssignedReviewDateRstTimestamp, toCard } from "./card-service-helper";
+import { getNextReviewDayStart, toAssignedReviewDateRstTimestamp, toCard } from "./card-service-helper";
 
 const shanghaiConfig: ColConfig = {
     timeZone: "Asia/Shanghai",
@@ -111,7 +111,7 @@ describe("getNextResetBoundaryTimestamp", () => {
             const now = fromShanghaiLocalTime(shanghaiNow.replace(" ", "T"));
             const nextReset = fromShanghaiLocalTime(expectedNextReset.replace(" ", "T"));
 
-            const result = getNextRstBoundaryTimestamp(shanghaiConfig, now);
+            const result = getNextReviewDayStart(shanghaiConfig, now);
 
             expect(result).toBe(nextReset.getTime());
         },

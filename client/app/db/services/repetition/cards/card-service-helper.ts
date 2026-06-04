@@ -50,15 +50,15 @@ export function toCardQueue(card: FSRSCard): CardQueue {
 }
 
 /**
- * Get the next review reset boundary after the given timestamp.
+ * Get the next review-day start after the given timestamp.
  * This is used as the upper due bound for "today's" learning/review cards.
  * Example when dailyResetTime = 4:
  * - 2026-05-31 03:52 -> 2026-05-31 04:00.
  * - 2026-05-31 22:06 -> 2026-06-01 04:00.
  * - 2026-05-31 04:00 -> 2026-06-01 04:00.
- * @returns Epoch timestamp in milliseconds for the next reset boundary.
+ * @returns Epoch timestamp in milliseconds for the next review-day start.
  */
-export function getNextRstBoundaryTimestamp(config: ColConfig, now = new Date()): number {
+export function getNextReviewDayStart(config: ColConfig, now = new Date()): number {
     const oneDayInMs = 86_400_000;
     return toAssignedReviewDateRstTimestamp(new Date(now.getTime() + oneDayInMs), config);
 }
