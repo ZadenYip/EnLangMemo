@@ -163,10 +163,29 @@ export interface StudyCard {
     cardTpl: CardTemplate;
 }
 
+export interface ReviewedCardState {
+    /**
+     * Reviewed card id in hex string format.
+     */
+    cardId: string;
+    /**
+     * Queue after the review result is applied.
+     */
+    queue: CardQueue;
+    /**
+     * Card state after the review result is applied.
+     */
+    state: CardState;
+    /**
+     * Next due timestamp in milliseconds.
+     */
+    due: number;
+}
+
 export type CardReviewResult =
     | {
         state: "success";
-        card: LangCard;
+        card: ReviewedCardState;
     }
     | {
         state: "card-not-found" | "deck-not-found" | "invalid-rating";

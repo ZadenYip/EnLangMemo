@@ -51,6 +51,24 @@
         "LEARNING": "正学习 {{count}} 张卡片",
         "START": "开始学习"
       },
+      "CARD": {
+        "FRONT_PLACEHOLDER": "卡片正面",
+        "BACK_PLACEHOLDER": "卡片背面",
+        "EDIT": "编辑",
+        "SHOW_ANSWER": "显示答案",
+        "MORE": "更多操作",
+        "RATING": {
+          "AGAIN": "重来",
+          "HARD": "困难",
+          "GOOD": "良好",
+          "EASY": "简单"
+        },
+        "INTERVAL": {
+          "MINUTE": "{{count}}分钟",
+          "HOUR": "{{count}}小时",
+          "DAY": "{{count}}天"
+        }
+      },
       "COMPLETED": {
         "MESSAGE": "当前牌组：{{name}} 已经完成学习",
         "BACK_TO_HOME": "返回主界面"

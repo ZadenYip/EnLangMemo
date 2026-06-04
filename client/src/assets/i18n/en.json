@@ -51,6 +51,24 @@
         "LEARNING": "{{count}} cards learning",
         "START": "Start Learning"
       },
+      "CARD": {
+        "FRONT_PLACEHOLDER": "Card front",
+        "BACK_PLACEHOLDER": "Card back",
+        "EDIT": "Edit",
+        "SHOW_ANSWER": "Show Answer",
+        "MORE": "More",
+        "RATING": {
+          "AGAIN": "Again",
+          "HARD": "Hard",
+          "GOOD": "Good",
+          "EASY": "Easy"
+        },
+        "INTERVAL": {
+          "MINUTE": "{{count}}m",
+          "HOUR": "{{count}}h",
+          "DAY": "{{count}}d"
+        }
+      },
       "COMPLETED": {
         "MESSAGE": "Current deck: {{name}} has completed learning",
         "BACK_TO_HOME": "Back to Home"
