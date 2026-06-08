@@ -8,9 +8,6 @@
 		},
 		{
 			"path": "pipeline-data"
-		},
-		{
-			"path": "server"
 		}
 	],
 	"settings": {}
