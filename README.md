@@ -30,6 +30,10 @@
 
 这份 schema 有的注释可能不太同步实际开发情况，后续会整理正式版
 
+### 同步服务器
+
+正在开发...，仓库地址：[enlangmemo-server](https://github.com/ZadenYip/enlangmemo-server)
+
 ## 核心界面展示
 
 主界面：
