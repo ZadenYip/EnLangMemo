@@ -88,6 +88,7 @@ class PKCEFlow {
                     "Failed to extract authorization code from OAuth callback URL",
                 ),
             );
+            return;
         }
         this.session.authorizationCode = code;
         void this.exchangeToken().catch((err) => {
