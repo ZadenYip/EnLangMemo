@@ -20,11 +20,22 @@ nav {
   gap: 4px;
 }
 
-nav > a {
+.toolbar-nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.auth-status-button {
+  margin-left: 1.5rem;
+}
+
+nav a,
+nav button {
   color: var(--mat-sys-primary);
 }
 
-nav > a.active {
+nav a.active {
   background: rgb(193, 213, 248);
 }
 

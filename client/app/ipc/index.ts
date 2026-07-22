@@ -17,6 +17,8 @@ import { PcsNoteIpcService } from "../db/services/repetition/processing-note/pcs
 import { PcsNoteServiceIPCDescriptor } from "../db/services/repetition/processing-note/pcs-note-service-interface";
 import { CardIpcService } from "../db/services/repetition/cards/card-ipc-service";
 import { CardServiceIPCDescriptor } from "../db/services/repetition/cards/card-service-interface";
+import { AuthIpcService } from "../oauth/auth-ipc-service";
+import { AuthServiceIPCDescriptor } from "../oauth/auth-service.interface";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
@@ -49,4 +51,7 @@ function registerDatabaseHandlers() {
 
     const cardService = new CardIpcService();
     registerProxy(cardService, CardServiceIPCDescriptor);
+
+    const authService = new AuthIpcService();
+    registerProxy(authService, AuthServiceIPCDescriptor);
 }

@@ -13,7 +13,7 @@ export class NotifyService {
      * @param message Message text to display.
      */
     open(message: string, action?: string, config: MatSnackBarConfig = {
-        duration: 1000,
+        duration: 3000,
         horizontalPosition: "center",
         verticalPosition: "bottom",
     }): void {

@@ -2,17 +2,45 @@ import * as crypto from "crypto";
 import { shell } from "electron";
 import Logger from "electron-log/main";
 import { TokenErrorResponse, TokenResponse } from "./token";
-import { isDev } from "@main/main";
+import { OAUTH_API_BASE_URL } from "./oauth-config";
+import type { OAuthFailureReason } from "./auth-service.types";
 
 export const OAUTH_CALLBACK_PATH = "enlangmemo://oauth/callback";
-// TODO production environment should use the real OAuth server URL
-const OAUTH_BASE_URL = isDev() ? "http://127.0.0.1:8080/v1/oauth" : "";
+
+/** Maximum time to wait for the OAuth token endpoint. */
+const TOKEN_EXCHANGE_TIMEOUT_MS = 10_000;
+
+/** Internal OAuth flow error converted to CurUserResponse by the IPC service. */
+export class OAuthFlowError extends Error {
+    /** Structured OAuth failure reason for IPC response mapping. */
+    readonly reason: OAuthFailureReason;
+    /** HTTP status returned by the OAuth server, when available. */
+    readonly status?: number;
+
+    /**
+     * Create an internal OAuth flow error.
+     * @param reason - Structured failure reason for IPC response mapping.
+     * @param message - Log-friendly failure message.
+     * @param status - Optional HTTP status returned by OAuth server.
+     * @param cause - Original lower-level failure.
+     */
+    constructor(reason: OAuthFailureReason, message: string, status?: number, cause?: unknown) {
+        super(message, { cause });
+        this.name = "OAuthFlowError";
+        this.reason = reason;
+        this.status = status;
+    }
+}
 
 let pkceFlow: PKCEFlow | null = null;
 
 export async function startPKCEFlow(): Promise<TokenResponse> {
     pkceFlow = new PKCEFlow();
-    return pkceFlow.start();
+    try {
+        return await pkceFlow.start();
+    } finally {
+        pkceFlow = null;
+    }
 }
 
 export function handleAuthorizeCallback(url: string): void {
@@ -42,7 +70,9 @@ interface PKCESession {
 }
 
 class PKCEFlow {
+    private callbackTimeout: NodeJS.Timeout | null = null;
     readonly oauthPromise = Promise.withResolvers<TokenResponse>();
+    
 
     private session: PKCESession = {
         responseType: "",
@@ -64,6 +94,14 @@ class PKCEFlow {
             authorizationCode: "",
         };
 
+        this.callbackTimeout = setTimeout(() => {
+            this.oauthPromise.reject(
+                new OAuthFlowError(
+                    "oauth_callback_timeout",
+                    "OAuth callback not received within timeout period（60 seconds）",
+                ),
+            );
+        }, 30_000);
         await this.sendAuthorizeRequest();
 
         return this.oauthPromise.promise;
@@ -80,26 +118,31 @@ class PKCEFlow {
         return s256Code;
     }
 
+    /**
+     * This would be called when the OAuth server redirects back to the application
+     * @param url - The OAuth callback URL containing the authorization code and state.
+     */
     public authorizeCallback(url: string): void {
+        if (this.callbackTimeout) {
+            clearTimeout(this.callbackTimeout);
+        }
+        
         const code = this.extractOACode(url);
         if (!code) {
             this.oauthPromise.reject(
-                new Error(
+                new OAuthFlowError(
+                    "oauth_callback_invalid",
                     "Failed to extract authorization code from OAuth callback URL",
                 ),
             );
             return;
         }
         this.session.authorizationCode = code;
-        void this.exchangeToken().catch((err) => {
-            this.oauthPromise.reject(
-                new Error(`Failed to exchange token: ${err.message}`),
-            );
-        });
+        void this.exchangeToken();
     }
 
     private async exchangeToken(): Promise<void> {
-        const url = new URL(OAUTH_BASE_URL + "/token");
+        const url = new URL(OAUTH_API_BASE_URL + "/token");
 
         const params = new URLSearchParams();
         params.set("grant_type", "authorization_code");
@@ -108,12 +151,40 @@ class PKCEFlow {
         params.set("client_id", this.session.clientID);
         params.set("code_verifier", this.session.codeVerifier);
 
-        const response = await fetch(url, {
-            method: "POST",
-            body: params,
-        });
+        let response: Response;
 
-        const rawData = await response.json();
+        try {
+            response = await fetch(url, {
+                method: "POST",
+                body: params,
+                signal: AbortSignal.timeout(TOKEN_EXCHANGE_TIMEOUT_MS),
+            });
+        } catch (error) {
+            this.oauthPromise.reject(
+                new OAuthFlowError(
+                    isTimeoutError(error) ? "oauth_token_timeout" : "oauth_token_request_failed",
+                    "Failed to exchange token: request failed",
+                    undefined,
+                    error,
+                ),
+            );
+            return;
+        }
+
+        let rawData: unknown;
+        try {
+            rawData = await response.json();
+        } catch (error) {
+            this.oauthPromise.reject(
+                new OAuthFlowError(
+                    "oauth_token_request_failed",
+                    "Failed to exchange token: invalid token response",
+                    response.status,
+                    error,
+                ),
+            );
+            return;
+        }
         switch (response.status) {
             case 200:
                 this.oauthPromise.resolve(rawData as TokenResponse);
@@ -121,18 +192,37 @@ class PKCEFlow {
             case 400:
                 if (rawData as TokenErrorResponse) {
                     const errorResponse = rawData as TokenErrorResponse;
-                    this.oauthPromise.reject(new Error(errorResponse.error || "Failed to exchange token: Invalid request"));
+                    this.oauthPromise.reject(new OAuthFlowError(
+                        "oauth_token_invalid_request",
+                        errorResponse.error || "Failed to exchange token: Invalid request",
+                        response.status,
+                    ));
                 } else {
-                    this.oauthPromise.reject(new Error("Failed to exchange token: Invalid request"));
+                    this.oauthPromise.reject(new OAuthFlowError(
+                        "oauth_token_invalid_request",
+                        "Failed to exchange token: Invalid request",
+                        response.status,
+                    ));
                 }
                 break;
+            case 500:
+                this.oauthPromise.reject(new OAuthFlowError(
+                    "oauth_token_server_error",
+                    "Failed to exchange token: OAuth server internal error",
+                    response.status,
+                ));
+                break;
             default:
-                this.oauthPromise.reject(new Error(`Failed to exchange token: Unknown error, response: ${JSON.stringify(rawData)}`));
+                this.oauthPromise.reject(new OAuthFlowError(
+                    "oauth_token_unknown_error",
+                    `Failed to exchange token: Unknown error, response: ${JSON.stringify(rawData)}`,
+                    response.status,
+                ));
         }
     }
 
     private async sendAuthorizeRequest(): Promise<void> {
-        const url = new URL(OAUTH_BASE_URL + "/authorize");
+        const url = new URL(OAUTH_API_BASE_URL + "/authorize");
         url.searchParams.set("response_type", this.session.responseType);
         url.searchParams.set("client_id", this.session.clientID);
         url.searchParams.set("redirect_uri", this.session.redirectURI);
@@ -169,4 +259,13 @@ class PKCEFlow {
 
 function genRandomBytes(size: number): Buffer {
     return crypto.randomBytes(size);
+}
+
+/**
+ * Check whether fetch failed because the token request timed out.
+ * @param error - Unknown error thrown by fetch.
+ * @returns True when the error represents a timeout or abort.
+ */
+function isTimeoutError(error: unknown): boolean {
+    return error instanceof DOMException && (error.name === "TimeoutError" || error.name === "AbortError");
 }
