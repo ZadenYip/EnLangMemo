@@ -1,9 +1,10 @@
 import Logger from "electron-log/main";
 import { IAuthService, } from "./auth-service.interface";
 import { loadToken, saveToken, clearToken } from "./token-store";
-import { OAuthFlowError, startPKCEFlow } from "./oauth";
+import { OAuthError, startPKCEFlow } from "./oauth";
 import { APP_API_BASE_URL } from "./oauth-config";
 import type { AuthFailureReason, AuthUser, CurUserResponse } from "./auth-service.types";
+import { mapFetchError, mapFetchJsonError } from "@main/network/errors";
 
 interface MeResponse {
     user_id: string;
@@ -15,7 +16,6 @@ const ME_ENDPOINT = `${APP_API_BASE_URL}/v1/apps/enlangmemo/me`;
 
 /** IPC-facing auth service that keeps access tokens in the main process. */
 export class AuthIpcService implements IAuthService {
-
     /**
      * Start the OAuth login flow and will save the access token if successful.
      * @returns The current-user query response after login.
@@ -29,7 +29,10 @@ export class AuthIpcService implements IAuthService {
         } catch (error) {
             // catch startPKCEFlow() errors not getCurUser() errors
             Logger.error("Failed to start OAuth login", error);
-            return failedCurUserResponse(...mapLoginFailure(error));
+            if (error instanceof OAuthError) {
+                return failedCurUserResponse((error as OAuthError).reason);
+            } 
+            return failedCurUserResponse("unexpected_error");
         }
     }
 
@@ -49,50 +52,53 @@ export class AuthIpcService implements IAuthService {
             return successfulCurUserResponse(null);
         }
 
+        let response: Response;
         try {
-            const response = await fetch(ME_ENDPOINT, {
+            response = await fetch(ME_ENDPOINT, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token.accessToken}`,
                 },
                 signal: AbortSignal.timeout(10_000),
             });
+        } catch (error) {
+            Logger.error("failed to fetch current user with request", error);
+            return failedCurUserResponse(mapFetchError(error));
+        }
+        if (response.status === 401) {
+            Logger.error(
+                `Current-user query failed inside auth server, status: ${response.status}`,
+            );
+            clearToken();
+            return failedCurUserResponse("exchange_token_unauthorized");
+        }
 
-            if (response.status === 400) {
-                Logger.error(`invalid request to current-user endpoint, status: ${response.status}`);
-                return failedCurUserResponse("cur_user_invalid_request", response.status);
-            }
+        if (response.status === 500) {
+            Logger.error(
+                "Current-user query failed inside auth server, status: 500",
+            );
+            return failedCurUserResponse("server_error");
+        }
 
-            if (response.status === 401) {
-                Logger.error(`Current-user query failed inside auth server, status: ${response.status}`);
-                clearToken();
-                return failedCurUserResponse("cur_user_unauthorized", response.status);
-            }
+        if (!response.ok) {
+            Logger.error(
+                `Failed to fetch current user, status: ${response.status}`,
+            );
+            return failedCurUserResponse("unexpected_error");
+        }
 
-            if (response.status === 500) {
-                Logger.error("Current-user query failed inside auth server, status: 500");
-                return failedCurUserResponse("cur_user_server_error", response.status);
-            }
-
-            if (!response.ok) {
-                Logger.error(`Failed to fetch current user, status: ${response.status}`);
-                return failedCurUserResponse("cur_user_unknown_error", response.status);
-            }
-
-            const curUserResponse = await response.json() as MeResponse;
-
+        try {
+            const curUserResponse = (await response.json()) as MeResponse;
             return successfulCurUserResponse({
                 userId: curUserResponse.user_id,
                 loginId: curUserResponse.login_id,
                 nickname: curUserResponse.nickname,
             });
         } catch (error) {
-            const failureReason = isTimeoutError(error) ? "cur_user_timeout" : "cur_user_request_failed";
-            Logger.error(`Failed to query current user, reason: ${failureReason}`, error);
-            return failedCurUserResponse(failureReason);
+            Logger.error("failed to parse current user response", error);
+            return failedCurUserResponse(mapFetchJsonError(error));
         }
     }
-
 }
 
 /**
@@ -110,36 +116,12 @@ function successfulCurUserResponse(user: AuthUser | null): CurUserResponse {
 /**
  * Create a failed current-user query response.
  * @param error - Short failure reason for renderer-side branching.
- * @param status - Optional HTTP status returned by the auth server.
  * @returns Current-user response DTO for IPC callers.
  */
-function failedCurUserResponse(error: AuthFailureReason, status?: number): CurUserResponse {
+function failedCurUserResponse(error: AuthFailureReason): CurUserResponse {
     return {
         success: false,
         user: null,
-        status,
         error,
     };
-}
-
-/**
- * Map OAuth login failures into the current-user response failure tuple.
- * @param error - Unknown error caught from the OAuth login flow.
- * @returns Failure reason and optional HTTP status for CurUserResponse.
- */
-function mapLoginFailure(error: unknown): [AuthFailureReason, number?] {
-    if (!(error instanceof OAuthFlowError)) {
-        return ["oauth_login_failed"];
-    }
-
-    return [error.reason, error.status];
-}
-
-/**
- * Check whether a fetch or body parsing failure was caused by timeout.
- * @param error - Unknown error caught from fetch or response body parsing.
- * @returns True when the error represents an aborted timeout.
- */
-function isTimeoutError(error: unknown): boolean {
-    return error instanceof DOMException && (error.name === "TimeoutError" || error.name === "AbortError");
 }

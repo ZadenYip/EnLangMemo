@@ -95,28 +95,46 @@ export class AuthService {
      * @param kind - User-facing auth failure category.
      */
     private notifyAuthFailure(kind: AuthFailureKind): void {
-        const messageKey = kind === "server"
-            ? "HEADER.AUTH.SERVER_INTERNAL_ERROR"
-            : "HEADER.AUTH.APP_INTERNAL_ERROR";
+        const messageKey = toAuthFailureMessageKey(kind);
         this.notifyService.open(this.translateService.instant(messageKey));
     }
 }
 
 /** User-facing auth failure category shown by the renderer. */
-type AuthFailureKind = "server" | "internal";
+type AuthFailureKind = "network" | "server" | "internal";
 
 /**
- * Map main-process auth failures into two user-facing notification categories.
+ * Map user-facing auth failure categories into localized message keys.
+ * @param kind - User-facing auth failure category.
+ * @returns Translation key displayed in notification.
+ */
+function toAuthFailureMessageKey(kind: AuthFailureKind): string {
+    switch (kind) {
+        case "network":
+            return "HEADER.AUTH.NETWORK_ERROR";
+        case "server":
+            return "HEADER.AUTH.SERVER_INTERNAL_ERROR";
+        case "internal":
+            return "HEADER.AUTH.APP_INTERNAL_ERROR";
+    }
+}
+
+/**
+ * Map main-process auth failures into user-facing notification categories.
  * @param reason - Failure reason returned through IPC.
  * @returns User-facing auth failure category.
  */
 function toAuthFailureKind(reason: AuthFailureReason | undefined): AuthFailureKind {
     switch (reason) {
-        case "oauth_token_server_error":
-        case "oauth_callback_timeout":
-        case "cur_user_server_error":
-            return "server";
-        default:
+        case "timeout":
+        case "network_error":
+        case "fetch_aborted":
+        case "callback_timeout":
+            return "network";
+        case "unexpected_error":
+        case undefined:
             return "internal";
+        default:
+            return "server";
     }
 }

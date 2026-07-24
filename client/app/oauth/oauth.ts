@@ -1,10 +1,11 @@
 import * as crypto from "crypto";
 import { shell } from "electron";
 import Logger from "electron-log/main";
-import { TokenErrorResponse, TokenResponse } from "./token";
+import { TokenResponse } from "./token";
 import { OAUTH_API_BASE_URL } from "./oauth-config";
-import type { OAuthFailureReason } from "./auth-service.types";
 import { isDev } from "@main/main";
+import { AuthFailureReason } from "./auth-service.types";
+import { mapFetchError, mapFetchJsonError } from "@main/network/errors";
 
 export const OAUTH_CALLBACK_PATH = "enlangmemo://oauth/callback";
 
@@ -12,9 +13,9 @@ export const OAUTH_CALLBACK_PATH = "enlangmemo://oauth/callback";
 const TOKEN_EXCHANGE_TIMEOUT_MS = 10_000;
 
 /** Internal OAuth flow error converted to CurUserResponse by the IPC service. */
-export class OAuthFlowError extends Error {
+export class OAuthError extends Error {
     /** Structured OAuth failure reason for IPC response mapping. */
-    readonly reason: OAuthFailureReason;
+    readonly reason: AuthFailureReason;
     /** HTTP status returned by the OAuth server, when available. */
     readonly status?: number;
 
@@ -25,9 +26,9 @@ export class OAuthFlowError extends Error {
      * @param status - Optional HTTP status returned by OAuth server.
      * @param cause - Original lower-level failure.
      */
-    constructor(reason: OAuthFailureReason, message: string, status?: number, cause?: unknown) {
+    constructor(reason: AuthFailureReason, message: string, status?: number, cause?: unknown) {
         super(message, { cause });
-        this.name = "OAuthFlowError";
+        this.name = "OAuthError";
         this.reason = reason;
         this.status = status;
     }
@@ -97,8 +98,8 @@ class PKCEFlow {
 
         this.callbackTimeout = setTimeout(() => {
             this.oauthPromise.reject(
-                new OAuthFlowError(
-                    "oauth_callback_timeout",
+                new OAuthError(
+                    "callback_timeout",
                     "OAuth callback not received within timeout period（60 seconds）",
                 ),
             );
@@ -131,8 +132,8 @@ class PKCEFlow {
         const code = this.extractOACode(url);
         if (!code) {
             this.oauthPromise.reject(
-                new OAuthFlowError(
-                    "oauth_callback_invalid",
+                new OAuthError(
+                    "unexpected_error",
                     "Failed to extract authorization code from OAuth callback URL",
                 ),
             );
@@ -161,28 +162,10 @@ class PKCEFlow {
                 signal: AbortSignal.timeout(TOKEN_EXCHANGE_TIMEOUT_MS),
             });
         } catch (error) {
-            const isTimeout = isTimeoutError(error);
-            let err: OAuthFlowError;
-            if (isTimeout) {
-                Logger.error("Token exchange request timed out", error);
-                err = new OAuthFlowError(
-                    "oauth_token_timeout",
-                    "Failed to exchange token: request timed out",
-                    undefined,
-                    error,
-                );
-            } else {
-                if (error instanceof Error) {
-                    Logger.error("Token exchange request failed", (error as Error).message);
-                }
-                err = new OAuthFlowError(
-                    "oauth_token_unknown_error",
-                    "failed to exchange token: unexpected error",
-                    undefined,
-                    error,
-                );
-            }
-            this.oauthPromise.reject(err);
+            const fetchError = mapFetchError(error);
+            this.oauthPromise.reject(
+                new OAuthError(fetchError, `failed to exchange token when fetching ${url.toString()}`),
+            );
             return;
         }
 
@@ -191,9 +174,9 @@ class PKCEFlow {
             rawData = await response.json();
         } catch (error) {
             this.oauthPromise.reject(
-                new OAuthFlowError(
-                    "oauth_token_request_failed",
-                    "Failed to exchange token: invalid token response",
+                new OAuthError(
+                    mapFetchJsonError(error),
+                    "failed to exchange token when parsing JSON response",
                     response.status,
                     error,
                 ),
@@ -205,32 +188,24 @@ class PKCEFlow {
                 this.oauthPromise.resolve(rawData as TokenResponse);
                 break;
             case 400:
-                if (rawData as TokenErrorResponse) {
-                    const errorResponse = rawData as TokenErrorResponse;
-                    this.oauthPromise.reject(new OAuthFlowError(
-                        "oauth_token_invalid_request",
-                        errorResponse.error || "Failed to exchange token: Invalid request",
-                        response.status,
-                    ));
-                } else {
-                    this.oauthPromise.reject(new OAuthFlowError(
-                        "oauth_token_invalid_request",
-                        "Failed to exchange token: Invalid request",
-                        response.status,
-                    ));
-                }
+                this.oauthPromise.reject(new OAuthError(
+                    "unexpected_error",
+                    "invalid request to exchange token",
+                    response.status,
+                ));
+
                 break;
             case 500:
-                this.oauthPromise.reject(new OAuthFlowError(
-                    "oauth_token_server_error",
-                    "Failed to exchange token: OAuth server internal error",
+                this.oauthPromise.reject(new OAuthError(
+                    "server_error",
+                    "failed to exchange token: OAuth server internal error",
                     response.status,
                 ));
                 break;
             default:
-                this.oauthPromise.reject(new OAuthFlowError(
-                    "oauth_token_unknown_error",
-                    `Failed to exchange token: Unknown error, response: ${JSON.stringify(rawData)}`,
+                this.oauthPromise.reject(new OAuthError(
+                    "unexpected_error",
+                    `failed to exchange token: unexpected HTTP status ${response.status}`,
                     response.status,
                 ));
         }
@@ -274,13 +249,4 @@ class PKCEFlow {
 
 function genRandomBytes(size: number): Buffer {
     return crypto.randomBytes(size);
-}
-
-/**
- * Check whether fetch failed because the token request timed out.
- * @param error - Unknown error thrown by fetch.
- * @returns True when the error represents a timeout or abort.
- */
-function isTimeoutError(error: unknown): boolean {
-    return error instanceof DOMException && (error.name === "TimeoutError" || error.name === "AbortError");
 }
