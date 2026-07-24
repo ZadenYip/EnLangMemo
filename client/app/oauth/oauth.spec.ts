@@ -33,7 +33,7 @@ describe("OAuth PKCE flow", () => {
             const tokenUrl = new URL(input.toString());
             tokenRequestBody = init?.body?.toString() ?? "";
 
-            expect(tokenUrl.toString()).toBe("http://127.0.0.1:8080/v1/oauth/token");
+            expect(tokenUrl.toString()).toBe("https://localhost/v1/oauth/token");
             expect(init?.method).toBe("POST");
 
             return new Response(JSON.stringify(tokenResponse), {
@@ -50,9 +50,9 @@ describe("OAuth PKCE flow", () => {
         const authorizeUrl = new URL(vi.mocked(shell.openExternal).mock.calls[0][0]);
         const callbackState = authorizeUrl.searchParams.get("state");
 
-        expect(authorizeUrl.toString()).toContain("http://127.0.0.1:8080/v1/oauth/authorize");
+        expect(authorizeUrl.toString()).toContain("https://localhost/v1/oauth/authorize");
         expect(authorizeUrl.searchParams.get("response_type")).toBe("code");
-        expect(authorizeUrl.searchParams.get("client_id")).toBe("test-client-id");
+        expect(authorizeUrl.searchParams.get("client_id")).toBe("00000000-0000-0000-0000-000000000010");
         expect(authorizeUrl.searchParams.get("redirect_uri")).toBe(OAUTH_CALLBACK_PATH);
         expect(authorizeUrl.searchParams.get("code_challenge_method")).toBe("S256");
         expect(callbackState).toBeTruthy();
@@ -67,7 +67,7 @@ describe("OAuth PKCE flow", () => {
         expect(tokenRequestParams.get("grant_type")).toBe("authorization_code");
         expect(tokenRequestParams.get("code")).toBe("test-auth-code");
         expect(tokenRequestParams.get("redirect_uri")).toBe(OAUTH_CALLBACK_PATH);
-        expect(tokenRequestParams.get("client_id")).toBe("test-client-id");
+        expect(tokenRequestParams.get("client_id")).toBe("00000000-0000-0000-0000-000000000010");
 
         const codeVerifier = tokenRequestParams.get("code_verifier");
         const expectedChallenge = crypto
