@@ -1,6 +1,6 @@
 import { bufferToHex } from "@main/db/import/utils";
 import { cardsTable } from "@main/db/schema/repetition/rep";
-import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
+import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
 import { CardQueue, FSRSCard, LangCard, StudyCard } from "./card-service-types";
 
 export interface StudyCardRow {

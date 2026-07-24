@@ -12,17 +12,19 @@ When esbuild bundles `preload.ts`, it follows the import chain and bundles all d
 
 ```
 preload.ts
-  └─ service.ts
-       └─ database-service.ts        ← This file contains the DatabaseService class
-            └─ better-sqlite3        ← Unnecessarily bundled into preload ✗
+  -> service.ts
+       -> database-service.ts        <- This file contains the DatabaseService class
+            -> better-sqlite3        <- Unnecessarily bundled into preload X
 ```
 
 To solve this problem, separate **interface** and **implementation**:
 
 ```
-database-service.interface.ts   ← Only interface and descriptor
-database-service.ts             ← Has class and better-sqlite3
+database-service-interface.ts   <- Only interface and descriptor
+database-service.ts             <- Has class and better-sqlite3
 ```
+
+Also, files ending in `-interface.ts` or `-types.ts` are intentionally included by both the main-process and renderer-process tsconfig files. Treat them as shared contract files: keep only types, interfaces, descriptors, and lightweight constants there; do not import main-process implementations or Node/native dependencies.
 
 Then, `ipc-service.ts` uses electron-ipc-cat's `createProxy` to create proxy objects, avoiding importing the implementation class.
 
@@ -30,7 +32,7 @@ Then, `ipc-service.ts` uses electron-ipc-cat's `createProxy` to create proxy obj
 import { createProxy } from 'electron-ipc-cat/client';
 import { AsyncifyProxy } from 'electron-ipc-cat/common';
 
-import { DatabaseServiceIPCDescriptor, IDatabaseService } from "../database/database-service.interface";
+import { DatabaseServiceIPCDescriptor, IDatabaseService } from "../database/database-service-interface";
 
 export const database = createProxy<AsyncifyProxy<IDatabaseService>>(DatabaseServiceIPCDescriptor);
 
@@ -46,7 +48,7 @@ The generic `<AsyncifyProxy<IDatabaseService>>` just tells TypeScript the return
 Reference [electron-ipc-cat](https://github.com/linonetwo/electron-ipc-cat#1-the-class). Here we use the database service as an example:
 
 ```typescript
-/** database-service.interface.ts **/
+/** database-service-interface.ts **/
 
 export interface IDatabaseService {
     // Method signature return type can be Promise or Observable
@@ -69,7 +71,7 @@ Next, implement the interface (skipped here), then proceed to registration:
 ```typescript
 /** app/ipc/index.ts **/
 import { registerProxy } from 'electron-ipc-cat/server';
-import { DatabaseServiceIPCDescriptor } from '../database/database-service.interface';
+import { DatabaseServiceIPCDescriptor } from '../database/database-service-interface';
 import { DatabaseService } from '../database/database-service';
 
 // Called by main process
@@ -92,7 +94,7 @@ After registration, create proxy objects for preload to use. We introduce an `ip
 import { createProxy } from 'electron-ipc-cat/client';
 import { AsyncifyProxy } from 'electron-ipc-cat/common';
 
-import { DatabaseServiceIPCDescriptor, IDatabaseService } from "../database/database-service.interface";
+import { DatabaseServiceIPCDescriptor, IDatabaseService } from "../database/database-service-interface";
 
 export const database = createProxy<AsyncifyProxy<IDatabaseService>>(DatabaseServiceIPCDescriptor);
 
@@ -112,11 +114,11 @@ contextBridge.exposeInMainWorld('service', service);
 console.log('[Preload] Exposed service to window');
 ```
 
-Finally, to let the renderer process know which service are available, add a type declaration file `ipc-api.d.ts` and include it in Angular's `tsconfig.app.json`:
+Finally, to let the renderer process know which service are available, add a type declaration file `ipc-api.ts` and include it in Angular's `tsconfig.app.json`:
 
 ```typescript
-import { IServicesWithOnlyObservables, IServicesWithoutObservables } from "electron-ipc-cat/common";
-import * as service from "./ipc-service";
+import type { IServicesWithOnlyObservables, IServicesWithoutObservables } from "electron-ipc-cat/common";
+import type * as service from "./ipc-service";
 
 declare global {
   interface Window {

@@ -3,15 +3,15 @@ import { AsyncifyProxy } from "electron-ipc-cat/common";
 import { Observable } from "rxjs";
 
 import { DicServiceIPCDescriptor, IDatabaseService } from "../db/services/dictionary/dic-service-interface";
-import { DialogServiceIPCDescriptor, IDialogService } from "../dialog/dialog-service.interface";
-import { ISubtitleService, SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service.interface";
+import { DialogServiceIPCDescriptor, IDialogService } from "../dialog/dialog-service-interface";
+import { ISubtitleService, SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service-interface";
 import { CollectionServiceIPCDescriptor, ICollectionService } from "../db/services/repetition/collection/col-service-interface";
 import { DeckServiceIPCDescriptor, IDeckService } from "../db/services/repetition/deck/deck-service-interface";
 import { INoteTplService, NoteTplServiceIPCDescriptor } from "../db/services/repetition/note-template/nt-tpl-service-interface";
 import { DicNoteMappingServiceIPCDescriptor, IDicNoteMappingService } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service-interface";
 import { IPcsNoteService, PcsNoteServiceIPCDescriptor } from "../db/services/repetition/processing-note/pcs-note-service-interface";
 import { CardServiceIPCDescriptor, ICardService } from "../db/services/repetition/cards/card-service-interface";
-import { AuthServiceIPCDescriptor, IAuthService } from "../oauth/auth-service.interface";
+import { AuthServiceIPCDescriptor, IAuthService } from "../oauth/auth-service-interface";
 
 export const dic = createProxy<AsyncifyProxy<IDatabaseService>>(DicServiceIPCDescriptor);
 export const dialog = createProxy<AsyncifyProxy<IDialogService>>(DialogServiceIPCDescriptor);

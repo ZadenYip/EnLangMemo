@@ -9,7 +9,7 @@ import { wordsTable } from "../../schema/dictionary/dic";
 import { impWords } from ".";
 import { createSchema, writeJsonLinesFile, writeRawLinesFile } from "./test-helpers";
 import { hexToBuffer, uuidToBuffer } from "../utils";
-import { ImportResult } from "./dic-import-type";
+import { ImportResult } from "./dic-import-types";
 import { dictionarySchema, getDicDb } from "@main/db/db";
 
 vi.mock(import("@main/db/db"), async (importOriginal) => {

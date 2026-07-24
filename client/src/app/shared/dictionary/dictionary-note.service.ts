@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Definition, DictionaryEntry } from "@main/db/services/dictionary/dic-service-types";
-import { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
+import { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
 import {
     createEmptyOption,
     SelectDropdownOption,

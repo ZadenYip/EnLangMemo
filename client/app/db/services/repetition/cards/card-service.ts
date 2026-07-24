@@ -1,7 +1,7 @@
 import { getRepDb } from "@main/db/db";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import { cardsTable, decksTable, notesTable } from "@main/db/schema/repetition/rep";
-import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
+import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
 import type { PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types";
 import { and, count, eq, inArray, lte, SQL } from "drizzle-orm";
 import { createEmptyCard } from "ts-fsrs";

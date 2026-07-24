@@ -1,6 +1,6 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
 import { DictionaryEntry } from "./dic-service-types";
-import { ImportResult } from "../../import/dictionary/dic-import-type";
+import { ImportResult } from "../../import/dictionary/dic-import-types";
 
 export interface IDatabaseService {
     queryWord(spelling: string): Promise<DictionaryEntry | null>;

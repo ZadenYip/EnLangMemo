@@ -5,7 +5,7 @@ import { definitionsTable, examplesTable, wordPosesTable, wordsTable } from "../
 import { eq } from "drizzle-orm";
 import { lemmatize } from "@main/lemmatization";
 import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
-import { ImportResult } from "../../import/dictionary/dic-import-type";
+import { ImportResult } from "../../import/dictionary/dic-import-types";
 import { bufferToHex } from "../../import/utils";
 
 export class DictionaryService implements IDictionaryService {

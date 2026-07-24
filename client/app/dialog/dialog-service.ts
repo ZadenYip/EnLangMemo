@@ -1,5 +1,5 @@
 import { dialog } from "electron";
-import { IDialogService } from "./dialog-service.interface";
+import { IDialogService } from "./dialog-service-interface";
 
 export class DialogService implements IDialogService {
     public async showOpenDialog(propose: string, extensions: string[]): Promise<string | null> {

@@ -1,4 +1,4 @@
-import { ISubtitleService } from "./subtitle-service.interface";
+import { ISubtitleService } from "./subtitle-service-interface";
 import { Observable } from "rxjs";
 import { createReadStream } from "fs";
 import { Parser } from "./srt/parser/parser";

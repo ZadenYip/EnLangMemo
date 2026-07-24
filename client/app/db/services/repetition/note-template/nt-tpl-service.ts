@@ -11,7 +11,7 @@ import {
     NoteTemplateCreationResult,
     NoteTemplateSaveResult,
     TemplateDeletionResult,
-} from "./nt-tpl-service.types";
+} from "./nt-tpl-service-types";
 import { genCardTpl, genNoteTpl } from "./nt-tpl-service-helper";
 
 

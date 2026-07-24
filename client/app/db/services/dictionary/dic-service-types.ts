@@ -4,7 +4,7 @@ export interface DictionaryEntry {
         // british and american phonetic symbols
         bre: string;
         ame: string;
-    }
+    };
     senses: Sense[];
 }
 

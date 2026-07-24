@@ -7,12 +7,12 @@ import {
     wordPosesTable,
     wordsTable,
 } from "../../schema/dictionary/dic";
-import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from "../../schema/dictionary/dic-types";
+import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from "../../schema/dictionary/dic-schema-infers";
 import { sql } from "drizzle-orm";
 import Database from "better-sqlite3";
 import Logger from "electron-log/main";
 import { convertKeysToCamelCase, hexToBuffer, uuidToBuffer } from "../utils";
-import { ImportResult } from "./dic-import-type";
+import { ImportResult } from "./dic-import-types";
 
 export type WordRow = Omit<WordInsert, "wordId" | "fingerprint"> & { wordId: string, fingerprint: string };
 export type WordPosRow = Omit<WordPosInsert, "wordId" | "poseId"> & { wordId: string; poseId: string };

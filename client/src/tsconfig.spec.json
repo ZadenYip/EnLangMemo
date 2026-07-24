@@ -3,6 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "esModuleInterop": true,
+    "rootDir": "..",
     "outDir": "../out-tsc/spec",
     "typeRoots": ["../node_modules/@types", "../node_modules"],
     "types": [
@@ -15,9 +16,12 @@
     "**/*.spec.ts",
     "**/*.d.ts",
     "**/*types.ts",
-    "../app/ipc/ipc-api.d.ts",
-    "../app/db/services/*.d.ts",
-    "../app/subtitle-handler/*.d.ts"
+    "../app/ipc/ipc-api.ts",
+    "../app/ipc/ipc-service.ts",
+    "../app/**/*-interface.ts",
+    "../app/**/*-types.ts",
+    "../app/subtitle-handler/types.ts",
+    "../app/network/errors.ts"
   ],
   "exclude": [
     "dist",

@@ -1,5 +1,5 @@
 import { Injectable, signal } from "@angular/core";
-import { CardTemplate, NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
+import { CardTemplate, NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
 import {
     createEmptyOption,
     SelectDropdownOption,

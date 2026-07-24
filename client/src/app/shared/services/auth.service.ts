@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from "@angular/core";
 import Logger from "electron-log/renderer";
 import { TranslateService } from "@ngx-translate/core";
 import { NotifyService } from "./notify.service";
-import type { AuthFailureReason, CurUserResponse } from "@main/oauth/auth-service.types";
+import type { AuthFailureReason, CurUserResponse } from "@main/oauth/auth-service-types";
 
 export interface CurrentUserView {
     /** Current user ID from the OAuth server. */
