@@ -4,6 +4,7 @@ import Logger from "electron-log/main";
 import { TokenErrorResponse, TokenResponse } from "./token";
 import { OAUTH_API_BASE_URL } from "./oauth-config";
 import type { OAuthFailureReason } from "./auth-service.types";
+import { isDev } from "@main/main";
 
 export const OAUTH_CALLBACK_PATH = "enlangmemo://oauth/callback";
 
@@ -86,8 +87,8 @@ class PKCEFlow {
     public async start(): Promise<TokenResponse> {
         this.session = {
             responseType: "code",
-            // TODO 填写 OAuth 客户端 ID
-            clientID: "test-client-id",
+            // TODO 填写正式的 OAuth 客户端 ID
+            clientID: isDev() ? "00000000-0000-0000-0000-000000000010" : "",
             redirectURI: OAUTH_CALLBACK_PATH,
             state: genRandomBytes(32).toString("base64url"),
             codeVerifier: genRandomBytes(32).toString("base64url"),
@@ -160,14 +161,28 @@ class PKCEFlow {
                 signal: AbortSignal.timeout(TOKEN_EXCHANGE_TIMEOUT_MS),
             });
         } catch (error) {
-            this.oauthPromise.reject(
-                new OAuthFlowError(
-                    isTimeoutError(error) ? "oauth_token_timeout" : "oauth_token_request_failed",
-                    "Failed to exchange token: request failed",
+            const isTimeout = isTimeoutError(error);
+            let err: OAuthFlowError;
+            if (isTimeout) {
+                Logger.error("Token exchange request timed out", error);
+                err = new OAuthFlowError(
+                    "oauth_token_timeout",
+                    "Failed to exchange token: request timed out",
                     undefined,
                     error,
-                ),
-            );
+                );
+            } else {
+                if (error instanceof Error) {
+                    Logger.error("Token exchange request failed", (error as Error).message);
+                }
+                err = new OAuthFlowError(
+                    "oauth_token_unknown_error",
+                    "failed to exchange token: unexpected error",
+                    undefined,
+                    error,
+                );
+            }
+            this.oauthPromise.reject(err);
             return;
         }
 
