@@ -6,7 +6,7 @@ import {
 	NoteTemplateCreationResult,
 	NoteTemplateSaveResult,
 	TemplateDeletionResult,
-} from "./nt-tpl-service.types";
+} from "./nt-tpl-service-types";
 
 export interface INoteTplService {
 	/**

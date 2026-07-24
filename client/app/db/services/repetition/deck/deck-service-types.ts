@@ -1,4 +1,4 @@
-import { FSRSParameters } from "ts-fsrs";
+import type { FSRSParameters } from "ts-fsrs";
 
 export interface DeckConfig {
     /**
@@ -27,7 +27,7 @@ export interface Deck {
     name: string;
 
     /**
-     * The maximum number of new cards can be learned per day in this deck.
+     * The maximum number of new cards can be learned per day.
      */
     newCardsPerDay: number;
 
@@ -74,7 +74,7 @@ export interface Deck {
     reviewedToday: number;
 }
 
-export type DeckCreationResult = 
+export type DeckCreationResult =
     | { state: "success" }
     | { state: "duplicate" }
-    | { state: "error"; errorMessage: string }
+    | { state: "error"; errorMessage: string };

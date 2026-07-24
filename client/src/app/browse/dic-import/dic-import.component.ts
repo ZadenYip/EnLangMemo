@@ -11,7 +11,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatTableModule } from "@angular/material/table";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import type { ImportResult } from "@main/db/import/dictionary/dic-import-type";
+import type { ImportResult } from "@main/db/import/dictionary/dic-import-types";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { map, startWith } from "rxjs";
 

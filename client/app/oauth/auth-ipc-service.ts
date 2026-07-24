@@ -1,9 +1,9 @@
 import Logger from "electron-log/main";
-import { IAuthService, } from "./auth-service.interface";
+import { IAuthService, } from "./auth-service-interface";
 import { loadToken, saveToken, clearToken } from "./token-store";
 import { OAuthError, startPKCEFlow } from "./oauth";
 import { APP_API_BASE_URL } from "./oauth-config";
-import type { AuthFailureReason, AuthUser, CurUserResponse } from "./auth-service.types";
+import type { AuthFailureReason, AuthUser, CurUserResponse } from "./auth-service-types";
 import { mapFetchError, mapFetchJsonError } from "@main/network/errors";
 
 interface MeResponse {

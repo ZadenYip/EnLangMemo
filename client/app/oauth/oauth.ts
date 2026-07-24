@@ -4,7 +4,7 @@ import Logger from "electron-log/main";
 import { TokenResponse } from "./token";
 import { OAUTH_API_BASE_URL } from "./oauth-config";
 import { isDev } from "@main/main";
-import { AuthFailureReason } from "./auth-service.types";
+import type { AuthFailureReason } from "./auth-service-types";
 import { mapFetchError, mapFetchJsonError } from "@main/network/errors";
 
 export const OAUTH_CALLBACK_PATH = "enlangmemo://oauth/callback";

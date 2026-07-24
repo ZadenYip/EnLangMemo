@@ -1,4 +1,4 @@
-import { CardTemplate, TemplateField } from "../note-template/nt-tpl-service.types";
+import { CardTemplate, TemplateField } from "../note-template/nt-tpl-service-types";
 import { NoteField } from "../processing-note/pcs-note-types";
 
 export interface CardRef {

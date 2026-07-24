@@ -9,7 +9,7 @@ import {
     text,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
-import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
+import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
 import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types";
 import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
 import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
@@ -51,7 +51,7 @@ export const collectionTable = sqliteTable("collection", {
     updatedAt: int("updated_at").notNull(),
     collectionSchemaUpdatedAt: int("collection_schema_updated_at").notNull(),
     /**
-     * see app/db/services/repetition/collection/col-service-types.d.ts 
+     * see app/db/services/repetition/collection/col-service-types.ts
      * CollectionConfig
      */
     config: jsonb<ColConfig>("config").notNull(),

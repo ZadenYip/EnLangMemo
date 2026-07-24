@@ -1,4 +1,3 @@
-
 /**
  * Global dictionary note creation mapping.
  */
@@ -47,4 +46,3 @@ export interface DicNoteFieldMapping {
      */
     tgtDefFieldId?: number;
 }
-

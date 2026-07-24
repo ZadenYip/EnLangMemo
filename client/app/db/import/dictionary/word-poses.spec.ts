@@ -8,7 +8,7 @@ import { wordPosesTable } from "../../schema/dictionary/dic";
 import { impWordPoses, impWords } from ".";
 import { createSchema, writeJsonLinesFile } from "./test-helpers";
 import { bufferToHex } from "../utils";
-import { ImportResult } from "./dic-import-type";
+import { ImportResult } from "./dic-import-types";
 
 vi.mock(import("@main/db/db"), async (importOriginal) => {
     const mod = await importOriginal();

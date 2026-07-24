@@ -61,7 +61,7 @@ export interface TemplateField {
 export interface CardTemplate {
     /**
      * unix timestamp in milliseconds, e.g. 1778079239000
-     * bussiness id 
+     * bussiness id
      */
     id: number;
     name: string;

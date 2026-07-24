@@ -2,7 +2,7 @@ import { inject, Injectable, linkedSignal } from "@angular/core";
 import {
     NoteTemplate,
     NoteTemplateSaveResult,
-} from "@main/db/services/repetition/note-template/nt-tpl-service.types";
+} from "@main/db/services/repetition/note-template/nt-tpl-service-types";
 import { BenchStateService } from "../bench-state.service";
 import Logger from "electron-log/renderer";
 

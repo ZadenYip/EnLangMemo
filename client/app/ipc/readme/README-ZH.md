@@ -4,7 +4,7 @@
 
 ## 为什么接口和实现要分开两个文件？
 
-首先要知道的是：  
+首先要知道的是：
 
 esbuild 打包工具对 preload.ts 进行打包时，会顺着 import 链把所有依赖都打包进来：
 
@@ -18,9 +18,11 @@ preload.ts
 为了解决这个问题，把**接口**和**实现**分开：
 
 ```
-database-service.interface.ts   ← 只有 interface 和描述符
+database-service-interface.ts   ← 只有 interface 和描述符
 database-service.ts             ← 有 class 和 better-sqlite3
 ```
+
+另外，所有以 `-interface.ts` 和 `-types.ts` 结尾的文件，都会被主进程和渲染进程的 tsconfig 同时 include。也就是说这类文件默认就是共享契约文件，只放类型、interface、descriptor 和轻量常量，不要 import 主进程实现或 Node 原生依赖。
 
 接着，ipc-service.ts 使用 electron-ipc-cat createProxy 创建代理对象，避免引入实现类。
 
@@ -28,7 +30,7 @@ database-service.ts             ← 有 class 和 better-sqlite3
 import { createProxy } from 'electron-ipc-cat/client';
 import { AsyncifyProxy } from 'electron-ipc-cat/common';
 
-import { DatabaseServiceIPCDescriptor, IDatabaseService } from "../database/database-service.interface";
+import { DatabaseServiceIPCDescriptor, IDatabaseService } from "../database/database-service-interface";
 
 export const database = createProxy<AsyncifyProxy<IDatabaseService>>(DatabaseServiceIPCDescriptor);
 
@@ -44,7 +46,7 @@ export const descriptors = {
 参考 [electron-ipc-cat](https://github.com/linonetwo/electron-ipc-cat#1-the-class)，这里就以数据库服务为例：
 
 ```typescript
-/** database-service.interface.ts **/
+/** database-service-interface.ts **/
 
 export interface IDatabaseService {
     // 这里方法签名返回类型可以用 Promise 或者 Observable
@@ -66,7 +68,7 @@ export const DatabaseServiceIPCDescriptor = {
 ```typescript
 /** app/ipc/index.ts **/
 import { registerProxy } from 'electron-ipc-cat/server';
-import { DatabaseServiceIPCDescriptor } from '../database/database-service.interface';
+import { DatabaseServiceIPCDescriptor } from '../database/database-service-interface';
 import { DatabaseService } from '../database/database-service';
 
 // 会被 main 进程调用
@@ -89,7 +91,7 @@ function registerDatabaseHandlers() {
 import { createProxy } from 'electron-ipc-cat/client';
 import { AsyncifyProxy } from 'electron-ipc-cat/common';
 
-import { DatabaseServiceIPCDescriptor, IDatabaseService } from "../database/database-service.interface";
+import { DatabaseServiceIPCDescriptor, IDatabaseService } from "../database/database-service-interface";
 
 export const database = createProxy<AsyncifyProxy<IDatabaseService>>(DatabaseServiceIPCDescriptor);
 
@@ -111,11 +113,11 @@ console.log('[Preload] Exposed service to window');
 
 注意这里要用 service 而不是 services，因为 electron-ipc-cat 的 fixContextIsolation 希望暴露到 window.service（注意没有 s），不然 window.observables 无法正常工作。此外，要在渲染进程主页面引入`import 'electron-ipc-cat/fixContextIsolation';`，这样子window.observables 才能正常工作。
 
-最后为了让渲染进程处知道有哪些 Service，可以添加一个类型声明文件 ipc-api.d.ts，并 include 到 angular 的 tsconfig.app.json 里
+最后为了让渲染进程处知道有哪些 Service，可以添加一个类型声明文件 ipc-api.ts，并 include 到 angular 的 tsconfig.app.json 里
 
 ```typescript
-import { IServicesWithOnlyObservables, IServicesWithoutObservables } from "electron-ipc-cat/common";
-import * as service from "./ipc-service";
+import type { IServicesWithOnlyObservables, IServicesWithoutObservables } from "electron-ipc-cat/common";
+import type * as service from "./ipc-service";
 
 declare global {
   interface Window {
@@ -124,6 +126,7 @@ declare global {
   }
 }
 
+export {};
 ```
 
 现在就可以在渲染进程通过 `window.service.database.runSQL(...)` 来调用数据库服务了。

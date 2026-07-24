@@ -3,7 +3,7 @@ import { MatRadioModule } from "@angular/material/radio";
 import { TranslateModule } from "@ngx-translate/core";
 import { BenchStateService } from "../bench/bench-state.service";
 import { NoteContEditStateService } from "../bench/note-cont-edit/note-cont-edit-state.service";
-import { CardTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service.types";
+import { CardTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
 import { CardFrameComponent } from "@render/shared/components";
 import { CardRenderField, renderCardDocument } from "@render/shared/card-rendering/card-template-renderer";
 

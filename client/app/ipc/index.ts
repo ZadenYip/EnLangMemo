@@ -2,9 +2,9 @@ import { registerProxy } from "electron-ipc-cat/server";
 import { DicServiceIPCDescriptor } from "../db/services/dictionary/dic-service-interface";
 import { DictionaryService } from "../db/services/dictionary/dic-service";
 import { DialogService } from "../dialog/dialog-service";
-import { DialogServiceIPCDescriptor } from "../dialog/dialog-service.interface";
+import { DialogServiceIPCDescriptor } from "../dialog/dialog-service-interface";
 import { SubtitleService } from "../subtitle-handler/subtitle-service";
-import { SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service.interface";
+import { SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service-interface";
 import { CollectionService } from "../db/services/repetition/collection/col-service";
 import { CollectionServiceIPCDescriptor } from "../db/services/repetition/collection/col-service-interface";
 import { DeckIpcService } from "../db/services/repetition/deck/deck-ipc-service";
@@ -18,7 +18,7 @@ import { PcsNoteServiceIPCDescriptor } from "../db/services/repetition/processin
 import { CardIpcService } from "../db/services/repetition/cards/card-ipc-service";
 import { CardServiceIPCDescriptor } from "../db/services/repetition/cards/card-service-interface";
 import { AuthIpcService } from "../oauth/auth-ipc-service";
-import { AuthServiceIPCDescriptor } from "../oauth/auth-service.interface";
+import { AuthServiceIPCDescriptor } from "../oauth/auth-service-interface";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();

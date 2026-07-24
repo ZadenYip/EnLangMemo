@@ -17,7 +17,6 @@ export type AuthFailureReason =
     | "exchange_token_unauthorized"
     | "unexpected_error";
 
-
 export interface CurUserResponse {
     /** Whether the current-user query completed without transport or server errors. */
     success: boolean;
