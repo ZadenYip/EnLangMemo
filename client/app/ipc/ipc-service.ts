@@ -11,6 +11,7 @@ import { INoteTplService, NoteTplServiceIPCDescriptor } from "../db/services/rep
 import { DicNoteMappingServiceIPCDescriptor, IDicNoteMappingService } from "../db/services/repetition/dic-note-mapping/dic-nt-mapping-service-interface";
 import { IPcsNoteService, PcsNoteServiceIPCDescriptor } from "../db/services/repetition/processing-note/pcs-note-service-interface";
 import { CardServiceIPCDescriptor, ICardService } from "../db/services/repetition/cards/card-service-interface";
+import { AuthServiceIPCDescriptor, IAuthService } from "../oauth/auth-service.interface";
 
 export const dic = createProxy<AsyncifyProxy<IDatabaseService>>(DicServiceIPCDescriptor);
 export const dialog = createProxy<AsyncifyProxy<IDialogService>>(DialogServiceIPCDescriptor);
@@ -21,6 +22,7 @@ export const ntTpl = createProxy<AsyncifyProxy<INoteTplService>>(NoteTplServiceI
 export const dicNoteMap = createProxy<AsyncifyProxy<IDicNoteMappingService>>(DicNoteMappingServiceIPCDescriptor);
 export const pcsNote = createProxy<AsyncifyProxy<IPcsNoteService>>(PcsNoteServiceIPCDescriptor);
 export const card = createProxy<AsyncifyProxy<ICardService>>(CardServiceIPCDescriptor);
+export const auth = createProxy<AsyncifyProxy<IAuthService>>(AuthServiceIPCDescriptor);
 
 export const descriptors = {
     dic: DicServiceIPCDescriptor,
@@ -32,4 +34,5 @@ export const descriptors = {
     dicNoteMap: DicNoteMappingServiceIPCDescriptor,
     pcsNote: PcsNoteServiceIPCDescriptor,
     card: CardServiceIPCDescriptor,
+    auth: AuthServiceIPCDescriptor,
 };

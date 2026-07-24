@@ -1,11 +1,20 @@
 <div class="toolbar-wrapper">
     <nav>
-        @for (t of tabs; track t.path) {
-            <a mat-button routerLink="{{ t.path }}" routerLinkActive="active">
-                {{ t.label | translate }}
-            </a>
-        }
-        <a mat-button> {{ "HEADER.SYNC" | translate }}</a>
+        <div class="toolbar-nav-buttons">
+            @for (t of tabs; track t.path) {
+                <a mat-button routerLink="{{ t.path }}" routerLinkActive="active">
+                    {{ t.label | translate }}
+                </a>
+            }
+            <a mat-button> {{ "HEADER.SYNC" | translate }}</a>
+        </div>
+        <button mat-button type="button" class="auth-status-button" [disabled]="auth.authBusy()" (click)="onAuthStatusClick()">
+            @if (auth.currentUser(); as user) {
+                {{ user.nickname }}
+            } @else {
+                {{ auth.authStatusLabel() | translate }}
+            }
+        </button>
     </nav>
 </div>
 

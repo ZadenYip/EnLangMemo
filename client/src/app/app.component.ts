@@ -1,4 +1,4 @@
-﻿import { Component, HostListener, inject } from "@angular/core";
+import { Component, HostListener, OnInit, inject } from "@angular/core";
 import { TranslatePipe, TranslateService } from "@ngx-translate/core";
 import {
     Router,
@@ -11,6 +11,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import Logger from "electron-log/renderer";
 import { DictionaryComponent } from "./shared/dictionary/dictionary.component";
 import { DictionaryWindowService } from "./shared/dictionary/dictionary-window.service";
+import { AuthService } from "./shared/services/auth.service";
 import { APP_PATHS } from "./root-route";
 
 @Component({
@@ -28,10 +29,12 @@ import { APP_PATHS } from "./root-route";
         DictionaryComponent,
     ],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
     private readonly router: Router = inject(Router);
     private readonly translate: TranslateService = inject(TranslateService);
     private readonly dictionaryWindowService = inject(DictionaryWindowService);
+    /** Renderer auth status facade for the toolbar. */
+    readonly auth = inject(AuthService);
 
     readonly tabs = [
         { label: "HEADER.DECKS", path: `${APP_PATHS.deck}` },
@@ -41,6 +44,10 @@ export class AppComponent {
         { label: "HEADER.STATS", path: `${APP_PATHS.stats}` },
         { label: "HEADER.SETTINGS", path: `${APP_PATHS.settings}` },
     ] as const;
+
+    ngOnInit(): void {
+        void this.auth.refreshCurrentUser();
+    }
 
     /**
      *
@@ -60,6 +67,15 @@ export class AppComponent {
         Logger.info("Sync triggered");
     }
 
+    /** Handle toolbar auth button click. */
+    async onAuthStatusClick(): Promise<void> {
+        await this.auth.login();
+    }
+
+    /**
+     * dictionary window should be hidden when clicking outside of it
+     * @param event - The mouse down event to handle.
+     */
     @HostListener("document:mousedown", ["$event"])
     onDocumentMouseDown(event: MouseEvent): void {
         const target = event.target as HTMLElement | null;
@@ -67,6 +83,7 @@ export class AppComponent {
             return;
         }
 
+        // If the click is inside the dictionary window, do not hide it
         if (target.closest("app-dictionary")) {
             return;
         }

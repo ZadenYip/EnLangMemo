@@ -28,6 +28,10 @@
                 "--remote-debugging-port=9876"
             ],
             "windows": {
+                "env": {
+                    // Set NODE_EXTRA_CA_CERTS for Windows to use mkcert root CA
+                    "NODE_EXTRA_CA_CERTS": "${userHome}\\AppData\\Local\\mkcert\\rootCA.pem"
+                },
                 "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
             },
             "outFiles": ["${workspaceFolder}/app/**/*.js"],
