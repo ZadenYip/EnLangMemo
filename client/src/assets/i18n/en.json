@@ -307,12 +307,13 @@
     "STATS": "Stats",
     "SYNC": "Sync",
     "SETTINGS": "Settings",
-    "AUTH": {
-      "CHECKING": "Checking...",
-      "NOT_LOGGED_IN": "Not signed in",
-      "NETWORK_ERROR": "Unable to reach the auth server. Please check your network and try again.",
-      "SERVER_INTERNAL_ERROR": "Auth server internal error. Please try again later.",
-      "APP_INTERNAL_ERROR": "Application internal error. Please contact the developer."
+      "AUTH": {
+        "CHECKING": "Checking...",
+        "NOT_LOGGED_IN": "Not signed in",
+        "LOGOUT": "Log out",
+        "NETWORK_ERROR": "Unable to reach the auth server. Please check your network and try again.",
+        "SERVER_INTERNAL_ERROR": "Auth server internal error. Please try again later.",
+        "APP_INTERNAL_ERROR": "Application internal error. Please contact the developer."
     }
   },
   "DIALOG": {

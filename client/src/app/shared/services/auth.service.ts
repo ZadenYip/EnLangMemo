@@ -60,6 +60,12 @@ export class AuthService {
         }
     }
 
+    /** Logout current user; implementation is intentionally deferred. */
+    async logout(): Promise<void> {
+        const curUserResponse = await window.service.auth.logout();
+        this.curUser.set(curUserResponse.user);
+    }
+
     /** Refresh current user status through the main process. */
     async refreshCurrentUser(): Promise<void> {
         this.authBusy.set(true);

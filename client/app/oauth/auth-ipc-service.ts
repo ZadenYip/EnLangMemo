@@ -36,6 +36,17 @@ export class AuthIpcService implements IAuthService {
         }
     }
 
+    /**
+     * Clear the stored access
+     * @returns CurUserResponse { success: true, user: null }
+     */
+    public async logout(): Promise<CurUserResponse> {
+        // TODO 未来根据 RFC 7009 实现对应发送注销请求到服务器的功能
+        clearToken();
+        Logger.info("User logged out, token cleared.");
+        return this.getCurUser();
+    }
+
     /** Query the current user with the stored access token. */
     public async getCurUser(): Promise<CurUserResponse> {
         const token = loadToken();

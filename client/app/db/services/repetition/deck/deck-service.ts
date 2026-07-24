@@ -32,6 +32,7 @@ export class DeckService {
      * Get one deck overview in the current collection by id.
      */
     async getDeckById(deckId: string): Promise<Deck | null> {
+        // TODO 检查当日学习和复习的数量是否需要重置为0，若需要则重置
         const deckRow = await getRepDb().query.decksTable.findFirst({
             where: eq(decksTable.id, hexToBuffer(deckId)),
             columns: {

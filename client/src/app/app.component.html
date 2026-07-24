@@ -8,13 +8,20 @@
             }
             <a mat-button> {{ "HEADER.SYNC" | translate }}</a>
         </div>
-        <button mat-button type="button" class="auth-status-button" [disabled]="auth.authBusy()" (click)="onAuthStatusClick()">
-            @if (auth.currentUser(); as user) {
+        @if (auth.currentUser(); as user) {
+            <button mat-button type="button" class="auth-status-button" [disabled]="auth.authBusy()" [matMenuTriggerFor]="authMenu">
                 {{ user.nickname }}
-            } @else {
+            </button>
+        } @else {
+            <button mat-button type="button" class="auth-status-button" [disabled]="auth.authBusy()" (click)="onAuthStatusClick()">
                 {{ auth.authStatusLabel() | translate }}
-            }
-        </button>
+            </button>
+        }
+        <mat-menu #authMenu="matMenu">
+            <button mat-menu-item type="button" (click)="onLogoutClick()">
+                {{ "HEADER.AUTH.LOGOUT" | translate }}
+            </button>
+        </mat-menu>
     </nav>
 </div>
 

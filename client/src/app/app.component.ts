@@ -7,6 +7,7 @@ import {
     RouterLinkActive,
 } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import Logger from "electron-log/renderer";
 import { DictionaryComponent } from "./shared/dictionary/dictionary.component";
@@ -24,6 +25,7 @@ import { APP_PATHS } from "./root-route";
         RouterLink,
         RouterLinkActive,
         MatButtonModule,
+        MatMenuModule,
         MatToolbarModule,
         TranslatePipe,
         DictionaryComponent,
@@ -70,6 +72,11 @@ export class AppComponent implements OnInit {
     /** Handle toolbar auth button click. */
     async onAuthStatusClick(): Promise<void> {
         await this.auth.login();
+    }
+
+    /** Handle toolbar logout menu action. */
+    async onLogoutClick(): Promise<void> {
+        await this.auth.logout();
     }
 
     /**
