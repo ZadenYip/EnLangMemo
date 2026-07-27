@@ -1,8 +1,8 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import type { CurUserResponse } from "./auth-service-types";
+import type { CurUserResponse, RevokeResponse } from "./auth-service-types";
 export interface IAuthService {
     startLogin(): Promise<CurUserResponse>;
-    logout(): Promise<CurUserResponse>;
+    logout(): Promise<RevokeResponse>;
     getCurUser(): Promise<CurUserResponse>;
 }
 

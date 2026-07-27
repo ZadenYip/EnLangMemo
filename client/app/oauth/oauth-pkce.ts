@@ -2,8 +2,7 @@ import * as crypto from "crypto";
 import { shell } from "electron";
 import Logger from "electron-log/main";
 import { TokenResponse } from "./token";
-import { OAUTH_API_BASE_URL } from "./oauth-config";
-import { isDev } from "@main/main";
+import { CLIENT_ID, OAUTH_API_BASE_URL } from "./oauth-config";
 import type { AuthFailureReason } from "./auth-service-types";
 import { mapFetchError, mapFetchJsonError } from "@main/network/errors";
 
@@ -89,7 +88,7 @@ class PKCEFlow {
         this.session = {
             responseType: "code",
             // TODO 填写正式的 OAuth 客户端 ID
-            clientID: isDev() ? "00000000-0000-0000-0000-000000000010" : "",
+            clientID: CLIENT_ID,
             redirectURI: OAUTH_CALLBACK_PATH,
             state: genRandomBytes(32).toString("base64url"),
             codeVerifier: genRandomBytes(32).toString("base64url"),

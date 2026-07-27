@@ -1,6 +1,6 @@
 // deep link 
 // https://www.electronjs.org/docs/latest/tutorial/launch-app-from-url-in-another-app
-import { handleAuthorizeCallback, OAUTH_CALLBACK_PATH } from "@main/oauth/oauth";
+import { handleAuthorizeCallback, OAUTH_CALLBACK_PATH } from "@main/oauth/oauth-pkce";
 import { app } from "electron";
 import Logger from "electron-log/main";
 import { BrowserWindow } from "electron/main";
@@ -48,9 +48,9 @@ export function registerMacOSProtocol() {
 }
 
 function dispatchDeepLink(url: string | undefined) {
-    Logger.info(`Received deep link: ${url}`);
+    Logger.info("received deep link");
     if (!url) {
-        Logger.error("Received deep link is undefined");
+        Logger.error("received deep link is undefined");
         return;
     }
 
