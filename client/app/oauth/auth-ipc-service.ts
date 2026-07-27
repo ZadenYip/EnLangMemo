@@ -1,10 +1,11 @@
 import Logger from "electron-log/main";
 import { IAuthService, } from "./auth-service-interface";
 import { loadToken, saveToken, clearToken } from "./token-store";
-import { OAuthError, startPKCEFlow } from "./oauth";
+import { OAuthError, startPKCEFlow } from "./oauth-pkce";
 import { APP_API_BASE_URL } from "./oauth-config";
-import type { AuthFailureReason, AuthUser, CurUserResponse } from "./auth-service-types";
+import type { AuthFailureReason, AuthUser, CurUserResponse, RevokeResponse } from "./auth-service-types";
 import { mapFetchError, mapFetchJsonError } from "@main/network/errors";
+import { revokeToken } from "./oauth-revoke";
 
 interface MeResponse {
     user_id: string;
@@ -37,14 +38,11 @@ export class AuthIpcService implements IAuthService {
     }
 
     /**
-     * Clear the stored access
-     * @returns CurUserResponse { success: true, user: null }
+     * Clear the stored access token and revoke it on the server.
+     * @returns The revoke response after logout.
      */
-    public async logout(): Promise<CurUserResponse> {
-        // TODO 未来根据 RFC 7009 实现对应发送注销请求到服务器的功能
-        clearToken();
-        Logger.info("User logged out, token cleared.");
-        return this.getCurUser();
+    public async logout(): Promise<RevokeResponse> {
+        return await revokeToken();
     }
 
     /** Query the current user with the stored access token. */

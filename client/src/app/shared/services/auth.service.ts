@@ -60,10 +60,23 @@ export class AuthService {
         }
     }
 
-    /** Logout current user; implementation is intentionally deferred. */
+    /**
+     * send logout request to main process and clear current user status.
+     * If logout fails, notify the user about the failure.
+     * @returns Promise<void>
+     */
     async logout(): Promise<void> {
-        const curUserResponse = await window.service.auth.logout();
-        this.curUser.set(curUserResponse.user);
+        try {
+            const revokeResponse = await window.service.auth.logout();
+            if (!revokeResponse.success) {
+                this.notifyAuthFailure(toAuthFailureKind(revokeResponse.error));
+            }
+        } catch (error) {
+            Logger.error("unexpected error in IPC when revoking token", error);
+            this.notifyAuthFailure("internal");
+        }
+        
+        this.curUser.set(null);
     }
 
     /** Refresh current user status through the main process. */

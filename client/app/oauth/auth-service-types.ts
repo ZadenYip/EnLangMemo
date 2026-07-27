@@ -25,3 +25,8 @@ export interface CurUserResponse {
     /** Short failure reason for logs or renderer-side branching. */
     error?: AuthFailureReason;
 }
+
+export interface RevokeResponse {
+    success: boolean;
+    error?: AuthFailureReason;
+}

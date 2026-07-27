@@ -42,7 +42,7 @@ describe("OAuth PKCE flow", () => {
             });
         }));
 
-        const { OAUTH_CALLBACK_PATH, handleAuthorizeCallback, startPKCEFlow } = await import("./oauth");
+        const { OAUTH_CALLBACK_PATH, handleAuthorizeCallback, startPKCEFlow } = await import("./oauth-pkce");
 
         const oauthPromise = startPKCEFlow();
         await vi.waitFor(() => expect(shell.openExternal).toHaveBeenCalledTimes(1));
@@ -81,7 +81,7 @@ describe("OAuth PKCE flow", () => {
     it("rejects the flow and does not exchange tokens when callback state is invalid", async () => {
         vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 200 })));
 
-        const { OAUTH_CALLBACK_PATH, handleAuthorizeCallback, startPKCEFlow } = await import("./oauth");
+        const { OAUTH_CALLBACK_PATH, handleAuthorizeCallback, startPKCEFlow } = await import("./oauth-pkce");
 
         const oauthPromise = startPKCEFlow();
         await vi.waitFor(() => expect(shell.openExternal).toHaveBeenCalledTimes(1));
