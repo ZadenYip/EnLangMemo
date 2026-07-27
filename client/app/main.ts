@@ -89,7 +89,7 @@ function createWindow(): BrowserWindow {
             const reloaderFn = reloader.default || reloader;
             reloaderFn(module);
         });
-        mainWindow.loadURL("http://localhost:4200");
+        mainWindow.loadURL("http://localhost:5173");
     } else {
         // Path when running electron executable
         let pathIndex = "./browser/index.html";

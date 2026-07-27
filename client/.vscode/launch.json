@@ -10,7 +10,7 @@
             "request": "attach",
             "port": 9876,
             "sourceMaps": true,
-            "urlFilter": "http://localhost:4200*",
+            "urlFilter": "http://localhost:5173*",
             "timeout": 20000,
             "trace": true,
             "preLaunchTask": "Build.Renderer",
