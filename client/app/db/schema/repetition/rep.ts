@@ -45,7 +45,7 @@ const jsonb = <TData extends object>(str: string) =>
 export const collectionTable = sqliteTable("collection", {
     sqliteSchemaVersion: int("sqlite_schema_version").notNull(),
     lastSyncTime: int("last_sync_time").notNull().default(0),
-    lastSyncUsn: int("last_sync_usn").notNull().default(0),
+    lastSyncUsn: int("sync_cursor_usn").notNull().default(0),
     usn: int("usn").notNull(),
     createdAt: int("created_at").notNull(),
     updatedAt: int("updated_at").notNull(),
