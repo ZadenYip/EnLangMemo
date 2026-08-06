@@ -133,6 +133,7 @@ Table decks {
 Table note_types {
   id blob [primary key, note: '笔记模板 id UUIDv7']
   name text [not null, note: '模板名']
+  preset_template_id integer [not null, default: 0, note: '官方发放的预设模板编号；0 表示未分配/未知预设，1 表示 Sentence Mining Definition']
   usn integer [not null, note: 
   '''
     用来对比

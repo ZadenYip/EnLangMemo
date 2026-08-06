@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "a62c3cf7-aee1-4e57-86c1-066ca0c9c2a5",
+  "id": "0b063135-409c-4898-9b9e-6e66b1f380c8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -349,6 +349,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "preset_template_id": {
+          "name": "preset_template_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "usn": {
           "name": "usn",

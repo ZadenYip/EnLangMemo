@@ -81,6 +81,10 @@ export const decksTable = sqliteTable("decks", {
 export const noteTypesTable = sqliteTable("note_types", {
     id: blob("id", { mode: "buffer" }).primaryKey(),
     name: text("name").notNull(),
+    /**
+     * Official preset template id used for analytics and server-side training data grouping.
+     */
+    presetTemplateId: int("preset_template_id").notNull().default(0),
     usn: int("usn").notNull(),
     updatedAt: int("updated_at").notNull(),
     /**

@@ -6,7 +6,10 @@ import { getRepDb, repetitionSchema } from "@main/db/db";
 import { generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
 import { noteTypesTable } from "@main/db/schema/repetition/rep";
 import { NoteTplService } from "./nt-tpl-service";
-import { genNoteTpl } from "./nt-tpl-service-helper";
+import {
+    createSentenceMiningDefinitionNoteTpl as sentenceMiningDefinitionNoteTpl,
+    SENTENCE_MINING_DEFINITION_TPL_NAME,
+} from "./nt-tpl-service-helper";
 
 vi.mock(import("@main/db/db"), async () => {
     const actual = await vi.importActual<typeof import("@main/db/db")>("@main/db/db");
@@ -83,10 +86,10 @@ describe("NoteTplService", () => {
     it("should query note template by blob primary key id", async () => {
         await db.insert(noteTypesTable).values({
             id: generateUUIDV7(),
-            name: "BlobPkTemplate",
+            name: SENTENCE_MINING_DEFINITION_TPL_NAME,
             usn: -1,
             updatedAt: Date.now(),
-            noteTemplate: genNoteTpl(),
+            noteTemplate: sentenceMiningDefinitionNoteTpl(),
         });
 
         const refs = await service.getAllNoteTplRefs();
@@ -97,6 +100,7 @@ describe("NoteTplService", () => {
         expect(noteTpl).not.toBeNull();
         expect(noteTpl?.front).toContain("{{Context}}");
         expect(noteTpl?.back).toContain("{{Target Definition}}");
+        expect(noteTpl?.back).toContain("{{Source Definition}}");
     });
 
     it("should use primary-key index search for blob id lookup", async () => {
@@ -105,7 +109,7 @@ describe("NoteTplService", () => {
             name: "ExplainPkSearch",
             usn: -1,
             updatedAt: Date.now(),
-            noteTemplate: genNoteTpl(),
+            noteTemplate: sentenceMiningDefinitionNoteTpl(),
         });
         const refs = await service.getAllNoteTplRefs();
         const targetRef = refs[0];

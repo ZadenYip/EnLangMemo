@@ -1,7 +1,19 @@
 import { NoteTemplate, TemplateField } from "./nt-tpl-service-types";
 
+/**
+ * Official preset id for the sentence-mining definition note template.
+ */
+export const SENTENCE_MINING_DEF_TPL_PRESET_ID = 1;
 
-export function genNoteTpl(): NoteTemplate {
+/**
+ * User-visible name for the sentence-mining definition note template.
+ */
+export const SENTENCE_MINING_DEFINITION_TPL_NAME = "Sentence Mining Definition";
+
+/**
+ * Create the built-in sentence-mining definition note template.
+ */
+export function createSentenceMiningDefinitionNoteTpl(): NoteTemplate {
     const dateTime = Date.now();
     const word = createField(dateTime, "Word");
     const ctxField = createField(dateTime + 1, "Context");
@@ -10,15 +22,15 @@ export function genNoteTpl(): NoteTemplate {
     const tgtDefinition = createField(dateTime + 4, "Target Definition");
     const audio = createField(dateTime + 5, "Audio");
     return {
-        css: css,
+        css,
         sortField: ctxField.id,
         fields: [word, ctxField, phonetic, srcDefinition, tgtDefinition, audio],
-        front: front,
-        back: back,
+        front,
+        back,
     };
 }
 
-const front = 
+const front =
 `
 <div class="bar head">Processing</div>
 
@@ -155,7 +167,6 @@ html {
   font-size: 1rem;
   line-height: 1.5;
 }
-
 
 .expression b {
   font-weight: normal;

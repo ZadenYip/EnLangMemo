@@ -52,6 +52,7 @@ CREATE TABLE `dic_note_map` (
 CREATE TABLE `note_types` (
 	`id` blob PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
+	`preset_template_id` integer DEFAULT 0 NOT NULL,
 	`usn` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`note_template` jsonb NOT NULL
