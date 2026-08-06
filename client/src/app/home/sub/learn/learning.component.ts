@@ -76,8 +76,8 @@ export class LearningComponent implements OnInit, OnDestroy {
         }
 
         const template = this.answerVisible()
-            ? studyCard.cardTpl.back
-            : studyCard.cardTpl.front;
+            ? studyCard.noteTpl.back
+            : studyCard.noteTpl.front;
         return renderCardDocument({
             css: studyCard.noteTpl.css,
             template,

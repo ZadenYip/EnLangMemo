@@ -3,7 +3,6 @@ import { MatRadioModule } from "@angular/material/radio";
 import { TranslateModule } from "@ngx-translate/core";
 import { BenchStateService } from "../bench/bench-state.service";
 import { NoteContEditStateService } from "../bench/note-cont-edit/note-cont-edit-state.service";
-import { CardTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
 import { CardFrameComponent } from "@render/shared/components";
 import { CardRenderField, renderCardDocument } from "@render/shared/card-rendering/card-template-renderer";
 
@@ -25,32 +24,18 @@ export class ProcessingPreviewComponent {
     readonly previewSide = signal<PreviewSide>("front");
 
     /**
-     * Currently selected card template detail.
-     */
-    readonly curCardTpl = computed<CardTemplate | null>(() => {
-        const noteTpl = this.benchState.curNoteTpl();
-        const selectedCardTplId = this.benchState.selectedCardTpl().value;
-        if (!noteTpl || !selectedCardTplId) {
-            return null;
-        }
-
-        return noteTpl.cardtpls.find((cardTpl) => String(cardTpl.id) === selectedCardTplId) ?? null;
-    });
-
-    /**
      * Complete HTML document rendered inside the isolated preview iframe.
      */
     readonly previewDocument = computed(() => {
         const noteTpl = this.benchState.curNoteTpl();
         const note = this.noteContEditState.curNote();
-        const cardTpl = this.curCardTpl();
-        if (!noteTpl || !note || !cardTpl) {
+        if (!noteTpl || !note) {
             return "";
         }
 
         const sideTemplate = this.previewSide() === "front"
-            ? cardTpl.front
-            : cardTpl.back;
+            ? noteTpl.front
+            : noteTpl.back;
         return renderCardDocument({
             css: noteTpl.css,
             template: sideTemplate,

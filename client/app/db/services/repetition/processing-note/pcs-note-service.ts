@@ -7,7 +7,7 @@ import {
     noteTypesTable,
     processingNotesTable,
 } from "@main/db/schema/repetition/rep";
-import { createCardsFromPcsNote as createCardsFromPcsNote } from "@main/db/services/repetition/cards/card-service";
+import { createCardFromPcsNote } from "@main/db/services/repetition/cards/card-service";
 import {
     PcsNote,
     PcsNoteCreationResult,
@@ -120,7 +120,7 @@ export class PcsNoteService {
             };
         }
 
-        /** Note template row used to enumerate card templates. */
+        /** Note template row used to create the fixed single card. */
         const noteType = await getRepDb().query.noteTypesTable.findFirst({
             where: eq(noteTypesTable.id, hexToBuffer(note.noteTplId)),
             columns: {
@@ -138,8 +138,8 @@ export class PcsNoteService {
             };
         }
 
-        const cardCount = getRepDb().transaction((tx) => {
-            const createdCardCount = createCardsFromPcsNote(
+        getRepDb().transaction((tx) => {
+            createCardFromPcsNote(
                 note,
                 deck.id,
                 noteType.noteTemplate,
@@ -148,18 +148,15 @@ export class PcsNoteService {
             tx.delete(processingNotesTable)
                 .where(eq(processingNotesTable.id, hexToBuffer(note.id)))
                 .run();
-            return createdCardCount;
         });
 
-        Logger.info("Processing note saved, cards created, and processing note deleted:", {
+        Logger.info("Processing note saved, card created, and processing note deleted:", {
             noteId: note.id,
             deckId,
             deckName: deck.name,
-            cardCount,
         });
 
         return {
-            cardCount,
             state: "success",
         };
     }

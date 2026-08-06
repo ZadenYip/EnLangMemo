@@ -82,7 +82,6 @@ function collectionInit(): void {
             usn: usn,
             createdAt: nowTime,
             updatedAt: nowTime,
-            collectionSchemaUpdatedAt: nowTime,
             config: collectionConfig
         }
     ).run();

@@ -49,7 +49,6 @@ export const collectionTable = sqliteTable("collection", {
     usn: int("usn").notNull(),
     createdAt: int("created_at").notNull(),
     updatedAt: int("updated_at").notNull(),
-    collectionSchemaUpdatedAt: int("collection_schema_updated_at").notNull(),
     /**
      * see app/db/services/repetition/collection/col-service-types.ts
      * CollectionConfig
@@ -77,7 +76,7 @@ export const decksTable = sqliteTable("decks", {
 
 /**
  * NoteTypes 表 - 笔记模板
- * 定义笔记的结构、字段、卡片模板等
+ * 定义固定笔记字段和唯一卡片展示模板
  */
 export const noteTypesTable = sqliteTable("note_types", {
     id: blob("id", { mode: "buffer" }).primaryKey(),
@@ -88,14 +87,8 @@ export const noteTypesTable = sqliteTable("note_types", {
       "css": "CSS content",
       "sortField": timestamp,
       "fields": [{"id": timestamp, "name": "TargetWord"}], 
-      "cardTpls": [
-        {
-          "id": timestamp
-          "name": "默认卡", 
-          "question": "{{TargetWord}}", 
-          "answer": "xxx"
-        }
-      ]
+      "front": "{{TargetWord}}", 
+      "back": "xxx"
      */
     noteTemplate: jsonb<NoteTemplate>("note_template").notNull(),
 });
@@ -153,7 +146,6 @@ export const cardsTable = sqliteTable(
             .notNull(),
         usn: int("usn").notNull(),
         updatedAt: int("updated_at").notNull(),
-        cardTemplateId: int("card_template_id").notNull(),
         difficulty: real("difficulty").notNull(),
         stability: real("stability").notNull(),
         scheduledDays: int("scheduled_days").notNull(),

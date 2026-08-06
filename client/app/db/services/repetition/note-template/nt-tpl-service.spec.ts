@@ -3,8 +3,10 @@ import path from "node:path";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { getRepDb, repetitionSchema } from "@main/db/db";
-import { hexToBuffer } from "@main/db/import/utils";
+import { generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
+import { noteTypesTable } from "@main/db/schema/repetition/rep";
 import { NoteTplService } from "./nt-tpl-service";
+import { genNoteTpl } from "./nt-tpl-service-helper";
 
 vi.mock(import("@main/db/db"), async () => {
     const actual = await vi.importActual<typeof import("@main/db/db")>("@main/db/db");
@@ -79,8 +81,13 @@ describe("NoteTplService", () => {
     });
 
     it("should query note template by blob primary key id", async () => {
-        const createResult = await service.createNoteTpl("BlobPkTemplate");
-        expect(createResult.state).toBe("success");
+        await db.insert(noteTypesTable).values({
+            id: generateUUIDV7(),
+            name: "BlobPkTemplate",
+            usn: -1,
+            updatedAt: Date.now(),
+            noteTemplate: genNoteTpl(),
+        });
 
         const refs = await service.getAllNoteTplRefs();
         expect(refs.length).toBe(1);
@@ -88,11 +95,18 @@ describe("NoteTplService", () => {
         const targetRef = refs[0];
         const noteTpl = await service.getNoteTplById(targetRef.id);
         expect(noteTpl).not.toBeNull();
-        expect(noteTpl?.cardtpls.length).toBeGreaterThan(0);
+        expect(noteTpl?.front).toContain("{{Context}}");
+        expect(noteTpl?.back).toContain("{{Target Definition}}");
     });
 
     it("should use primary-key index search for blob id lookup", async () => {
-        await service.createNoteTpl("ExplainPkSearch");
+        await db.insert(noteTypesTable).values({
+            id: generateUUIDV7(),
+            name: "ExplainPkSearch",
+            usn: -1,
+            updatedAt: Date.now(),
+            noteTemplate: genNoteTpl(),
+        });
         const refs = await service.getAllNoteTplRefs();
         const targetRef = refs[0];
 

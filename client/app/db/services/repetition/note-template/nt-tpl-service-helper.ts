@@ -1,4 +1,4 @@
-import { CardTemplate, NoteTemplate, TemplateField } from "./nt-tpl-service-types";
+import { NoteTemplate, TemplateField } from "./nt-tpl-service-types";
 
 
 export function genNoteTpl(): NoteTemplate {
@@ -13,7 +13,8 @@ export function genNoteTpl(): NoteTemplate {
         css: css,
         sortField: ctxField.id,
         fields: [word, ctxField, phonetic, srcDefinition, tgtDefinition, audio],
-        cardtpls: [genCardTpl()],
+        front: front,
+        back: back,
     };
 }
 
@@ -169,25 +170,6 @@ html {
   font-size: 0.875rem;
 }
 `;
-
-export function genCardTpl(name = "Default Card Template"): CardTemplate {
-    const idTime = Date.now();
-    return {
-        name,
-        id: idTime,
-        front: front,
-        back: back,
-    };
-}
-
-export function createCardTpl(idTime: number, name: string, front: string, back: string): CardTemplate {
-    return {
-        id: idTime,
-        name,
-        front,
-        back,
-    };
-}
 
 export function createField(idTime: number, name: string): TemplateField {
     return {

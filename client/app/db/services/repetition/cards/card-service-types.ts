@@ -1,4 +1,4 @@
-import { CardTemplate, TemplateField } from "../note-template/nt-tpl-service-types";
+import { TemplateField } from "../note-template/nt-tpl-service-types";
 import { NoteField } from "../processing-note/pcs-note-types";
 
 export interface CardRef {
@@ -58,11 +58,6 @@ export interface LangCard {
     updatedAt: number;
 
     /**
-     * corresponding note template's card template business id
-     */
-    cardTemplateId: number;
-
-    /**
      * FSRS difficulty.
      */
     difficulty: number;
@@ -107,13 +102,21 @@ export interface LangCard {
 
 export interface StudyNoteTemplate {
     /**
-     * Shared CSS from the note template.
+     * CSS from the fixed note template.
      */
     css: string;
     /**
      * Field definitions needed to map note field values to template names.
      */
     fields: TemplateField[];
+    /**
+     * Front-side HTML from the fixed note template.
+     */
+    front: string;
+    /**
+     * Back-side HTML from the fixed note template.
+     */
+    back: string;
 }
 
 export interface StudyCardRatingPreview {
@@ -157,10 +160,6 @@ export interface StudyCard {
      * Lightweight note template data needed for rendering.
      */
     noteTpl: StudyNoteTemplate;
-    /**
-     * Card template used to render the current card.
-     */
-    cardTpl: CardTemplate;
 }
 
 export interface ReviewedCardState {

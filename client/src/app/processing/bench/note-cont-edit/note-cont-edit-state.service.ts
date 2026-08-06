@@ -232,9 +232,6 @@ export class NoteContEditStateService {
             this.notify.open(
                 this.translate.instant(
                     "PAGES.PROCESSING.BENCH.NOTE_CONTENT_EDIT.SAVE_AND_ADD.SUCCESS",
-                    {
-                        count: result.cardCount,
-                    },
                 ),
             );
         } finally {

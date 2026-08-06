@@ -85,9 +85,6 @@ Table collection {
   usn integer [not null]
   created_at integer [not null]
   updated_at integer [not null]
-  collection_schema_updated_at integer [not null, note: '''
-    笔记模板等修改时间
-  ''']
   config jsonb [not null, note: 
   '''
     app\db\services\repetition\collection\col-service-types.d.ts
@@ -150,22 +147,17 @@ Table note_types {
     note: '''
     {
       "css": "CSS 模板"
+      // 单个展示模板，直接展开在笔记模板上
+      "front": "{{TargetWord}}", 
+      "back": "xxx",
       // 放在第一个的字段
       "sortField": timestamp,
       // 有哪些字段
-      "fields": [{"id": timestamp, "name": "TargetWord"], 
-      // JSONArray card-template
-      "cardTpls": [
-        {"id": timestamp
-          "name": "默认卡", 
-        "front": "{{TargetWord}}", 
-        "back": "xxx"
-          }
-        ]
+      "fields": [{"id": timestamp, "name": "TargetWord"}]
     }
     '''
   ]
-  Note: '笔记模板'
+  Note: '笔记模板；一类笔记只对应一种展示模板'
 }
 
 Table notes {
@@ -216,10 +208,6 @@ Table cards {
   deck_id blob [not null]
   usn integer [not null]
   updated_at integer [not null]
-
-  card_template_id integer [not null, note: '''
-    对应笔记模板中的哪个卡片模板 timestamp
-  ''']
 
   difficulty real [not null]
   stability real [not null]
