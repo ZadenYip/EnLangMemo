@@ -5,31 +5,26 @@ export interface NoteTplRef {
 
 export interface NoteTemplate {
     /**
-     * css content for the note template shared by all card templates.
+     * CSS content used by the fixed note template renderer.
      */
     css: string;
     /**
-     * business id, unix timestamp in milliseconds, e.g. 1778079239000
+     * Fixed sort field business id, unix timestamp in milliseconds, e.g. 1778079239000.
      */
     sortField: number;
+    /**
+     * Fixed field definitions used by notes created from this template.
+     */
     fields: TemplateField[];
-    cardtpls: CardTemplate[];
+    /**
+     * HTML content for the front side of the fixed presentation template.
+     */
+    front: string;
+    /**
+     * HTML content for the back side of the fixed presentation template.
+     */
+    back: string;
 }
-
-/**
- * Result of creating a new note template.
- */
-export type NoteTemplateCreationResult =
-    | { state: "success"; templateName: string }
-    | { state: "duplicate" };
-
-/**
- * Result of creating a new card template under a note template.
- */
-export type CardTemplateCreationResult =
-    | { state: "success"; templateName: string }
-    | { state: "duplicate" }
-    | { state: "not-found" };
 
 /**
  * Result of saving note template content.
@@ -58,19 +53,3 @@ export interface TemplateField {
     name: string;
 }
 
-export interface CardTemplate {
-    /**
-     * unix timestamp in milliseconds, e.g. 1778079239000
-     * bussiness id
-     */
-    id: number;
-    name: string;
-    /**
-     * HTML content for the front side of the card.
-     */
-    front: string;
-    /**
-     * HTML content for the back side of the card.
-     */
-    back: string;
-}

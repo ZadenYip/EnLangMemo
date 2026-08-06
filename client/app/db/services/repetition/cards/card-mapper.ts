@@ -8,7 +8,6 @@ export interface StudyCardRow {
         typeof cardsTable.$inferSelect,
         | "id"
         | "queue"
-        | "cardTemplateId"
         | "difficulty"
         | "stability"
         | "scheduledDays"
@@ -42,10 +41,6 @@ export type FSRSCardRow = Pick<
 
 export function toStudyCard(row: StudyCardRow): StudyCard {
     const card = toFSRSCard(row.card);
-    const cardTemplate = row.noteTemplate.cardtpls.find((cardTpl) => cardTpl.id === row.card.cardTemplateId);
-    if (!cardTemplate) {
-        throw new Error(`Card template "${row.card.cardTemplateId}" not found.`);
-    }
 
     return {
         cardId: bufferToHex(row.card.id),
@@ -59,8 +54,9 @@ export function toStudyCard(row: StudyCardRow): StudyCard {
         noteTpl: {
             css: row.noteTemplate.css,
             fields: row.noteTemplate.fields,
+            front: row.noteTemplate.front,
+            back: row.noteTemplate.back,
         },
-        cardTpl: cardTemplate,
     };
 }
 
@@ -71,7 +67,6 @@ export function toLangCard(row: typeof cardsTable.$inferSelect): LangCard {
         deckId: bufferToHex(row.deckId),
         usn: row.usn,
         updatedAt: row.updatedAt,
-        cardTemplateId: row.cardTemplateId,
         difficulty: row.difficulty,
         stability: row.stability,
         scheduledDays: row.scheduledDays,

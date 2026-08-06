@@ -95,7 +95,7 @@
           "NOTE_TEMPLATE": "Edit Note Template"
         },
         "ACTIONS": {
-          "EDIT_CURRENT_TEMPLATE": "Edit Selected Card Template"
+          "EDIT_CURRENT_TEMPLATE": "Edit Selected Note Template"
         },
         "NOTE_CONTENT_EDIT": {
           "TOOLS": {
@@ -112,7 +112,7 @@
           },
           "SAVE_AND_ADD": {
             "ACTION": "Save to deck",
-            "SUCCESS": "Note saved and {{count}} cards created.",
+            "SUCCESS": "Note saved and one card created.",
             "FAILED": "Failed to save note to deck."
           },
           "SAVE": {
@@ -122,57 +122,13 @@
           }
         },
         "TEMPLATE_EDIT": {
-          "CARD_TEMPLATE_LABEL": "Card Template:",
           "NOTE_TEMPLATE_LABEL": "Note Template:",
           "FRONT_TEMPLATE": "Front Template",
           "BACK_TEMPLATE": "Back Template",
           "CSS_TEMPLATE": "CSS Template",
-          "CARD_TPL_OPS_MENU": {
-            "CREATE": "Create card template",
-            "DELETE": "Delete card template"
-          },
-          "NOTE_TPL_OPS_MENU": {
-            "CREATE": "Create note template",
-            "DELETE": "Delete note template",
-            "DEFAULT": "Default",
-            "SETTINGS": "Note template settings"
-          },
           "FRONT_PLACEHOLDER": "Edit front template HTML",
           "BACK_PLACEHOLDER": "Edit back template HTML",
           "CSS_PLACEHOLDER": "Edit CSS styles",
-          "CREATE_NOTE_DIALOG": {
-            "TITLE": "Add Note Template",
-            "FIELDS": {
-              "CREATE_NAME": "Template Name"
-            },
-            "SUCCESS": "Note template created: {{name}}",
-            "DUPLICATE": "A note template with the same name already exists."
-          },
-          "CREATE_CARD_DIALOG": {
-            "TITLE": "Add Card Template",
-            "FIELDS": {
-              "CREATE_NAME": "Template Name"
-            },
-            "SUCCESS": "Card template created: {{name}}",
-            "DUPLICATE": "A card template with the same name already exists.",
-            "NO_NOTE_SELECTED": "Please select a note template first."
-          },
-          "DELETE_CARD_DIALOG": {
-            "TITLE": "Confirm Delete",
-            "MESSAGE": "Are you sure you want to delete the card template \"{{name}}\"? This action cannot be undone.",
-            "SUCCESS": "Card template deleted: {{name}}",
-            "NOT_FOUND": "The selected card template no longer exists.",
-            "NO_SELECTION": "Please select a card template to delete.",
-            "LAST_ONE": "At least one card template must be kept."
-          },
-            "DELETE_NOTE_DIALOG": {
-              "TITLE": "Confirm Delete",
-              "MESSAGE": "Are you sure you want to delete the note template \"{{name}}\"? This action cannot be undone.",
-              "SUCCESS": "Note template deleted: {{name}}",
-              "NOT_FOUND": "The selected note template no longer exists.",
-              "NO_SELECTION": "Please select a note template to delete.",
-              "LAST_ONE": "At least one note template must be kept."
-            },
             "SAVE_TEMPLATE": {
               "ACTION": "Save Template",
               "SUCCESS": "Note Template saved.",

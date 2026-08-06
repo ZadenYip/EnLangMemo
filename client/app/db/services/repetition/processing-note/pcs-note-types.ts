@@ -21,7 +21,6 @@ export type PcsNoteSaveResult =
 export type PcsNoteSaveToDeckResult =
     | {
         state: "success";
-        cardCount: number;
     }
     | {
         state: "not-found" | "invalid-fields" | "note-template-not-found" | "deck-not-found";

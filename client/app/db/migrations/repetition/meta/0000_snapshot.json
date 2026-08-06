@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "bf271013-3834-4b80-88e3-1667d201089e",
+  "id": "0b063135-409c-4898-9b9e-6e66b1f380c8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -37,13 +37,6 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "card_template_id": {
-          "name": "card_template_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -168,8 +161,8 @@
           "autoincrement": false,
           "default": 0
         },
-        "last_sync_usn": {
-          "name": "last_sync_usn",
+        "sync_cursor_usn": {
+          "name": "sync_cursor_usn",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -192,13 +185,6 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "collection_schema_updated_at": {
-          "name": "collection_schema_updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -363,6 +349,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "preset_template_id": {
+          "name": "preset_template_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "usn": {
           "name": "usn",

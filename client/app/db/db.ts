@@ -11,7 +11,11 @@ import { getAccountDir } from "@main/paths";
 import { ColConfig } from "./services/repetition/collection/col-service-types";
 import { noteTypesTable } from "./schema/repetition/rep";
 import { generateUUIDV7 } from "./import/utils";
-import { genNoteTpl } from "./services/repetition/note-template/nt-tpl-service-helper";
+import {
+    createSentenceMiningDefinitionNoteTpl,
+    SENTENCE_MINING_DEFINITION_TPL_NAME,
+    SENTENCE_MINING_DEF_TPL_PRESET_ID,
+} from "./services/repetition/note-template/nt-tpl-service-helper";
 
 export const dictionarySchema = dic_schema;
 export const repetitionSchema = rep_schema;
@@ -82,17 +86,18 @@ function collectionInit(): void {
             usn: usn,
             createdAt: nowTime,
             updatedAt: nowTime,
-            collectionSchemaUpdatedAt: nowTime,
             config: collectionConfig
         }
     ).run();
 
+    // Initialize the note template table with a default note template
     repDb.insert(noteTypesTable).values({
                 id: generateUUIDV7(),
-                name: "Default Note Template",
+                name: SENTENCE_MINING_DEFINITION_TPL_NAME,
+                presetTemplateId: SENTENCE_MINING_DEF_TPL_PRESET_ID,
                 usn: -1,
                 updatedAt: Date.now(),
-                noteTemplate: genNoteTpl(),
+                noteTemplate: createSentenceMiningDefinitionNoteTpl(),
     }).run();
     Logger.info("Database tables initialized with default values.");
 }

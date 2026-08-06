@@ -20,22 +20,20 @@ export { reviewCard } from "./card-review";
 type RepTx = Parameters<Parameters<ReturnType<typeof getRepDb>["transaction"]>[0]>[0];
 
 /**
- * Create a real note and one card per card template from a processing note.
+ * Create a real note and one schedulable card from a processing note.
  */
-export function createCardsFromPcsNote(
+export function createCardFromPcsNote(
     note: PcsNote,
     deckId: Buffer,
     noteTemplate: NoteTemplate,
     tx: RepTx,
-): number {
-    /** Number of cards created from the note template. */
-    const cardCount = noteTemplate.cardtpls.length;
-
+): void {
     /** Current timestamp shared by the generated note and cards. */
     const now = Date.now();
     /** Generated permanent note id derived from the processing note content. */
     const noteId = generateUUIDV7();
 
+    // insert the note record
     tx.insert(notesTable)
         .values({
             id: noteId,
@@ -50,32 +48,29 @@ export function createCardsFromPcsNote(
         })
         .run();
 
-    for (const cardTemplate of noteTemplate.cardtpls) {
-        /** Initial card scheduling values reserved for the final FSRS implementation. */
-        const card = createEmptyCard(new Date(), createEmptyCardHandler);
-        tx.insert(cardsTable)
-            .values({
-                id: generateUUIDV7(),
-                noteId,
-                deckId,
-                usn: -1,
-                updatedAt: now,
-                cardTemplateId: cardTemplate.id,
-                difficulty: card.difficulty,
-                stability: card.stability,
-                scheduledDays: card.scheduledDays,
-                due: card.due.getTime(),
-                lastReview: card.lastReview ? card.lastReview.getTime() : null,
-                lapses: card.lapses,
-                learningSteps: card.learningSteps,
-                repetitions: card.repetitions,
-                state: card.state,
-                queue: CardQueue.NEW,
-            })
-            .run();
-    }
+    // insert the card record, with initial FSRS scheduling values
+    /** Initial card scheduling values reserved for the final FSRS implementation. */
+    const card = createEmptyCard(new Date(), createEmptyCardHandler);
+    tx.insert(cardsTable)
+        .values({
+            id: generateUUIDV7(),
+            noteId,
+            deckId,
+            usn: -1,
+            updatedAt: now,
+            difficulty: card.difficulty,
+            stability: card.stability,
+            scheduledDays: card.scheduledDays,
+            due: card.due.getTime(),
+            lastReview: card.lastReview ? card.lastReview.getTime() : null,
+            lapses: card.lapses,
+            learningSteps: card.learningSteps,
+            repetitions: card.repetitions,
+            state: card.state,
+            queue: CardQueue.NEW,
+        })
+        .run();
 
-    return cardCount;
 }
 
 /**

@@ -1,0 +1,305 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table words {
+  // UUIDv7
+  word_id blob [primary key]
+  spelling text [not null]
+  fingerprint blob [not null, note: 'SHA256 用来验证是否有内容更改']
+  phonetic_bre text
+  phonetic_ame text
+
+  // Epoch MS
+  created_at integer [not null]
+  updated_at integer [not null]
+
+  indexes {
+    spelling [unique, name: "idx_words_spelling"]
+  }
+
+  note: '单词表 (Word)'
+}
+
+// 2. 词性表 (Part of Speech)
+Table word_poses {
+  // UUIDv7
+  pose_id blob [primary key]
+  word_id blob [not null]
+  part_of_speech text
+
+  created_at integer [not null]
+  updated_at integer [not null]
+  indexes {
+    word_id [name: "idx_word_poses_word_id"]
+  }
+}
+Ref: words.word_id < word_poses.word_id [delete: cascade]
+
+// 3. 释义表
+Table definitions {
+  // UUIDv7
+  def_id blob [primary key] 
+  word_pos_id blob [not null, note: '关联到具体的"词性"']
+  def_src text [note: '源语言释义']
+  def_tgt text [note: '目标语言释义']
+
+  // Epoch MS
+  created_at integer [not null]
+  updated_at integer [not null]
+  indexes {
+    word_pos_id [name: "idx_definitions_word_pos_id"]
+  }
+}
+Ref: word_poses.pose_id < definitions.word_pos_id [delete: cascade]
+
+
+// 4. 例句表 (Example)
+Table examples {
+  exp_id blob [primary key] // UUIDv7
+  def_id blob [not null]
+  ex_src text [not null, note: '源语言例句']
+  ex_tgt text [note: '目标语言例句']
+
+  indexes {
+    def_id [name: "idx_examples_def_id"]
+  }
+
+  // Epoch MS
+  created_at integer [not null]
+  updated_at integer [not null]
+}
+Ref: definitions.def_id < examples.def_id [delete: cascade]
+
+
+
+/**
+* 下面是关于间隔重复的表
+*/
+// 注意服务器中每张表都会多一个 user_id 字段
+Table collection {
+  sqlite_schema_version integer [not null, note: '本地应用 sqlite schema 版本']
+  // 全局同步状态
+  last_sync_time integer [not null, default: 0]
+  sync_cursor_usn integer [not null, default: 0]
+
+  usn integer [not null]
+  created_at integer [not null]
+  updated_at integer [not null]
+  config jsonb [not null, note: 
+  '''
+    app\db\services\repetition\collection\col-service-types.d.ts
+    配置
+export interface CollectionConfig {
+    /**
+    * IANA 
+    */
+    timeZone: string;
+    /**
+     * 复习时间重置 1 表示 1:00（24小时制）重置
+     */
+    dailyResetTime: number;
+    /**
+     * epoch 时间戳，单位为毫秒，上次 scheduler 重置的时间
+     */
+    lastRolloverAt: number;
+}
+  ''']
+  Note: '本地有且只有一行'
+}
+
+Table decks {
+  id blob [primary key, not null, note: 'UUIDv7']
+  usn integer [not null]
+  name text [not null]
+  updated_at integer [not null]
+  new_cards_per_day integer [not null, default: 20, note: "一天能学多少张新卡"]
+  new_learned_today integer [not null, default: 0, note: "今天新卡学了多少个"]
+  learned_today integer [not null, default: 0, note: "今天学习了多少次卡片"]
+  reviewed_today integer [not null, default: 0, note: "今天复习了多少张卡片"]
+  config jsonb [not null, note: 
+  '''
+  牌组的配置
+  export interface DeckConfig {
+    /**
+     * The maximum number of new cards can be learned per day in this deck.
+     * -1 means no limit
+     */
+    newCardsPerDay: number;
+    // TODO FSRS algorithm parameters
+  }
+  ''']
+}
+
+Table note_types {
+  id blob [primary key, note: '笔记模板 id UUIDv7']
+  name text [not null, note: '模板名']
+  preset_template_id integer [not null, default: 0, note: '官方发放的预设模板编号；0 表示未分配/未知预设，1 表示 Sentence Mining Definition']
+  usn integer [not null, note: 
+  '''
+    用来对比
+      -- update sequence number : used to figure out diffs when syncing. 
+      --   value of -1 indicates changes that need to be pushed to server. 
+      --   usn < server usn indicates changes that need to be pulled from server.
+  ''']
+  updated_at integer [not null]
+
+  note_template jsonb [
+    not null,
+    note: '''
+    {
+      "css": "CSS 模板"
+      // 单个展示模板，直接展开在笔记模板上
+      "front": "{{TargetWord}}", 
+      "back": "xxx",
+      // 放在第一个的字段
+      "sortField": timestamp,
+      // 有哪些字段
+      "fields": [{"id": timestamp, "name": "TargetWord"}]
+    }
+    '''
+  ]
+  Note: '笔记模板；一类笔记只对应一种展示模板'
+}
+
+Table notes {
+  id blob [primary key, note: '笔记 id UUIDv7']
+  note_type_id blob [not null]
+  usn integer [not null]
+  created_at integer [not null]
+  updated_at integer [not null]
+  sense_id blob [note: '释义追踪 ID，用于研究记忆迁移率']
+  sort_field text [note: '用来排序的字段，也得是清洗后的']
+  search_fields text [note: 'fields 清洗后的所有值拼凑']
+  fields jsonb [not null, note: 
+  '''
+  Key-Value
+  {id} 是对应 note type 里 fields 存的 id
+  实际填入的内容，例如 {"{id}": "Apple"}
+  ''']
+
+  indexes {
+    (usn) [name: 'ix_notes_usn']
+  }
+
+  Note: '笔记'
+}
+Ref: notes.note_type_id > note_types.id
+
+// 基本和 notes 相同就是减少约束和不必要的字段
+Table processing_notes {
+  id blob [primary key, note: '待加工卡片 id UUIDv7']
+  note_type_id blob [not null]
+  usn integer [not null]
+  created_at integer [not null]
+  updated_at integer [not null]
+  sense_id blob
+  fields jsonb [not null]
+
+  indexes {
+    (usn) [name: 'ix_processing_usn']
+  }
+
+  Note: '待加工卡'
+}
+Ref: processing_notes.note_type_id > note_types.id
+
+Table cards {
+  id blob [primary key, note: '卡片 id UUIDv7']
+  note_id blob [not null]
+  deck_id blob [not null]
+  usn integer [not null]
+  updated_at integer [not null]
+
+  difficulty real [not null]
+  stability real [not null]
+  scheduled_days integer [not null, note: '当前间隔']
+
+  // epoch time
+  due integer [not null, note: '''
+    到期时间 值的含义根据 state 变化
+    新卡片为
+    ''']
+  last_review integer [note: '空则是新卡 上次复习时间']
+  lapses integer [not null, note: '遗忘次数']
+  learning_steps integer [not null, note: '''
+
+  ''']
+  repetitions integer [not null, note: '重复次数']
+  state integer [not null, note: 
+  '''
+    0 = 新卡片
+    1 = 在学习
+    2 = 复习
+    3 = 重学习
+  '''
+    ]
+  queue integer [not null, note: 
+  '''
+    -1 = 停止,
+     0 = 新卡片
+     1 = 在学习/重学习
+     2 = 复习
+  ''']
+
+  indexes {
+    (deck_id, queue, due) [name: 'ix_cards_sched', note: '排期']
+    (usn) [name: 'ix_cards_usn', note: '同步用']
+    (note_id) [name: 'ix_cards_nid', note: '方便模板变更以及删除笔记']
+  }
+}
+Ref: decks.id < cards.deck_id
+Ref: cards.note_id > notes.id
+
+Table review_log {
+  id blob [primary key, note: 'UUIDv7']
+  card_id blob [not null]
+  usn integer [not null]
+
+  review_time integer [not null, note: '实际复习时间']
+  scheduled_days integer [not null]
+
+  rating integer [not null, note: '1:Again, 2:Hard, 3:Good, 4:Easy']
+  difficulty real [not null, note: '复习后的难度']
+  stability real [not null, note: '复习后的稳定性']
+  
+
+  learning_steps integer [not null]
+  state integer [not null]
+  duration integer [not null, note: '停留耗时(ms)']
+
+  indexes {
+    (usn) [name: 'ix_review_log_usn', note: '同步用']
+    (card_id) [name: 'ix_review_log_card_id', note: '方便查询卡片历史']
+  }
+
+  Note: '复习记录 (不可变追加日志)'
+}
+// 不需要级联删除也不需要外键，card 删除对应记录不删而是保留起来
+Ref: review_log.card_id > cards.id
+
+Table tombstones {
+  unit_id blob [primary key, note: '对应卡片，笔记，牌组和笔记模板uuid，Knowledge Unit']
+  usn integer [not null, note: '此处为 -1 被标记为本地删除']
+  deleted_at integer [not null, note: '删除发生的时间戳']
+  unit_type integer [not null, note: 
+  '''
+    0 对应 card
+    1 对应 note
+    2 对应 deck
+    3 对应 note_type
+    4 对应 processing_note
+  ''']
+
+  indexes {
+    (usn) [name: 'ix_tombstones_usn', note: '同步用']
+  }
+  Note: '对应 Anki 的 grave'
+}
+
+Table dic_note_map {
+  map_id blob [primary key, note: '目前只支持保存一个']
+  note_type_id blob [not null, note: '当前字典添加笔记使用的笔记模板 id']
+  usn integer [not null]
+  mapping jsonb [not null, note: '字典添加卡片相关字段到笔记模板字段的映射']
+}
+Ref: dic_note_map.note_type_id > note_types.id [delete: cascade]

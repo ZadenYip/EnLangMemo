@@ -26,7 +26,6 @@ export async function queryStudyCardsByQueue(
             card: {
                 id: cardsTable.id,
                 queue: cardsTable.queue,
-                cardTemplateId: cardsTable.cardTemplateId,
                 difficulty: cardsTable.difficulty,
                 stability: cardsTable.stability,
                 scheduledDays: cardsTable.scheduledDays,

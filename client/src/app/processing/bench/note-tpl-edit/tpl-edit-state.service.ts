@@ -17,21 +17,15 @@ export class TplEditStateService {
      */
     readonly isBusy = this.benchState.isBusy;
 
-    private readonly activeCard = linkedSignal(() => {
-        const noteTpl = this.benchState.curNoteTpl();
-        const cardTplId = this.benchState.selectedCardTpl().value;
-        return noteTpl?.cardtpls.find((cardTpl) => String(cardTpl.id) === cardTplId) ?? null;
-    });
-    
     /**
-     * Draft content for current card front template.
+     * Draft content for current fixed front template.
      */
-    readonly frontTpl = linkedSignal(() => this.activeCard()?.front ?? "");
+    readonly frontTpl = linkedSignal(() => this.benchState.curNoteTpl()?.front ?? "");
 
     /**
-     * Draft content for current card back template.
+     * Draft content for current fixed back template.
      */
-    readonly backTpl = linkedSignal(() => this.activeCard()?.back ?? "");
+    readonly backTpl = linkedSignal(() => this.benchState.curNoteTpl()?.back ?? "");
 
     /**
      * Draft css content for current note template.
@@ -56,7 +50,7 @@ export class TplEditStateService {
     }
 
     /**
-     * Save current note template edit draft.
+     * Save current note template presentation draft.
      */
     async saveDraft(): Promise<NoteTemplateSaveResult | { state: "not-found" } | { state: "busy" }> {
         if (!this.benchState.beginBusy()) {
@@ -67,15 +61,14 @@ export class TplEditStateService {
         try {
             const noteTpl = this.benchState.curNoteTpl();
             const noteTplId = this.benchState.selectedNoteTpl().value;
-            const cardTplId = this.benchState.selectedCardTpl().value;
-            if (!noteTpl || !noteTplId || !cardTplId) {
+            if (!noteTpl || !noteTplId) {
                 Logger.warn("Save template failed: not found");
                 return {
                     state: "not-found",
                 };
             }
 
-            const nextNoteTpl = this.createNextNoteTpl(noteTpl, cardTplId);
+            const nextNoteTpl = this.createNextNoteTpl(noteTpl);
             const result = await window.service.ntTpl.saveNoteTpl(noteTplId, nextNoteTpl);
             if (result.state === "success") {
                 this.benchState.replaceCurNoteTpl(nextNoteTpl);
@@ -87,23 +80,14 @@ export class TplEditStateService {
     }
 
     /**
-     * Merge current draft into a new note template object.
+     * Merge editable draft fields into a new note template object.
      */
-    private createNextNoteTpl(noteTpl: NoteTemplate, cardTplId: string): NoteTemplate {
-        const nextCardTpls = noteTpl.cardtpls.map((cardTpl) =>
-            String(cardTpl.id) === cardTplId
-                ? {
-                    ...cardTpl,
-                    front: this.frontTpl(),
-                    back: this.backTpl(),
-                }
-                : cardTpl,
-        );
-
+    private createNextNoteTpl(noteTpl: NoteTemplate): NoteTemplate {
         return {
             ...noteTpl,
             css: this.cssTpl(),
-            cardtpls: nextCardTpls,
+            front: this.frontTpl(),
+            back: this.backTpl(),
         };
     }
 

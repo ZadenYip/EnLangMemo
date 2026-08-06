@@ -7,7 +7,6 @@ import {
 import { TplEditComponent } from "./note-tpl-edit/tpl-edit.component";
 import { NoteTplOpsComponent } from "./note-tpl-edit/note-tpl-ops/note-tpl-ops.component";
 import { BenchStateService } from "./bench-state.service";
-import { CardTplOpsComponent } from "./note-tpl-edit/card-tpl-ops/card-tpl-ops.component";
 import { NoteContEditComponent } from "./note-cont-edit/note-cont-edit.component";
 import { NoteContEditStateService } from "./note-cont-edit/note-cont-edit-state.service";
 
@@ -23,7 +22,6 @@ interface BenchModeOption extends SelectDropdownOption {
     imports: [
         TplEditComponent,
         SelectDropdownComponent,
-        CardTplOpsComponent,
         NoteContEditComponent,
         NoteTplOpsComponent,
         TranslateModule,

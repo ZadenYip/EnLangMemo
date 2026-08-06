@@ -5,21 +5,4 @@
         [disabled]="benchState.isBusy()"
         (selectedOptionChange)="pickNoteTpl($event)"
     ></app-select-dropdown>
-    <button mat-icon-button [disabled]="benchState.isBusy()" [matMenuTriggerFor]="menu">
-        <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-        <button mat-menu-item [disabled]="benchState.isBusy()" (click)="onMenuAction('create')">
-            <mat-icon>add</mat-icon>
-            <span>{{ 'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TPL_OPS_MENU.CREATE' | translate }}</span>
-        </button>
-        <button mat-menu-item [disabled]="benchState.isBusy() || !benchState.selectedNoteTpl().value" (click)="onMenuAction('delete')">
-            <mat-icon>delete</mat-icon>
-            <span>{{ 'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TPL_OPS_MENU.DELETE' | translate }}</span>
-        </button>
-        <button mat-menu-item [disabled]="benchState.isBusy()" (click)="onMenuAction('settings')">
-            <mat-icon>settings</mat-icon>
-            <span>{{ 'PAGES.PROCESSING.BENCH.TEMPLATE_EDIT.NOTE_TPL_OPS_MENU.SETTINGS' | translate }}</span>
-        </button>
-    </mat-menu>
 </div>

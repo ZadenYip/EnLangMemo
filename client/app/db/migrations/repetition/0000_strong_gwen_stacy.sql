@@ -4,7 +4,6 @@ CREATE TABLE `cards` (
 	`deck_id` blob NOT NULL,
 	`usn` integer NOT NULL,
 	`updated_at` integer NOT NULL,
-	`card_template_id` integer NOT NULL,
 	`difficulty` real NOT NULL,
 	`stability` real NOT NULL,
 	`scheduled_days` integer NOT NULL,
@@ -23,11 +22,10 @@ CREATE INDEX `ix_cards_nid` ON `cards` (`note_id`);--> statement-breakpoint
 CREATE TABLE `collection` (
 	`sqlite_schema_version` integer NOT NULL,
 	`last_sync_time` integer DEFAULT 0 NOT NULL,
-	`last_sync_usn` integer DEFAULT 0 NOT NULL,
+	`sync_cursor_usn` integer DEFAULT 0 NOT NULL,
 	`usn` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
-	`collection_schema_updated_at` integer NOT NULL,
 	`config` jsonb NOT NULL
 );
 --> statement-breakpoint
@@ -54,6 +52,7 @@ CREATE TABLE `dic_note_map` (
 CREATE TABLE `note_types` (
 	`id` blob PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
+	`preset_template_id` integer DEFAULT 0 NOT NULL,
 	`usn` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`note_template` jsonb NOT NULL
