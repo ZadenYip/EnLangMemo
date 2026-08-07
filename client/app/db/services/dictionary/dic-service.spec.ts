@@ -5,7 +5,6 @@ import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "@db/db";
 import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
 import { createSchema } from "../../import/dictionary/test-helpers";
-import { uuidToBuffer } from "../../import/utils";
 import { DictionaryService } from "./dic-service";
 
 // Mock the lemmatize function
@@ -25,18 +24,18 @@ vi.mock(import("@db/db"), async () => {
 });
 
 interface WordFixtureRow {
-    word_id: string;
+    word_id: number;
     spelling: string;
 }
 
 interface WordPosFixtureRow {
-    pose_id: string;
-    word_id: string;
+    pose_id: number;
+    word_id: number;
 }
 
 interface DefinitionFixtureRow {
-    def_id: string;
-    word_pos_id: string;
+    def_id: number;
+    word_pos_id: number;
 }
 
 interface ExplainPlanRow {
@@ -152,12 +151,12 @@ describe("Dictionary Service Tests", () => {
         const examplesSql = "SELECT exp_id FROM examples WHERE def_id = ?";
 
         const wordsPlan = buildExplainPlanAnalysis(sqlite, wordsSql, [wordRow.spelling]);
-        const posesPlan = buildExplainPlanAnalysis(sqlite, posesSql, [uuidToBuffer(poseRow.word_id)]);
-        const definitionsPlan = buildExplainPlanAnalysis(sqlite, definitionsSql, [uuidToBuffer(definitionRow.word_pos_id)]);
-        const examplesPlan = buildExplainPlanAnalysis(sqlite, examplesSql, [uuidToBuffer(definitionRow.def_id)]);
+        const posesPlan = buildExplainPlanAnalysis(sqlite, posesSql, [poseRow.word_id]);
+        const definitionsPlan = buildExplainPlanAnalysis(sqlite, definitionsSql, [definitionRow.word_pos_id]);
+        const examplesPlan = buildExplainPlanAnalysis(sqlite, examplesSql, [definitionRow.def_id]);
 
         // Check that the query plans indicate index usage for the relevant columns
-        const indexUsagePattern = /SEARCH \w+ USING INDEX/;
+        const indexUsagePattern = /SEARCH \w+ USING (?:COVERING )?INDEX/;
         const strMatch = expect.stringMatching(indexUsagePattern);
         expect(wordsPlan.map((row) => row.detail)).toContainEqual(strMatch);
         expect(posesPlan.map((row) => row.detail)).toContainEqual(strMatch);

@@ -49,7 +49,7 @@ export function uuidToBuffer(uuid: string): Buffer {
 
 /**
  * Converts a hexadecimal string to a bytes buffer.
- * @param value - sha256 fingerprint
+ * @param value - hexadecimal value
  * @returns bytes buffer
  */
 export function hexToBuffer(value: string): Buffer {
@@ -58,7 +58,7 @@ export function hexToBuffer(value: string): Buffer {
 
 /**
  * Converts a bytes buffer to a hexadecimal string.
- * @param value - sha256 fingerprint buffer
+ * @param value - bytes buffer
  * @returns hexadecimal string
  */
 export function bufferToHex(value: Buffer): string {

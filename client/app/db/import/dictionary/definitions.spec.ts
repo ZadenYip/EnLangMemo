@@ -7,7 +7,6 @@ import { dictionarySchema, getDicDb } from "../../db";
 import { definitionsTable } from "../../schema/dictionary/dic";
 import { impDefinitions, impWordPoses, impWords } from ".";
 import { createSchema, writeJsonLinesFile } from "./test-helpers";
-import { bufferToHex } from "../utils";
 import { ImportResult } from "./dic-import-types";
 
 vi.mock(import("@main/db/db"), async (importOriginal) => {
@@ -42,9 +41,9 @@ describe("Dictionary Import Definitions Tests", () => {
     it("imports definitions into the in-memory dictionary database", async () => {
         const words = [
             {
-                word_id: "55555555-5555-5555-5555-555555555555",
+                word_id: 1,
                 spelling: "bright",
-                fingerprint: "abcdefabcdefabcdefabcdefabcdefab",
+                entry_version: 1,
                 phonetic_bre: "brite",
                 phonetic_ame: "brite",
                 created_at: 100,
@@ -53,7 +52,7 @@ describe("Dictionary Import Definitions Tests", () => {
         ];
         const poses = [
             {
-                pose_id: "66666666-6666-6666-6666-666666666666",
+                pose_id: 1,
                 word_id: words[0].word_id,
                 part_of_speech: "adjective",
                 created_at: 300,
@@ -66,7 +65,7 @@ describe("Dictionary Import Definitions Tests", () => {
         // definitions.jsonl
         const definitions = [
             {
-                def_id: "77777777-7777-7777-7777-777777777777",
+                def_id: 1,
                 word_pos_id: poses[0].pose_id,
                 def_src: "giving out or reflecting much light",
                 def_tgt: "bright",
@@ -88,8 +87,8 @@ describe("Dictionary Import Definitions Tests", () => {
         const rows = await db.select().from(definitionsTable);
 
         expect(rows).toHaveLength(1);
-        expect(bufferToHex(rows[0].defId)).toBe("77777777777777777777777777777777");
-        expect(bufferToHex(rows[0].wordPosId)).toBe("66666666666666666666666666666666");
+        expect(rows[0].defId).toBe(1);
+        expect(rows[0].wordPosId).toBe(1);
         expect(rows[0].defSrc).toBe("giving out or reflecting much light");
         expect(rows[0].defTgt).toBe("bright");
         expect(rows[0].createdAt).toBe(700);

@@ -118,7 +118,7 @@ export const notesTable = sqliteTable(
         usn: int("usn").notNull(),
         createdAt: int("created_at").notNull(),
         updatedAt: int("updated_at").notNull(),
-        senseId: blob("sense_id", { mode: "buffer" }), // 释义追踪 ID
+        senseId: int("sense_id"), // 释义追踪 ID，关联官方词典 definitions.def_id
         sortField: text("sort_field"), // 用来排序的字段
         searchFields: text("search_fields"), // 所有字段值拼凑的搜索字符串
         fields: jsonb<NoteField[]>("fields").notNull(), // JSON: [{"TargetWord": "Apple"}, {...}]
@@ -134,7 +134,7 @@ export const processingNotesTable = sqliteTable(
         usn: int("usn").notNull(),
         createdAt: int("created_at").notNull(),
         updatedAt: int("updated_at").notNull(),
-        senseId: blob("sense_id", { mode: "buffer" }),
+        senseId: int("sense_id"),
         fields: jsonb<NoteField[]>("fields").notNull(),
     },
     (table) => [index("ix_processing_usn").on(table.usn)],

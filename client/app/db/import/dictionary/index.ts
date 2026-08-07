@@ -11,13 +11,13 @@ import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from "../.
 import { sql } from "drizzle-orm";
 import Database from "better-sqlite3";
 import Logger from "electron-log/main";
-import { convertKeysToCamelCase, hexToBuffer, uuidToBuffer } from "../utils";
+import { convertKeysToCamelCase } from "../utils";
 import { ImportResult } from "./dic-import-types";
 
-export type WordRow = Omit<WordInsert, "wordId" | "fingerprint"> & { wordId: string, fingerprint: string };
-export type WordPosRow = Omit<WordPosInsert, "wordId" | "poseId"> & { wordId: string; poseId: string };
-export type DefinitionRow = Omit<DefinitionInsert, "defId" | "wordPosId"> & { defId: string; wordPosId: string };
-export type ExampleRow = Omit<ExampleInsert, "expId" | "defId"> & { expId: string; defId: string };
+export type WordRow = WordInsert;
+export type WordPosRow = WordPosInsert;
+export type DefinitionRow = DefinitionInsert;
+export type ExampleRow = ExampleInsert;
 
 // Fail early when the local JSONL file does not exist.
 function assertFileExists(filePath: string): void {
@@ -143,14 +143,15 @@ async function upsertBatch<TRow>(
 export async function impWords(filePath: string): Promise<ImportResult> {
 
     const isWordImportRow = (row: Partial<WordRow>): row is WordRow =>
-        Boolean(row.wordId && row.spelling && row.fingerprint);
+        Boolean(
+            Number.isInteger(row.wordId)
+            && row.spelling
+            && Number.isInteger(row.entryVersion)
+            && row.entryVersion! > 0,
+        );
 
     const impResult = importJsonLines<WordRow>(filePath, isWordImportRow, async (rows) => {
-        const insertDatas = rows.map(row => ({
-            ...row,
-            wordId: uuidToBuffer(row.wordId),
-            fingerprint: hexToBuffer(row.fingerprint)
-        }));
+        const insertDatas = rows;
 
         // TODO DrizzleORM does not support async in transaction for better-sqlite3
         // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
@@ -165,7 +166,7 @@ export async function impWords(filePath: string): Promise<ImportResult> {
                 setWhere: sql.raw(`${wordsTable.updatedAt.name} < excluded.${wordsTable.updatedAt.name}`),
                 set: {
                     spelling: sql.raw(`excluded.${wordsTable.spelling.name}`),
-                    fingerprint: sql.raw(`excluded.${wordsTable.fingerprint.name}`),
+                    entryVersion: sql.raw(`excluded.${wordsTable.entryVersion.name}`),
                     phoneticBre: sql.raw(`excluded.${wordsTable.phoneticBre.name}`),
                     phoneticAme: sql.raw(`excluded.${wordsTable.phoneticAme.name}`),
                     updatedAt: sql.raw(`excluded.${wordsTable.updatedAt.name}`),
@@ -185,14 +186,10 @@ export async function impWords(filePath: string): Promise<ImportResult> {
  */
 export async function impWordPoses(filePath: string): Promise<ImportResult> {
     const isWordPosImportRow = (row: Partial<WordPosRow>): row is WordPosRow =>
-        Boolean(row.poseId && row.wordId);
+        Boolean(Number.isInteger(row.poseId) && Number.isInteger(row.wordId));
 
     const impResult = importJsonLines<WordPosRow>(filePath, isWordPosImportRow, async (rows) => {
-        const insertDatas: WordPosInsert[] = rows.map(row => ({
-            ...row,
-            poseId: uuidToBuffer(row.poseId),
-            wordId: uuidToBuffer(row.wordId)
-        }));
+        const insertDatas: WordPosInsert[] = rows;
         
         // TODO DrizzleORM does not support async in transaction for better-sqlite3
         // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
@@ -227,14 +224,10 @@ export async function impWordPoses(filePath: string): Promise<ImportResult> {
 export async function impDefinitions(filePath: string): Promise<ImportResult> {
     const isDefinitionImportRow = (
         row: Partial<DefinitionRow>,
-    ): row is DefinitionRow => Boolean(row.defId && row.wordPosId);
+    ): row is DefinitionRow => Boolean(Number.isInteger(row.defId) && Number.isInteger(row.wordPosId));
 
     const impResult = importJsonLines<DefinitionRow>(filePath, isDefinitionImportRow, async (rows) => {
-        const insertDatas: DefinitionInsert[] = rows.map(row => ({
-            ...row,
-            defId: uuidToBuffer(row.defId),
-            wordPosId: uuidToBuffer(row.wordPosId)
-        }));
+        const insertDatas: DefinitionInsert[] = rows;
 
         // TODO DrizzleORM does not support async in transaction for better-sqlite3
         // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
@@ -269,14 +262,10 @@ export async function impDefinitions(filePath: string): Promise<ImportResult> {
 export async function impExamples(filePath: string): Promise<ImportResult> {
     const db = getDicDb();
     const isExampleImportRow = (row: Partial<ExampleRow>): row is ExampleRow =>
-        Boolean(row.expId && row.defId && row.exSrc);
+        Boolean(Number.isInteger(row.expId) && Number.isInteger(row.defId) && row.exSrc);
 
     const impResult = importJsonLines<ExampleRow>(filePath, isExampleImportRow, async (rows) => {
-        const insertDatas: ExampleInsert[] = rows.map(row => ({
-            ...row,
-            expId: uuidToBuffer(row.expId),
-            defId: uuidToBuffer(row.defId)
-        }));
+        const insertDatas: ExampleInsert[] = rows;
 
         // TODO DrizzleORM does not support async in transaction for better-sqlite3
         // see：https://github.com/drizzle-team/drizzle-orm/issues/2275

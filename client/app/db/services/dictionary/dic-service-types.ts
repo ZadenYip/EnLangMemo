@@ -15,9 +15,9 @@ export interface Sense {
 
 export interface Definition {
     /**
-     * Definition business id stored as hex string.
+     * Official dictionary definition id.
      */
-    defId: string;
+    defId: number;
     definition: BilingualText;
     examples?: BilingualText[];
 }

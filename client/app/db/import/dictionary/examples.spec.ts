@@ -12,7 +12,6 @@ import {
     impWords,
 } from ".";
 import { createSchema, writeJsonLinesFile } from "./test-helpers";
-import { bufferToHex } from "../utils";
 import { ImportResult } from "./dic-import-types";
 
 vi.mock(import("@main/db/db"), async (importOriginal) => {
@@ -47,9 +46,9 @@ describe("Dictionary Import Examples Tests", () => {
     it("imports examples into the in-memory dictionary database", async () => {
         const words = [
             {
-                word_id: "88888888-8888-8888-8888-888888888888",
+                word_id: 1,
                 spelling: "learn",
-                fingerprint: "11223344556677889900aabbccddeeff",
+                entry_version: 1,
                 phonetic_bre: "lern",
                 phonetic_ame: "lern",
                 created_at: 100,
@@ -58,7 +57,7 @@ describe("Dictionary Import Examples Tests", () => {
         ];
         const poses = [
             {
-                pose_id: "99999999-9999-9999-9999-999999999999",
+                pose_id: 1,
                 word_id: words[0].word_id,
                 part_of_speech: "verb",
                 created_at: 300,
@@ -67,7 +66,7 @@ describe("Dictionary Import Examples Tests", () => {
         ];
         const definitions = [
             {
-                def_id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                def_id: 1,
                 word_pos_id: poses[0].pose_id,
                 def_src: "to gain knowledge or skill",
                 def_tgt: "study",
@@ -82,7 +81,7 @@ describe("Dictionary Import Examples Tests", () => {
         // examples.jsonl
         const examples = [
             {
-                exp_id: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+                exp_id: 1,
                 def_id: definitions[0].def_id,
                 ex_src: "Children learn quickly.",
                 ex_tgt: "Kids learn quickly.",
@@ -104,8 +103,8 @@ describe("Dictionary Import Examples Tests", () => {
         const exp_rows = await db.select().from(examplesTable);
 
         expect(exp_rows).toHaveLength(1);
-        expect(bufferToHex(exp_rows[0].expId)).toBe("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-        expect(bufferToHex(exp_rows[0].defId)).toBe("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        expect(exp_rows[0].expId).toBe(1);
+        expect(exp_rows[0].defId).toBe(1);
         expect(exp_rows[0].exSrc).toBe("Children learn quickly.");
         expect(exp_rows[0].exTgt).toBe("Kids learn quickly.");
         expect(exp_rows[0].createdAt).toBe(900);

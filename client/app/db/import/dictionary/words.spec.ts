@@ -8,7 +8,6 @@ import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { wordsTable } from "../../schema/dictionary/dic";
 import { impWords } from ".";
 import { createSchema, writeJsonLinesFile, writeRawLinesFile } from "./test-helpers";
-import { hexToBuffer, uuidToBuffer } from "../utils";
 import { ImportResult } from "./dic-import-types";
 import { dictionarySchema, getDicDb } from "@main/db/db";
 
@@ -20,19 +19,29 @@ vi.mock(import("@main/db/db"), async (importOriginal) => {
     };
 });
 
-function toExpectedWordRecord(row: any): {
-    wordId: Buffer;
+interface WordJsonLine {
+    word_id: number;
     spelling: string;
-    fingerprint: Buffer;
+    entry_version: number;
+    phonetic_bre?: string | null;
+    phonetic_ame?: string | null;
+    created_at: number;
+    updated_at: number;
+}
+
+function toExpectedWordRecord(row: WordJsonLine): {
+    wordId: number;
+    spelling: string;
+    entryVersion: number;
     phoneticBre: string | null;
     phoneticAme: string | null;
     createdAt: number;
     updatedAt: number;
 } {
     return {
-        wordId: uuidToBuffer(row.word_id),
+        wordId: row.word_id,
         spelling: row.spelling,
-        fingerprint: hexToBuffer(row.fingerprint),
+        entryVersion: row.entry_version,
         phoneticBre: row.phonetic_bre ?? null,
         phoneticAme: row.phonetic_ame ?? null,
         createdAt: row.created_at,
@@ -71,18 +80,18 @@ describe("Dictionary Import Words Tests", () => {
     it("imports words into the in-memory dictionary database", async () => {
         const words = [
             {
-                word_id: "11111111-1111-1111-1111-111111111111",
+                word_id: 1,
                 spelling: "hello",
-                fingerprint: "00112233445566778899aabbccddeeff",
+                entry_version: 1,
                 phonetic_bre: "heh-loh",
                 phonetic_ame: "heh-loh",
                 created_at: 100,
                 updated_at: 200,
             },
             {
-                word_id: "22222222-2222-2222-2222-222222222222",
+                word_id: 2,
                 spelling: "world",
-                fingerprint: "ffeeddccbbaa99887766554433221100",
+                entry_version: 1,
                 phonetic_bre: null,
                 phonetic_ame: null,
                 created_at: 300,
@@ -114,9 +123,9 @@ describe("Dictionary Import Words Tests", () => {
 
     it("counts processed, skipped, and failed in a mixed words import file", async () => {
         const existing = {
-            word_id: "12121212-1212-1212-1212-121212121212",
+            word_id: 1,
             spelling: "active",
-            fingerprint: "00112233445566778899aabbccddeeff",
+            entry_version: 1,
             phonetic_bre: "ak-tiv",
             phonetic_ame: "ak-tiv",
             created_at: 100,
@@ -125,9 +134,9 @@ describe("Dictionary Import Words Tests", () => {
         await impWords(writeJsonLinesFile(tempDir, "seed-words.jsonl", [existing]));
 
         const validInsert = {
-            word_id: "34343434-3434-3434-3434-343434343434",
+            word_id: 2,
             spelling: "fresh",
-            fingerprint: "ffeeddccbbaa99887766554433221100",
+            entry_version: 2,
             phonetic_bre: "fresh",
             phonetic_ame: "fresh",
             created_at: 400,
@@ -139,7 +148,7 @@ describe("Dictionary Import Words Tests", () => {
             updated_at: 200,
         };
         const wrongTypeRow = {
-            word_id: "56565656-5656-5656-5656-565656565656",
+            word_id: 3,
             spelling: "broken",
             created_at: 700,
             updated_at: 800,
@@ -171,8 +180,8 @@ describe("Dictionary Import Words Tests", () => {
 
     it("counts only blank and invalid rows when no valid word rows exist", async () => {
         const wrongTypeRow = {
-            word_id: "78787878-7878-7878-7878-787878787878",
-            spelling: "missing-fingerprint",
+            word_id: 1,
+            spelling: "missing-entry-version",
             created_at: 100,
             updated_at: 200,
         };

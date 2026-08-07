@@ -8,6 +8,13 @@
       "when": 1786020416814,
       "tag": "0000_strong_gwen_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1786106114096,
+      "tag": "0001_overrated_next_avengers",
+      "breakpoints": true
     }
   ]
 }

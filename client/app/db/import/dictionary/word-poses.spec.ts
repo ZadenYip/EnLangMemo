@@ -7,7 +7,6 @@ import { dictionarySchema, getDicDb } from "@main/db/db";
 import { wordPosesTable } from "../../schema/dictionary/dic";
 import { impWordPoses, impWords } from ".";
 import { createSchema, writeJsonLinesFile } from "./test-helpers";
-import { bufferToHex } from "../utils";
 import { ImportResult } from "./dic-import-types";
 
 vi.mock(import("@main/db/db"), async (importOriginal) => {
@@ -42,9 +41,9 @@ describe("Dictionary Import Word Poses Tests", () => {
     it("imports word poses into the in-memory dictionary database", async () => {
         const words = [
             {
-                word_id: "33333333-3333-3333-3333-333333333333",
+                word_id: 1,
                 spelling: "run",
-                fingerprint: "1234567890abcdef1234567890abcdef",
+                entry_version: 1,
                 phonetic_bre: "run",
                 phonetic_ame: "run",
                 created_at: 100,
@@ -55,7 +54,7 @@ describe("Dictionary Import Word Poses Tests", () => {
 
         const poses = [
             {
-                pose_id: "44444444-4444-4444-4444-444444444444",
+                pose_id: 1,
                 word_id: words[0].word_id,
                 part_of_speech: "verb",
                 created_at: 500,
@@ -76,8 +75,8 @@ describe("Dictionary Import Word Poses Tests", () => {
         const rows = await db.select().from(wordPosesTable);
 
         expect(rows).toHaveLength(1);
-        expect(bufferToHex(rows[0].poseId)).toBe("44444444444444444444444444444444");
-        expect(bufferToHex(rows[0].wordId)).toBe("33333333333333333333333333333333");
+        expect(rows[0].poseId).toBe(1);
+        expect(rows[0].wordId).toBe(1);
         expect(rows[0].partOfSpeech).toBe("verb");
         expect(rows[0].createdAt).toBe(500);
         expect(rows[0].updatedAt).toBe(600);
@@ -86,9 +85,9 @@ describe("Dictionary Import Word Poses Tests", () => {
     it("imports wrong foreign key word poses into the in-memory dictionary database", async () => {
         const poses = [
             {
-                pose_id: "44444444-4444-4444-4444-444444444444",
+                pose_id: 1,
                 // This word_id does not exist in the words table
-                word_id: "33333333-3333-3333-3333-333333333333", 
+                word_id: 404, 
                 part_of_speech: "verb",
                 created_at: 500,
                 updated_at: 600,

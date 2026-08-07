@@ -6,7 +6,6 @@ import { eq } from "drizzle-orm";
 import { lemmatize } from "@main/lemmatization";
 import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
 import { ImportResult } from "../../import/dictionary/dic-import-types";
-import { bufferToHex } from "../../import/utils";
 
 export class DictionaryService implements IDictionaryService {
     /**
@@ -47,15 +46,15 @@ export class DictionaryService implements IDictionaryService {
             return null;
         }
 
-        const sensesByPoseId = new Map<string, Sense>();
-        const definitionsByDefId = new Map<string, Definition>();
+        const sensesByPoseId = new Map<number, Sense>();
+        const definitionsByDefId = new Map<number, Definition>();
 
         for (const row of rows) {
             if (!row.poseId) {
                 continue;
             }
 
-            const poseId = bufferToHex(row.poseId);
+            const poseId = row.poseId;
             let sense = sensesByPoseId.get(poseId);
             if (!sense) {
                 sense = {
@@ -69,7 +68,7 @@ export class DictionaryService implements IDictionaryService {
                 continue;
             }
 
-            const defId = bufferToHex(row.defId);
+            const defId = row.defId;
             let definition = definitionsByDefId.get(defId);
             if (!definition) {
                 definition = {
