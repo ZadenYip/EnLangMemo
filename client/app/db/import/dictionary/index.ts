@@ -279,6 +279,8 @@ export async function impDictionaryDetailed(
             impResult.failed += 1;
             activeResult.total += 1;
             activeResult.failed += 1;
+            await flushDicBatch(activeType, batch, impResult, activeResult, filePath);
+            batch = [];
             finalizeImportResult(detailedResult);
             return detailedResult;
         }
@@ -299,6 +301,8 @@ export async function impDictionaryDetailed(
             impResult.failed += 1;
             activeResult.total += 1;
             activeResult.failed += 1;
+            await flushDicBatch(activeType, batch, impResult, activeResult, filePath);
+            batch = [];
             finalizeImportResult(detailedResult);
             return detailedResult;
         }
