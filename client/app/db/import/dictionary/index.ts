@@ -273,15 +273,14 @@ export async function impDictionaryDetailed(
         try {
             row = JSON.parse(trimmedStr) as Partial<DictImportRow>;
         } catch (error) {
-            if (error instanceof SyntaxError) {
-                Logger.error(`Skipping invalid JSON line ${impResult.total} in ${filePath}: ${error.message}`);
-            } else {
-                Logger.error(`Unexpected error processing line ${impResult.total} in ${filePath}`);
-            }
+            Logger.error(
+                `Abort dictionary import: invalid JSON at line ${impResult.total} in ${filePath}${error instanceof Error ? ` (${error.message})` : ""}`,
+            );
             impResult.failed += 1;
             activeResult.total += 1;
             activeResult.failed += 1;
-            continue;
+            finalizeImportResult(detailedResult);
+            return detailedResult;
         }
 
         if (isDictionaryImportRowType(row.type) && row.type > activeType) {
@@ -296,11 +295,12 @@ export async function impDictionaryDetailed(
         }
 
         if (!isDicImpRow(row) || row.type < activeType) {
-            Logger.warn(`Skipping invalid dictionary row ${impResult.total} in ${filePath}: invalid type/order/data`);
+            Logger.error(`Abort dictionary import: invalid row type/order/data at line ${impResult.total} in ${filePath}`);
             impResult.failed += 1;
             activeResult.total += 1;
             activeResult.failed += 1;
-            continue;
+            finalizeImportResult(detailedResult);
+            return detailedResult;
         }
 
         activeResult.total += 1;
@@ -312,9 +312,13 @@ export async function impDictionaryDetailed(
     }
 
     await flushDicBatch(activeType, batch, impResult, activeResult, filePath);
-    impResult.skipped = impResult.total - (impResult.processed + impResult.failed);
-    updateDetailedSkipped(detailedResult);
+    finalizeImportResult(detailedResult);
     return detailedResult;
+}
+
+function finalizeImportResult(result: DicImpResult): void {
+    result.total.skipped = result.total.total - (result.total.processed + result.total.failed);
+    updateDetailedSkipped(result);
 }
 
 function createImportResult(): ImportResult {

@@ -14,6 +14,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import type { DicImpResult, ImportResult } from "@main/db/import/dictionary/dic-import-types";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { map, startWith } from "rxjs";
+import Logger from "electron-log/renderer";
 
 type LabeledImportResult = ImportResult & { itemLabelKey: string };
 
@@ -44,7 +45,7 @@ export class DicImportComponent {
     readonly isSubmitDisabled = computed(() => this.__formInvalid() || this.isImporting());
     progressValue = 0;
 
-    dictionaryImportResult: DicImpResult | null = null;
+    dicImpResult: DicImpResult | null = null;
 
     displayedColumns: string[] = ["item", "total", "processed", "skipped", "failed"];
     dataSource: LabeledImportResult[] = [];
@@ -68,6 +69,7 @@ export class DicImportComponent {
             await new Promise((resolve) => setTimeout(resolve, 500));
 
             this.dataSource = this.buildResultRows();
+            Logger.info("Dictionary import completed successfully.", this.dicImpResult);
         } finally {
             this.isImporting.set(false);
             this.progressValue = 0;
@@ -80,7 +82,7 @@ export class DicImportComponent {
                 next: (progress) => {
                     this.progressValue = progress.progress;
                     if (progress.result) {
-                        this.dictionaryImportResult = progress.result;
+                        this.dicImpResult = progress.result;
                     }
                 },
                 error: (error) => {
@@ -97,19 +99,19 @@ export class DicImportComponent {
         return [
             {
                 itemLabelKey: "PAGES.BROWSE.DIC_IMPORT.WORDS",
-                ...this.toRowValues(this.dictionaryImportResult?.words ?? null),
+                ...this.toRowValues(this.dicImpResult?.words ?? null),
             },
             {
                 itemLabelKey: "PAGES.BROWSE.DIC_IMPORT.POSES",
-                ...this.toRowValues(this.dictionaryImportResult?.wordPoses ?? null),
+                ...this.toRowValues(this.dicImpResult?.wordPoses ?? null),
             },
             {
                 itemLabelKey: "PAGES.BROWSE.DIC_IMPORT.DEFS",
-                ...this.toRowValues(this.dictionaryImportResult?.definitions ?? null),
+                ...this.toRowValues(this.dicImpResult?.definitions ?? null),
             },
             {
                 itemLabelKey: "PAGES.BROWSE.DIC_IMPORT.EXPS",
-                ...this.toRowValues(this.dictionaryImportResult?.examples ?? null),
+                ...this.toRowValues(this.dicImpResult?.examples ?? null),
             },
         ];
     }
