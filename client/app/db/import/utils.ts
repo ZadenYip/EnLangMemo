@@ -1,34 +1,6 @@
 import Logger from "electron-log/main";
 import { v7 as uuidv7 } from "uuid";
 
-/**
- * Converts a snake_case string to camelCase.
- * @param str a snake_case string
- * @returns a camelCase string
- */
-export function toCamelCase(str: string): string {
-    return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-}
-
-/**
- * Converts keys from snake_case to camelCase recursively.
- * @param obj an object or array to recursively convert keys from snake_case to camelCase
- * @returns the object or array with camelCase keys
- */
-export function convertKeysToCamelCase(obj: unknown): unknown {
-    if (Array.isArray(obj)) {
-        return obj.map(convertKeysToCamelCase);
-    } else if (obj !== null && typeof obj === "object") {
-        return Object.entries(obj).reduce((acc, [key, value]) => {
-            const camelKey = toCamelCase(key);
-            acc[camelKey] = convertKeysToCamelCase(value); // 递归处理子对象
-            return acc;
-        }, {} as Record<string, unknown>);
-    }
-    // if it's a basic type (string, number, boolean, null, undefined), return as is
-    return obj;
-}
-
 export function generateUUIDV7(): Buffer {
     const uuidBuffer = Buffer.alloc(16);
     uuidv7({ msecs: Date.now() }, uuidBuffer);

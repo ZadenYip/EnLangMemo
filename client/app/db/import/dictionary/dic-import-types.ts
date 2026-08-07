@@ -23,3 +23,25 @@ export interface ImportResult {
      */
     failed: number;
 }
+
+export interface DicImpResult {
+    /** Aggregate result across every typed section in dictionary.jsonl. */
+    total: ImportResult;
+    /** Result for rows with type = 0. */
+    words: ImportResult;
+    /** Result for rows with type = 1. */
+    wordPoses: ImportResult;
+    /** Result for rows with type = 2. */
+    definitions: ImportResult;
+    /** Result for rows with type = 3. */
+    examples: ImportResult;
+}
+
+export interface DicImpProgress {
+    /** Current import progress percentage used by the renderer progress bar. */
+    progress: number;
+    /** Current dictionary section being imported from the typed JSONL file. */
+    stage: "words" | "wordPoses" | "definitions" | "examples" | "completed";
+    /** Final import result, only available when progress reaches 100%. */
+    result?: DicImpResult;
+}

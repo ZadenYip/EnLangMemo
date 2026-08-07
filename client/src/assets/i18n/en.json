@@ -153,10 +153,19 @@
       "DIC_IMPORT": {
         "TITLE": "Browse Files",
         "SUBTITLE": "Please import a dictionary file",
+        "DICTIONARY": "Dictionary File",
         "WORDS": "Words Table",
         "POSES": "Parts of Speech Table",
         "DEFS": "Definitions Table",
-        "EXPS": "Example Sentences Table"
+        "EXPS": "Example Sentences Table",
+        "TABLE_HEADERS": {
+          "ITEM": "Item",
+          "TOTAL": "Total",
+          "PROCESSED": "Processed",
+          "SKIPPED": "Skipped",
+          "FAILED": "Failed"
+        },
+        "SUBMIT": "Submit"
       }
     },
     "SETTINGS": {

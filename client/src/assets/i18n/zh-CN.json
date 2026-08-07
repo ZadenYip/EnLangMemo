@@ -153,10 +153,18 @@
       "DIC_IMPORT": {
         "TITLE": "词典导入",
         "SUBTITLE": "请导入词典文件",
+        "DICTIONARY": "词典文件",
         "WORDS": "词项表",
         "POSES": "词性表",
         "DEFS": "释义表",
         "EXPS": "例句表",
+        "TABLE_HEADERS": {
+          "ITEM": "项目",
+          "TOTAL": "总数",
+          "PROCESSED": "已处理",
+          "SKIPPED": "已跳过",
+          "FAILED": "失败"
+        },
         "SUBMIT": "提交"
       }
     },

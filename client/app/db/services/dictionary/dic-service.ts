@@ -4,8 +4,9 @@ import type { Definition, DictionaryEntry, Sense } from "./dic-service-types";
 import { definitionsTable, examplesTable, wordPosesTable, wordsTable } from "../../schema/dictionary/dic";
 import { eq } from "drizzle-orm";
 import { lemmatize } from "@main/lemmatization";
-import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
-import { ImportResult } from "../../import/dictionary/dic-import-types";
+import { impDictionaryDetailed } from "../../import/dictionary";
+import { DicImpProgress } from "../../import/dictionary/dic-import-types";
+import { Observable } from "rxjs";
 
 export class DictionaryService implements IDictionaryService {
     /**
@@ -120,20 +121,21 @@ export class DictionaryService implements IDictionaryService {
         return entry;
     }
 
-    public async importWords(path: string): Promise<ImportResult> {
-        return await impWords(path);
-    }
+    public importDictionary$(path: string): Observable<DicImpProgress> {
+        return new Observable<DicImpProgress>((subscriber) => {
+            const runImport = async () => {
+                try {
+                    subscriber.next({ progress: 0, stage: "words" });
+                    const result = await impDictionaryDetailed(path, (progress) => subscriber.next(progress));
+                    subscriber.next({ progress: 100, stage: "completed", result });
+                    subscriber.complete();
+                } catch (error) {
+                    subscriber.error(error);
+                }
+            };
 
-    public async importWordPoses(path: string): Promise<ImportResult> {
-        return await impWordPoses(path);
-    }
-
-    public async importDefinitions(path: string): Promise<ImportResult> {
-        return await impDefinitions(path);
-    }
-
-    public async importExamples(path: string): Promise<ImportResult> {
-        return await impExamples(path);
+            runImport();
+        });
     }
 
 }

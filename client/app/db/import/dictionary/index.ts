@@ -11,13 +11,27 @@ import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from "../.
 import { sql } from "drizzle-orm";
 import Database from "better-sqlite3";
 import Logger from "electron-log/main";
-import { convertKeysToCamelCase } from "../utils";
-import { ImportResult } from "./dic-import-types";
+import { DicImpProgress as DicImpProgress, DicImpResult, ImportResult } from "./dic-import-types";
 
 export type WordRow = WordInsert;
 export type WordPosRow = WordPosInsert;
 export type DefinitionRow = DefinitionInsert;
 export type ExampleRow = ExampleInsert;
+
+export enum DicImpRowType {
+    Word = 0,
+    WordPose = 1,
+    Definition = 2,
+    Example = 3,
+}
+
+type TypedWordRow = WordRow & { type: DicImpRowType.Word };
+type TypedWordPosRow = WordPosRow & { type: DicImpRowType.WordPose };
+type TypedDefinitionRow = DefinitionRow & { type: DicImpRowType.Definition };
+type TypedExampleRow = ExampleRow & { type: DicImpRowType.Example };
+export type DictImportRow = TypedWordRow | TypedWordPosRow | TypedDefinitionRow | TypedExampleRow;
+
+type DicImpProgressReporter = (progress: DicImpProgress) => void;
 
 // Fail early when the local JSONL file does not exist.
 function assertFileExists(filePath: string): void {
@@ -36,91 +50,23 @@ function createLineReader(filePath: string): readline.Interface {
     });
 }
 
-
-// Validate a words.jsonl row before writing it to the database.
-// Reusable JSONL import pipeline: read, parse, validate, and upsert.
-async function importJsonLines<TRow>(
-    filePath: string,
-    isValidRowFn: (row: Partial<TRow>) => row is TRow,
-    upsertRowsFn: (rows: TRow[]) => Promise<Database.RunResult>,
-): Promise<ImportResult> {
-    const importResult: ImportResult = {
-        total: 0,
-        processed: 0,
-        skipped: 0,
-        failed: 0,
-    };
-    let lineReader;
-    try {
-        lineReader = createLineReader(filePath);
-    } catch (error) {
-        Logger.error(
-            `Failed to create line reader for file ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-
-        // indicate file read error with total = -1
-        importResult.total = -1;
-        return importResult;
-    }
-
-
-    let row: Partial<TRow>;
-    let batch: TRow[] = [];
-    for await (const line of lineReader) {
-        importResult.total += 1;
-        const trimmed_str = line.trim();
-
-        if (!trimmed_str) {
-            continue;
-        }
-
-        try {
-            row = convertKeysToCamelCase(JSON.parse(trimmed_str)) as Partial<TRow>;
-        } catch (error) {
-            if (error instanceof SyntaxError) {
-                Logger.error(`Skipping invalid JSON line ${importResult.total} in ${filePath}: ${error.message}`);
-            } else {
-                Logger.error(`Unexpected error processing line ${importResult.total} in ${filePath}`);
-            }
-            importResult.failed += 1;
-            continue;
-        }
-
-        if (!isValidRowFn(row)) {
-            Logger.warn(`Skipping invalid data row ${importResult.total} in ${filePath}: missing required fields`);
-            importResult.failed += 1;
-            continue;
-        }
-
-        batch.push(row);
-        if (batch.length >= 1000) {
-            await upsertBatch(batch, upsertRowsFn, importResult, filePath);
-            batch = [];
-        }
-    }
-
-    // Process any remaining rows in the batch after reading all lines
-    if (batch.length > 0) {
-        await upsertBatch(batch, upsertRowsFn, importResult, filePath);
-    }
-
-    importResult.skipped = importResult.total - (importResult.processed + importResult.failed);
-    return importResult;
-}
-
 async function upsertBatch<TRow>(
     batch: TRow[],
     upsertRowsFn: (rows: TRow[]) => Promise<Database.RunResult>,
-    pointerImportResult: ImportResult,
+    totalImportResult: ImportResult,
     filePath: string,
+    sectionImportResult?: ImportResult,
 ) {
     let result: Database.RunResult;
     try {
         result = await upsertRowsFn(batch);
-        pointerImportResult.processed += result.changes;
+        totalImportResult.processed += result.changes;
+        if (sectionImportResult) {
+            sectionImportResult.processed += result.changes;
+        }
     } catch (error) {
         Logger.error(
-            `Database error processing line ${pointerImportResult.total} in ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+            `Database error processing line ${totalImportResult.total} in ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
         if (error instanceof Database.SqliteError) {
             Logger.error(
@@ -131,33 +77,61 @@ async function upsertBatch<TRow>(
                 `Unexpected error type: ${error instanceof Error ? error.name : typeof error}`,
             );
         }
-        pointerImportResult.failed += 1;
+        totalImportResult.failed += 1;
+        if (sectionImportResult) {
+            sectionImportResult.failed += 1;
+        }
     }
 }
 
-/**
- * Imports word data from a JSONL file into the words table.
- * @param filePath the path to the JSONL file containing word data
- * @returns a promise resolving to the import result
- */
-export async function impWords(filePath: string): Promise<ImportResult> {
+function isWordImpRow(row: Partial<WordRow>): row is WordRow {
+    return Boolean(
+        Number.isInteger(row.wordId)
+        && row.spelling
+        && Number.isInteger(row.entryVersion)
+        && row.entryVersion! > 0,
+    );
+}
 
-    const isWordImportRow = (row: Partial<WordRow>): row is WordRow =>
-        Boolean(
-            Number.isInteger(row.wordId)
-            && row.spelling
-            && Number.isInteger(row.entryVersion)
-            && row.entryVersion! > 0,
-        );
+function isWordPosImportRow(row: Partial<WordPosRow>): row is WordPosRow {
+    return Boolean(Number.isInteger(row.poseId) && Number.isInteger(row.wordId));
+}
 
-    const impResult = importJsonLines<WordRow>(filePath, isWordImportRow, async (rows) => {
-        const insertDatas = rows;
+function isDefinitionImpRow(row: Partial<DefinitionRow>): row is DefinitionRow {
+    return Boolean(Number.isInteger(row.defId) && Number.isInteger(row.wordPosId));
+}
 
-        // TODO DrizzleORM does not support async in transaction for better-sqlite3
-        // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
+function isExampleImpRow(row: Partial<ExampleRow>): row is ExampleRow {
+    return Boolean(Number.isInteger(row.expId) && Number.isInteger(row.defId) && row.exSrc);
+}
 
-        const transfactionResult = getDicDb().transaction((tx) => {
-            const dbResult = tx
+function isDicImpRow(row: Partial<DictImportRow>): row is DictImportRow {
+    switch (row.type) {
+        case DicImpRowType.Word:
+            return isWordImpRow(row);
+        case DicImpRowType.WordPose:
+            return isWordPosImportRow(row);
+        case DicImpRowType.Definition:
+            return isDefinitionImpRow(row);
+        case DicImpRowType.Example:
+            return isExampleImpRow(row);
+        default:
+            return false;
+    }
+}
+
+function stripType<TRow extends { type: DicImpRowType }>(row: TRow): Omit<TRow, "type"> {
+    const { type: _type, ...data } = row;
+    return data;
+}
+
+async function upsertWords(rows: WordRow[]): Promise<Database.RunResult> {
+    const insertDatas = rows;
+
+    // TODO DrizzleORM does not support async in transaction for better-sqlite3
+    // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
+    const transfactionResult = getDicDb().transaction((tx) => {
+        const dbResult = tx
             .insert(wordsTable)
             .values(insertDatas)
             .onConflictDoUpdate({
@@ -172,29 +146,18 @@ export async function impWords(filePath: string): Promise<ImportResult> {
                     updatedAt: sql.raw(`excluded.${wordsTable.updatedAt.name}`),
                 },
             }).run();
-            return dbResult;
-        });
-        return transfactionResult;
+        return dbResult;
     });
-    return impResult; 
+    return transfactionResult;
 }
 
-/**
- * Imports word-pos data from a JSONL file into the wordPoses table.
- * @param filePath the path to the JSONL file containing word-pos data
- * @returns a promise resolving to the import result
- */
-export async function impWordPoses(filePath: string): Promise<ImportResult> {
-    const isWordPosImportRow = (row: Partial<WordPosRow>): row is WordPosRow =>
-        Boolean(Number.isInteger(row.poseId) && Number.isInteger(row.wordId));
-
-    const impResult = importJsonLines<WordPosRow>(filePath, isWordPosImportRow, async (rows) => {
-        const insertDatas: WordPosInsert[] = rows;
-        
-        // TODO DrizzleORM does not support async in transaction for better-sqlite3
-        // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
-        const transfactionResult = getDicDb().transaction((tx) => {
-            const dbResult = tx
+async function upsertWordPoses(rows: WordPosRow[]): Promise<Database.RunResult> {
+    const insertDatas: WordPosInsert[] = rows;
+    
+    // TODO DrizzleORM does not support async in transaction for better-sqlite3
+    // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
+    const transfactionResult = getDicDb().transaction((tx) => {
+        const dbResult = tx
             .insert(wordPosesTable)
             .values(insertDatas)
             .onConflictDoUpdate({
@@ -208,31 +171,19 @@ export async function impWordPoses(filePath: string): Promise<ImportResult> {
                 }
             }).run();
             
-            return dbResult;
-        });
-
-        return transfactionResult;
+        return dbResult;
     });
-    return impResult;
+
+    return transfactionResult;
 }
 
-/**
- * Imports definition data from a JSONL file into the definitions table.
- * @param filePath the path to the JSONL file containing definition data
- * @returns a promise resolving to the import result
- */
-export async function impDefinitions(filePath: string): Promise<ImportResult> {
-    const isDefinitionImportRow = (
-        row: Partial<DefinitionRow>,
-    ): row is DefinitionRow => Boolean(Number.isInteger(row.defId) && Number.isInteger(row.wordPosId));
+async function upsertDefinitions(rows: DefinitionRow[]): Promise<Database.RunResult> {
+    const insertDatas: DefinitionInsert[] = rows;
 
-    const impResult = importJsonLines<DefinitionRow>(filePath, isDefinitionImportRow, async (rows) => {
-        const insertDatas: DefinitionInsert[] = rows;
-
-        // TODO DrizzleORM does not support async in transaction for better-sqlite3
-        // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
-        const transfactionResult = getDicDb().transaction((tx) => {
-            const dbResult = tx
+    // TODO DrizzleORM does not support async in transaction for better-sqlite3
+    // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
+    const transfactionResult = getDicDb().transaction((tx) => {
+        const dbResult = tx
                 .insert(definitionsTable)
                 .values(insertDatas)
                 .onConflictDoUpdate({
@@ -246,31 +197,20 @@ export async function impDefinitions(filePath: string): Promise<ImportResult> {
                         updatedAt: sql.raw(`excluded.${definitionsTable.updatedAt.name}`),
                     },
                 }).run();
-            return dbResult;
-        });
-
-        return transfactionResult;
+        return dbResult;
     });
-    return impResult;
+
+    return transfactionResult;
 }
 
-/**
- * Imports example data from a JSONL file into the examples table.
- * @param filePath the path to the JSONL file containing example data
- * @returns a promise resolving to the import result
- */
-export async function impExamples(filePath: string): Promise<ImportResult> {
+async function upsertExamples(rows: ExampleRow[]): Promise<Database.RunResult> {
     const db = getDicDb();
-    const isExampleImportRow = (row: Partial<ExampleRow>): row is ExampleRow =>
-        Boolean(Number.isInteger(row.expId) && Number.isInteger(row.defId) && row.exSrc);
+    const insertDatas: ExampleInsert[] = rows;
 
-    const impResult = importJsonLines<ExampleRow>(filePath, isExampleImportRow, async (rows) => {
-        const insertDatas: ExampleInsert[] = rows;
-
-        // TODO DrizzleORM does not support async in transaction for better-sqlite3
-        // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
-        const transfactionResult = db.transaction((tx) => {
-            const dbResult = tx
+    // TODO DrizzleORM does not support async in transaction for better-sqlite3
+    // see：https://github.com/drizzle-team/drizzle-orm/issues/2275
+    const transfactionResult = db.transaction((tx) => {
+        const dbResult = tx
                 .insert(examplesTable)
                 .values(insertDatas)
                 .onConflictDoUpdate({
@@ -284,10 +224,176 @@ export async function impExamples(filePath: string): Promise<ImportResult> {
                         updatedAt: sql.raw(`excluded.${examplesTable.updatedAt.name}`),
                     }
                 }).run();
-            return dbResult;
-        });
-
-        return transfactionResult;
+        return dbResult;
     });
-    return impResult;
+
+    return transfactionResult;
+}
+
+export async function impDictionaryDetailed(
+    filePath: string,
+    reportProgress?: DicImpProgressReporter,
+): Promise<DicImpResult> {
+    
+    const impResult = createImportResult();
+    const detailedResult: DicImpResult = {
+        total: impResult,
+        words: createImportResult(),
+        wordPoses: createImportResult(),
+        definitions: createImportResult(),
+        examples: createImportResult(),
+    };
+    let lineReader;
+    try {
+        lineReader = createLineReader(filePath);
+    } catch (error) {
+        Logger.error(
+            `Failed to create line reader for file ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+        impResult.total = -1;
+        detailedResult.words.total = -1;
+        return detailedResult;
+    }
+
+    let stage: DicImpRowType = DicImpRowType.Word;
+    let activeType = DicImpRowType.Word;
+    let activeResult = getDetailedImportResult(detailedResult, activeType);
+    let batch: DictImportRow[] = [];
+
+    for await (const line of lineReader) {
+        impResult.total += 1;
+        const trimmedStr = line.trim();
+
+        if (!trimmedStr) {
+            activeResult.total += 1;
+            continue;
+        }
+
+        let row: Partial<DictImportRow>;
+        try {
+            row = JSON.parse(trimmedStr) as Partial<DictImportRow>;
+        } catch (error) {
+            if (error instanceof SyntaxError) {
+                Logger.error(`Skipping invalid JSON line ${impResult.total} in ${filePath}: ${error.message}`);
+            } else {
+                Logger.error(`Unexpected error processing line ${impResult.total} in ${filePath}`);
+            }
+            impResult.failed += 1;
+            activeResult.total += 1;
+            activeResult.failed += 1;
+            continue;
+        }
+
+        if (isDictionaryImportRowType(row.type) && row.type > activeType) {
+            await flushDicBatch(activeType, batch, impResult, activeResult, filePath);
+            batch = [];
+            activeType = row.type;
+            activeResult = getDetailedImportResult(detailedResult, activeType);
+            if (stage !== activeType) {
+                reportProgress?.(dicImpProgress(activeType));
+                stage = activeType;
+            }
+        }
+
+        if (!isDicImpRow(row) || row.type < activeType) {
+            Logger.warn(`Skipping invalid dictionary row ${impResult.total} in ${filePath}: invalid type/order/data`);
+            impResult.failed += 1;
+            activeResult.total += 1;
+            activeResult.failed += 1;
+            continue;
+        }
+
+        activeResult.total += 1;
+        batch.push(row);
+        if (batch.length >= 1000) {
+            await flushDicBatch(activeType, batch, impResult, activeResult, filePath);
+            batch = [];
+        }
+    }
+
+    await flushDicBatch(activeType, batch, impResult, activeResult, filePath);
+    impResult.skipped = impResult.total - (impResult.processed + impResult.failed);
+    updateDetailedSkipped(detailedResult);
+    return detailedResult;
+}
+
+function createImportResult(): ImportResult {
+    return {
+        total: 0,
+        processed: 0,
+        skipped: 0,
+        failed: 0,
+    };
+}
+
+function updateDetailedSkipped(result: DicImpResult): void {
+    result.words.skipped = result.words.total - (result.words.processed + result.words.failed);
+    result.wordPoses.skipped = result.wordPoses.total - (result.wordPoses.processed + result.wordPoses.failed);
+    result.definitions.skipped = result.definitions.total - (result.definitions.processed + result.definitions.failed);
+    result.examples.skipped = result.examples.total - (result.examples.processed + result.examples.failed);
+}
+
+function getDetailedImportResult(
+    result: DicImpResult,
+    type: DicImpRowType,
+): ImportResult {
+    switch (type) {
+        case DicImpRowType.WordPose:
+            return result.wordPoses;
+        case DicImpRowType.Definition:
+            return result.definitions;
+        case DicImpRowType.Example:
+            return result.examples;
+        case DicImpRowType.Word:
+        default:
+            return result.words;
+    }
+}
+
+function isDictionaryImportRowType(value: unknown): value is DicImpRowType {
+    return value === DicImpRowType.Word
+        || value === DicImpRowType.WordPose
+        || value === DicImpRowType.Definition
+        || value === DicImpRowType.Example;
+}
+
+function dicImpProgress(type: DicImpRowType): DicImpProgress {
+    switch (type) {
+        case DicImpRowType.WordPose:
+            return { progress: 25, stage: "wordPoses" };
+        case DicImpRowType.Definition:
+            return { progress: 50, stage: "definitions" };
+        case DicImpRowType.Example:
+            return { progress: 75, stage: "examples" };
+        case DicImpRowType.Word:
+        default:
+            return { progress: 0, stage: "words" };
+    }
+}
+
+async function flushDicBatch(
+    type: DicImpRowType,
+    rows: DictImportRow[],
+    importResult: ImportResult,
+    detailedImportResult: ImportResult,
+    filePath: string,
+): Promise<void> {
+    if (rows.length === 0) {
+        return;
+    }
+
+    switch (type) {
+        case DicImpRowType.Word:
+            await upsertBatch(rows.map((row) => stripType(row as TypedWordRow)), upsertWords, importResult, filePath, detailedImportResult);
+            break;
+        case DicImpRowType.WordPose:
+            await upsertBatch(rows.map((row) => stripType(row as TypedWordPosRow)), upsertWordPoses, importResult, filePath, detailedImportResult);
+            break;
+        case DicImpRowType.Definition:
+            await upsertBatch(rows.map((row) => stripType(row as TypedDefinitionRow)), upsertDefinitions, importResult, filePath, detailedImportResult);
+            break;
+        case DicImpRowType.Example:
+            await upsertBatch(rows.map((row) => stripType(row as TypedExampleRow)), upsertExamples, importResult, filePath, detailedImportResult);
+            break;
+    }
 }
