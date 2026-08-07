@@ -1,19 +1,12 @@
-import {
-    blob,
-    index,
-    int,
-    sqliteTable,
-    text,
-    uniqueIndex,
-} from "drizzle-orm/sqlite-core";
+import { index, int, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
 export const wordsTable = sqliteTable(
     "words",
     {
-        wordId: blob("word_id", { mode: "buffer" }).primaryKey(),
+        wordId: int("word_id").primaryKey(),
         spelling: text("spelling").notNull(),
-        fingerprint: blob("fingerprint", { mode: "buffer" }).notNull(),
+        entryVersion: int("entry_version").notNull(),
         phoneticBre: text("phonetic_bre"),
         phoneticAme: text("phonetic_ame"),
         createdAt: int("created_at").notNull(),
@@ -25,8 +18,8 @@ export const wordsTable = sqliteTable(
 export const wordPosesTable = sqliteTable(
     "word_poses",
     {
-        poseId: blob("pose_id", { mode: "buffer" }).primaryKey(),
-        wordId: blob("word_id", { mode: "buffer" })
+        poseId: int("pose_id").primaryKey(),
+        wordId: int("word_id")
             .notNull()
             .references(() => wordsTable.wordId, { onDelete: "cascade" }),
         partOfSpeech: text("part_of_speech"),
@@ -39,8 +32,8 @@ export const wordPosesTable = sqliteTable(
 export const definitionsTable = sqliteTable(
     "definitions",
     {
-        defId: blob("def_id", { mode: "buffer" }).primaryKey(),
-        wordPosId: blob("word_pos_id", { mode: "buffer" })
+        defId: int("def_id").primaryKey(),
+        wordPosId: int("word_pos_id")
             .notNull()
             .references(() => wordPosesTable.poseId, { onDelete: "cascade" }),
         defSrc: text("def_src"),
@@ -54,8 +47,8 @@ export const definitionsTable = sqliteTable(
 export const examplesTable = sqliteTable(
     "examples",
     {
-        expId: blob("exp_id", { mode: "buffer" }).primaryKey(),
-        defId: blob("def_id", { mode: "buffer" })
+        expId: int("exp_id").primaryKey(),
+        defId: int("def_id")
             .notNull()
             .references(() => definitionsTable.defId, { onDelete: "cascade" }),
         exSrc: text("ex_src").notNull(),

@@ -29,7 +29,7 @@ export type PcsNoteSaveToDeckResult =
 export interface PcsNote {
     id: string;
     noteTplId: string;
-    senseId?: string;
+    senseId?: number;
     fields: NoteField[];
 }
 

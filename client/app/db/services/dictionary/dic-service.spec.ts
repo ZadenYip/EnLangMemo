@@ -1,11 +1,11 @@
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import Database from "better-sqlite3";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { dictionarySchema, getDicDb } from "@db/db";
-import { impDefinitions, impExamples, impWordPoses, impWords } from "../../import/dictionary";
-import { createSchema } from "../../import/dictionary/test-helpers";
-import { uuidToBuffer } from "../../import/utils";
+import { DicImpRowType, impDictionaryDetailed } from "../../import/dictionary";
+import { createSchema, writeJsonLinesFile } from "../../import/dictionary/test-helpers";
 import { DictionaryService } from "./dic-service";
 
 // Mock the lemmatize function
@@ -25,18 +25,18 @@ vi.mock(import("@db/db"), async () => {
 });
 
 interface WordFixtureRow {
-    word_id: string;
+    wordId: number;
     spelling: string;
 }
 
 interface WordPosFixtureRow {
-    pose_id: string;
-    word_id: string;
+    poseId: number;
+    wordId: number;
 }
 
 interface DefinitionFixtureRow {
-    def_id: string;
-    word_pos_id: string;
+    defId: number;
+    wordPosId: number;
 }
 
 interface ExplainPlanRow {
@@ -53,6 +53,7 @@ describe("Dictionary Service Tests", () => {
     let sqlite: Database.Database;
     let db: BetterSQLite3Database<typeof dictionarySchema>;
     let service: DictionaryService;
+    let tempDir: string;
 
     // For development/debugging, we can import the full fixtures with more entries.
     // const fulWordsJSLPath = path.resolve(fixturesDir, "full", "words.jsonl");
@@ -72,19 +73,37 @@ describe("Dictionary Service Tests", () => {
         createSchema(sqlite, db);
 
         mockedGetDicDb.mockReturnValue(db);
+        tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "dictionary-service-"));
 
-        await impWords(sliceWordsJSLPath);
-        await impWordPoses(slicePosesJSLPath);
-        await impDefinitions(sliceDefsPath);
-        await impExamples(sliceExpsJSLPath);
+        await impDictionaryDetailed(buildDictFixturePath(tempDir));
 
         service = new DictionaryService();
     });
 
     afterEach(() => {
         mockedGetDicDb.mockReset();
-        sqlite.close();
+        sqlite?.close();
+        if (tempDir) {
+            fs.rmSync(tempDir, { recursive: true, force: true });
+        }
     });
+
+    function buildDictFixturePath(tempDir: string): string {
+        const rows = [
+            ...readJsonLines(sliceWordsJSLPath).map((row) => ({ type: DicImpRowType.Word, ...row })),
+            ...readJsonLines(slicePosesJSLPath).map((row) => ({ type: DicImpRowType.WordPose, ...row })),
+            ...readJsonLines(sliceDefsPath).map((row) => ({ type: DicImpRowType.Definition, ...row })),
+            ...readJsonLines(sliceExpsJSLPath).map((row) => ({ type: DicImpRowType.Example, ...row })),
+        ];
+        return writeJsonLinesFile(tempDir, "dictionary.jsonl", rows);
+    }
+
+    function readJsonLines(filePath: string): Record<string, unknown>[] {
+        return fs.readFileSync(filePath, "utf8")
+            .split(/\r?\n/)
+            .filter((line) => line.trim().length > 0)
+            .map((line) => JSON.parse(line) as Record<string, unknown>);
+    }
 
     it("should query dictionary entry from imported fixtures", async () => {
         const result = await service.queryWord("run");
@@ -152,12 +171,12 @@ describe("Dictionary Service Tests", () => {
         const examplesSql = "SELECT exp_id FROM examples WHERE def_id = ?";
 
         const wordsPlan = buildExplainPlanAnalysis(sqlite, wordsSql, [wordRow.spelling]);
-        const posesPlan = buildExplainPlanAnalysis(sqlite, posesSql, [uuidToBuffer(poseRow.word_id)]);
-        const definitionsPlan = buildExplainPlanAnalysis(sqlite, definitionsSql, [uuidToBuffer(definitionRow.word_pos_id)]);
-        const examplesPlan = buildExplainPlanAnalysis(sqlite, examplesSql, [uuidToBuffer(definitionRow.def_id)]);
+        const posesPlan = buildExplainPlanAnalysis(sqlite, posesSql, [poseRow.wordId]);
+        const definitionsPlan = buildExplainPlanAnalysis(sqlite, definitionsSql, [definitionRow.wordPosId]);
+        const examplesPlan = buildExplainPlanAnalysis(sqlite, examplesSql, [definitionRow.defId]);
 
         // Check that the query plans indicate index usage for the relevant columns
-        const indexUsagePattern = /SEARCH \w+ USING INDEX/;
+        const indexUsagePattern = /SEARCH \w+ USING (?:COVERING )?INDEX/;
         const strMatch = expect.stringMatching(indexUsagePattern);
         expect(wordsPlan.map((row) => row.detail)).toContainEqual(strMatch);
         expect(posesPlan.map((row) => row.detail)).toContainEqual(strMatch);
@@ -191,10 +210,7 @@ describe("Dictionary Service Tests", () => {
     //     createSchema(loggedSqlite, loggedDb);
     //     mockedGetDicDb.mockReturnValue(loggedDb);
 
-    //     await impWords(sliceWordsJSLPath);
-    //     await impWordPoses(slicePosesJSLPath);
-    //     await impDefinitions(sliceDefsPath);
-    //     await impExamples(sliceExpsJSLPath);
+    //     await impDictionaryDetailed(buildDictionaryFixturePath(tempDir));
     //     loggedQueries.length = 0;
 
     //     const loggerService = new DatabaseService();

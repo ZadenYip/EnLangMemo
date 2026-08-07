@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9d4cdcf2-020e-4949-b88b-8db7f38924af",
+  "id": "93fa12ff-d6bc-4cb4-8bf7-a797a3459705",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "definitions": {
@@ -9,14 +9,14 @@
       "columns": {
         "def_id": {
           "name": "def_id",
-          "type": "blob",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false
         },
         "word_pos_id": {
           "name": "word_pos_id",
-          "type": "blob",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -83,14 +83,14 @@
       "columns": {
         "exp_id": {
           "name": "exp_id",
-          "type": "blob",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false
         },
         "def_id": {
           "name": "def_id",
-          "type": "blob",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -157,14 +157,14 @@
       "columns": {
         "pose_id": {
           "name": "pose_id",
-          "type": "blob",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false
         },
         "word_id": {
           "name": "word_id",
-          "type": "blob",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -224,7 +224,7 @@
       "columns": {
         "word_id": {
           "name": "word_id",
-          "type": "blob",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false
@@ -236,9 +236,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "fingerprint": {
-          "name": "fingerprint",
-          "type": "blob",
+        "entry_version": {
+          "name": "entry_version",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

@@ -1,22 +1,17 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
+import { Observable } from "rxjs";
 import { DictionaryEntry } from "./dic-service-types";
-import { ImportResult } from "../../import/dictionary/dic-import-types";
+import { DicImpProgress } from "../../import/dictionary/dic-import-types";
 
 export interface IDatabaseService {
     queryWord(spelling: string): Promise<DictionaryEntry | null>;
-    importWords(path: string): Promise<ImportResult>;
-    importWordPoses(path: string): Promise<ImportResult>;
-    importDefinitions(path: string): Promise<ImportResult>;
-    importExamples(path: string): Promise<ImportResult>;
+    importDictionary$(path: string): Observable<DicImpProgress>;
 }
 
 export const DicServiceIPCDescriptor = {
     channel: "dicService",
     properties: {
         queryWord: ProxyPropertyType.Function,
-        importWords: ProxyPropertyType.Function,
-        importWordPoses: ProxyPropertyType.Function,
-        importDefinitions: ProxyPropertyType.Function,
-        importExamples: ProxyPropertyType.Function
+        importDictionary$: ProxyPropertyType.Function$,
     },
 };

@@ -18,10 +18,3 @@ export function writeJsonLinesFile(tempDir: string, filename: string, rows: unkn
     fs.writeFileSync(filePath, content, "utf8");
     return filePath;
 }
-
-export function writeRawLinesFile(tempDir: string, filename: string, lines: string[]): string {
-    const filePath = path.join(tempDir, filename);
-    const content = `${lines.join("\n")}\n`;
-    fs.writeFileSync(filePath, content, "utf8");
-    return filePath;
-}

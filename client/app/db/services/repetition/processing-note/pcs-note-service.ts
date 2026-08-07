@@ -74,7 +74,7 @@ export class PcsNoteService {
                 usn: -1,
                 createdAt: now,
                 updatedAt: now,
-                senseId: note.senseId ? hexToBuffer(note.senseId) : null,
+                senseId: note.senseId ?? null,
                 fields: note.fields,
             });
 
@@ -256,7 +256,7 @@ export class PcsNoteService {
         return {
             id: bufferToHex(rawNote.id),
             noteTplId: bufferToHex(rawNote.noteTypeId),
-            senseId: rawNote.senseId ? bufferToHex(rawNote.senseId) : undefined,
+            senseId: rawNote.senseId ?? undefined,
             fields: rawNote.fields,
         };
     }

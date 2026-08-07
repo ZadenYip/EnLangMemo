@@ -2,10 +2,10 @@
 // Docs: https://dbml.dbdiagram.io/docs
 
 Table words {
-  // UUIDv7
-  word_id blob [primary key]
+  // 官方词典整数主键
+  word_id integer [primary key]
   spelling text [not null]
-  fingerprint blob [not null, note: 'SHA256 用来验证是否有内容更改']
+  entry_version integer [not null, note: '词条内容版本；官方词典内容发生变化时递增']
   phonetic_bre text
   phonetic_ame text
 
@@ -22,9 +22,9 @@ Table words {
 
 // 2. 词性表 (Part of Speech)
 Table word_poses {
-  // UUIDv7
-  pose_id blob [primary key]
-  word_id blob [not null]
+  // 官方词典整数主键
+  pose_id integer [primary key]
+  word_id integer [not null]
   part_of_speech text
 
   created_at integer [not null]
@@ -37,9 +37,9 @@ Ref: words.word_id < word_poses.word_id [delete: cascade]
 
 // 3. 释义表
 Table definitions {
-  // UUIDv7
-  def_id blob [primary key] 
-  word_pos_id blob [not null, note: '关联到具体的"词性"']
+  // 官方词典整数主键
+  def_id integer [primary key] 
+  word_pos_id integer [not null, note: '关联到具体的"词性"']
   def_src text [note: '源语言释义']
   def_tgt text [note: '目标语言释义']
 
@@ -55,8 +55,8 @@ Ref: word_poses.pose_id < definitions.word_pos_id [delete: cascade]
 
 // 4. 例句表 (Example)
 Table examples {
-  exp_id blob [primary key] // UUIDv7
-  def_id blob [not null]
+  exp_id integer [primary key, note: '官方词典整数主键']
+  def_id integer [not null]
   ex_src text [not null, note: '源语言例句']
   ex_tgt text [note: '目标语言例句']
 
@@ -167,7 +167,7 @@ Table notes {
   usn integer [not null]
   created_at integer [not null]
   updated_at integer [not null]
-  sense_id blob [note: '释义追踪 ID，用于研究记忆迁移率']
+  sense_id integer [note: '释义追踪 ID，对应官方词典 definitions.def_id，用于研究记忆迁移率']
   sort_field text [note: '用来排序的字段，也得是清洗后的']
   search_fields text [note: 'fields 清洗后的所有值拼凑']
   fields jsonb [not null, note: 
@@ -192,7 +192,7 @@ Table processing_notes {
   usn integer [not null]
   created_at integer [not null]
   updated_at integer [not null]
-  sense_id blob
+  sense_id integer
   fields jsonb [not null]
 
   indexes {

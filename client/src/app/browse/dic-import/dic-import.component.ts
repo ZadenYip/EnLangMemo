@@ -11,9 +11,10 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatTableModule } from "@angular/material/table";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import type { ImportResult } from "@main/db/import/dictionary/dic-import-types";
+import type { DicImpResult, ImportResult } from "@main/db/import/dictionary/dic-import-types";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { map, startWith } from "rxjs";
+import Logger from "electron-log/renderer";
 
 type LabeledImportResult = ImportResult & { itemLabelKey: string };
 
@@ -33,10 +34,7 @@ type LabeledImportResult = ImportResult & { itemLabelKey: string };
 })
 export class DicImportComponent {
     form = new FormGroup({
-        words: new FormControl("", Validators.required),
-        poses: new FormControl("", Validators.required),
-        defs: new FormControl("", Validators.required),
-        exps: new FormControl("", Validators.required),
+        dictionary: new FormControl("", Validators.required),
     });
 
     private __formInvalid = toSignal(this.form.statusChanges.pipe(
@@ -47,10 +45,7 @@ export class DicImportComponent {
     readonly isSubmitDisabled = computed(() => this.__formInvalid() || this.isImporting());
     progressValue = 0;
 
-    wordsImportResult: ImportResult | null = null;
-    posesImportResult: ImportResult | null = null;
-    defsImportResult: ImportResult | null = null;
-    expsImportResult: ImportResult | null = null;
+    dicImpResult: DicImpResult | null = null;
 
     displayedColumns: string[] = ["item", "total", "processed", "skipped", "failed"];
     dataSource: LabeledImportResult[] = [];
@@ -64,53 +59,59 @@ export class DicImportComponent {
         }
 
         this.isImporting.set(true);
+        this.dataSource = [];
 
-        const { words, poses, defs, exps } = this.form.value;
-        this.wordsImportResult = await window.service.dic.importWords(
-            words ?? ""
-        );
-        this.progressValue = 25;
+        try {
+            const { dictionary } = this.form.value;
+            await this.importDictionaryWithProgress(dictionary ?? "");
 
-        this.posesImportResult = await window.service.dic.importWordPoses(
-            poses ?? ""
-        );
-        this.progressValue = 50;
+            // Add a small delay to ensure that the progress bar visually reaches 100% before showing the results
+            await new Promise((resolve) => setTimeout(resolve, 500));
 
-        this.defsImportResult = await window.service.dic.importDefinitions(
-            defs ?? ""
-        );
-        this.progressValue = 75;
+            this.dataSource = this.buildResultRows();
+            Logger.info("Dictionary import completed successfully.", this.dicImpResult);
+        } finally {
+            this.isImporting.set(false);
+            this.progressValue = 0;
+        }
+    }
 
-        this.expsImportResult = await window.service.dic.importExamples(
-            exps ?? ""
-        );
-        this.progressValue = 100;
-
-        // Add a small delay to ensure that the progress bar visually reaches 100% before showing the results
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        this.dataSource = this.buildResultRows();
-        this.isImporting.set(false);
-        this.progressValue = 0;
+    private importDictionaryWithProgress(dictionaryPath: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            window.observables.dic.importDictionary$(dictionaryPath).subscribe({
+                next: (progress) => {
+                    this.progressValue = progress.progress;
+                    if (progress.result) {
+                        this.dicImpResult = progress.result;
+                    }
+                },
+                error: (error) => {
+                    reject(error);
+                },
+                complete: () => {
+                    resolve();
+                },
+            });
+        });
     }
 
     private buildResultRows(): LabeledImportResult[] {
         return [
             {
                 itemLabelKey: "PAGES.BROWSE.DIC_IMPORT.WORDS",
-                ...this.toRowValues(this.wordsImportResult),
+                ...this.toRowValues(this.dicImpResult?.words ?? null),
             },
             {
                 itemLabelKey: "PAGES.BROWSE.DIC_IMPORT.POSES",
-                ...this.toRowValues(this.posesImportResult),
+                ...this.toRowValues(this.dicImpResult?.wordPoses ?? null),
             },
             {
                 itemLabelKey: "PAGES.BROWSE.DIC_IMPORT.DEFS",
-                ...this.toRowValues(this.defsImportResult),
+                ...this.toRowValues(this.dicImpResult?.definitions ?? null),
             },
             {
                 itemLabelKey: "PAGES.BROWSE.DIC_IMPORT.EXPS",
-                ...this.toRowValues(this.expsImportResult),
+                ...this.toRowValues(this.dicImpResult?.examples ?? null),
             },
         ];
     }

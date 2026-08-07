@@ -13,7 +13,7 @@ import { IPcsNoteService, PcsNoteServiceIPCDescriptor } from "../db/services/rep
 import { CardServiceIPCDescriptor, ICardService } from "../db/services/repetition/cards/card-service-interface";
 import { AuthServiceIPCDescriptor, IAuthService } from "../oauth/auth-service-interface";
 
-export const dic = createProxy<AsyncifyProxy<IDatabaseService>>(DicServiceIPCDescriptor);
+export const dic = createProxy<AsyncifyProxy<IDatabaseService>>(DicServiceIPCDescriptor, Observable);
 export const dialog = createProxy<AsyncifyProxy<IDialogService>>(DialogServiceIPCDescriptor);
 export const subtitle = createProxy<AsyncifyProxy<ISubtitleService>>(SubtitleServiceIPCDescriptor, Observable);
 export const collection = createProxy<AsyncifyProxy<ICollectionService>>(CollectionServiceIPCDescriptor);

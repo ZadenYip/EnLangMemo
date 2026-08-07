@@ -41,7 +41,7 @@ export function createCardFromPcsNote(
             usn: -1,
             createdAt: now,
             updatedAt: now,
-            senseId: note.senseId ? hexToBuffer(note.senseId) : null,
+            senseId: note.senseId ?? null,
             sortField: resolveSortField(note, noteTemplate.sortField),
             searchFields: buildSearchFields(note),
             fields: note.fields,
