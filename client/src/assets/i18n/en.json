@@ -21,6 +21,7 @@
         "CREATE_SUCCESS": "Deck created: {{name}}",
         "CREATE_DUPLICATE": "Deck already exists.",
         "CREATE_NAME_EMPTY": "Deck name cannot be empty.",
+        "CREATE_NAME_TOO_LONG": "Deck name cannot exceed {{max}} characters.",
         "CONFIG_DIALOG": {
           "TITLE": "Deck Config: {{name}}",
           "FIELDS": {

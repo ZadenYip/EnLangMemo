@@ -21,6 +21,7 @@
         "CREATE_SUCCESS": "已创建牌组：{{name}}",
         "CREATE_DUPLICATE": "牌组已存在。",
         "CREATE_NAME_EMPTY": "牌组名称不能为空。",
+        "CREATE_NAME_TOO_LONG": "牌组名称不能超过 {{max}} 个字符。",
         "CONFIG_DIALOG": {
           "TITLE": "牌组配置：{{name}}",
           "FIELDS": {

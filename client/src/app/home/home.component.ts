@@ -34,6 +34,8 @@ import { DeckSettingsComponent } from "./sub/settings/settings.component";
 ],
 })
 export class HomeComponent implements OnInit {
+    private static readonly maxDeckNameChars = 32;
+
     private readonly router = inject(Router);
 
     private readonly dialog = inject(MatDialog);
@@ -138,8 +140,16 @@ export class HomeComponent implements OnInit {
      */
     onInputDeckName(event: Event): void {
         const input = event.target as HTMLInputElement;
-        this.pendingDeckName = input.value;
-        if(!this.pendingDeckName.trim()) {
+        const normalizedName = this.limitDeckName(input.value);
+        if (normalizedName !== input.value) {
+            input.value = normalizedName;
+            const msg = this.translateService.instant("PAGES.HOME.DECKS.CREATE_NAME_TOO_LONG", {
+                max: HomeComponent.maxDeckNameChars,
+            });
+            this.notify.open(msg);
+        }
+        this.pendingDeckName = normalizedName;
+        if (!this.pendingDeckName.trim()) {
             this.pendingDeckName = "";
             const msg = this.translateService.instant("PAGES.HOME.DECKS.CREATE_NAME_EMPTY");
             this.notify.open(msg);
@@ -163,10 +173,19 @@ export class HomeComponent implements OnInit {
      * Confirm and create a new deck, then refresh the list.
      */
     async confirmCreateDeck(): Promise<void> {
-        const deckName = this.pendingDeckName;
+        const deckName = this.limitDeckName(this.pendingDeckName);
         if (!deckName.trim()) {
             const msg = this.translateService.instant("PAGES.HOME.DECKS.CREATE_NAME_EMPTY");
             this.resetCreateDeckInput();
+            this.notify.open(msg);
+            return;
+        }
+        if (deckName !== this.pendingDeckName) {
+            this.pendingDeckName = deckName;
+            this.createInputElem()!.nativeElement.value = deckName;
+            const msg = this.translateService.instant("PAGES.HOME.DECKS.CREATE_NAME_TOO_LONG", {
+                max: HomeComponent.maxDeckNameChars,
+            });
             this.notify.open(msg);
             return;
         }
@@ -201,6 +220,10 @@ export class HomeComponent implements OnInit {
             }
         }
         this.pendingDeckName = "";
+    }
+
+    private limitDeckName(name: string): string {
+        return Array.from(name).slice(0, HomeComponent.maxDeckNameChars).join("");
     }
 
 }
