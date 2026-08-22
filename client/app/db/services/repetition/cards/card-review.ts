@@ -1,6 +1,6 @@
 import { getRepDb } from "@main/db/db";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { cardsTable, collectionTable, decksTable, reviewLogTable } from "@main/db/schema/repetition/rep";
+import { cardsTable, collectionTable, decksTable, reviewLogsTable } from "@main/db/schema/repetition/rep";
 import { eq } from "drizzle-orm";
 import { ColConfig } from "../collection/col-service-types";
 import { toFSRSCard } from "./card-mapper";
@@ -171,7 +171,7 @@ function insertReviewLogInTx(
     recordLogItem: ReviewOutcome["recordLogItem"],
     duration: number,
 ): void {
-    tx.insert(reviewLogTable)
+    tx.insert(reviewLogsTable)
         .values({
             id: generateUUIDV7(),
             cardId,

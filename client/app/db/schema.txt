@@ -77,6 +77,7 @@ Ref: definitions.def_id < examples.def_id [delete: cascade]
 */
 // 注意服务器中每张表都会多一个 user_id 字段
 Table collection {
+  id blob [primary key]
   sqlite_schema_version integer [not null, note: '本地应用 sqlite schema 版本']
   // 全局同步状态
   last_sync_time integer [not null, default: 0]
@@ -250,7 +251,7 @@ Table cards {
 Ref: decks.id < cards.deck_id
 Ref: cards.note_id > notes.id
 
-Table review_log {
+Table review_logs {
   id blob [primary key, note: 'UUIDv7']
   card_id blob [not null]
   usn integer [not null]
@@ -268,26 +269,29 @@ Table review_log {
   duration integer [not null, note: '停留耗时(ms)']
 
   indexes {
-    (usn) [name: 'ix_review_log_usn', note: '同步用']
-    (card_id) [name: 'ix_review_log_card_id', note: '方便查询卡片历史']
+    (usn) [name: 'ix_review_logs_usn', note: '同步用']
+    (card_id) [name: 'ix_review_logs_card_id', note: '方便查询卡片历史']
   }
 
   Note: '复习记录 (不可变追加日志)'
 }
 // 不需要级联删除也不需要外键，card 删除对应记录不删而是保留起来
-Ref: review_log.card_id > cards.id
+Ref: review_logs.card_id > cards.id
 
 Table tombstones {
-  unit_id blob [primary key, note: '对应卡片，笔记，牌组和笔记模板uuid，Knowledge Unit']
+  unit_id blob [primary key, note: '对应同步实体 uuid，Knowledge Unit']
   usn integer [not null, note: '此处为 -1 被标记为本地删除']
   deleted_at integer [not null, note: '删除发生的时间戳']
   unit_type integer [not null, note: 
   '''
-    0 对应 card
-    1 对应 note
+    0 对应 unspecified
+    1 对应 collection
     2 对应 deck
     3 对应 note_type
-    4 对应 processing_note
+    4 对应 note
+    5 对应 processing_note
+    6 对应 card
+    7 对应 review_log
   ''']
 
   indexes {

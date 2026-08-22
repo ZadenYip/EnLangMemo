@@ -80,6 +80,7 @@ function collectionInit(): void {
 
     repDb.insert(rep_schema.collectionTable).values(
         {
+            id: generateUUIDV7(),
             sqliteSchemaVersion: version,
             lastSyncTime: zeroTime,
             lastSyncUsn: usn,

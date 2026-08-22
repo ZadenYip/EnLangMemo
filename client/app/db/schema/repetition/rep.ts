@@ -43,6 +43,7 @@ const jsonb = <TData extends object>(str: string) =>
  * 存储应用级别的配置和同步状态
  */
 export const collectionTable = sqliteTable("collection", {
+    id: blob("id", { mode: "buffer" }).primaryKey(),
     sqliteSchemaVersion: int("sqlite_schema_version").notNull(),
     lastSyncTime: int("last_sync_time").notNull().default(0),
     lastSyncUsn: int("sync_cursor_usn").notNull().default(0),
@@ -181,8 +182,8 @@ export const cardsTable = sqliteTable(
 /**
  * ReviewLog 表 - 复习记录（不可变追加日志）
  */
-export const reviewLogTable = sqliteTable(
-    "review_log",
+export const reviewLogsTable = sqliteTable(
+    "review_logs",
     {
         id: blob("id", { mode: "buffer" }).primaryKey(),
         cardId: blob("card_id", { mode: "buffer" }).notNull(),
@@ -197,8 +198,8 @@ export const reviewLogTable = sqliteTable(
         duration: int("duration").notNull(), // 停留耗时(ms)
     },
     (table) => [
-        index("ix_review_log_usn").on(table.usn),
-        index("ix_review_log_card_id").on(table.cardId),
+        index("ix_review_logs_usn").on(table.usn),
+        index("ix_review_logs_card_id").on(table.cardId),
     ],
 );
 
@@ -209,10 +210,10 @@ export const reviewLogTable = sqliteTable(
 export const tombstonesTable = sqliteTable(
     "tombstones",
     {
-        unitId: blob("unit_id", { mode: "buffer" }).primaryKey(), // 对应卡片、笔记、牌组或笔记模板的 UUID
+        unitId: blob("unit_id", { mode: "buffer" }).primaryKey(), // 对应同步实体的 UUID
         usn: int("usn").notNull(), // -1 表示本地删除
         deletedAt: int("deleted_at").notNull(), // 删除时间戳
-        unitType: int("unit_type").notNull(), // 0=card, 1=note, 2=deck, 3=note_type, 4=processing_note
+        unitType: int("unit_type").notNull(), // 0=unspecified, 1=collection, 2=deck, 3=note_type, 4=note, 5=processing_note, 6=card, 7=review_log
     },
     (table) => [index("ix_tombstones_usn").on(table.usn)],
 );
@@ -255,12 +256,12 @@ export const cardsRelations = relations(cardsTable, ({ one, many }) => ({
         fields: [cardsTable.deckId],
         references: [decksTable.id],
     }),
-    reviewLogs: many(reviewLogTable),
+    reviewLogs: many(reviewLogsTable),
 }));
 
-export const reviewLogRelations = relations(reviewLogTable, ({ one }) => ({
+export const reviewLogRelations = relations(reviewLogsTable, ({ one }) => ({
     card: one(cardsTable, {
-        fields: [reviewLogTable.cardId],
+        fields: [reviewLogsTable.cardId],
         references: [cardsTable.id],
     }),
 }));
