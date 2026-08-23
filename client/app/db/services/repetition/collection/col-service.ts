@@ -1,13 +1,13 @@
 ﻿import * as fs from "fs";
 import * as path from "path";
-import { getAccountsDir } from "@main/paths";
-import { ICollectionService } from "./col-service-interface";
-import { getAppConfig, saveAppConfig } from "@main/db/config/config";
-import { getRepDb, reInitDatabase } from "@main/db/db";
-import Logger from "electron-log/main";
-import { ColConfig } from "./col-service-types";
-import { collectionTable } from "@main/db/schema/repetition/rep";
-import { getColConfig } from "./col-service-helper";
+import { getAccountsDir } from "@main/paths.js";
+import { ICollectionService } from "./col-service-interface.js";
+import { getAppConfig, saveAppConfig } from "@main/db/config/config.js";
+import { getRepDb, reInitDatabase } from "@main/db/db.js";
+import Logger from "electron-log/main.js";
+import { ColConfig } from "./col-service-types.js";
+import { collectionTable } from "@main/db/schema/repetition/rep.js";
+import { getColConfig } from "./col-service-helper.js";
 
 export class CollectionService implements ICollectionService {
     /**

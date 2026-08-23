@@ -1,4 +1,4 @@
-import type { FetchError, FetchJsonError } from "@main/network/errors";
+import type { FetchError, FetchJsonError } from "@main/network/errors.js";
 
 export interface AuthUser {
     /** Current user ID from the EnLangMemo OAuth server. */

@@ -20,6 +20,7 @@ CREATE INDEX `ix_cards_sched` ON `cards` (`deck_id`,`queue`,`due`);--> statement
 CREATE INDEX `ix_cards_usn` ON `cards` (`usn`);--> statement-breakpoint
 CREATE INDEX `ix_cards_nid` ON `cards` (`note_id`);--> statement-breakpoint
 CREATE TABLE `collection` (
+	`id` blob PRIMARY KEY NOT NULL,
 	`sqlite_schema_version` integer NOT NULL,
 	`last_sync_time` integer DEFAULT 0 NOT NULL,
 	`sync_cursor_usn` integer DEFAULT 0 NOT NULL,
@@ -64,7 +65,7 @@ CREATE TABLE `notes` (
 	`usn` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
-	`sense_id` blob,
+	`sense_id` integer,
 	`sort_field` text,
 	`search_fields` text,
 	`fields` jsonb NOT NULL
@@ -77,12 +78,12 @@ CREATE TABLE `processing_notes` (
 	`usn` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
-	`sense_id` blob,
+	`sense_id` integer,
 	`fields` jsonb NOT NULL
 );
 --> statement-breakpoint
 CREATE INDEX `ix_processing_usn` ON `processing_notes` (`usn`);--> statement-breakpoint
-CREATE TABLE `review_log` (
+CREATE TABLE `review_logs` (
 	`id` blob PRIMARY KEY NOT NULL,
 	`card_id` blob NOT NULL,
 	`usn` integer NOT NULL,
@@ -96,8 +97,8 @@ CREATE TABLE `review_log` (
 	`duration` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `ix_review_log_usn` ON `review_log` (`usn`);--> statement-breakpoint
-CREATE INDEX `ix_review_log_card_id` ON `review_log` (`card_id`);--> statement-breakpoint
+CREATE INDEX `ix_review_logs_usn` ON `review_logs` (`usn`);--> statement-breakpoint
+CREATE INDEX `ix_review_logs_card_id` ON `review_logs` (`card_id`);--> statement-breakpoint
 CREATE TABLE `tombstones` (
 	`unit_id` blob PRIMARY KEY NOT NULL,
 	`usn` integer NOT NULL,

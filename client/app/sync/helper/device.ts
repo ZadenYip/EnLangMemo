@@ -1,5 +1,5 @@
-import { generateUUIDV7 } from "@main/db/import/utils";
-import { getCurAccountDir } from "@main/paths";
+import { generateUUIDV7 } from "@main/db/import/utils.js";
+import { getCurAccountDir } from "@main/paths.js";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import * as os from "os";
 import path from "path/win32";

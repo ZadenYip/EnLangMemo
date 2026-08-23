@@ -1,8 +1,8 @@
 import { createConnectTransport } from "@connectrpc/connect-node";
 import { createClient, type Client, type Interceptor } from "@connectrpc/connect";
-import { APP_API_BASE_URL } from "@main/env/env";
+import { APP_API_BASE_URL } from "@main/env/env.js";
 import { SyncService } from "@enlangmemo/sync-api";
-import { loadToken } from "@main/oauth/token-store";
+import { loadToken } from "@main/oauth/token-store.js";
 
 type SyncClient = Client<typeof SyncService>;
 

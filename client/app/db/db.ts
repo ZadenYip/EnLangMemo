@@ -1,21 +1,22 @@
 import Database from "better-sqlite3";
 import * as path from "path";
 import * as fs from "fs";
-import Logger from "electron-log/main";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
-import * as dic_schema from "./schema/dictionary/dic";
-import * as rep_schema from "./schema/repetition/rep";
+import * as dic_schema from "./schema/dictionary/dic.js";
+import * as rep_schema from "./schema/repetition/rep.js";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
-import { AppConfig } from "./config/config";
-import { getAccountDir } from "@main/paths";
-import { ColConfig } from "./services/repetition/collection/col-service-types";
-import { noteTypesTable } from "./schema/repetition/rep";
-import { generateUUIDV7 } from "./import/utils";
+import { AppConfig } from "./config/config.js";
+import { getAccountDir } from "@main/paths.js";
+import { ColConfig } from "./services/repetition/collection/col-service-types.js";
+import { noteTypesTable } from "./schema/repetition/rep.js";
+import { generateUUIDV7 } from "./import/utils.js";
 import {
     createSentenceMiningDefinitionNoteTpl,
     SENTENCE_MINING_DEFINITION_TPL_NAME,
     SENTENCE_MINING_DEF_TPL_PRESET_ID,
-} from "./services/repetition/note-template/nt-tpl-service-helper";
+} from "./services/repetition/note-template/nt-tpl-service-helper.js";
+import Logger from "electron-log/main.js";
+import { fileURLToPath } from "url";
 
 export const dictionarySchema = dic_schema;
 export const repetitionSchema = rep_schema;
@@ -42,8 +43,8 @@ export function initDatabase(appConfig: AppConfig): void {
     dicDb = drizzle(sqlDic, { schema: dic_schema });
 
     // TODO 生产环境改为对应路径，现在为开发方便还没改
-    // __dirname is main.js's directory
-    migrate(dicDb, { migrationsFolder: path.join(__dirname, "db", "migrations", "dictionary") });
+    // path.dirname(fileURLToPath(import.meta.url) is main.js's directory
+    migrate(dicDb, { migrationsFolder: path.join(path.dirname(fileURLToPath(import.meta.url)), "db", "migrations", "dictionary") });
 
     // Initialize the card database
     const repDbPath = path.join(dbDir, "repetition.db");
@@ -51,7 +52,7 @@ export function initDatabase(appConfig: AppConfig): void {
     sqlRep = new Database(repDbPath);
     sqlRep.pragma("journal_mode = WAL");
     repDb = drizzle(sqlRep, { schema: rep_schema });
-    migrate(repDb, { migrationsFolder: path.join(__dirname, "db", "migrations", "repetition") });
+    migrate(repDb, { migrationsFolder: path.join(path.dirname(fileURLToPath(import.meta.url)), "db", "migrations", "repetition") });
     collectionInit();
 }
 

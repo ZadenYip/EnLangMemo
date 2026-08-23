@@ -1,6 +1,6 @@
-import { ICardService } from "./card-service-interface";
-import { clearFsrsSchedulerCache, getNextReviewDayStart, getStudyCardRatingPreviews, getStudyCards, reviewCard } from "./card-service";
-import { CardReviewRating, CardReviewResult, StudyCard, StudyCardRatingPreviews } from "./card-service-types";
+import { ICardService } from "./card-service-interface.js";
+import { clearFsrsSchedulerCache, getNextReviewDayStart, getStudyCardRatingPreviews, getStudyCards, reviewCard } from "./card-service.js";
+import { CardReviewRating, CardReviewResult, StudyCard, StudyCardRatingPreviews } from "./card-service-types.js";
 
 /**
  * IPC-facing card service facade.

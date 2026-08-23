@@ -3,19 +3,19 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { CollectionService } from "./col-service";
+import { CollectionService } from "./col-service.js";
 
-import { getAccountsDir, getUserDataDir } from "@main/paths";
-import { getAppConfig, saveAppConfig } from "@main/db/config/config";
-import { reInitDatabase } from "@main/db/db";
+import { getAccountsDir, getUserDataDir } from "@main/paths.js";
+import { getAppConfig, saveAppConfig } from "@main/db/config/config.js";
+import { reInitDatabase } from "@main/db/db.js";
 
 
 // mock @main/main avoid error caused by importing electron modules in test environment
-vi.mock(import("@main/main"), async () => ({
+vi.mock(import("@main/main.js"), async () => ({
     isDev: () => true
 }));
 
-vi.mock(import("@main/paths"), async (_importOriginal) => {
+vi.mock(import("@main/paths.js"), async (_importOriginal) => {
     return {
         getUserDataDir: vi.fn(),
         getAccountsDir: vi.fn(() => path.join(getUserDataDir(), "accounts")),
@@ -25,7 +25,7 @@ vi.mock(import("@main/paths"), async (_importOriginal) => {
     };
 });
 
-vi.mock(import("@main/db/config/config"), async (importOriginal) => {
+vi.mock(import("@main/db/config/config.js"), async (importOriginal) => {
     const actual = await importOriginal();
     return {
         ...actual,
@@ -33,7 +33,7 @@ vi.mock(import("@main/db/config/config"), async (importOriginal) => {
         saveAppConfig: vi.fn()
     };
 });
-vi.mock(import("@main/db/db"), async () => {
+vi.mock(import("@main/db/db.js"), async () => {
     return {
         reInitDatabase: vi.fn(),
         initDatabase: vi.fn(),

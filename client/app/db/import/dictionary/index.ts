@@ -1,17 +1,17 @@
 import fs from "node:fs";
 import readline from "node:readline";
-import { getDicDb } from "../../db";
+import { getDicDb } from "../../db.js";
 import {
     definitionsTable,
     examplesTable,
     wordPosesTable,
     wordsTable,
-} from "../../schema/dictionary/dic";
-import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from "../../schema/dictionary/dic-schema-infers";
+} from "../../schema/dictionary/dic.js";
+import { DefinitionInsert, ExampleInsert, WordInsert, WordPosInsert } from "../../schema/dictionary/dic-schema-infers.js";
 import { sql } from "drizzle-orm";
 import Database from "better-sqlite3";
-import Logger from "electron-log/main";
-import { DicImpProgress as DicImpProgress, DicImpResult, ImportResult } from "./dic-import-types";
+import Logger from "electron-log/main.js";
+import { DicImpProgress as DicImpProgress, DicImpResult, ImportResult } from "./dic-import-types.js";
 
 export type WordRow = WordInsert;
 export type WordPosRow = WordPosInsert;

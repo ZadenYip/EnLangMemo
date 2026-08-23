@@ -9,11 +9,12 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import Logger from "electron-log/renderer";
-import { DictionaryComponent } from "./shared/dictionary/dictionary.component";
-import { DictionaryWindowService } from "./shared/dictionary/dictionary-window.service";
-import { AuthService } from "./shared/services/auth.service";
-import { APP_PATHS } from "./root-route";
+import Logger from "electron-log/renderer.js";
+import { DictionaryComponent } from "./shared/dictionary/dictionary.component.js";
+import { DictionaryWindowService } from "./shared/dictionary/dictionary-window.service.js";
+import { AuthService } from "./shared/services/auth.service.js";
+import { SyncService } from "./shared/services/sync.service.js";
+import { APP_PATHS } from "./root-route.js";
 
 @Component({
     selector: "app-root",

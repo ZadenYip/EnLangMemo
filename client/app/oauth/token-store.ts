@@ -1,10 +1,10 @@
 import { dialog, safeStorage } from "electron/main";
-import { TokenResponse } from "./token";
+import { TokenResponse } from "./token.js";
 import path from "path";
-import { getAccountDir } from "@main/paths";
-import { getAppConfig } from "@main/db/config/config";
+import { getAccountDir } from "@main/paths.js";
+import { getAppConfig } from "@main/db/config/config.js";
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from "fs";
-import Logger from "electron-log/main";
+import Logger from "electron-log/main.js";
 
 
 let token: Token | null = null;

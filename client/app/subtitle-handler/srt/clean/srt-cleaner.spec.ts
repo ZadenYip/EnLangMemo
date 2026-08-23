@@ -1,5 +1,5 @@
 import { Readable } from "stream";
-import { removeDuplicateCue } from "./srt-cleaner";
+import { removeDuplicateCue } from "./srt-cleaner.js";
 
 
 describe("SRT Cleaner Tests", () => {

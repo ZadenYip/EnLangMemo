@@ -4,9 +4,9 @@ import {
     PcsNoteRef,
     PcsNoteSaveResult,
     PcsNoteSaveToDeckResult,
-} from "./pcs-note-types";
-import { IPcsNoteService } from "./pcs-note-service-interface";
-import { PcsNoteService } from "./pcs-note-service";
+} from "./pcs-note-types.js";
+import { IPcsNoteService } from "./pcs-note-service-interface.js";
+import { PcsNoteService } from "./pcs-note-service.js";
 
 /**
  * IPC-facing processing note service facade.

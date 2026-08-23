@@ -1,5 +1,5 @@
-import { getRepDb } from "@main/db/db";
-import { collectionTable } from "@main/db/schema/repetition/rep";
+import { getRepDb } from "@main/db/db.js";
+import { collectionTable } from "@main/db/schema/repetition/rep.js";
 
 type CollectionRow = typeof collectionTable.$inferSelect;
 

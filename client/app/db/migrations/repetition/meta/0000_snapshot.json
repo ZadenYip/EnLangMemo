@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0b063135-409c-4898-9b9e-6e66b1f380c8",
+  "id": "10791bc4-4c32-4b87-8d34-d1b273d8162a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -146,6 +146,13 @@
     "collection": {
       "name": "collection",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "blob",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
         "sqlite_schema_version": {
           "name": "sqlite_schema_version",
           "type": "integer",
@@ -426,7 +433,7 @@
         },
         "sense_id": {
           "name": "sense_id",
-          "type": "blob",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -507,7 +514,7 @@
         },
         "sense_id": {
           "name": "sense_id",
-          "type": "blob",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -534,8 +541,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "review_log": {
-      "name": "review_log",
+    "review_logs": {
+      "name": "review_logs",
       "columns": {
         "id": {
           "name": "id",
@@ -616,15 +623,15 @@
         }
       },
       "indexes": {
-        "ix_review_log_usn": {
-          "name": "ix_review_log_usn",
+        "ix_review_logs_usn": {
+          "name": "ix_review_logs_usn",
           "columns": [
             "usn"
           ],
           "isUnique": false
         },
-        "ix_review_log_card_id": {
-          "name": "ix_review_log_card_id",
+        "ix_review_logs_card_id": {
+          "name": "ix_review_logs_card_id",
           "columns": [
             "card_id"
           ],

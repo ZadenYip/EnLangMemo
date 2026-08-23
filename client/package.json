@@ -3,6 +3,7 @@
   "version": "17.0.0",
   "description": "Angular 21 with Electron 39 (Typescript + SASS + Hot Reload)",
   "homepage": "https://github.com/maximegris/angular-electron",
+  "type": "module",
   "author": {
     "name": "Maxime GRIS",
     "email": "maxime.gris@gmail.com"
@@ -64,7 +65,7 @@
     "@connectrpc/connect": "2.1.2",
     "@connectrpc/connect-node": "2.1.2",
     "@connectrpc/validate": "0.2.0",
-    "@enlangmemo/sync-api": "0.3.4",
+    "@enlangmemo/sync-api": "0.3.5",
     "better-sqlite3": "12.5.0",
     "drizzle-orm": "0.45.1",
     "electron-ipc-cat": "2.2.3",

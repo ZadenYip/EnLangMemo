@@ -1,5 +1,5 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { Deck, DeckCreationResult, DeckSettings } from "./deck-service-types";
+import { Deck, DeckCreationResult, DeckSettings } from "./deck-service-types.js";
 
 export interface IDeckService {
     listDecks(): Promise<Deck[]>;

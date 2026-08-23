@@ -1,14 +1,14 @@
-import Logger from "electron-log/main";
+import Logger from "electron-log/main.js";
 import { eq } from "drizzle-orm";
-import { bufferToHex, hexToBuffer } from "@main/db/import/utils";
-import { getRepDb } from "@main/db/db";
-import { noteTypesTable } from "@main/db/schema/repetition/rep";
-import { INoteTplService } from "./nt-tpl-service-interface";
+import { bufferToHex, hexToBuffer } from "@main/db/import/utils.js";
+import { getRepDb } from "@main/db/db.js";
+import { noteTypesTable } from "@main/db/schema/repetition/rep.js";
+import { INoteTplService } from "./nt-tpl-service-interface.js";
 import {
     NoteTplRef,
     NoteTemplate,
     NoteTemplateSaveResult,
-} from "./nt-tpl-service-types";
+} from "./nt-tpl-service-types.js";
 
 
 export class NoteTplService implements INoteTplService {

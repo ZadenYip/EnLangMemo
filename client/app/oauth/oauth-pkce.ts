@@ -1,10 +1,10 @@
 import * as crypto from "crypto";
 import { shell } from "electron";
-import Logger from "electron-log/main";
-import { TokenResponse } from "./token";
-import { CLIENT_ID, OAUTH_API_BASE_URL } from "./oauth-config";
-import type { AuthFailureReason } from "./auth-service-types";
-import { mapFetchError, mapFetchJsonError } from "@main/network/errors";
+import Logger from "electron-log/main.js";
+import { TokenResponse } from "./token.js";
+import { CLIENT_ID, OAUTH_API_BASE_URL } from "./oauth-config.js";
+import type { AuthFailureReason } from "./auth-service-types.js";
+import { mapFetchError, mapFetchJsonError } from "@main/network/errors.js";
 
 export const OAUTH_CALLBACK_PATH = "enlangmemo://oauth/callback";
 

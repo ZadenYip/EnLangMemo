@@ -1,4 +1,4 @@
-import { definitionsTable, examplesTable, wordPosesTable, wordsTable } from "./dic";
+import { definitionsTable, examplesTable, wordPosesTable, wordsTable } from "./dic.js";
 
 export type WordInsert = typeof wordsTable.$inferInsert;
 export type WordPosInsert = typeof wordPosesTable.$inferInsert;

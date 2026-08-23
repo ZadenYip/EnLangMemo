@@ -1,8 +1,8 @@
-import { mapFetchError } from "@main/network/errors";
-import { RevokeResponse } from "./auth-service-types";
-import { CLIENT_ID, OAUTH_API_BASE_URL } from "./oauth-config";
-import { clearToken, loadToken } from "./token-store";
-import Logger from "electron-log/main";
+import { mapFetchError } from "@main/network/errors.js";
+import { RevokeResponse } from "./auth-service-types.js";
+import { CLIENT_ID, OAUTH_API_BASE_URL } from "./oauth-config.js";
+import { clearToken, loadToken } from "./token-store.js";
+import Logger from "electron-log/main.js";
 
 /**
  * send a request to server to revoke token, 

@@ -1,5 +1,5 @@
 ﻿import { ProxyPropertyType } from "electron-ipc-cat/common";
-import { ColConfig } from "./col-service-types";
+import { ColConfig } from "./col-service-types.js";
 
 export interface ICollectionService {
     /**

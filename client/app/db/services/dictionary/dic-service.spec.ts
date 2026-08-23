@@ -1,22 +1,23 @@
 import fs from "node:fs";
 import os from "node:os";
-import path from "node:path";
+import path, { dirname } from "node:path";
 import Database from "better-sqlite3";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
-import { dictionarySchema, getDicDb } from "@db/db";
-import { DicImpRowType, impDictionaryDetailed } from "../../import/dictionary";
-import { createSchema, writeJsonLinesFile } from "../../import/dictionary/test-helpers";
-import { DictionaryService } from "./dic-service";
+import { dictionarySchema, getDicDb } from "@db/db.js";
+import { DicImpRowType, impDictionaryDetailed } from "../../import/dictionary/index.js";
+import { createSchema, writeJsonLinesFile } from "../../import/dictionary/test-helpers.js";
+import { DictionaryService } from "./dic-service.js";
+import { fileURLToPath } from "node:url";
 
 // Mock the lemmatize function
-vi.mock(import("@main/lemmatization"), () => {
+vi.mock(import("@main/lemmatization/index.js"), () => {
     return {
         lemmatize: vi.fn((word: string) => word), // Mock implementation: return the input word as-is
     };
 });
 
-vi.mock(import("@db/db"), async () => {
-    const actual = await vi.importActual<typeof import("@db/db")>("@db/db");
+vi.mock(import("@db/db.js"), async () => {
+    const actual = await vi.importActual<typeof import("@db/db.js")>("@db/db.js");
     return {
         ...actual,
         getDicDb: vi.fn(),
@@ -48,7 +49,7 @@ interface ExplainPlanRow {
 
 describe("Dictionary Service Tests", () => {
     const mockedGetDicDb = vi.mocked(getDicDb);
-    const fixturesDir = path.resolve(__dirname, "./fixtures");
+    const fixturesDir = path.resolve(dirname(fileURLToPath(import.meta.url)), "./fixtures");
 
     let sqlite: Database.Database;
     let db: BetterSQLite3Database<typeof dictionarySchema>;

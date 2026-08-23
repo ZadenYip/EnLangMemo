@@ -1,4 +1,4 @@
-import Logger from "electron-log/main";
+import Logger from "electron-log/main.js";
 import { v7 as uuidv7 } from "uuid";
 
 export function generateUUIDV7(): Buffer {

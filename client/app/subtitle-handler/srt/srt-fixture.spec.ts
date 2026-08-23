@@ -1,12 +1,13 @@
 import { createReadStream, readFileSync } from "fs";
-import { CueAST, Parser, TimestampAST } from "./parser/parser";
-import { resolve } from "path";
+import { CueAST, Parser, TimestampAST } from "./parser/parser.js";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 
 
 describe("SRT Fixture Tests", () => {
     it("should parse GBC-ED.srt correctly", async () => {
         const subtitleData = createReadStream(
-            resolve(__dirname, "./fixtures/GBC-ED.srt"),
+            resolve(dirname(fileURLToPath(import.meta.url)), "./fixtures/GBC-ED.srt"),
             "utf-8"
         );
 
@@ -24,7 +25,7 @@ describe("SRT Fixture Tests", () => {
 
 // convert JSON back to CueAST objects  
 async function expectCueASTEqual(jsonPath: string) {
-    const data = readFileSync(resolve(__dirname, jsonPath), "utf-8");
+    const data = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), jsonPath), "utf-8");
     const rawExpected = JSON.parse(data);
     const expected: CueAST[] = rawExpected.map((c: any) => 
         new CueAST(

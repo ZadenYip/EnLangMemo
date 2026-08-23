@@ -1,7 +1,7 @@
 import { FSRS, fsrs, FSRSParameters, Grade } from "ts-fsrs";
-import { ColConfig } from "../collection/col-service-types";
-import { repeatHandler, toCard } from "./card-service-helper";
-import { CardRating, CardReviewRating, FSRSCard, StudyCardRatingPreviews } from "./card-service-types";
+import { ColConfig } from "../collection/col-service-types.js";
+import { repeatHandler, toCard } from "./card-service-helper.js";
+import { CardRating, CardReviewRating, FSRSCard, StudyCardRatingPreviews } from "./card-service-types.js";
 
 interface CachedFsrsScheduler {
     /**

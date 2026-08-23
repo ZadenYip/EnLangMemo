@@ -6,8 +6,8 @@ import {
 } from "@enlangmemo/sync-api"
 import { ConnectError } from "@connectrpc/connect";
 import { eq } from "drizzle-orm";
-import Logger from "electron-log/main";
-import { getRepDb } from "@main/db/db";
+import Logger from "electron-log/main.js";
+import { getRepDb } from "@main/db/db.js";
 import {
     cardsTable,
     collectionTable,
@@ -17,23 +17,20 @@ import {
     processingNotesTable,
     reviewLogsTable,
     tombstonesTable,
-} from "@main/db/schema/repetition/rep";
-import { getDeviceInfo } from "../helper/device"
-import { getCollectionRow } from "../helper/collection";
+} from "@main/db/schema/repetition/rep.js";
+import { getDeviceInfo } from "../helper/device.js"
+import { getCollectionRow } from "../helper/collection.js";
 import { create } from "@bufbuild/protobuf";
-import { getClient } from "..";
-import { mapRpcErrorCode, SyncRpcErrorCode } from "../error/rpc-error-code";
-import { clearSyncSession, createSyncSession, getSyncSession } from "../session";
+import { getClient } from "../index.js";
+import { mapRpcErrorCode } from "../error/rpc-error-code.js";
+import { clearSyncSession, createSyncSession, getSyncSession } from "../session.js";
+import { HandshakeViewResult } from "../sync-service-types.js";
 
 
 export const syncProtocolVersion = 1;
 
 /** 握手 RPC 的单次请求超时时间。 */
 const handshakeTimeoutMs = 10_000;
-
-export type HandshakeViewResult =
-    | { kind: "status"; status: HandshakeStatus }
-    | { kind: "rpc_error"; code: SyncRpcErrorCode; message: string };
 
 
 export async function handshake(): Promise<HandshakeViewResult> {
@@ -76,7 +73,8 @@ export async function handshake(): Promise<HandshakeViewResult> {
     createSyncSession(BigInt(clientSyncCursorUsn), response);
     return {
         kind: "status",
-        status: response.status,
+        // status: response.status,
+        hasLocalChanges: localChanges,
     };
     
 }

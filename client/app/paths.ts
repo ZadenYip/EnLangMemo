@@ -1,6 +1,6 @@
 import { app } from "electron";
 import * as path from "path";
-import { getAppConfig } from "./db/config/config";
+import { getAppConfig } from "./db/config/config.js";
 
 /**
  * Get the base user data directory: <exe_dir>/user_data

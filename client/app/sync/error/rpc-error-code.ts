@@ -1,16 +1,5 @@
 import { Code } from "@connectrpc/connect";
-
-export type SyncRpcErrorCode =
-    | "canceled"
-    | "unknown"
-    | "invalid_argument"
-    | "deadline_exceeded"
-    | "permission_denied"
-    | "resource_exhausted"
-    | "unavailable"
-    | "unauthenticated"
-    | "internal";
-
+import { SyncRpcErrorCode } from "../sync-service-types.js";
 /**
  * map a ConnectRPC Code to a SyncRpcErrorCode, so that can be transported with ipc
  * @param code 

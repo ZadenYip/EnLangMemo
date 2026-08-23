@@ -1,4 +1,4 @@
-import { CueAST, TimestampAST } from "./srt/parser/parser";
+import { CueAST, TimestampAST } from "./srt/parser/parser.js";
 
 
 export function shiftTimestamp(shiftMs: Readonly<number>, timestamp: Readonly<TimestampAST>): TimestampAST {

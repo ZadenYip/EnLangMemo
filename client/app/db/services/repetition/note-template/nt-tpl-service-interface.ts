@@ -3,7 +3,7 @@ import {
 	NoteTplRef,
 	NoteTemplate,
 	NoteTemplateSaveResult,
-} from "./nt-tpl-service-types";
+} from "./nt-tpl-service-types.js";
 
 export interface INoteTplService {
 	/**

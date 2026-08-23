@@ -1,5 +1,5 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import type { HandshakeViewResult } from "./handshake/handshake";
+import { HandshakeViewResult } from "./sync-service-types.js";
 
 export interface ISyncService {
     /**

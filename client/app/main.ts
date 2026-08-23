@@ -1,13 +1,15 @@
 import { app, BrowserWindow, screen } from "electron";
 import * as path from "path";
 import * as fs from "fs";
-import { registerAllIPCHandlers } from "./ipc";
-import { loggerSetUp } from "./logs/log";
-import { loadAppConfig } from "./db/config/config";
-import { initDatabase } from "./db/db";
-import { getUserDataDir } from "./paths";
-import { registerAppProtocol, registerWindowProtocol } from "./deep-link/register";
-import { initSyncClient } from "./sync";
+import { loggerSetUp } from "./logs/log.js";
+import { loadAppConfig } from "./db/config/config.js";
+import { initDatabase } from "./db/db.js";
+import { getUserDataDir } from "./paths.js";
+import { initSyncClient } from "./sync/index.js";
+import { registerAppProtocol, registerWindowProtocol } from "./deep-link/register.js";
+import { registerAllIPCHandlers } from "./ipc/index.js";
+import { fileURLToPath } from "url";
+
 
 export function isDev(): boolean {
     return !app.isPackaged;
@@ -75,7 +77,7 @@ function createWindow(): BrowserWindow {
             allowRunningInsecureContent: !serve,
             contextIsolation: true,
             webSecurity: !serve,
-            preload: path.join(__dirname, "preload.js"),
+            preload: path.join(path.dirname(fileURLToPath(import.meta.url)), "preload.js"),
         },
     });
     mainWindow.on("page-title-updated", (event) => {
@@ -97,12 +99,12 @@ function createWindow(): BrowserWindow {
         // Path when running electron executable
         let pathIndex = "./browser/index.html";
 
-        if (fs.existsSync(path.join(__dirname, "../dist/browser/index.html"))) {
+        if (fs.existsSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "../dist/browser/index.html"))) {
             // Path when running electron in local folder
             pathIndex = "../dist/browser/index.html";
         }
 
-        const fullPath = path.join(__dirname, pathIndex);
+        const fullPath = path.join(path.dirname(fileURLToPath(import.meta.url)), pathIndex);
         const url = `file://${path.resolve(fullPath).replace(/\\/g, "/")}`;
         mainWindow.loadURL(url);
     }

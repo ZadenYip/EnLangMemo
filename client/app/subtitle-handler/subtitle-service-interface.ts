@@ -1,6 +1,6 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
 import { Observable } from "rxjs";
-import { GlobalSubtitle } from "./types";
+import { GlobalSubtitle } from "./types.js";
 
 export interface ISubtitleService {
     fetchSubtitles$(filePath: string): Observable<GlobalSubtitle>;

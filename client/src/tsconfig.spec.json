@@ -3,6 +3,8 @@
   "compilerOptions": {
     "composite": true,
     "esModuleInterop": true,
+    "module": "es2022",
+    "moduleResolution": "bundler",
     "rootDir": "..",
     "outDir": "../out-tsc/spec",
     "typeRoots": ["../node_modules/@types", "../node_modules"],
