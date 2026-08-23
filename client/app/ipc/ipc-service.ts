@@ -12,6 +12,7 @@ import { DicNoteMappingServiceIPCDescriptor, IDicNoteMappingService } from "../d
 import { IPcsNoteService, PcsNoteServiceIPCDescriptor } from "../db/services/repetition/processing-note/pcs-note-service-interface";
 import { CardServiceIPCDescriptor, ICardService } from "../db/services/repetition/cards/card-service-interface";
 import { AuthServiceIPCDescriptor, IAuthService } from "../oauth/auth-service-interface";
+import { ISyncService, SyncServiceIPCDescriptor } from "../sync/sync-service-interface";
 
 export const dic = createProxy<AsyncifyProxy<IDatabaseService>>(DicServiceIPCDescriptor, Observable);
 export const dialog = createProxy<AsyncifyProxy<IDialogService>>(DialogServiceIPCDescriptor);
@@ -23,6 +24,7 @@ export const dicNoteMap = createProxy<AsyncifyProxy<IDicNoteMappingService>>(Dic
 export const pcsNote = createProxy<AsyncifyProxy<IPcsNoteService>>(PcsNoteServiceIPCDescriptor);
 export const card = createProxy<AsyncifyProxy<ICardService>>(CardServiceIPCDescriptor);
 export const auth = createProxy<AsyncifyProxy<IAuthService>>(AuthServiceIPCDescriptor);
+export const sync = createProxy<AsyncifyProxy<ISyncService>>(SyncServiceIPCDescriptor);
 
 export const descriptors = {
     dic: DicServiceIPCDescriptor,
@@ -35,4 +37,5 @@ export const descriptors = {
     pcsNote: PcsNoteServiceIPCDescriptor,
     card: CardServiceIPCDescriptor,
     auth: AuthServiceIPCDescriptor,
+    sync: SyncServiceIPCDescriptor,
 };

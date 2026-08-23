@@ -7,6 +7,7 @@ import { loadAppConfig } from "./db/config/config";
 import { initDatabase } from "./db/db";
 import { getUserDataDir } from "./paths";
 import { registerAppProtocol, registerWindowProtocol } from "./deep-link/register";
+import { initSyncClient } from "./sync";
 
 export function isDev(): boolean {
     return !app.isPackaged;
@@ -55,6 +56,8 @@ function initApp() {
     initDatabase(appConfig);
     createWindow();
     registerAllIPCHandlers();
+    
+    initSyncClient();
 }
 
 function createWindow(): BrowserWindow {

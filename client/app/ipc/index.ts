@@ -19,6 +19,8 @@ import { CardIpcService } from "../db/services/repetition/cards/card-ipc-service
 import { CardServiceIPCDescriptor } from "../db/services/repetition/cards/card-service-interface";
 import { AuthIpcService } from "../oauth/auth-ipc-service";
 import { AuthServiceIPCDescriptor } from "../oauth/auth-service-interface";
+import { SyncIpcService } from "../sync/sync-ipc-service";
+import { SyncServiceIPCDescriptor } from "../sync/sync-service-interface";
 
 export function registerAllIPCHandlers() {
     registerDatabaseHandlers();
@@ -54,4 +56,7 @@ function registerDatabaseHandlers() {
 
     const authService = new AuthIpcService();
     registerProxy(authService, AuthServiceIPCDescriptor);
+
+    const syncService = new SyncIpcService();
+    registerProxy(syncService, SyncServiceIPCDescriptor);
 }

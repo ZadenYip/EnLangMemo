@@ -6,6 +6,9 @@ import { getAppConfig } from "@main/db/config/config";
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from "fs";
 import Logger from "electron-log/main";
 
+
+let token: Token | null = null;
+
 export interface Token {
     /** Access token expiration timestamp in milliseconds. */
     expiresAt: number;
@@ -36,6 +39,14 @@ export function saveToken(token: TokenResponse): void {
 }
 
 export function loadToken(): Token | null {
+    if (token !== null) {
+        if (token.expiresAt <= Date.now()) {
+            clearToken();
+            return null;
+        }
+        return token;
+    }
+    
     if (!safeStorage.isEncryptionAvailable()) {
         showUnsupportEncryptionError();
         return null;
@@ -49,7 +60,18 @@ export function loadToken(): Token | null {
 
     const encrypted = readFileSync(tokenPath);
     const decrypted = safeStorage.decryptString(encrypted);
-    return JSON.parse(decrypted) as Token;
+
+    try {
+        token = JSON.parse(decrypted) as Token;
+    } catch (error) {
+        if (error instanceof SyntaxError) {
+            Logger.error("Failed to parse token JSON:", error);
+            clearToken();
+            return null;
+        }
+    }
+
+    return token;
 }
 
 export function clearToken(): void {
@@ -57,6 +79,7 @@ export function clearToken(): void {
     if (existsSync(tokenPath)) {
         unlinkSync(tokenPath);
     }
+    token = null;
 }
 
 function showUnsupportEncryptionError(): void {

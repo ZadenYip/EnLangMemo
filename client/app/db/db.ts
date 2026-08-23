@@ -55,6 +55,8 @@ export function initDatabase(appConfig: AppConfig): void {
     collectionInit();
 }
 
+const schemaVersion = 1;
+
 function collectionInit(): void {
     // if exist collection record, do nothing
     const existing = repDb.select().from(rep_schema.collectionTable).all();
@@ -64,7 +66,6 @@ function collectionInit(): void {
     }
 
     Logger.info("No collection record found, initializing collection table with default config.");
-    const version = 1;
     const zeroTime = (new Date(0)).getTime();
     const usn = -1;
     const date = new Date();
@@ -81,7 +82,7 @@ function collectionInit(): void {
     repDb.insert(rep_schema.collectionTable).values(
         {
             id: generateUUIDV7(),
-            sqliteSchemaVersion: version,
+            sqliteSchemaVersion: schemaVersion,
             lastSyncTime: zeroTime,
             lastSyncUsn: usn,
             usn: usn,

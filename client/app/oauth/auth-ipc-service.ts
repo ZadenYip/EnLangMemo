@@ -2,10 +2,11 @@ import Logger from "electron-log/main";
 import { IAuthService, } from "./auth-service-interface";
 import { loadToken, saveToken, clearToken } from "./token-store";
 import { OAuthError, startPKCEFlow } from "./oauth-pkce";
-import { APP_API_BASE_URL } from "./oauth-config";
+import {  } from "./oauth-config";
 import type { AuthFailureReason, AuthUser, CurUserResponse, RevokeResponse } from "./auth-service-types";
 import { mapFetchError, mapFetchJsonError } from "@main/network/errors";
 import { revokeToken } from "./oauth-revoke";
+import { APP_API_BASE_URL } from "@main/env/env";
 
 interface MeResponse {
     user_id: string;
