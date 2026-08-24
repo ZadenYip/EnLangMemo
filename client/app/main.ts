@@ -86,14 +86,15 @@ function createWindow(): BrowserWindow {
     });
 
     if (serve) {
-        import("electron-debug").then((debug) => {
-            debug.default({ isEnabled: true, showDevTools: true });
-        });
+        // TODO 换其他方式实现热重载，这些太老了
+        // import("electron-debug").then((debug) => {
+        //     debug.default({ isEnabled: true, showDevTools: true });
+        // });
 
-        import("electron-reloader").then((reloader) => {
-            const reloaderFn = reloader.default || reloader;
-            reloaderFn(module);
-        });
+        // import("electron-reloader").then((reloader) => {
+        //     const reloaderFn = reloader.default || reloader;
+        //     reloaderFn(module);
+        // });
         mainWindow.loadURL("http://localhost:5173");
     } else {
         // Path when running electron executable

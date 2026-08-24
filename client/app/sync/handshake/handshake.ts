@@ -24,7 +24,8 @@ import { create } from "@bufbuild/protobuf";
 import { getClient } from "../index.js";
 import { mapRpcErrorCode } from "../error/rpc-error-code.js";
 import { clearSyncSession, createSyncSession, getSyncSession } from "../session.js";
-import { HandshakeViewResult } from "../sync-service-types.js";
+import { hexToBuffer } from "@main/db/import/utils.js";
+import { HandshakeViewResult } from "./handshake-types.js";
 
 
 export const syncProtocolVersion = 1;
@@ -37,10 +38,10 @@ export async function handshake(): Promise<HandshakeViewResult> {
     const info = getDeviceInfo();
     const colRow = getCollectionRow();
     const localChanges = hasLocalChanges();
-    const clientSyncCursorUsn = colRow.lastSyncUsn;
+    const clientSyncCursorUsn = colRow.syncCursorUsn;
 
     const req: HandshakeRequest = create(HandshakeRequestSchema, {
-        deviceId: info.deviceId,
+        deviceId: hexToBuffer(info.deviceId),
         deviceName: info.deviceName,
         collectionId: colRow.id,
         clientSyncCursorUsn: BigInt(clientSyncCursorUsn),
@@ -73,7 +74,7 @@ export async function handshake(): Promise<HandshakeViewResult> {
     createSyncSession(BigInt(clientSyncCursorUsn), response);
     return {
         kind: "status",
-        // status: response.status,
+        status: response.status,
         hasLocalChanges: localChanges,
     };
     
@@ -126,7 +127,6 @@ function hasLocalChanges(): boolean {
 
     const repDb = getRepDb();
     for (const table of syncTables) {
-        /** 当前表中任意一条 usn = -1 的记录。 */
         const changedRow = repDb
             .select({ usn: table.usn })
             .from(table)

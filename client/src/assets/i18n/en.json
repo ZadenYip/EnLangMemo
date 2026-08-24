@@ -264,6 +264,34 @@
       "SAVE_SUCCESS": "Dictionary note mapping saved."
     }
   },
+  "SYNC": {
+    "MESSAGES": {
+      "SYNCING": "Syncing...",
+      "NO_NEW_DATA": "No new sync data.",
+      "LOCKED_BY_OTHER_CLIENT": "Another client is syncing. Please try again later.",
+      "CLIENT_TOO_OLD": "The client version is too old and is not supported by the server.",
+      "SERVER_TOO_OLD": "The server version is too old. Please contact the developer.",
+      "TIME_SKEW_TOO_LARGE": "The server and client clocks differ too much. Please correct your local time and try again.",
+      "CLIENT_DATA_TOO_OLD": "The client data is too old. Automatic reset is not implemented yet.",
+      "COLLECTION_ID_CORRECTED": "Local collection identity corrected. Please start sync again.",
+      "COLLECTION_ID_CORRECT_FAILED": "Failed to correct the local collection identity.",
+      "UNEXPECTED_ERROR": "Unexpected error during sync."
+    },
+    "COLLECTION_ID_MISMATCH": {
+      "TITLE": "Collection identity mismatch",
+      "MESSAGE": "The local collection identity does not match the server. Please check whether you signed in to the wrong account. If the account is correct, correct the local collection identity and sync again.",
+      "CONFIRM": "Correct local identity"
+    },
+    "ERRORS": {
+      "UNAUTHENTICATED": "Sign-in expired. Please sign in again before syncing.",
+      "DEADLINE_EXCEEDED": "Sync handshake timed out. Please check your network and try again.",
+      "UNAVAILABLE": "Sync service is temporarily unavailable. Please try again later.",
+      "RESOURCE_EXHAUSTED": "Too many sync requests. Please try again later.",
+      "PERMISSION_DENIED": "The current user has no permission to access this collection.",
+      "INVALID_ARGUMENT": "Invalid sync request. Please contact the developer.",
+      "UNKNOWN": "Sync request failed. Please try again later."
+    }
+  },
   "HEADER": {
     "DECKS": "Decks",
     "PROCESSING": "Processing",

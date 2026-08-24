@@ -6,7 +6,9 @@
                     {{ t.label | translate }}
                 </a>
             }
-            <a mat-button> {{ "HEADER.SYNC" | translate }}</a>
+            <button mat-button type="button" [disabled]="sync.syncBusy()" (click)="onSync()">
+                {{ "HEADER.SYNC" | translate }}
+            </button>
         </div>
         @if (auth.currentUser(); as user) {
             <button mat-button type="button" class="auth-status-button" [disabled]="auth.authBusy()" [matMenuTriggerFor]="authMenu">

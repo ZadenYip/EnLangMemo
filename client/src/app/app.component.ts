@@ -38,6 +38,8 @@ export class AppComponent implements OnInit {
     private readonly dictionaryWindowService = inject(DictionaryWindowService);
     /** Renderer auth status facade for the toolbar. */
     readonly auth = inject(AuthService);
+    /** Renderer sync facade for the toolbar. */
+    readonly sync = inject(SyncService);
 
     readonly tabs = [
         { label: "HEADER.DECKS", path: `${APP_PATHS.deck}` },
@@ -66,8 +68,9 @@ export class AppComponent implements OnInit {
         });
     };
 
-    onSync() {
-        Logger.info("Sync triggered");
+    async onSync(): Promise<void> {
+        Logger.info("sync triggered");
+        await this.sync.startSync();
     }
 
     /** Handle toolbar auth button click. */

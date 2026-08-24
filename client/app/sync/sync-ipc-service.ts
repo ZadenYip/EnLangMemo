@@ -1,5 +1,6 @@
 import type { ISyncService } from "./sync-service-interface.js";
-import { handshake, updateColIdIfMismatch, type HandshakeViewResult } from "./handshake/handshake.js";
+import { handshake, updateColIdIfMismatch } from "./handshake/handshake.js";
+import { HandshakeViewResult } from "./sync-service-types.js";
 
 export class SyncIpcService implements ISyncService {
     /**

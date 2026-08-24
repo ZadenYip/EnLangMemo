@@ -85,7 +85,7 @@ function collectionInit(): void {
             id: generateUUIDV7(),
             sqliteSchemaVersion: schemaVersion,
             lastSyncTime: zeroTime,
-            lastSyncUsn: usn,
+            syncCursorUsn: 1,
             usn: usn,
             createdAt: nowTime,
             updatedAt: nowTime,

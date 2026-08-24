@@ -9,7 +9,3 @@ export type SyncRpcErrorCode =
     | "unauthenticated"
     | "internal";
 
-
-export type HandshakeViewResult =
-    | { kind: "status"; hasLocalChanges: boolean }
-    | { kind: "rpc_error"; code: SyncRpcErrorCode; message: string };

@@ -1,11 +1,11 @@
-import { generateUUIDV7 } from "@main/db/import/utils.js";
+import { bufferToHex, generateUUIDV7 } from "@main/db/import/utils.js";
 import { getCurAccountDir } from "@main/paths.js";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import * as os from "os";
 import path from "path/win32";
 
 interface DeviceInfo {
-    deviceId: Buffer;
+    deviceId: string;
     deviceName: string;
 }
 
@@ -18,7 +18,7 @@ export function getDeviceInfo(): DeviceInfo {
     if (!existsSync(infoPath)) {
         const deviceInfo = genDeviceInfo();
         const infoStr = JSON.stringify({
-            deviceId: deviceInfo.deviceId.toString("hex"),
+            deviceId: deviceInfo.deviceId,
             deviceName: deviceInfo.deviceName
         });
         writeFileSync(infoPath, infoStr, "utf-8");
@@ -50,8 +50,10 @@ function writeDeviceInfo(deviceInfo: DeviceInfo): void {
 function genDeviceInfo(): DeviceInfo {
     const deviceId = generateUUIDV7();
     const deviceName = os.hostname();
+
+    const uuidTo = bufferToHex(deviceId);
     return {
-        deviceId,
+        deviceId: uuidTo,
         deviceName
     }
 }

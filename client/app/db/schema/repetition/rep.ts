@@ -46,7 +46,7 @@ export const collectionTable = sqliteTable("collection", {
     id: blob("id", { mode: "buffer" }).primaryKey(),
     sqliteSchemaVersion: int("sqlite_schema_version").notNull(),
     lastSyncTime: int("last_sync_time").notNull().default(0),
-    lastSyncUsn: int("sync_cursor_usn").notNull().default(0),
+    syncCursorUsn: int("sync_cursor_usn").notNull().default(0),
     usn: int("usn").notNull(),
     createdAt: int("created_at").notNull(),
     updatedAt: int("updated_at").notNull(),
