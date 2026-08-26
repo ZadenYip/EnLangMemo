@@ -229,12 +229,12 @@ export const noteTypesRelations = relations(noteTypesTable, ({ many }) => ({
     processingNotes: many(processingNotesTable),
 }));
 
-export const notesRelations = relations(notesTable, ({ one, many }) => ({
+export const notesRelations = relations(notesTable, ({ one }) => ({
     noteType: one(noteTypesTable, {
         fields: [notesTable.noteTypeId],
         references: [noteTypesTable.id],
     }),
-    cards: many(cardsTable),
+    cards: one(cardsTable),
 }));
 
 export const processingNotesRelations = relations(

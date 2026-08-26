@@ -1,5 +1,5 @@
 import { contextBridge, webUtils } from "electron";
-import * as service from "./ipc/ipc-service";
+import * as service from "./ipc/ipc-service.js";
 
 
 contextBridge.exposeInMainWorld("service", service);

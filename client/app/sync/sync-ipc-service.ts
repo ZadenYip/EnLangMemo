@@ -1,6 +1,11 @@
 import type { ISyncService } from "./sync-service-interface.js";
 import { handshake, updateColIdIfMismatch } from "./handshake/handshake.js";
-import { HandshakeViewResult } from "./sync-service-types.js";
+import { HandshakeViewResult } from "./handshake/handshake-types.js";
+import { Observable } from "rxjs";
+import { PushBatchResult } from "./push/push-types.js";
+import { push$ } from "./push/push.js";
+import { finish } from "./finish/finish.js";
+import type { FinishResult } from "./finish/finish-types.js";
 
 export class SyncIpcService implements ISyncService {
     /**
@@ -9,6 +14,14 @@ export class SyncIpcService implements ISyncService {
      */
     public async handshake(): Promise<HandshakeViewResult> {
         return await handshake();
+    }
+
+    public push$(): Observable<PushBatchResult> {
+        return push$();
+    }
+
+    public async finish(): Promise<FinishResult> {
+        return await finish();
     }
 
     /**
