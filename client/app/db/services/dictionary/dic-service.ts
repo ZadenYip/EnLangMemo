@@ -1,11 +1,11 @@
-import { getDicDb } from "../../db";
-import { IDatabaseService as IDictionaryService } from "./dic-service-interface";
-import type { Definition, DictionaryEntry, Sense } from "./dic-service-types";
-import { definitionsTable, examplesTable, wordPosesTable, wordsTable } from "../../schema/dictionary/dic";
+import { getDicDb } from "../../db.js";
+import { IDatabaseService as IDictionaryService } from "./dic-service-interface.js";
+import type { Definition, DictionaryEntry, Sense } from "./dic-service-types.js";
+import { definitionsTable, examplesTable, wordPosesTable, wordsTable } from "../../schema/dictionary/dic.js";
 import { eq } from "drizzle-orm";
-import { lemmatize } from "@main/lemmatization";
-import { impDictionaryDetailed } from "../../import/dictionary";
-import { DicImpProgress } from "../../import/dictionary/dic-import-types";
+import { lemmatize } from "@main/lemmatization/index.js";
+import { impDictionaryDetailed } from "../../import/dictionary/index.js";
+import { DicImpProgress } from "../../import/dictionary/dic-import-types.js";
 import { Observable } from "rxjs";
 
 export class DictionaryService implements IDictionaryService {

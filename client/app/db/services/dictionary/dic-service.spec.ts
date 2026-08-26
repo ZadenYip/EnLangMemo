@@ -17,9 +17,9 @@ vi.mock(import("@main/lemmatization/index.js"), () => {
 });
 
 vi.mock(import("@db/db.js"), async () => {
-    const actual = await vi.importActual<typeof import("@db/db.js")>("@db/db.js");
+    const mod = await import("@main/db/schema/dictionary/dic.js");
     return {
-        ...actual,
+        dictionarySchema: mod,
         getDicDb: vi.fn(),
         runSQL: vi.fn()
     };

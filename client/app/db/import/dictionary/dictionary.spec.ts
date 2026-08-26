@@ -10,10 +10,10 @@ import { DicImpRowType, impDictionaryDetailed } from "./index.js";
 import { ImportResult } from "./dic-import-types.js";
 import { createSchema, writeJsonLinesFile } from "./test-helpers.js";
 
-vi.mock(import("@main/db/db.js"), async (importOriginal) => {
-    const mod = await importOriginal();
+vi.mock(import("@main/db/db.js"), async () => {
+    const mod = await import("@main/db/schema/dictionary/dic.js");
     return {
-        dictionarySchema: mod.dictionarySchema,
+        dictionarySchema: mod,
         getDicDb: vi.fn(),
     };
 });
