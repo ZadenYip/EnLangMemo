@@ -6,6 +6,7 @@ import {
     decksTable,
     noteTypesTable,
     processingNotesTable,
+    tombstonesTable,
 } from "@main/db/schema/repetition/rep.js";
 import { createCardFromPcsNote } from "@main/db/services/repetition/cards/card-service.js";
 import {
@@ -15,6 +16,7 @@ import {
     PcsNoteSaveResult,
     PcsNoteSaveToDeckResult,
 } from "./pcs-note-types.js";
+import { EntityType } from "@enlangmemo/sync-api";
 
 /**
  * Service for processing notes waiting in the bench pool.
@@ -125,6 +127,7 @@ export class PcsNoteService {
             where: eq(noteTypesTable.id, hexToBuffer(note.noteTplId)),
             columns: {
                 noteTemplate: true,
+                usn: true,
             },
         });
 
@@ -145,6 +148,15 @@ export class PcsNoteService {
                 noteType.noteTemplate,
                 tx,
             );
+            if (noteType.usn != -1) {
+                // if already synced, add tombstone for deletion on server
+                tx.insert(tombstonesTable).values({
+                    unitId: hexToBuffer(note.id),
+                    unitType: EntityType.PROCESSING_NOTE,
+                    usn: -1,
+                    deletedAt: Date.now(),
+                }).run();
+            }
             tx.delete(processingNotesTable)
                 .where(eq(processingNotesTable.id, hexToBuffer(note.id)))
                 .run();

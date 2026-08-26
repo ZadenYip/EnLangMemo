@@ -22,6 +22,8 @@ export interface ISyncService {
      * @returns A promise that resolves when the operation is complete.
      */
     correctColId(): Promise<boolean>;
+
+    clearSession(): Promise<void>;
 }
 
 export const SyncServiceIPCDescriptor = {
@@ -31,5 +33,6 @@ export const SyncServiceIPCDescriptor = {
         push$: ProxyPropertyType.Function$,
         finish: ProxyPropertyType.Function,
         correctColId: ProxyPropertyType.Function,
+        clearSession: ProxyPropertyType.Function,
     },
 };

@@ -6,6 +6,7 @@ import { toInt } from "../helper/type.js";
 import { ConnectError } from "@connectrpc/connect";
 import { mapRpcErrorCode } from "../error/rpc-error-code.js";
 import { FinishSyncResponse } from "@enlangmemo/sync-api";
+import Logger from "electron-log";
 
 
 export async function finish(): Promise<FinishResult> {
@@ -31,7 +32,8 @@ export async function finish(): Promise<FinishResult> {
 }
 
 function updateCliFinishSyncTime(time: number): void {
+    Logger.info("update client last sync time", time);
     getRepDb().update(collectionTable).set({
         lastSyncTime: time,
-    })
+    }).run();
 }

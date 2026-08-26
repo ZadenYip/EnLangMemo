@@ -65,7 +65,7 @@
     "@connectrpc/connect": "2.1.2",
     "@connectrpc/connect-node": "2.1.2",
     "@connectrpc/validate": "0.2.0",
-    "@enlangmemo/sync-api": "0.3.7",
+    "@enlangmemo/sync-api": "0.3.8",
     "better-sqlite3": "12.5.0",
     "drizzle-orm": "0.45.1",
     "electron-ipc-cat": "2.2.3",

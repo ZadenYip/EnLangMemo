@@ -12,10 +12,9 @@ import { assignCardUsn, getCardChanges, toCardSyncChange } from "./change/card.j
 import { assignReviewLogUsn, getReviewChanges, toReviewLogSyncChange } from "./change/review-log.js";
 import { assignPcsUsn, getPcsChanges, toPcsSyncChange } from "./change/processing-note.js";
 import { deleteSyncedTombstone, getTombstoneChanges, toTombstoneSyncChange } from "./change/tombstone.js";
-import type { RepTx } from "./change/tx-types.js";
+import type { RepTx } from "./change/rep-tx.js";
 import { toInt } from "@main/sync/helper/type.js";
 
-/** Result for collecting one entity type into the current push collector. */
 export interface CollectResult {
     /** Whether there are more rows remaining after this collection pass. */
     hasMore: boolean;

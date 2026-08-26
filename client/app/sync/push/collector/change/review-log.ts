@@ -3,7 +3,7 @@ import { ChangeOp, EntityType, ReviewLogPayloadSchema, SyncChange, SyncChangeSch
 import { getRepDb } from "@main/db/db.js";
 import { reviewLogsTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
-import type { RepTx } from "./tx-types.js";
+import type { RepTx } from "./rep-tx.js";
 
 export type ReviewLogChange = Pick<
     typeof reviewLogsTable.$inferSelect,

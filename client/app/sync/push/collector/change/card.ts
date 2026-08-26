@@ -4,7 +4,7 @@ import type { SyncChange } from "@enlangmemo/sync-api";
 import { getRepDb } from "@main/db/db.js";
 import { cardsTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
-import type { RepTx } from "./tx-types.js";
+import type { RepTx } from "./rep-tx.js";
 
 export type CardChange = Pick<
     typeof cardsTable.$inferSelect,

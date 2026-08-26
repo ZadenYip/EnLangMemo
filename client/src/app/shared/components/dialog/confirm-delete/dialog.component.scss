@@ -8,7 +8,9 @@
 
   p {
     @include global.h2-p;
+    height: 100%;
+    line-height: 1.5;
   }
 
-  white-space: pre;
+  white-space: pre-wrap;
 }

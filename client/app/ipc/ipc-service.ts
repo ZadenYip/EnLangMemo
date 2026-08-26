@@ -2,7 +2,7 @@ import { createProxy } from "electron-ipc-cat/client";
 import { AsyncifyProxy } from "electron-ipc-cat/common";
 import { Observable } from "rxjs";
 
-import { DicServiceIPCDescriptor, IDatabaseService } from "../db/services/dictionary/dic-service-interface.js";
+import{ DicServiceIPCDescriptor, IDatabaseService } from "../db/services/dictionary/dic-service-interface.js";
 import { DialogServiceIPCDescriptor, IDialogService } from "../dialog/dialog-service-interface.js";
 import { ISubtitleService, SubtitleServiceIPCDescriptor } from "../subtitle-handler/subtitle-service-interface.js";
 import { CollectionServiceIPCDescriptor, ICollectionService } from "../db/services/repetition/collection/col-service-interface.js";
@@ -24,7 +24,7 @@ export const dicNoteMap = createProxy<AsyncifyProxy<IDicNoteMappingService>>(Dic
 export const pcsNote = createProxy<AsyncifyProxy<IPcsNoteService>>(PcsNoteServiceIPCDescriptor);
 export const card = createProxy<AsyncifyProxy<ICardService>>(CardServiceIPCDescriptor);
 export const auth = createProxy<AsyncifyProxy<IAuthService>>(AuthServiceIPCDescriptor);
-export const sync = createProxy<AsyncifyProxy<ISyncService>>(SyncServiceIPCDescriptor);
+export const sync = createProxy<AsyncifyProxy<ISyncService>>(SyncServiceIPCDescriptor, Observable);
 
 export const descriptors = {
     dic: DicServiceIPCDescriptor,

@@ -1,4 +1,4 @@
-import { SyncRpcErrorCode } from "../sync-service-types.js";
+import type { SyncRpcErrorCode } from "../sync-service-types.js";
 
 export type PushBatchResult =
     | { kind: "success"; changes: number; lastBatch: boolean }

@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{ "SYNC.PROGRESS.TITLE" | translate }}</h2>
+
+<mat-dialog-content>
+    <p>{{ "SYNC.PROGRESS.MESSAGE" | translate }}</p>
+
+    <div class="sync-progress-stats">
+        <span>{{ "SYNC.PROGRESS.PUSH_BATCHES" | translate }}</span>
+        <strong>{{ pushedBatches() }}</strong>
+    </div>
+
+    <div class="sync-progress-stats">
+        <span>{{ "SYNC.PROGRESS.PUSH_CHANGES" | translate }}</span>
+        <strong>{{ pushedChanges() }}</strong>
+    </div>
+
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</mat-dialog-content>

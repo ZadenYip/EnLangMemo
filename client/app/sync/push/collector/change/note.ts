@@ -5,7 +5,7 @@ import { cardsTable, notesTable, reviewLogsTable } from "@main/db/schema/repetit
 import { and, asc, eq, gt } from "drizzle-orm";
 import { getUnsyncedReviewLogsByCardId, ReviewLogChange } from "./review-log.js";
 import { CardChange } from "./card.js";
-import type { RepTx } from "./tx-types.js";
+import type { RepTx } from "./rep-tx.js";
 
 type NoteChange = Pick<
     typeof notesTable.$inferSelect,

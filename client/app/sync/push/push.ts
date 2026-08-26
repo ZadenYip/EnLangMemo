@@ -8,32 +8,35 @@ import { TombstoneType, type SyncEntityType } from "./push-queue.js";
 import { ConnectError } from "@connectrpc/connect";
 import { mapRpcErrorCode } from "../error/rpc-error-code.js";
 import Logger from "electron-log";
-import { PushBatchResult as PushViewResult } from "./push-types.js";
 import { Observable } from "rxjs";
+import { PushBatchResult } from "./push-types.js";
 
-export function push$(): Observable<PushViewResult> {
-    return new Observable<PushViewResult>((subscriber) => {
+export function push$(): Observable<PushBatchResult> {
+    return new Observable<PushBatchResult>((subscriber) => {
+
         const run = async () => {
-            resetPushQueue();
             while (true) {
-                const session = getSyncSessionOrThrow();
-                if (session.queue!.isEmpty()) {
-                    return;
-                }
-
                 try {
-                    const result = await pushBatch(session);
-                    subscriber.next({
-                        kind: "success",
-                        changes: result.changes,
-                        lastBatch: result.lastBatch,
-                    });
-                    if (result.lastBatch) {
-                        Logger.info("push complete, clearing sync session.");
-                        clearSyncSession();
+                    resetPushQueue();
+                    const session = getSyncSessionOrThrow();
+                    if (session.queue!.isEmpty()) {
+                        await finishPush(session);
+                        subscriber.next({
+                            kind: "success",
+                            changes: 0,
+                            lastBatch: true,
+                        });
+                        Logger.info("push phase finished, send complete to renderer.");
                         subscriber.complete();
                         return;
                     }
+
+                    const changeCount = await pushBatch(session);
+                    subscriber.next({
+                        kind: "success",
+                        changes: changeCount,
+                        lastBatch: false,
+                    });
                 } catch (error) {
                     clearSyncSession();
                     Logger.error("push failed", error);
@@ -48,36 +51,48 @@ export function push$(): Observable<PushViewResult> {
                             code: mapRpcErrorCode(error.code),
                             message: error.rawMessage,
                         });
+                        subscriber.complete();
                         return;
                     } else {
                         subscriber.error();
                     }
                     return;
                 }
-
-                // Rebuild the queue after each acknowledged batch. Note cascade push may
-                // confirm its related card/review-log rows, so the old queue can point at
-                // entity types that no longer have unsynced changes.
-                resetPushQueue();
             }
         };
 
         void run();
 
         return () => {
-            Logger.info("push subscription unsubscribed, clearing sync session.");
-            clearSyncSession();
+            Logger.info("push observable unsubscribed.");
         };
     });
 }
 
-interface CollectBatchResult {
-    changes: number;
-    lastBatch: boolean;
+async function finishPush(session: SyncSession): Promise<void> {
+    const response = await getClient().push(
+        create(PushRequestSchema, {
+            sessionId: session.sessionId,
+            batchSeq: session.batchSeq,
+            finishPush: true
+        }),
+        { timeoutMs: timeoutMs },
+    );
+
+    if (response.batchSeq !== session.batchSeq) {
+        throw new Error(`finish-push batchSeq mismatch: expected ${session.batchSeq}, got ${response.batchSeq}`);
+    }
+
+    session.status = "FINISHING";
+    session.batchSeq += 1;
 }
-async function pushBatch(session: SyncSession): Promise<CollectBatchResult> {
+
+/**
+ * @returns the number of changes collected in this batch.
+ */
+async function pushBatch(session: SyncSession): Promise<number> {
     const c = new PushCollector();
-    const result = collectPushBatch(session, c);
+    await collectPushBatch(session, c);
 
     if (c.changes.length === 0) {
         throw new Error("push collector produced empty batch.");
@@ -88,7 +103,7 @@ async function pushBatch(session: SyncSession): Promise<CollectBatchResult> {
             sessionId: session.sessionId,
             batchSeq: session.batchSeq,
             changes: c.changes,
-            lastBatch: result.lastBatch,
+            finishPush: false,
         }),
         { timeoutMs: timeoutMs },
     );
@@ -97,16 +112,17 @@ async function pushBatch(session: SyncSession): Promise<CollectBatchResult> {
         throw new Error(`push batchSeq mismatch: expected ${session.batchSeq}, got ${response.batchSeq}`);
     }
 
+    const changes = c.changes;
     c.response(response);
-    Logger.info(`push batch ${session.batchSeq} acknowledged with ${c.changes.length} changes.`);
+    Logger.info(`push batch ${session.batchSeq} acknowledged with ${changes.length} changes.`);
     session.batchSeq += 1;
-    return result;
+    return changes.length;
 }
 
 function collectPushBatch(
     session: SyncSession,
     collector: PushCollector,
-): CollectBatchResult {
+): void {
     const queue = session.queue!;
     // This cursor only lives inside the current batch. After the batch is
     // acknowledged, assigned USNs remove those rows from later usn=-1 queries.
@@ -152,11 +168,6 @@ function collectPushBatch(
             }
         }
     }
-
-    return {
-        changes: collector.changes.length,
-        lastBatch: queue.isEmpty(),
-    };
 }
 
 function collectByType(

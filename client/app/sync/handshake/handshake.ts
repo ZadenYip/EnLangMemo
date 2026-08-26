@@ -22,7 +22,7 @@ import { getDeviceInfo } from "../helper/device.js"
 import { create } from "@bufbuild/protobuf";
 import { getClient } from "../index.js";
 import { mapRpcErrorCode } from "../error/rpc-error-code.js";
-import { clearSyncSession, createSyncSession, getSyncSession } from "../session.js";
+import { clearSyncSession, createSyncSession, getSyncSession, getSyncSessionOrThrow } from "../session.js";
 import { hexToBuffer } from "@main/db/import/utils.js";
 import { HandshakeViewResult } from "./handshake-types.js";
 import { getColRow } from "../push/collector/change/collection.js";
@@ -74,6 +74,9 @@ export async function handshake(): Promise<HandshakeViewResult> {
     switch (response.status) {
         case HandshakeStatus.LOCKED_BY_OTHER_CLIENT:
         case HandshakeStatus.COLLECTION_ID_MISMATCH:
+            Logger.info(`handshake failed with status: ${HandshakeStatus[response.status]}.`);
+            createSyncSession(BigInt(cliSyncCursor), response);
+            break;
         case HandshakeStatus.CLIENT_TOO_OLD:
         case HandshakeStatus.CLIENT_DATA_TOO_OLD:
         case HandshakeStatus.TIME_SKEW_TOO_LARGE:
@@ -115,7 +118,7 @@ export async function handshake(): Promise<HandshakeViewResult> {
  * @param response - The handshake response from the server.
  */
 export function updateColIdIfMismatch(): boolean {
-    const session = getSyncSession();
+    const session = getSyncSessionOrThrow();
     if (!session) {
         Logger.error("no sync session found when trying to update collection ID.");
         return false;
@@ -123,10 +126,6 @@ export function updateColIdIfMismatch(): boolean {
 
     if (!session.serverCollectionId) {
         Logger.error("no server collection ID found in sync session when trying to update collection ID.");
-        return false;
-    }
-    if (session.status !== "PUSHING") {
-        Logger.error("sync session is not in PUSHING state when trying to update collection ID.");
         return false;
     }
 

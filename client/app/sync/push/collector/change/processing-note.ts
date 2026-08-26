@@ -9,7 +9,7 @@ import type { SyncChange } from "@enlangmemo/sync-api";
 import { getRepDb } from "@main/db/db.js";
 import { processingNotesTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
-import type { RepTx } from "./tx-types.js";
+import type { RepTx } from "./rep-tx.js";
 
 /** Processing-note fields required to build one processing-note SyncChange. */
 export type PcsChange = Pick<

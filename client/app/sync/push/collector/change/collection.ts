@@ -9,7 +9,7 @@ import {
 import { getRepDb } from "@main/db/db.js";
 import { collectionTable } from "@main/db/schema/repetition/rep.js";
 import { eq, lt } from "drizzle-orm";
-import type { RepTx } from "./tx-types.js";
+import type { RepTx } from "./rep-tx.js";
 import Logger from "electron-log/main.js";
 
 type ColChange = Pick<
