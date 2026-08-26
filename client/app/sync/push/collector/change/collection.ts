@@ -98,6 +98,6 @@ export function updateCliSyncCursor(tx: RepTx, cursorUsn: number): void {
         Logger.error(
             `failed to update collection sync cursor to ${cursorUsn}, no rows were updated. Current cursor: ${getColRow().syncCursorUsn}`,
         );
-        throw new Error(`failed to update collection sync cursor in updateCliSyncCursor().`);
+        throw new Error("failed to update collection sync cursor in updateCliSyncCursor().");
     }
 }

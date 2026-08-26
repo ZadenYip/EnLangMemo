@@ -22,7 +22,7 @@ import { getDeviceInfo } from "../helper/device.js"
 import { create } from "@bufbuild/protobuf";
 import { getClient } from "../index.js";
 import { mapRpcErrorCode } from "../error/rpc-error-code.js";
-import { clearSyncSession, createSyncSession, getSyncSession, getSyncSessionOrThrow } from "../session.js";
+import { clearSyncSession, createSyncSession, getSyncSessionOrThrow } from "../session.js";
 import { hexToBuffer } from "@main/db/import/utils.js";
 import { HandshakeViewResult } from "./handshake-types.js";
 import { getColRow } from "../push/collector/change/collection.js";

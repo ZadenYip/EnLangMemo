@@ -1,7 +1,7 @@
 import { create } from "@bufbuild/protobuf";
 import { ChangeOp, EntityType, NotePayloadSchema, SyncChange, SyncChangeSchema } from "@enlangmemo/sync-api";
 import { getRepDb } from "@main/db/db.js";
-import { cardsTable, notesTable, reviewLogsTable } from "@main/db/schema/repetition/rep.js";
+import { cardsTable, notesTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
 import { getUnsyncedReviewLogsByCardId, ReviewLogChange } from "./review-log.js";
 import { CardChange } from "./card.js";

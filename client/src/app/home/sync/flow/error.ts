@@ -2,7 +2,7 @@ import { SyncRpcErrorCode } from "@main/sync/sync-service-types.js";
 import { NotifyService } from "@render/shared/services/notify.service.js";
 import { TranslateService } from "@ngx-translate/core";
 
-export type NotifyDeps = {
+export interface NotifyDeps {
     notify: NotifyService
     translate: TranslateService
 }

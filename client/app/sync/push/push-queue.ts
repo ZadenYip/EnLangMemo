@@ -22,6 +22,7 @@ interface PendingEntityCheck {
 export class PushQueue {
     private queue: SyncEntityType[] = [];
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() {}
 
     public static NewSyncQueue(): PushQueue {

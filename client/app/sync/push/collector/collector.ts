@@ -5,7 +5,7 @@ import { maxSyncBatchSize, syncEntityLimits } from "./sync-size/constants.js";
 import { estSyncChangeSize } from "./sync-size/sync-change-size.js";
 import Logger from "electron-log/main.js";
 import { assignDeckUsn, getDeckChanges, toDeckSyncChange } from "./change/deck.js";
-import { assignColUsn, getColChange, getColRow, updateCliSyncCursor } from "./change/collection.js";
+import { assignColUsn, getColChange, updateCliSyncCursor } from "./change/collection.js";
 import { assignNoteTypeUsn, getNoteTypeChangeRows, toNoteTypeSyncChange } from "./change/note-type.js";
 import { assignNoteUsn, getNoteChanges, getUnsyncedNoteCascade, toNoteSyncChange } from "./change/note.js";
 import { assignCardUsn, getCardChanges, toCardSyncChange } from "./change/card.js";
@@ -247,7 +247,7 @@ export class PushCollector {
                 `push response changes length ${resp.changes.length} does not match request changes length ${this.changes.length}`,
             );
             throw new Error(
-                `push response changes length does not match request changes length`,
+                "push response changes length does not match request changes length",
             );
         }
 
@@ -262,7 +262,7 @@ export class PushCollector {
                         `push response change entityId ${Buffer.from(respChange.entityId).toString("hex")} does not match request change entityId ${Buffer.from(reqChange.entityId).toString("hex")}`,
                     );
                     throw new Error(
-                        `push response change entityId does not match request change entityId`,
+                        "push response change entityId does not match request change entityId",
                     );
                 }
 
@@ -271,7 +271,7 @@ export class PushCollector {
                         `push response change entityType ${respChange.entityType} does not match request change entityType ${reqChange.entityType}`,
                     );
                     throw new Error(
-                        `push response change entityType does not match request change entityType`,
+                        "push response change entityType does not match request change entityType",
                     );
                 }
 
@@ -280,7 +280,7 @@ export class PushCollector {
                         `push response change op ${respChange.op} is not ASSIGN_USN`,
                     );
                     throw new Error(
-                        `push response change op is not ASSIGN_USN`,
+                        "push response change op is not ASSIGN_USN",
                     );
                 }
                 cursorUsn = Math.max(cursorUsn, toInt(respChange.usn));
