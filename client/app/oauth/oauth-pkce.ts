@@ -8,10 +8,8 @@ import { mapFetchError, mapFetchJsonError } from "@main/network/errors.js";
 
 export const OAUTH_CALLBACK_PATH = "enlangmemo://oauth/callback";
 
-/** Maximum time to wait for the OAuth token endpoint. */
 const TOKEN_EXCHANGE_TIMEOUT_MS = 10_000;
 
-/** Internal OAuth flow error converted to CurUserResponse by the IPC service. */
 export class OAuthError extends Error {
     /** Structured OAuth failure reason for IPC response mapping. */
     readonly reason: AuthFailureReason;

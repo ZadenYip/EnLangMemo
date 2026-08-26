@@ -273,14 +273,21 @@
       "SERVER_TOO_OLD": "The server version is too old. Please contact the developer.",
       "TIME_SKEW_TOO_LARGE": "The server and client clocks differ too much. Please correct your local time and try again.",
       "CLIENT_DATA_TOO_OLD": "The client data is too old. Automatic reset is not implemented yet.",
-      "COLLECTION_ID_CORRECTED": "Local collection identity corrected. Please start sync again.",
-      "COLLECTION_ID_CORRECT_FAILED": "Failed to correct the local collection identity.",
-      "UNEXPECTED_ERROR": "Unexpected error during sync."
+      "COLLECTION_ID_CORRECTED": "Local collection ID corrected. Please start sync again.",
+      "COLLECTION_ID_CORRECT_FAILED": "Failed to correct the local collection ID.",
+      "UNEXPECTED_ERROR": "Unexpected error during sync.",
+      "SYNC_COMPLETED": "Sync completed."
+    },
+    "PROGRESS": {
+      "TITLE": "Syncing",
+      "MESSAGE": "Keep the app open. Other actions are blocked until sync finishes.",
+      "PUSH_BATCHES": "Push batches completed",
+      "PUSH_CHANGES": "Changes uploaded"
     },
     "COLLECTION_ID_MISMATCH": {
-      "TITLE": "Collection identity mismatch",
-      "MESSAGE": "The local collection identity does not match the server. Please check whether you signed in to the wrong account. If the account is correct, correct the local collection identity and sync again.",
-      "CONFIRM": "Correct local identity"
+      "TITLE": "Collection ID mismatch",
+      "MESSAGE": "The local collection ID does not match the server. Please check whether you signed in to the wrong account. If the account is correct, correct the local collection ID and sync again.",
+      "CONFIRM": "Correct local ID"
     },
     "ERRORS": {
       "UNAUTHENTICATED": "Sign-in expired. Please sign in again before syncing.",

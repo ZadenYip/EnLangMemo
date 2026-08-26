@@ -80,10 +80,9 @@ export class VideoComponent implements OnDestroy {
     private respondToSubtitleOffsetChange(newOffset: number) {
         const signedOffset = newOffset >= 0 ? `+${newOffset}` : `${newOffset}`;
         Logger.debug(`Subtitle offset adjusted to ${signedOffset} ms`);
-        this.translate.instant("IMMERSE.SUBTITLE_OFFSET_TIP", {
+        this.subtitleOffsetTip = this.translate.instant("PAGES.IMMERSE.SUBTITLE.OFFSET_TIP", {
             offset: signedOffset,
         });
-        this.subtitleOffsetTip = `Subtitle offset: ${signedOffset} ms`;
         clearTimeout(this.clearSubtitletipTimer);
         this.clearSubtitletipTimer = window.setTimeout(() => {
             this.subtitleOffsetTip = "";

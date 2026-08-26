@@ -86,11 +86,11 @@ function createWindow(): BrowserWindow {
     });
 
     if (serve) {
-        // TODO 换其他方式实现热重载，这些太老了
-        // import("electron-debug").then((debug) => {
-        //     debug.default({ isEnabled: true, showDevTools: true });
-        // });
+        import("electron-debug").then((debug) => {
+            debug.default({ isEnabled: true, showDevTools: true });
+        });
 
+        // TODO 换其他方式实现热重载，太老了
         // import("electron-reloader").then((reloader) => {
         //     const reloaderFn = reloader.default || reloader;
         //     reloaderFn(module);

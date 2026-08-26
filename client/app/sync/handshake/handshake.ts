@@ -19,13 +19,13 @@ import {
     tombstonesTable,
 } from "@main/db/schema/repetition/rep.js";
 import { getDeviceInfo } from "../helper/device.js"
-import { getCollectionRow } from "../helper/collection.js";
 import { create } from "@bufbuild/protobuf";
 import { getClient } from "../index.js";
 import { mapRpcErrorCode } from "../error/rpc-error-code.js";
-import { clearSyncSession, createSyncSession, getSyncSession } from "../session.js";
+import { clearSyncSession, createSyncSession, getSyncSessionOrThrow } from "../session.js";
 import { hexToBuffer } from "@main/db/import/utils.js";
 import { HandshakeViewResult } from "./handshake-types.js";
+import { getColRow } from "../push/collector/change/collection.js";
 
 
 export const syncProtocolVersion = 1;
@@ -36,15 +36,15 @@ const handshakeTimeoutMs = 10_000;
 
 export async function handshake(): Promise<HandshakeViewResult> {
     const info = getDeviceInfo();
-    const colRow = getCollectionRow();
+    const colRow = getColRow();
     const localChanges = hasLocalChanges();
-    const clientSyncCursorUsn = colRow.syncCursorUsn;
+    const cliSyncCursor = colRow.syncCursorUsn;
 
     const req: HandshakeRequest = create(HandshakeRequestSchema, {
         deviceId: hexToBuffer(info.deviceId),
         deviceName: info.deviceName,
         collectionId: colRow.id,
-        clientSyncCursorUsn: BigInt(clientSyncCursorUsn),
+        clientSyncCursorUsn: BigInt(cliSyncCursor),
         clientLastSyncTime: BigInt(colRow.lastSyncTime),
         protocolVersion: syncProtocolVersion,
         dbSchemaVersion: colRow.sqliteSchemaVersion,
@@ -71,7 +71,39 @@ export async function handshake(): Promise<HandshakeViewResult> {
         };
     }
 
-    createSyncSession(BigInt(clientSyncCursorUsn), response);
+    switch (response.status) {
+        case HandshakeStatus.LOCKED_BY_OTHER_CLIENT:
+        case HandshakeStatus.COLLECTION_ID_MISMATCH:
+            Logger.info(`handshake failed with status: ${HandshakeStatus[response.status]}.`);
+            createSyncSession(BigInt(cliSyncCursor), response);
+            break;
+        case HandshakeStatus.CLIENT_TOO_OLD:
+        case HandshakeStatus.CLIENT_DATA_TOO_OLD:
+        case HandshakeStatus.TIME_SKEW_TOO_LARGE:
+        case HandshakeStatus.SERVER_TOO_OLD:
+            Logger.info(`handshake failed with status: ${HandshakeStatus[response.status]}.`);
+            break;
+        case HandshakeStatus.UPLOAD_ALL:
+            // TODO
+            throw new Error("unimplemented: UPLOAD_ALL handshake status.");
+        case HandshakeStatus.NEED_PULL:
+            Logger.info("handshake indicates that a pull is needed. Creating sync session.");
+            createSyncSession(BigInt(cliSyncCursor), response);
+            break;
+        case HandshakeStatus.NO_REMOTE_CHANGES:
+            if (localChanges) {
+                createSyncSession(BigInt(cliSyncCursor), response);
+                Logger.info("sync session created for push phase.");
+            } else {
+                Logger.info("handshake indicates no remote changes and no local changes. No sync session created.");
+            }
+            break;
+        case HandshakeStatus.UNSPECIFIED:
+        default:
+            Logger.error(`handshake failed with UNSPECIFIED status: ${response.status}`);
+            throw new Error("handshake failed with UNSPECIFIED status.");
+    }
+
     return {
         kind: "status",
         status: response.status,
@@ -86,21 +118,16 @@ export async function handshake(): Promise<HandshakeViewResult> {
  * @param response - The handshake response from the server.
  */
 export function updateColIdIfMismatch(): boolean {
-    const session = getSyncSession();
+    const session = getSyncSessionOrThrow();
     if (!session) {
-        Logger.error("No sync session found when trying to update collection ID.");
+        Logger.error("no sync session found when trying to update collection ID.");
         return false;
     }
 
     if (!session.serverCollectionId) {
-        Logger.error("No server collection ID found in sync session when trying to update collection ID.");
+        Logger.error("no server collection ID found in sync session when trying to update collection ID.");
         return false;
     }
-
-    if (session.status !== HandshakeStatus.COLLECTION_ID_MISMATCH) {
-        return false;
-    }
-
 
     getRepDb().update(collectionTable)
         .set({ id: Buffer.from(session.serverCollectionId) })

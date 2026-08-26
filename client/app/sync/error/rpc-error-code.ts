@@ -1,5 +1,5 @@
 import { Code } from "@connectrpc/connect";
-import { SyncRpcErrorCode } from "../sync-service-types.js";
+import type { SyncRpcErrorCode } from "../sync-service-types.js";
 /**
  * map a ConnectRPC Code to a SyncRpcErrorCode, so that can be transported with ipc
  * @param code 

@@ -13,7 +13,7 @@ import Logger from "electron-log/renderer.js";
 import { DictionaryComponent } from "./shared/dictionary/dictionary.component.js";
 import { DictionaryWindowService } from "./shared/dictionary/dictionary-window.service.js";
 import { AuthService } from "./shared/services/auth.service.js";
-import { SyncService } from "./shared/services/sync.service.js";
+import { SyncService } from "./home/sync/sync.service.js";
 import { APP_PATHS } from "./root-route.js";
 
 @Component({

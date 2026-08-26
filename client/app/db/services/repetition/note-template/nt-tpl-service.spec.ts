@@ -13,9 +13,9 @@ import {
 import { fileURLToPath } from "node:url";
 
 vi.mock(import("@main/db/db.js"), async () => {
-    const actual = await vi.importActual<typeof import("@main/db/db.js")>("@main/db/db.js");
+    const mod = await import("@main/db/schema/repetition/rep.js");
     return {
-        ...actual,
+        repetitionSchema: mod,
         getRepDb: vi.fn(),
     };
 });

@@ -273,14 +273,21 @@
       "SERVER_TOO_OLD": "服务端版本太低，请联系开发人员处理。",
       "TIME_SKEW_TOO_LARGE": "服务器与客户端的时间偏差太大，请纠正本地时间后重试。",
       "CLIENT_DATA_TOO_OLD": "客户端数据太旧，当前暂不支持自动重置，请稍后实现后再处理。",
-      "COLLECTION_ID_CORRECTED": "本地集合标识已纠正，请重新发起同步。",
-      "COLLECTION_ID_CORRECT_FAILED": "纠正本地集合标识失败。",
-      "UNEXPECTED_ERROR": "同步过程中发生未知错误。"
+      "COLLECTION_ID_CORRECTED": "本地集合 ID 已纠正，请重新发起同步。",
+      "COLLECTION_ID_CORRECT_FAILED": "纠正本地集合 ID 失败。",
+      "UNEXPECTED_ERROR": "同步过程中发生未知错误。",
+      "SYNC_COMPLETED": "同步完成。"
+    },
+    "PROGRESS": {
+      "TITLE": "正在同步",
+      "MESSAGE": "请保持应用打开，同步完成前暂时不能操作其他内容。",
+      "PUSH_BATCHES": "已完成 Push 批次",
+      "PUSH_CHANGES": "已上传变更"
     },
     "COLLECTION_ID_MISMATCH": {
-      "TITLE": "集合标识不一致",
-      "MESSAGE": "本地集合数据标识与服务器不一致。请先检查是否登录错用户；如果没有登录错，可以纠正本地集合标识后重新同步。",
-      "CONFIRM": "纠正本地集合标识"
+      "TITLE": "集合ID不一致",
+      "MESSAGE": "本地集合数据 ID 与服务器不一致。请先检查是否登录错用户；如果没有登录错，可以纠正本地集合 ID 后重新同步。",
+      "CONFIRM": "纠正本地集合ID"
     },
     "ERRORS": {
       "UNAUTHENTICATED": "登录已失效，请重新登录后再同步。",
