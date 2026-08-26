@@ -1,8 +1,8 @@
-import { getRepDb } from "@main/db/db";
-import { cardsTable, notesTable, noteTypesTable } from "@main/db/schema/repetition/rep";
+import { getRepDb } from "@main/db/db.js";
+import { cardsTable, notesTable, noteTypesTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, lte, SQL } from "drizzle-orm";
-import { CardQueue, StudyCard } from "./card-service-types";
-import { toStudyCard } from "./card-mapper";
+import { CardQueue, StudyCard } from "./card-service-types.js";
+import { toStudyCard } from "./card-mapper.js";
 
 /**
  * Query due study cards from one queue for one deck.

@@ -1,5 +1,5 @@
 import { ProxyPropertyType } from "electron-ipc-cat/common";
-import type { CardReviewRating, CardReviewResult, StudyCard, StudyCardRatingPreviews } from "./card-service-types";
+import type { CardReviewRating, CardReviewResult, StudyCard, StudyCardRatingPreviews } from "./card-service-types.js";
 
 export interface ICardService {
     getStudyCards(deckId: string, limit: number): Promise<StudyCard[]>;

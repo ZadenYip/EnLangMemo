@@ -1,5 +1,5 @@
 import { app } from "electron";
-import log from "electron-log/main";
+import log from "electron-log/main.js";
 import * as path from "path";
 
 export function loggerSetUp(serve: boolean): void {

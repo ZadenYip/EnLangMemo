@@ -1,5 +1,5 @@
 import { Readable } from "stream";
-import { Lexer, Token, TokenType } from "../lexer/lexer";
+import { Lexer, Token, TokenType } from "../lexer/lexer.js";
 
 abstract class ASTNode {}
 

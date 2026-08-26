@@ -9,11 +9,11 @@ import {
     text,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
-import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
-import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types";
-import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types";
-import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types";
-import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types";
+import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types.js";
+import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types.js";
+import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types.js";
+import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types.js";
+import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 
 
 // More information see in https://dbdiagram.io/d/EnLangMemo-69aafcb1a3f0aa31e1146507
@@ -46,7 +46,7 @@ export const collectionTable = sqliteTable("collection", {
     id: blob("id", { mode: "buffer" }).primaryKey(),
     sqliteSchemaVersion: int("sqlite_schema_version").notNull(),
     lastSyncTime: int("last_sync_time").notNull().default(0),
-    lastSyncUsn: int("sync_cursor_usn").notNull().default(0),
+    syncCursorUsn: int("sync_cursor_usn").notNull().default(0),
     usn: int("usn").notNull(),
     createdAt: int("created_at").notNull(),
     updatedAt: int("updated_at").notNull(),

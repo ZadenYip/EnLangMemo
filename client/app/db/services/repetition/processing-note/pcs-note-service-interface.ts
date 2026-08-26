@@ -5,7 +5,7 @@ import {
     PcsNoteRef,
     PcsNoteSaveResult,
     PcsNoteSaveToDeckResult,
-} from "./pcs-note-types";
+} from "./pcs-note-types.js";
 
 export interface IPcsNoteService {
     /**

@@ -1,7 +1,7 @@
-import { bufferToHex } from "@main/db/import/utils";
-import { cardsTable } from "@main/db/schema/repetition/rep";
-import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
-import { CardQueue, FSRSCard, LangCard, StudyCard } from "./card-service-types";
+import { bufferToHex } from "@main/db/import/utils.js";
+import { cardsTable } from "@main/db/schema/repetition/rep.js";
+import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types.js";
+import { CardQueue, FSRSCard, LangCard, StudyCard } from "./card-service-types.js";
 
 export interface StudyCardRow {
     card: Pick<

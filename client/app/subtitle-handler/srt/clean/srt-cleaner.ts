@@ -1,5 +1,5 @@
 import { Readable } from "stream";
-import { CueAST, Parser, TimestampAST } from "../parser/parser";
+import { CueAST, Parser, TimestampAST } from "../parser/parser.js";
 
 /**
  * Remove duplicate cues from an SRT file which have the same start time, end time, and text.

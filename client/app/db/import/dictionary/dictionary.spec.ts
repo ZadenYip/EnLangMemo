@@ -4,13 +4,13 @@ import path from "node:path";
 import Database from "better-sqlite3";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 
-import { dictionarySchema, getDicDb } from "@main/db/db";
-import { definitionsTable, examplesTable, wordPosesTable, wordsTable } from "../../schema/dictionary/dic";
-import { DicImpRowType, impDictionaryDetailed } from ".";
-import { ImportResult } from "./dic-import-types";
-import { createSchema, writeJsonLinesFile } from "./test-helpers";
+import { dictionarySchema, getDicDb } from "@main/db/db.js";
+import { definitionsTable, examplesTable, wordPosesTable, wordsTable } from "../../schema/dictionary/dic.js";
+import { DicImpRowType, impDictionaryDetailed } from "./index.js";
+import { ImportResult } from "./dic-import-types.js";
+import { createSchema, writeJsonLinesFile } from "./test-helpers.js";
 
-vi.mock(import("@main/db/db"), async (importOriginal) => {
+vi.mock(import("@main/db/db.js"), async (importOriginal) => {
     const mod = await importOriginal();
     return {
         dictionarySchema: mod.dictionarySchema,

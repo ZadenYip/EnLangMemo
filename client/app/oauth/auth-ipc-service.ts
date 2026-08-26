@@ -1,11 +1,11 @@
-import Logger from "electron-log/main";
-import { IAuthService, } from "./auth-service-interface";
-import { loadToken, saveToken, clearToken } from "./token-store";
-import { OAuthError, startPKCEFlow } from "./oauth-pkce";
-import { APP_API_BASE_URL } from "./oauth-config";
-import type { AuthFailureReason, AuthUser, CurUserResponse, RevokeResponse } from "./auth-service-types";
-import { mapFetchError, mapFetchJsonError } from "@main/network/errors";
-import { revokeToken } from "./oauth-revoke";
+import Logger from "electron-log/main.js";
+import { IAuthService, } from "./auth-service-interface.js";
+import { loadToken, saveToken, clearToken } from "./token-store.js";
+import { OAuthError, startPKCEFlow } from "./oauth-pkce.js";
+import type { AuthFailureReason, AuthUser, CurUserResponse, RevokeResponse } from "./auth-service-types.js";
+import { mapFetchError, mapFetchJsonError } from "@main/network/errors.js";
+import { revokeToken } from "./oauth-revoke.js";
+import { APP_API_BASE_URL } from "@main/env/env.js";
 
 interface MeResponse {
     user_id: string;

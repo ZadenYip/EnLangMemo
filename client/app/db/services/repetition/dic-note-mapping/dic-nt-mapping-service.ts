@@ -1,12 +1,12 @@
-import { getRepDb } from "@main/db/db";
-import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { dicNoteMapTable, noteTypesTable } from "@main/db/schema/repetition/rep";
+import { getRepDb } from "@main/db/db.js";
+import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils.js";
+import { dicNoteMapTable, noteTypesTable } from "@main/db/schema/repetition/rep.js";
 import {
     DicNoteMapWithNoteType,
-} from "./dic-nt-mapping-types";
-import { IDicNoteMappingService } from "./dic-nt-mapping-service-interface";
+} from "./dic-nt-mapping-types.js";
+import { IDicNoteMappingService } from "./dic-nt-mapping-service-interface.js";
 import { eq } from "drizzle-orm";
-import Logger from "electron-log/main";
+import Logger from "electron-log/main.js";
 
 /**
  * Service for the single dictionary note mapping config.

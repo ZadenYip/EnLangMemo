@@ -1,13 +1,13 @@
-import { getRepDb } from "@main/db/db";
-import { decksTable } from "@main/db/schema/repetition/rep";
-import { Deck, DeckConfig, DeckCreationResult, DeckSettings } from "./deck-service-types";
+import { getRepDb } from "@main/db/db.js";
+import { decksTable } from "@main/db/schema/repetition/rep.js";
+import { Deck, DeckConfig, DeckCreationResult, DeckSettings } from "./deck-service-types.js";
 import { eq } from "drizzle-orm";
-import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
+import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils.js";
 import Logger from "electron-log";
 import { generatorParameters } from "ts-fsrs";
-import { countCardsByDeckAndQueues, countCardsByDeckQueuesAndStates } from "../cards/card-service";
-import { CardQueue, CardState } from "../cards/card-service-types";
-import { calcCanLearnToday } from "./deck-service-helper";
+import { countCardsByDeckAndQueues, countCardsByDeckQueuesAndStates } from "../cards/card-service.js";
+import { CardQueue, CardState } from "../cards/card-service-types.js";
+import { calcCanLearnToday } from "./deck-service-helper.js";
 
 export class DeckService {
     /**

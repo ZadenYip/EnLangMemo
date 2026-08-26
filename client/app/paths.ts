@@ -1,5 +1,6 @@
 import { app } from "electron";
 import * as path from "path";
+import { getAppConfig } from "./db/config/config.js";
 
 /**
  * Get the base user data directory: <exe_dir>/user_data
@@ -23,4 +24,12 @@ export function getAccountsDir(): string {
  */
 export function getAccountDir(accountName: string): string {
     return path.join(getAccountsDir(), accountName);
+}
+
+
+export function getCurAccountDir(): string {
+    if (!getAppConfig().selectedAccount) {
+        throw new Error("No account selected in app config");
+    }
+    return getAccountDir(getAppConfig().selectedAccount);
 }

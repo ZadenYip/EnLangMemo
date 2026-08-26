@@ -1,12 +1,12 @@
-import { getRepDb } from "@main/db/db";
-import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { cardsTable, collectionTable, decksTable, reviewLogsTable } from "@main/db/schema/repetition/rep";
+import { getRepDb } from "@main/db/db.js";
+import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils.js";
+import { cardsTable, collectionTable, decksTable, reviewLogsTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
-import { ColConfig } from "../collection/col-service-types";
-import { toFSRSCard } from "./card-mapper";
-import { nextHandler, toCard, toCardQueue } from "./card-service-helper";
-import { CardQueue, CardReviewRating, CardReviewResult, CardState, FSRSCard, FSRSRecordLogItem, ReviewedCardState } from "./card-service-types";
-import { getFsrsScheduler, toFsrsGrade } from "./card-scheduler";
+import { ColConfig } from "../collection/col-service-types.js";
+import { toFSRSCard } from "./card-mapper.js";
+import { nextHandler, toCard, toCardQueue } from "./card-service-helper.js";
+import { CardQueue, CardReviewRating, CardReviewResult, CardState, FSRSCard, FSRSRecordLogItem, ReviewedCardState } from "./card-service-types.js";
+import { getFsrsScheduler, toFsrsGrade } from "./card-scheduler.js";
 
 type RepTx = Parameters<Parameters<ReturnType<typeof getRepDb>["transaction"]>[0]>[0];
 type ReviewCardRow = typeof cardsTable.$inferSelect;

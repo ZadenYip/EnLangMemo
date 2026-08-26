@@ -1,4 +1,4 @@
-import { lemmatize } from ".";
+import { lemmatize } from "./index.js";
 
 describe("NLP Tokenization Test", () => {
     it("should output lemmatized tokens", () => {

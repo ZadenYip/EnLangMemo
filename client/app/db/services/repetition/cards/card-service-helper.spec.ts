@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ColConfig } from "../collection/col-service-types";
-import type { FSRSCard } from "./card-service-types";
-import { getNextReviewDayStart, toAssignedReviewDateRstTimestamp, toCard } from "./card-service-helper";
+import { ColConfig } from "../collection/col-service-types.js";
+import type { FSRSCard } from "./card-service-types.js";
+import { getNextReviewDayStart, toAssignedReviewDateRstTimestamp, toCard } from "./card-service-helper.js";
 
 const shanghaiConfig: ColConfig = {
     timeZone: "Asia/Shanghai",

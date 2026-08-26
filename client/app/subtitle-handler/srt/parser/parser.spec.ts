@@ -1,5 +1,5 @@
 import { Readable } from "stream";
-import { CueAST, Parser, TimestampAST } from "./parser";
+import { CueAST, Parser, TimestampAST } from "./parser.js";
 
 describe("Subtitle Parser", () => {
     it("should parse cues correctly", async () => { 

@@ -7,10 +7,10 @@ build({
     bundle: true,
     platform: "node",
     target: "es2022",
-    format: "cjs",
+    format: "esm",
     sourcemap: true,
     packages: "external",
-    outdir: "app/"
+    outdir: "app/",
 }).catch(() => process.exit(1));
 
 // package electron-ipc-cat is pure JS, must bundle it
@@ -21,10 +21,11 @@ build({
     bundle: true,
     platform: "node",
     target: "es2022",
+    // must be cjs to be compatible with electron preload script when electron sandbox is enabled
     format: "cjs",
     sourcemap: true,
     external: [
         "electron"
     ],
-    outdir: "app/"
+    outdir: "app/",
 }).catch(() => process.exit(1));

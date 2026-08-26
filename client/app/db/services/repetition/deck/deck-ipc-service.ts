@@ -1,6 +1,6 @@
-import { Deck, DeckCreationResult, DeckSettings } from "./deck-service-types";
-import { IDeckService } from "./deck-service-interface";
-import { DeckService } from "./deck-service";
+import { Deck, DeckCreationResult, DeckSettings } from "./deck-service-types.js";
+import { IDeckService } from "./deck-service-interface.js";
+import { DeckService } from "./deck-service.js";
 
 /**
  * IPC-facing deck service facade.

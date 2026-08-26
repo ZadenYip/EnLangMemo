@@ -1,8 +1,8 @@
 // deep link 
 // https://www.electronjs.org/docs/latest/tutorial/launch-app-from-url-in-another-app
-import { handleAuthorizeCallback, OAUTH_CALLBACK_PATH } from "@main/oauth/oauth-pkce";
+import { handleAuthorizeCallback, OAUTH_CALLBACK_PATH } from "@main/oauth/oauth-pkce.js";
 import { app } from "electron";
-import Logger from "electron-log/main";
+import Logger from "electron-log/main.js";
 import { BrowserWindow } from "electron/main";
 
 const APP_PROTOCOL = "enlangmemo";

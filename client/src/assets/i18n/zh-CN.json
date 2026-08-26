@@ -264,6 +264,34 @@
       "SAVE_SUCCESS": "字典笔记映射已保存。"
     }
   },
+  "SYNC": {
+    "MESSAGES": {
+      "SYNCING": "正在同步...",
+      "NO_NEW_DATA": "没有新的同步数据。",
+      "LOCKED_BY_OTHER_CLIENT": "有其他客户端正在同步，请稍后再试。",
+      "CLIENT_TOO_OLD": "客户端版本太低，服务器不支持该客户端版本同步。",
+      "SERVER_TOO_OLD": "服务端版本太低，请联系开发人员处理。",
+      "TIME_SKEW_TOO_LARGE": "服务器与客户端的时间偏差太大，请纠正本地时间后重试。",
+      "CLIENT_DATA_TOO_OLD": "客户端数据太旧，当前暂不支持自动重置，请稍后实现后再处理。",
+      "COLLECTION_ID_CORRECTED": "本地集合标识已纠正，请重新发起同步。",
+      "COLLECTION_ID_CORRECT_FAILED": "纠正本地集合标识失败。",
+      "UNEXPECTED_ERROR": "同步过程中发生未知错误。"
+    },
+    "COLLECTION_ID_MISMATCH": {
+      "TITLE": "集合标识不一致",
+      "MESSAGE": "本地集合数据标识与服务器不一致。请先检查是否登录错用户；如果没有登录错，可以纠正本地集合标识后重新同步。",
+      "CONFIRM": "纠正本地集合标识"
+    },
+    "ERRORS": {
+      "UNAUTHENTICATED": "登录已失效，请重新登录后再同步。",
+      "DEADLINE_EXCEEDED": "同步握手超时，请检查网络后重试。",
+      "UNAVAILABLE": "同步服务暂时不可用，请稍后再试。",
+      "RESOURCE_EXHAUSTED": "同步请求过于频繁，请稍后再试。",
+      "PERMISSION_DENIED": "当前用户无权访问该集合。",
+      "INVALID_ARGUMENT": "同步请求格式非法，请联系开发人员。",
+      "UNKNOWN": "同步请求失败，请稍后再试。"
+    }
+  },
   "HEADER": {
     "DECKS": "牌组",
     "PROCESSING": "加工",

@@ -1,5 +1,5 @@
-import { TemplateField } from "../note-template/nt-tpl-service-types";
-import { NoteField } from "../processing-note/pcs-note-types";
+import { TemplateField } from "../note-template/nt-tpl-service-types.js";
+import { NoteField } from "../processing-note/pcs-note-types.js";
 
 export interface CardRef {
     /**

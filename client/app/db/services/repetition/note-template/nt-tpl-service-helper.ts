@@ -1,4 +1,4 @@
-import { NoteTemplate, TemplateField } from "./nt-tpl-service-types";
+import { NoteTemplate, TemplateField } from "./nt-tpl-service-types.js";
 
 /**
  * Official preset id for the sentence-mining definition note template.

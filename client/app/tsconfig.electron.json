@@ -6,11 +6,11 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "module": "commonjs",
     "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "types": [
       "node"
     ],

@@ -1,6 +1,6 @@
 import { Readable } from "stream";
-import { CharReader } from "../parser/char-reader";
-import { isDigit, isMacLineEnding, isNewline, isSpace, isUnixLineEnding, isWindowsLineEnding } from "../../string-util";
+import { CharReader } from "../parser/char-reader.js";
+import { isDigit, isMacLineEnding, isNewline, isSpace, isUnixLineEnding, isWindowsLineEnding } from "../../string-util.js";
 
 export enum TokenType {
     SPACE,

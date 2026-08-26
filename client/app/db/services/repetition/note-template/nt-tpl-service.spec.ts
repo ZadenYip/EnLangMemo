@@ -1,18 +1,19 @@
 import Database from "better-sqlite3";
-import path from "node:path";
+import path, { dirname } from "node:path";
 import { BetterSQLite3Database, drizzle } from "drizzle-orm/better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
-import { getRepDb, repetitionSchema } from "@main/db/db";
-import { generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { noteTypesTable } from "@main/db/schema/repetition/rep";
-import { NoteTplService } from "./nt-tpl-service";
+import { getRepDb, repetitionSchema } from "@main/db/db.js";
+import { generateUUIDV7, hexToBuffer } from "@main/db/import/utils.js";
+import { noteTypesTable } from "@main/db/schema/repetition/rep.js";
+import { NoteTplService } from "./nt-tpl-service.js";
 import {
     createSentenceMiningDefinitionNoteTpl as sentenceMiningDefinitionNoteTpl,
     SENTENCE_MINING_DEFINITION_TPL_NAME,
-} from "./nt-tpl-service-helper";
+} from "./nt-tpl-service-helper.js";
+import { fileURLToPath } from "node:url";
 
-vi.mock(import("@main/db/db"), async () => {
-    const actual = await vi.importActual<typeof import("@main/db/db")>("@main/db/db");
+vi.mock(import("@main/db/db.js"), async () => {
+    const actual = await vi.importActual<typeof import("@main/db/db.js")>("@main/db/db.js");
     return {
         ...actual,
         getRepDb: vi.fn(),
@@ -70,7 +71,7 @@ describe("NoteTplService", () => {
         sqlite.pragma("foreign_keys = ON");
         db = drizzle(sqlite, { schema: repetitionSchema });
         migrate(db, {
-            migrationsFolder: path.resolve(__dirname, "../../../migrations/repetition"),
+            migrationsFolder: path.resolve(dirname(fileURLToPath(import.meta.url)), "../../../migrations/repetition"),
         });
         mockedGetRepDb.mockReturnValue(db);
         service = new NoteTplService();

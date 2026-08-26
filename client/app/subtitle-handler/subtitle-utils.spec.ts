@@ -1,5 +1,5 @@
-import { TimestampAST } from "./srt/parser/parser";
-import { shiftTimestamp } from "./subtitle-utils";
+import { TimestampAST } from "./srt/parser/parser.js";
+import { shiftTimestamp } from "./subtitle-utils.js";
 
 
 describe("Subtitle Utils Tests", () => {

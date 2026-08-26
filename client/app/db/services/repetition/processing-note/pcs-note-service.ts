@@ -1,20 +1,20 @@
-import Logger from "electron-log/main";
+import Logger from "electron-log/main.js";
 import { eq } from "drizzle-orm";
-import { getRepDb } from "@main/db/db";
-import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
+import { getRepDb } from "@main/db/db.js";
+import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils.js";
 import {
     decksTable,
     noteTypesTable,
     processingNotesTable,
-} from "@main/db/schema/repetition/rep";
-import { createCardFromPcsNote } from "@main/db/services/repetition/cards/card-service";
+} from "@main/db/schema/repetition/rep.js";
+import { createCardFromPcsNote } from "@main/db/services/repetition/cards/card-service.js";
 import {
     PcsNote,
     PcsNoteCreationResult,
     PcsNoteRef,
     PcsNoteSaveResult,
     PcsNoteSaveToDeckResult,
-} from "./pcs-note-types";
+} from "./pcs-note-types.js";
 
 /**
  * Service for processing notes waiting in the bench pool.

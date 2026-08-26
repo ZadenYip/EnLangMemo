@@ -1,21 +1,21 @@
-import { getRepDb } from "@main/db/db";
-import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils";
-import { cardsTable, decksTable, notesTable } from "@main/db/schema/repetition/rep";
-import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types";
-import type { PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types";
+import { getRepDb } from "@main/db/db.js";
+import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils.js";
+import { cardsTable, decksTable, notesTable } from "@main/db/schema/repetition/rep.js";
+import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types.js";
+import type { PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 import { and, count, eq, inArray, lte, SQL } from "drizzle-orm";
 import { createEmptyCard } from "ts-fsrs";
-import { getColConfig } from "../collection/col-service-helper";
-import { resolveNewCardLimit } from "../deck/deck-service-helper";
-import { mergeStudyCardsByDue, toFSRSCard } from "./card-mapper";
-import { queryStudyCardsByQueue } from "./card-query";
-import { createEmptyCardHandler, getNextReviewDayStart as calcNextReviewDayStart } from "./card-service-helper";
-import { CardQueue, CardState, StudyCard, StudyCardRatingPreviews } from "./card-service-types";
-import { buildRatingPreviews, getFsrsScheduler } from "./card-scheduler";
+import { getColConfig } from "../collection/col-service-helper.js";
+import { resolveNewCardLimit } from "../deck/deck-service-helper.js";
+import { mergeStudyCardsByDue, toFSRSCard } from "./card-mapper.js";
+import { queryStudyCardsByQueue } from "./card-query.js";
+import { createEmptyCardHandler, getNextReviewDayStart as calcNextReviewDayStart } from "./card-service-helper.js";
+import { CardQueue, CardState, StudyCard, StudyCardRatingPreviews } from "./card-service-types.js";
+import { buildRatingPreviews, getFsrsScheduler } from "./card-scheduler.js";
 
 // implementation of card service methods
-export { clearFsrsSchedulerCache } from "./card-scheduler";
-export { reviewCard } from "./card-review";
+export { clearFsrsSchedulerCache } from "./card-scheduler.js";
+export { reviewCard } from "./card-review.js";
 
 type RepTx = Parameters<Parameters<ReturnType<typeof getRepDb>["transaction"]>[0]>[0];
 

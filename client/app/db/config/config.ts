@@ -1,10 +1,11 @@
 import { dialog } from "electron";
 import * as path from "path";
 import * as fs from "fs";
-import Logger from "electron-log/main";
+import Logger from "electron-log/main.js";
 import { exit } from "process";
-import { isDev } from "@main/main";
-import { getUserDataDir } from "@main/paths";
+import { isDev } from "@main/main.js";
+import { getUserDataDir } from "@main/paths.js";
+import { fileURLToPath } from "url";
 
 let appConfig: AppConfig;
 
@@ -54,7 +55,7 @@ export function loadAppConfig(): AppConfig {
 function generateDefaultConfig(): AppConfig {
     try {
         // TODO 打包路径可能有问题，倒时候要处理
-        const resourcesPath = isDev() ? path.join(__dirname, "resources") : process.resourcesPath;
+        const resourcesPath = isDev() ? path.join(path.dirname(fileURLToPath(import.meta.url)), "resources") : process.resourcesPath;
         const defaultConfigPath = path.join(resourcesPath, "config.default.json");
 
         if (fs.existsSync(defaultConfigPath)) {

@@ -1,6 +1,6 @@
 import { Card, IPreview, RecordLog, RecordLogItem, ReviewLog, State } from "ts-fsrs";
-import { CardQueue, FSRSCard, FSRSIPreview, FSRSRecordLog, FSRSRecordLogItem, FSRSReviewLog } from "./card-service-types";
-import { ColConfig } from "../collection/col-service-types";
+import { CardQueue, FSRSCard, FSRSIPreview, FSRSRecordLog, FSRSRecordLogItem, FSRSReviewLog } from "./card-service-types.js";
+import { ColConfig } from "../collection/col-service-types.js";
 
 export function createEmptyCardHandler(card: Card): FSRSCard {
     const result: FSRSCard = toFSRSCard(card);

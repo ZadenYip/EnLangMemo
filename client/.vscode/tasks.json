@@ -4,7 +4,7 @@
       {
         "label": "Build.Main",
         "type": "shell",
-        "command": "pnpm electron:rebuild && pnpm electron:serve-build",
+        "command": "rm -f ./app/main.js* && rm -f ./app/preload.js* && pnpm electron:rebuild && pnpm electron:serve-build",
         "isBackground": false,
         "group": {
           "kind": "build",
