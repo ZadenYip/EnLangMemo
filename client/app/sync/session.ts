@@ -7,7 +7,7 @@ import Logger from "electron-log/main.js";
 export type SyncSessionStatus = "HANDSHAKING" | "NO_REMOTE_CHANGES" | "PULLING" | "PUSHING" | "FINISHING" | "FINISHED" | "FAILED";
 
 // 10 seconds
-export const timeoutMs = 10_000;
+export const rpcTimeoutMs = 10_000;
 export interface SyncSession {
     status: SyncSessionStatus;
     clientColUsn: bigint;
@@ -98,7 +98,7 @@ export async function sendFinish(): Promise<FinishSyncResponse> {
         throw new Error("sync session is not in FINISHING state when trying to finish.");
     }
 
-    const result = await getClient().finishSync(req, { timeoutMs: timeoutMs });
+    const result = await getClient().finishSync(req, { timeoutMs: rpcTimeoutMs });
     curSyncSession.status = "FINISHED";
     return result;
 }

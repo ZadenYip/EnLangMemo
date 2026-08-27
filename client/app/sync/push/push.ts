@@ -1,7 +1,7 @@
 import { create } from "@bufbuild/protobuf";
 import { EntityType, PushRequestSchema } from "@enlangmemo/sync-api";
 import { getClient } from "../index.js";
-import { clearSyncSession, getSyncSessionOrThrow, resetPushQueue, timeoutMs, type SyncSession } from "../session.js";
+import { clearSyncSession, getSyncSessionOrThrow, resetPushQueue, rpcTimeoutMs, type SyncSession } from "../session.js";
 import { type CollectResult, PushCollector } from "./collector/collector.js";
 import { zeroUuid } from "./collector/sync-size/constants.js";
 import { TombstoneType, type SyncEntityType } from "./push-queue.js";
@@ -76,7 +76,7 @@ async function finishPush(session: SyncSession): Promise<void> {
             batchSeq: session.batchSeq,
             finishPush: true
         }),
-        { timeoutMs: timeoutMs },
+        { timeoutMs: rpcTimeoutMs },
     );
 
     if (response.batchSeq !== session.batchSeq) {
@@ -105,7 +105,7 @@ async function pushBatch(session: SyncSession): Promise<number> {
             changes: c.changes,
             finishPush: false,
         }),
-        { timeoutMs: timeoutMs },
+        { timeoutMs: rpcTimeoutMs },
     );
 
     if (response.batchSeq !== session.batchSeq) {
