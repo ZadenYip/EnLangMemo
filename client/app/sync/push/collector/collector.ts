@@ -316,11 +316,11 @@ function assignLocalUsn(tx: RepTx, originOp: ChangeOp, type: EntityType, id: Buf
         case EntityType.NOTE_TYPE:
             assignNoteTypeUsn(tx, id, usn);
             return;
-        case EntityType.NOTE:
-            assignNoteUsn(tx, id, usn);
-            return;
         case EntityType.PROCESSING_NOTE:
             assignPcsUsn(tx, id, usn);
+            return;
+        case EntityType.NOTE:
+            assignNoteUsn(tx, id, usn);
             return;
         case EntityType.CARD:
             assignCardUsn(tx, id, usn);
