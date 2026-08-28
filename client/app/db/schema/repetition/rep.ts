@@ -38,8 +38,8 @@ const jsonb = <TData extends object>(str: string) =>
     })(str);
 
 /**
- * Collection 表 - 全局配置，只有一行
- * 存储应用级别的配置和同步状态
+ * Collection table: global config, expected to contain exactly one row.
+ * Stores app-level config and sync state.
  */
 export const collectionTable = sqliteTable("collection", {
     id: blob("id", { mode: "buffer" }).primaryKey(),
@@ -75,8 +75,8 @@ export const decksTable = sqliteTable("decks", {
 });
 
 /**
- * NoteTypes 表 - 笔记模板
- * 定义固定笔记字段和唯一卡片展示模板
+ * Note types table: note templates.
+ * Defines fixed note fields and the single card rendering template.
  */
 export const noteTypesTable = sqliteTable("note_types", {
     id: blob("id", { mode: "buffer" }).primaryKey(),
@@ -118,9 +118,9 @@ export const notesTable = sqliteTable(
         usn: int("usn").notNull(),
         createdAt: int("created_at").notNull(),
         updatedAt: int("updated_at").notNull(),
-        senseId: int("sense_id"), // 释义追踪 ID，关联官方词典 definitions.def_id
-        sortField: text("sort_field"), // 用来排序的字段
-        searchFields: text("search_fields"), // 所有字段值拼凑的搜索字符串
+        senseId: int("sense_id"), // Definition tracking ID, linked to official dictionary definitions.def_id.
+        sortField: text("sort_field"), // Field used for sorting.
+        searchFields: text("search_fields"), // Search string built from all field values.
         fields: jsonb<NoteField[]>("fields").notNull(), // JSON: [{"TargetWord": "Apple"}, {...}]
     },
     (table) => [index("ix_notes_usn").on(table.usn)],
@@ -179,7 +179,7 @@ export const cardsTable = sqliteTable(
 );
 
 /**
- * ReviewLog 表 - 复习记录（不可变追加日志）
+ * Review log table: immutable append-only review history.
  */
 export const reviewLogsTable = sqliteTable(
     "review_logs",
@@ -187,14 +187,14 @@ export const reviewLogsTable = sqliteTable(
         id: blob("id", { mode: "buffer" }).primaryKey(),
         cardId: blob("card_id", { mode: "buffer" }).notNull(),
         usn: int("usn").notNull(),
-        reviewTime: int("review_time").notNull(), // 实际复习时间
+        reviewTime: int("review_time").notNull(), // Actual review time.
         scheduledDays: int("scheduled_days").notNull(),
         rating: int("rating").notNull(), // 1=Again, 2=Hard, 3=Good, 4=Easy
-        difficulty: real("difficulty").notNull(), // 复习后的难度
-        stability: real("stability").notNull(), // 复习后的稳定性
+        difficulty: real("difficulty").notNull(), // Post-review difficulty.
+        stability: real("stability").notNull(), // Post-review stability.
         learningSteps: int("learning_steps").notNull(),
         state: int("state").notNull(),
-        duration: int("duration").notNull(), // 停留耗时(ms)
+        duration: int("duration").notNull(), // Time spent in milliseconds.
     },
     (table) => [
         index("ix_review_logs_usn").on(table.usn),
@@ -203,15 +203,15 @@ export const reviewLogsTable = sqliteTable(
 );
 
 /**
- * Tombstones 表 - 删除记录（对应 Anki 的 Grave）
- * 用于同步时追踪被删除的实体
+ * Tombstones table: deletion records, equivalent to Anki graves.
+ * Tracks deleted entities for sync.
  */
 export const tombstonesTable = sqliteTable(
     "tombstones",
     {
-        unitId: blob("unit_id", { mode: "buffer" }).primaryKey(), // 对应同步实体的 UUID
-        usn: int("usn").notNull(), // -1 表示本地删除
-        deletedAt: int("deleted_at").notNull(), // 删除时间戳
+        unitId: blob("unit_id", { mode: "buffer" }).primaryKey(), // UUID of the synced entity.
+        usn: int("usn").notNull(), // PendingLocalUsn means locally deleted and pending push.
+        deletedAt: int("deleted_at").notNull(), // Deletion timestamp.
         unitType: int("unit_type").notNull(), // 0=unspecified, 1=collection, 2=deck, 3=note_type, 4=note, 5=processing_note, 6=card, 7=review_log
     }
 );
