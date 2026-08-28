@@ -5,6 +5,7 @@ import { eq, lt } from "drizzle-orm";
 import type { RepTx } from "../../push/collector/change/rep-tx.js";
 import { resolveSortField } from "@main/db/services/repetition/cards/card-service.js";
 import { toInt } from "@main/sync/helper/type.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 export function remoteWins(remoteUpdatedAt: number, localUpdatedAt: number): boolean {
     return remoteUpdatedAt >= localUpdatedAt;
@@ -31,14 +32,14 @@ export function upsertTombstone(
     tx.insert(tombstonesTable)
         .values({
             unitId: entityId,
-            usn: -1,
+            usn: PendingLocalUsn,
             deletedAt,
             unitType: entityType,
         })
         .onConflictDoUpdate({
             target: tombstonesTable.unitId,
             set: {
-                usn: -1,
+                usn: PendingLocalUsn,
                 deletedAt,
                 unitType: entityType,
             },

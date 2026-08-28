@@ -26,6 +26,7 @@ import { clearSyncSession, createSyncSession, getSyncSessionOrThrow } from "../s
 import { hexToBuffer } from "@main/db/import/utils.js";
 import { HandshakeViewResult } from "./handshake-types.js";
 import { getColRow } from "../push/collector/change/collection.js";
+import { PendingLocalUsn } from "../helper/usn.js";
 
 
 export const syncProtocolVersion = 1;
@@ -157,7 +158,7 @@ function hasLocalChanges(): boolean {
         const changedRow = repDb
             .select({ usn: table.usn })
             .from(table)
-            .where(eq(table.usn, -1))
+            .where(eq(table.usn, PendingLocalUsn))
             .limit(1)
             .get();
 

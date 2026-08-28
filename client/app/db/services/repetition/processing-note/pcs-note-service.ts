@@ -6,7 +6,6 @@ import {
     decksTable,
     noteTypesTable,
     processingNotesTable,
-    tombstonesTable,
 } from "@main/db/schema/repetition/rep.js";
 import { createCardFromPcsNote } from "@main/db/services/repetition/cards/card-service.js";
 import {
@@ -17,6 +16,8 @@ import {
     PcsNoteSaveToDeckResult,
 } from "./pcs-note-types.js";
 import { EntityType } from "@enlangmemo/sync-api";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
+import { upsertTombstone } from "@main/sync/pull/apply/common.js";
 
 /**
  * Service for processing notes waiting in the bench pool.
@@ -73,7 +74,7 @@ export class PcsNoteService {
             .values({
                 id,
                 noteTypeId,
-                usn: -1,
+                usn: PendingLocalUsn,
                 createdAt: now,
                 updatedAt: now,
                 senseId: note.senseId ?? null,
@@ -141,6 +142,22 @@ export class PcsNoteService {
             };
         }
 
+        const processingNote = await getRepDb().query.processingNotesTable.findFirst({
+            where: eq(processingNotesTable.id, hexToBuffer(note.id)),
+            columns: {
+                usn: true,
+            },
+        });
+
+        if (!processingNote) {
+            Logger.error("Processing note save-to-deck failed: note not found", {
+                noteId: note.id,
+            });
+            return {
+                state: "not-found",
+            };
+        }
+
         getRepDb().transaction((tx) => {
             createCardFromPcsNote(
                 note,
@@ -148,17 +165,7 @@ export class PcsNoteService {
                 noteType.noteTemplate,
                 tx,
             );
-            // TODO 这里可能后面修改的笔记内容保存了，但是没同步刀服务器所以移动还是依然最好删除
-            // 可能最好单独多一个字段标记下是否同步到服务器更好？
-            if (noteType.usn != -1) {
-                // if already synced, add tombstone for deletion on server
-                tx.insert(tombstonesTable).values({
-                    unitId: hexToBuffer(note.id),
-                    unitType: EntityType.PROCESSING_NOTE,
-                    usn: -1,
-                    deletedAt: Date.now(),
-                }).run();
-            }
+            upsertTombstone(tx, EntityType.PROCESSING_NOTE, hexToBuffer(note.id), Date.now());
             tx.delete(processingNotesTable)
                 .where(eq(processingNotesTable.id, hexToBuffer(note.id)))
                 .run();
@@ -212,7 +219,7 @@ export class PcsNoteService {
         const result = await getRepDb()
             .update(processingNotesTable)
             .set({
-                usn: -1,
+                usn: PendingLocalUsn,
                 updatedAt: Date.now(),
                 fields: note.fields,
             })

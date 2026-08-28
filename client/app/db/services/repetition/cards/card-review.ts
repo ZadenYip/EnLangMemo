@@ -7,6 +7,7 @@ import { toFSRSCard } from "./card-mapper.js";
 import { nextHandler, toCard, toCardQueue } from "./card-service-helper.js";
 import { CardQueue, CardReviewRating, CardReviewResult, CardState, FSRSCard, FSRSRecordLogItem, ReviewedCardState } from "./card-service-types.js";
 import { getFsrsScheduler, toFsrsGrade } from "./card-scheduler.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 type RepTx = Parameters<Parameters<ReturnType<typeof getRepDb>["transaction"]>[0]>[0];
 type ReviewCardRow = typeof cardsTable.$inferSelect;
@@ -124,7 +125,7 @@ function updateReviewedCardInTx(tx: RepTx, cardRow: ReviewCardRow, outcome: Revi
     const nextCard = outcome.nextCard;
     tx.update(cardsTable)
         .set({
-            usn: -1,
+            usn: PendingLocalUsn,
             updatedAt: outcome.updatedAt,
             difficulty: nextCard.difficulty,
             stability: nextCard.stability,
@@ -152,7 +153,7 @@ function updateReviewedDeckStatsInTx(
 ): void {
     tx.update(decksTable)
         .set({
-            usn: -1,
+            usn: PendingLocalUsn,
             updatedAt,
             newLearnedToday: nextDeckStats.newLearnedToday,
             learnedToday: nextDeckStats.learnedToday,
@@ -175,7 +176,7 @@ function insertReviewLogInTx(
         .values({
             id: generateUUIDV7(),
             cardId,
-            usn: -1,
+            usn: PendingLocalUsn,
             reviewTime: recordLogItem.log.reviewTime.getTime(),
             scheduledDays: recordLogItem.log.scheduledDays,
             rating: recordLogItem.log.rating,

@@ -9,6 +9,7 @@ import { getRepDb } from "@main/db/db.js";
 import { tombstonesTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
 import type { RepTx } from "./rep-tx.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 export type TombstoneChange = Pick<
     typeof tombstonesTable.$inferSelect,
@@ -25,7 +26,7 @@ export function getTombstoneChanges(limit: number, startAfterId: Buffer): Tombst
         })
         .from(tombstonesTable)
         .where(and(
-            eq(tombstonesTable.usn, -1),
+            eq(tombstonesTable.usn, PendingLocalUsn),
             gt(tombstonesTable.unitId, startAfterId),
         ))
         .orderBy(asc(tombstonesTable.unitId))

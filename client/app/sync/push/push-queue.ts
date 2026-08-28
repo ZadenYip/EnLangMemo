@@ -1,7 +1,8 @@
 import { EntityType } from "@enlangmemo/sync-api";
 import { getRepDb } from "@main/db/db.js";
 import { cardsTable, collectionTable, decksTable, notesTable, noteTypesTable, processingNotesTable, reviewLogsTable, tombstonesTable } from "@main/db/schema/repetition/rep.js";
-import { eq } from "drizzle-orm/sql/expressions/conditions";
+import { eq } from "drizzle-orm";
+import { PendingLocalUsn } from "../helper/usn.js";
 
 export const TombstoneType = -1;
 export type SyncEntityType = EntityType | typeof TombstoneType;
@@ -74,7 +75,7 @@ function hasUnsyncedChange(table: CheckTable): boolean {
     return getRepDb()
         .select({ usn: table.usn })
         .from(table)
-        .where(eq(table.usn, -1))
+        .where(eq(table.usn, PendingLocalUsn))
         .limit(1)
         .get() !== undefined;
 }

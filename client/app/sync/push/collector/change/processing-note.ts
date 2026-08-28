@@ -10,6 +10,7 @@ import { getRepDb } from "@main/db/db.js";
 import { processingNotesTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
 import type { RepTx } from "./rep-tx.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 /** Processing-note fields required to build one processing-note SyncChange. */
 export type PcsChange = Pick<
@@ -39,7 +40,7 @@ export function getPcsChanges(limit: number, startAfterId: Buffer): PcsChange[] 
         })
         .from(processingNotesTable)
         .where(and(
-            eq(processingNotesTable.usn, -1),
+            eq(processingNotesTable.usn, PendingLocalUsn),
             gt(processingNotesTable.id, startAfterId),
         ))
         .orderBy(asc(processingNotesTable.id))
@@ -61,7 +62,7 @@ export function toPcsSyncChange(row: PcsChange): SyncChange {
         entityId: row.id,
         entityType: EntityType.PROCESSING_NOTE,
         op: ChangeOp.UPSERT,
-        usn: BigInt(row.usn),
+        usn: BigInt(PendingLocalUsn),
         payload: {
             case: "processingNote",
             value: payload,

@@ -17,6 +17,7 @@ import {
 } from "./services/repetition/note-template/nt-tpl-service-helper.js";
 import Logger from "electron-log/main.js";
 import { fileURLToPath } from "url";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 export const dictionarySchema = dic_schema;
 export const repetitionSchema = rep_schema;
@@ -68,7 +69,7 @@ function collectionInit(): void {
 
     Logger.info("No collection record found, initializing collection table with default config.");
     const zeroTime = (new Date(0)).getTime();
-    const usn = -1;
+    const usn = PendingLocalUsn;
     const date = new Date();
     const nowTime = date.getTime();
 
@@ -98,7 +99,7 @@ function collectionInit(): void {
                 id: generateUUIDV7(),
                 name: SENTENCE_MINING_DEFINITION_TPL_NAME,
                 presetTemplateId: SENTENCE_MINING_DEF_TPL_PRESET_ID,
-                usn: -1,
+                usn: PendingLocalUsn,
                 updatedAt: Date.now(),
                 noteTemplate: createSentenceMiningDefinitionNoteTpl(),
     }).run();

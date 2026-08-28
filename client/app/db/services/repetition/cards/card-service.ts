@@ -12,6 +12,7 @@ import { queryStudyCardsByQueue } from "./card-query.js";
 import { createEmptyCardHandler, getNextReviewDayStart as calcNextReviewDayStart } from "./card-service-helper.js";
 import { CardQueue, CardState, StudyCard, StudyCardRatingPreviews } from "./card-service-types.js";
 import { buildRatingPreviews, getFsrsScheduler } from "./card-scheduler.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 // implementation of card service methods
 export { clearFsrsSchedulerCache } from "./card-scheduler.js";
@@ -38,7 +39,7 @@ export function createCardFromPcsNote(
         .values({
             id: noteId,
             noteTypeId: hexToBuffer(note.noteTplId),
-            usn: -1,
+            usn: PendingLocalUsn,
             createdAt: now,
             updatedAt: now,
             senseId: note.senseId ?? null,
@@ -56,7 +57,7 @@ export function createCardFromPcsNote(
             id: generateUUIDV7(),
             noteId,
             deckId,
-            usn: -1,
+            usn: PendingLocalUsn,
             updatedAt: now,
             difficulty: card.difficulty,
             stability: card.stability,

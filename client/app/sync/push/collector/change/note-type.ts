@@ -10,6 +10,7 @@ import { getRepDb } from "@main/db/db.js";
 import { noteTypesTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
 import type { RepTx } from "./rep-tx.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 type NoteTypeChange = Pick<
     typeof noteTypesTable.$inferSelect,
@@ -33,7 +34,7 @@ export function getNoteTypeChangeRows(limit: number, startAfterId: Buffer): Note
         })
         .from(noteTypesTable)
         .where(and(
-            eq(noteTypesTable.usn, -1),
+            eq(noteTypesTable.usn, PendingLocalUsn),
             gt(noteTypesTable.id, startAfterId),
         ))
         .orderBy(asc(noteTypesTable.id))
@@ -53,7 +54,7 @@ export function toNoteTypeSyncChange(row: NoteTypeChange): SyncChange {
         entityId: row.id,
         entityType: EntityType.NOTE_TYPE,
         op: ChangeOp.UPSERT,
-        usn: BigInt(row.usn),
+        usn: BigInt(PendingLocalUsn),
         payload: {
             case: "noteType",
             value: payload,
