@@ -113,8 +113,8 @@ export function applyPull$(): Observable<ApplyResult> {
                     );
                 }
 
-                // TODO 根据未来看看有没有性能需要，要每个 resp 作为单独一个事务流式处理，
-                // 外加持久化整个 resps 的文件配合应用层处理为多个 resps 多个事务下也能实现原子性。
+                // TODO 根据未来看看有没有性能需要，要每个 resp 作为单独一个事务处理（利用文件系统的基础上完成整个拉取过程完成事务，
+                // 比如中途崩了，应用重启后能继续重新应用拉取好的数据）
                 getRepDb().transaction((tx) => {
                     for (const resp of resps) {
                         applyPullResponse(tx, resp);
