@@ -1,9 +1,13 @@
+// collection don't need to be deleted, because the collection is always present in the database.
+
 import { SyncChange } from "@enlangmemo/sync-api";
 import { collectionTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
 import type { RepTx } from "../../push/collector/change/rep-tx.js";
 import { parseJson, remoteWins } from "./common.js";
+
+
 
 export function applyCollectionUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "collection") {

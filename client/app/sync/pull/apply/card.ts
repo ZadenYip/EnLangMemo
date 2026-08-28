@@ -1,9 +1,14 @@
-import { SyncChange } from "@enlangmemo/sync-api";
-import { cardsTable } from "@main/db/schema/repetition/rep.js";
+import { EntityType, SyncChange } from "@enlangmemo/sync-api";
+import { cardsTable, notesTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
 import type { RepTx } from "../../push/collector/change/rep-tx.js";
-import { remoteWins, upsertTombstone } from "./common.js";
+import {
+    deleteTombstoneIfExists,
+    getRemoteDeletedAt,
+    remoteWins,
+    upsertTombstone,
+} from "./common.js";
 
 export function applyCardUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "card") {
@@ -42,5 +47,37 @@ export function applyCardUpsert(tx: RepTx, change: SyncChange): void {
             queue: payload.queue,
         })
         .where(eq(cardsTable.id, id))
+        .run();
+}
+
+export function applyCardDelete(tx: RepTx, change: SyncChange): void {
+    const id = Buffer.from(change.entityId);
+    const deletedAt = getRemoteDeletedAt(change);
+    const row = tx.select({ noteId: cardsTable.noteId })
+        .from(cardsTable)
+        .where(eq(cardsTable.id, id))
+        .get();
+
+    if (!row) {
+        deleteTombstoneIfExists(tx, id);
+        return;
+    }
+
+    tx.delete(cardsTable)
+        .where(eq(cardsTable.id, id))
+        .run();
+    deleteTombstoneIfExists(tx, id);
+
+    const note = tx.select({ id: notesTable.id })
+        .from(notesTable)
+        .where(eq(notesTable.id, row.noteId))
+        .get();
+    if (!note) {
+        return;
+    }
+
+    upsertTombstone(tx, EntityType.NOTE, note.id, deletedAt);
+    tx.delete(notesTable)
+        .where(eq(notesTable.id, note.id))
         .run();
 }

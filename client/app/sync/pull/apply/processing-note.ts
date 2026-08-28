@@ -3,7 +3,8 @@ import { processingNotesTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
 import type { RepTx } from "../../push/collector/change/rep-tx.js";
-import { parseFields, remoteWins, upsertTombstone } from "./common.js";
+import { deleteTombstoneIfExists, parseJson, remoteWins, upsertTombstone } from "./common.js";
+import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 
 export function applyPcsNoteUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "processingNote") {
@@ -31,8 +32,26 @@ export function applyPcsNoteUpsert(tx: RepTx, change: SyncChange): void {
             createdAt: toInt(payload.createdAt),
             updatedAt: toInt(payload.updatedAt),
             senseId: payload.senseId,
-            fields: parseFields(payload.fieldsJson),
+            fields: parseJson<NoteField[]>(payload.fieldsJson),
         })
         .where(eq(processingNotesTable.id, id))
         .run();
+}
+
+export function applyPcsNoteDelete(tx: RepTx, change: SyncChange): void {
+    const id = Buffer.from(change.entityId);
+    const row = tx.select({ id: processingNotesTable.id })
+        .from(processingNotesTable)
+        .where(eq(processingNotesTable.id, id))
+        .get();
+
+    if (!row) {
+        deleteTombstoneIfExists(tx, id);
+        return;
+    }
+
+    tx.delete(processingNotesTable)
+        .where(eq(processingNotesTable.id, id))
+        .run();
+    deleteTombstoneIfExists(tx, id);
 }

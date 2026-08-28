@@ -1,9 +1,10 @@
-import { EntityType } from "@enlangmemo/sync-api";
+import { EntityType, SyncChange } from "@enlangmemo/sync-api";
 import { collectionTable, noteTypesTable, tombstonesTable } from "@main/db/schema/repetition/rep.js";
 import type { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 import { eq, lt } from "drizzle-orm";
 import type { RepTx } from "../../push/collector/change/rep-tx.js";
 import { resolveSortField } from "@main/db/services/repetition/cards/card-service.js";
+import { toInt } from "@main/sync/helper/type.js";
 
 export function remoteWins(remoteUpdatedAt: number, localUpdatedAt: number): boolean {
     return remoteUpdatedAt >= localUpdatedAt;
@@ -13,29 +14,20 @@ export function parseJson<T>(json: string): T {
     return JSON.parse(json) as T;
 }
 
+export function getRemoteDeletedAt(change: SyncChange): number {
+    if (change.deletedAt === undefined) {
+        throw new Error(`DELETE change missing deletedAt for entity type: ${change.entityType}`);
+    }
+
+    return toInt(change.deletedAt);
+}
+
 export function upsertTombstone(
     tx: RepTx,
     entityType: EntityType,
     entityId: Buffer,
     deletedAt: number,
 ): void {
-    const existing = tx.select({ unitId: tombstonesTable.unitId })
-        .from(tombstonesTable)
-        .where(eq(tombstonesTable.unitId, entityId))
-        .get();
-
-    if (existing) {
-        tx.update(tombstonesTable)
-            .set({
-                usn: -1,
-                deletedAt,
-                unitType: entityType,
-            })
-            .where(eq(tombstonesTable.unitId, entityId))
-            .run();
-        return;
-    }
-
     tx.insert(tombstonesTable)
         .values({
             unitId: entityId,
@@ -43,6 +35,20 @@ export function upsertTombstone(
             deletedAt,
             unitType: entityType,
         })
+        .onConflictDoUpdate({
+            target: tombstonesTable.unitId,
+            set: {
+                usn: -1,
+                deletedAt,
+                unitType: entityType,
+            },
+        })
+        .run();
+}
+
+export function deleteTombstoneIfExists(tx: RepTx, entityId: Buffer): void {
+    tx.delete(tombstonesTable)
+        .where(eq(tombstonesTable.unitId, entityId))
         .run();
 }
 

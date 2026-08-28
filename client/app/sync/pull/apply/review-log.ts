@@ -3,7 +3,7 @@ import { reviewLogsTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
 import type { RepTx } from "../../push/collector/change/rep-tx.js";
-import { upsertTombstone } from "./common.js";
+import { deleteTombstoneIfExists, upsertTombstone } from "./common.js";
 
 export function applyReviewLogUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "reviewLog") {
@@ -36,4 +36,22 @@ export function applyReviewLogUpsert(tx: RepTx, change: SyncChange): void {
         })
         .where(eq(reviewLogsTable.id, id))
         .run();
+}
+
+export function applyReviewLogDelete(tx: RepTx, change: SyncChange): void {
+    const id = Buffer.from(change.entityId);
+    const row = tx.select({ id: reviewLogsTable.id })
+        .from(reviewLogsTable)
+        .where(eq(reviewLogsTable.id, id))
+        .get();
+
+    if (!row) {
+        deleteTombstoneIfExists(tx, id);
+        return;
+    }
+
+    tx.delete(reviewLogsTable)
+        .where(eq(reviewLogsTable.id, id))
+        .run();
+    deleteTombstoneIfExists(tx, id);
 }

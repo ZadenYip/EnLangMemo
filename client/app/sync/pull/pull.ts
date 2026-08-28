@@ -22,13 +22,13 @@ import Logger from "electron-log/main.js";
 import { RepTx } from "../push/collector/change/rep-tx.js";
 import { toInt } from "../helper/type.js";
 import { getRepDb } from "@main/db/db.js";
-import { applyCardUpsert } from "./apply/card.js";
+import { applyCardDelete, applyCardUpsert } from "./apply/card.js";
 import { applyCollectionUpsert as applyColUpsert } from "./apply/collection.js";
-import { applyDeckUpsert } from "./apply/deck.js";
-import { applyNoteTypeUpsert } from "./apply/note-type.js";
-import { applyNoteUpsert } from "./apply/note.js";
-import { applyPcsNoteUpsert as applyPcsNoteUpsert } from "./apply/processing-note.js";
-import { applyReviewLogUpsert } from "./apply/review-log.js";
+import { applyDeckDelete, applyDeckUpsert } from "./apply/deck.js";
+import { applyNoteTypeDelete, applyNoteTypeUpsert } from "./apply/note-type.js";
+import { applyNoteDelete, applyNoteUpsert } from "./apply/note.js";
+import { applyPcsNoteDelete, applyPcsNoteUpsert as applyPcsNoteUpsert } from "./apply/processing-note.js";
+import { applyReviewLogDelete, applyReviewLogUpsert } from "./apply/review-log.js";
 import { updatePullSyncCursor } from "./apply/common.js";
 
 export function pull$(): Observable<PullResult> {
@@ -195,6 +195,27 @@ function applyUpsert(tx: RepTx, change: SyncChange): void {
 }
 
 function applyDelete(tx: RepTx, change: SyncChange): void {
-    void tx;
-    throw new Error(`applyDelete is not implemented yet for entity type: ${change.entityType}`);
+    switch (change.entityType) {
+        case EntityType.REVIEW_LOG:
+            applyReviewLogDelete(tx, change);
+            return;
+        case EntityType.CARD:
+            applyCardDelete(tx, change);
+            return;
+        case EntityType.NOTE:
+            applyNoteDelete(tx, change);
+            return;
+        case EntityType.PROCESSING_NOTE:
+            applyPcsNoteDelete(tx, change);
+            return;
+        case EntityType.NOTE_TYPE:
+            applyNoteTypeDelete(tx, change);
+            return;
+        case EntityType.DECK:
+            applyDeckDelete(tx, change);
+            return;
+        case EntityType.COLLECTION:
+        default:
+            throw new Error(`applyDelete: unsupported entity type: ${change.entityType}`);
+    }
 }
