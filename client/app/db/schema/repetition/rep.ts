@@ -213,8 +213,7 @@ export const tombstonesTable = sqliteTable(
         usn: int("usn").notNull(), // -1 表示本地删除
         deletedAt: int("deleted_at").notNull(), // 删除时间戳
         unitType: int("unit_type").notNull(), // 0=unspecified, 1=collection, 2=deck, 3=note_type, 4=note, 5=processing_note, 6=card, 7=review_log
-    },
-    (table) => [index("ix_tombstones_usn").on(table.usn)],
+    }
 );
 
 // ================== Relations ==================
