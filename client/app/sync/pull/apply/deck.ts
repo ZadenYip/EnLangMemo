@@ -1,15 +1,14 @@
-import { EntityType, SyncChange } from "@enlangmemo/sync-api";
-import { cardsTable, decksTable, notesTable } from "@main/db/schema/repetition/rep.js";
+import { SyncChange } from "@enlangmemo/sync-api";
+import { decksTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
-import type { RepTx } from "../../push/collector/change/rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import {
-    deleteTombstoneIfExists,
     getRemoteDeletedAt,
     parseJson,
     remoteWins,
-    upsertTombstone,
 } from "./common.js";
+import { deleteDeckWithCascade, deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";
 
 export function applyDeckUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "deck") {
@@ -58,30 +57,6 @@ export function applyDeckDelete(tx: RepTx, change: SyncChange): void {
         return;
     }
 
-    const cards = tx.select({ id: cardsTable.id, noteId: cardsTable.noteId })
-        .from(cardsTable)
-        .where(eq(cardsTable.deckId, id))
-        .all();
-    for (const card of cards) {
-        upsertTombstone(tx, EntityType.CARD, card.id, deletedAt);
-        tx.delete(cardsTable)
-            .where(eq(cardsTable.id, card.id))
-            .run();
-
-        const note = tx.select({ id: notesTable.id })
-            .from(notesTable)
-            .where(eq(notesTable.id, card.noteId))
-            .get();
-        if (note) {
-            upsertTombstone(tx, EntityType.NOTE, note.id, deletedAt);
-            tx.delete(notesTable)
-                .where(eq(notesTable.id, note.id))
-                .run();
-        }
-    }
-
-    tx.delete(decksTable)
-        .where(eq(decksTable.id, id))
-        .run();
+    deleteDeckWithCascade(tx, id, deletedAt);
     deleteTombstoneIfExists(tx, id);
 }

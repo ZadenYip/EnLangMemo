@@ -1,11 +1,10 @@
-import { EntityType, SyncChange } from "@enlangmemo/sync-api";
-import { collectionTable, noteTypesTable, tombstonesTable } from "@main/db/schema/repetition/rep.js";
+import { SyncChange } from "@enlangmemo/sync-api";
+import { collectionTable, noteTypesTable } from "@main/db/schema/repetition/rep.js";
 import type { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 import { eq, lt } from "drizzle-orm";
-import type { RepTx } from "../../push/collector/change/rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import { resolveSortField } from "@main/db/services/repetition/cards/card-service.js";
 import { toInt } from "@main/sync/helper/type.js";
-import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 export function remoteWins(remoteUpdatedAt: number, localUpdatedAt: number): boolean {
     return remoteUpdatedAt >= localUpdatedAt;
@@ -21,36 +20,6 @@ export function getRemoteDeletedAt(change: SyncChange): number {
     }
 
     return toInt(change.deletedAt);
-}
-
-export function upsertTombstone(
-    tx: RepTx,
-    entityType: EntityType,
-    entityId: Buffer,
-    deletedAt: number,
-): void {
-    tx.insert(tombstonesTable)
-        .values({
-            unitId: entityId,
-            usn: PendingLocalUsn,
-            deletedAt,
-            unitType: entityType,
-        })
-        .onConflictDoUpdate({
-            target: tombstonesTable.unitId,
-            set: {
-                usn: PendingLocalUsn,
-                deletedAt,
-                unitType: entityType,
-            },
-        })
-        .run();
-}
-
-export function deleteTombstoneIfExists(tx: RepTx, entityId: Buffer): void {
-    tx.delete(tombstonesTable)
-        .where(eq(tombstonesTable.unitId, entityId))
-        .run();
 }
 
 export function resolveNoteSortField(tx: RepTx, noteTypeId: Buffer, fields: NoteField[]): string {

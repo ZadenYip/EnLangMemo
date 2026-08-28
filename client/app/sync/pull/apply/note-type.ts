@@ -2,14 +2,13 @@ import { EntityType, SyncChange } from "@enlangmemo/sync-api";
 import { cardsTable, notesTable, noteTypesTable, processingNotesTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
-import type { RepTx } from "../../push/collector/change/rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import {
-    deleteTombstoneIfExists,
     getRemoteDeletedAt,
     parseJson,
     remoteWins,
-    upsertTombstone,
 } from "./common.js";
+import { deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";
 
 export function applyNoteTypeUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "noteType") {

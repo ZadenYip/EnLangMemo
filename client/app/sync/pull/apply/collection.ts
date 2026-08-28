@@ -4,7 +4,7 @@ import { SyncChange } from "@enlangmemo/sync-api";
 import { collectionTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
-import type { RepTx } from "../../push/collector/change/rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import { parseJson, remoteWins } from "./common.js";
 
 

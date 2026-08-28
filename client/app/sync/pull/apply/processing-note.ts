@@ -2,8 +2,9 @@ import { SyncChange } from "@enlangmemo/sync-api";
 import { processingNotesTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
-import type { RepTx } from "../../push/collector/change/rep-tx.js";
-import { deleteTombstoneIfExists, parseJson, remoteWins, upsertTombstone } from "./common.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
+import { parseJson, remoteWins } from "./common.js";
+import { deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";
 import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 
 export function applyPcsNoteUpsert(tx: RepTx, change: SyncChange): void {

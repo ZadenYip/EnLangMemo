@@ -5,7 +5,7 @@ import { cardsTable, notesTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
 import { getUnsyncedReviewLogsByCardId, ReviewLogChange } from "./review-log.js";
 import { CardChange } from "./card.js";
-import type { RepTx } from "./rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 type NoteChange = Pick<

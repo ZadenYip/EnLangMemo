@@ -9,7 +9,7 @@ import {
 import { getRepDb } from "@main/db/db.js";
 import { collectionTable } from "@main/db/schema/repetition/rep.js";
 import { eq, lt } from "drizzle-orm";
-import type { RepTx } from "./rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import Logger from "electron-log/main.js";
 import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 

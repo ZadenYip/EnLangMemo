@@ -12,7 +12,7 @@ import { assignCardUsn, getCardChanges, toCardSyncChange } from "./change/card.j
 import { assignReviewLogUsn, getReviewChanges, toReviewLogSyncChange } from "./change/review-log.js";
 import { assignPcsUsn, getPcsChanges, toPcsSyncChange } from "./change/processing-note.js";
 import { deleteSyncedTombstone, getTombstoneChanges, toTombstoneSyncChange } from "./change/tombstone.js";
-import type { RepTx } from "./change/rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import { toInt } from "@main/sync/helper/type.js";
 
 export interface CollectResult {

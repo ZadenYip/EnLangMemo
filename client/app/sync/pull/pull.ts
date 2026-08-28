@@ -19,7 +19,7 @@ import {
 import { Observable } from "rxjs";
 import { ApplyResult, PullResult } from "./pull-types.js";
 import Logger from "electron-log/main.js";
-import { RepTx } from "../push/collector/change/rep-tx.js";
+import { RepTx } from "@main/db/services/repetition/helper/type.js";
 import { toInt } from "../helper/type.js";
 import { getRepDb } from "@main/db/db.js";
 import { applyCardDelete, applyCardUpsert } from "./apply/card.js";

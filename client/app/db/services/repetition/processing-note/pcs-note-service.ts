@@ -17,7 +17,7 @@ import {
 } from "./pcs-note-types.js";
 import { EntityType } from "@enlangmemo/sync-api";
 import { PendingLocalUsn } from "@main/sync/helper/usn.js";
-import { upsertTombstone } from "@main/sync/pull/apply/common.js";
+import { upsertTombstone } from "../helper/delete.js";
 
 /**
  * Service for processing notes waiting in the bench pool.
