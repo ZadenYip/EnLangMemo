@@ -148,6 +148,8 @@ export class PcsNoteService {
                 noteType.noteTemplate,
                 tx,
             );
+            // TODO 这里可能后面修改的笔记内容保存了，但是没同步刀服务器所以移动还是依然最好删除
+            // 可能最好单独多一个字段标记下是否同步到服务器更好？
             if (noteType.usn != -1) {
                 // if already synced, add tombstone for deletion on server
                 tx.insert(tombstonesTable).values({
