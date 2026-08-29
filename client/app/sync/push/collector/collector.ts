@@ -22,6 +22,8 @@ export interface CollectResult {
     sizeExceeded: boolean;
     /** ID cursor to use as the exclusive lower bound for the next collect pass. */
     nextStartAfterId: Buffer;
+    /** Entity type cursor used by tombstone collection order. */
+    nextStartUnitType?: EntityType;
 }
 
 export class PushCollector {
@@ -219,9 +221,9 @@ export class PushCollector {
         return result;
     }
 
-    collectTombstoneChanges(startAfterId: Buffer): CollectResult {
+    collectTombstoneChanges(startUnitType: EntityType, startAfterId: Buffer): CollectResult {
         const limit = syncEntityLimits.tombstone;
-        const rows = getTombstoneChanges(limit + 1, startAfterId);
+        const rows = getTombstoneChanges(limit + 1, startUnitType, startAfterId);
         const result: CollectResult = {
             hasMore: rows.length > limit,
             sizeExceeded: false,
@@ -235,6 +237,7 @@ export class PushCollector {
                 result.sizeExceeded = true;
                 break;
             }
+            result.nextStartUnitType = row.unitType as EntityType;
             result.nextStartAfterId = row.unitId;
         }
 

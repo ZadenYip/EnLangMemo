@@ -5,6 +5,7 @@ import { toInt } from "../../helper/type.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import {
     getRemoteDeletedAt,
+    hasTombstone,
     parseJson,
     remoteWins,
     resolveNoteSortField,
@@ -12,6 +13,7 @@ import {
 import { deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";
 import { buildSearchFields } from "@main/db/services/repetition/cards/card-service.js";
 import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
+import { isNoteTypeExists } from "./note-type.js";
 
 export function applyNoteUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "note") {
@@ -25,7 +27,29 @@ export function applyNoteUpsert(tx: RepTx, change: SyncChange): void {
         .where(eq(notesTable.id, id))
         .get();
     if (!row) {
-        upsertTombstone(tx, change.entityType, id, Date.now());
+        if (hasTombstone(tx, id)) {
+            return;
+        }
+        
+        const noteTypeId = Buffer.from(payload.noteTypeId);
+        
+        if (!isNoteTypeExists(tx, noteTypeId)) {
+            upsertTombstone(tx, change.entityType, id, Date.now());
+            return;
+        }
+
+        const fields = parseJson<NoteField[]>(payload.fieldsJson);
+        tx.insert(notesTable).values({
+            id,
+            noteTypeId,
+            usn: toInt(change.usn),
+            createdAt: toInt(payload.createdAt),
+            updatedAt: toInt(payload.updatedAt),
+            senseId: payload.senseId,
+            sortField: resolveNoteSortField(tx, noteTypeId, fields),
+            searchFields: buildSearchFields(fields),
+            fields,
+        }).run();
         return;
     }
     if (!remoteWins(toInt(payload.updatedAt), row.updatedAt)) {
@@ -77,4 +101,13 @@ export function applyNoteDelete(tx: RepTx, change: SyncChange): void {
         .where(eq(notesTable.id, id))
         .run();
     deleteTombstoneIfExists(tx, id);
+}
+
+export function isNoteExists(tx: RepTx, noteId: Buffer): boolean {
+    const row = tx.select({ dummy: notesTable.usn })
+        .from(notesTable)
+        .where(eq(notesTable.id, noteId))
+        .get();
+
+    return row !== undefined;
 }

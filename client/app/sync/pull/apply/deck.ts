@@ -5,10 +5,11 @@ import { toInt } from "../../helper/type.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import {
     getRemoteDeletedAt,
+    hasTombstone,
     parseJson,
     remoteWins,
 } from "./common.js";
-import { deleteDeckWithCascade, deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";
+import { deleteDeckWithCascade, deleteTombstoneIfExists } from "@main/db/services/repetition/helper/delete.js";
 
 export function applyDeckUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "deck") {
@@ -22,7 +23,20 @@ export function applyDeckUpsert(tx: RepTx, change: SyncChange): void {
         .where(eq(decksTable.id, id))
         .get();
     if (!row) {
-        upsertTombstone(tx, change.entityType, id, Date.now());
+        if (hasTombstone(tx, id)) {
+            return;
+        }
+        tx.insert(decksTable).values({
+            id,
+            usn: toInt(change.usn),
+            name: payload.name,
+            updatedAt: toInt(payload.updatedAt),
+            newCardsPerDay: payload.newCardsPerDay,
+            newLearnedToday: payload.newLearnedToday,
+            learnedToday: payload.learnedToday,
+            reviewedToday: payload.reviewedToday,
+            config: parseJson(payload.configJson),
+        }).run();
         return;
     }
     if (!remoteWins(toInt(payload.updatedAt), row.updatedAt)) {
@@ -59,4 +73,13 @@ export function applyDeckDelete(tx: RepTx, change: SyncChange): void {
 
     deleteDeckWithCascade(tx, id, deletedAt);
     deleteTombstoneIfExists(tx, id);
+}
+
+export function isDeckExists(tx: RepTx, deckId: Buffer): boolean {
+    const row = tx.select({ dummy: decksTable.usn })
+        .from(decksTable)
+        .where(eq(decksTable.id, deckId))
+        .get();
+
+    return row !== undefined;
 }

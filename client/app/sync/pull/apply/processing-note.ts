@@ -3,9 +3,10 @@ import { processingNotesTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
-import { parseJson, remoteWins } from "./common.js";
+import { hasTombstone, parseJson, remoteWins } from "./common.js";
 import { deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";
 import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
+import { isNoteTypeExists } from "./note-type.js";
 
 export function applyPcsNoteUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "processingNote") {
@@ -19,7 +20,23 @@ export function applyPcsNoteUpsert(tx: RepTx, change: SyncChange): void {
         .where(eq(processingNotesTable.id, id))
         .get();
     if (!row) {
-        upsertTombstone(tx, change.entityType, id, Date.now());
+        if (hasTombstone(tx, id)) {
+            return;
+        }
+        const noteTypeId = Buffer.from(payload.noteTypeId);
+        if (!isNoteTypeExists(tx, noteTypeId)) {
+            upsertTombstone(tx, change.entityType, id, Date.now());
+            return;
+        }
+        tx.insert(processingNotesTable).values({
+            id,
+            noteTypeId,
+            usn: toInt(change.usn),
+            createdAt: toInt(payload.createdAt),
+            updatedAt: toInt(payload.updatedAt),
+            senseId: payload.senseId,
+            fields: parseJson<NoteField[]>(payload.fieldsJson),
+        }).run();
         return;
     }
     if (!remoteWins(toInt(payload.updatedAt), row.updatedAt)) {

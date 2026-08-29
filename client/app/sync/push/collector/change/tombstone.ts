@@ -7,7 +7,7 @@ import {
 import type { SyncChange } from "@enlangmemo/sync-api";
 import { getRepDb } from "@main/db/db.js";
 import { tombstonesTable } from "@main/db/schema/repetition/rep.js";
-import { and, asc, eq, gt } from "drizzle-orm";
+import { and, asc, eq, gt, or } from "drizzle-orm";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
@@ -16,7 +16,7 @@ export type TombstoneChange = Pick<
     "unitId" | "usn" | "unitType" | "deletedAt"
 >;
 
-export function getTombstoneChanges(limit: number, startAfterId: Buffer): TombstoneChange[] {
+export function getTombstoneChanges(limit: number, startUnitType: EntityType, startAfterId: Buffer): TombstoneChange[] {
     return getRepDb()
         .select({
             unitId: tombstonesTable.unitId,
@@ -25,11 +25,18 @@ export function getTombstoneChanges(limit: number, startAfterId: Buffer): Tombst
             deletedAt: tombstonesTable.deletedAt,
         })
         .from(tombstonesTable)
+        // (-1, unitType, unitId) >= (-1, startUnitType, startAfterId)
         .where(and(
             eq(tombstonesTable.usn, PendingLocalUsn),
-            gt(tombstonesTable.unitId, startAfterId),
+            or(
+                and(
+                    eq(tombstonesTable.unitType, startUnitType),
+                    gt(tombstonesTable.unitId, startAfterId),
+                ),
+                gt(tombstonesTable.unitType, startUnitType),
+            ),
         ))
-        .orderBy(asc(tombstonesTable.unitId))
+        .orderBy(asc(tombstonesTable.unitType), asc(tombstonesTable.unitId))
         .limit(limit)
         .all();
 }

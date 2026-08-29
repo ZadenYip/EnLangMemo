@@ -5,10 +5,12 @@ import { toInt } from "../../helper/type.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import {
     getRemoteDeletedAt,
+    hasTombstone,
     parseJson,
     remoteWins,
 } from "./common.js";
 import { deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";
+import { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types.js";
 
 export function applyNoteTypeUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "noteType") {
@@ -22,7 +24,17 @@ export function applyNoteTypeUpsert(tx: RepTx, change: SyncChange): void {
         .where(eq(noteTypesTable.id, id))
         .get();
     if (!row) {
-        upsertTombstone(tx, change.entityType, id, Date.now());
+        if (hasTombstone(tx, id)) {
+            return;
+        }
+        tx.insert(noteTypesTable).values({
+            id,
+            name: payload.name,
+            presetTemplateId: payload.presetTemplateId,
+            usn: toInt(change.usn),
+            updatedAt: toInt(payload.updatedAt),
+            noteTemplate: parseJson<NoteTemplate>(payload.noteTemplateJson),
+        }).run();
         return;
     }
     if (!remoteWins(toInt(payload.updatedAt), row.updatedAt)) {
@@ -91,4 +103,13 @@ export function applyNoteTypeDelete(tx: RepTx, change: SyncChange): void {
         .where(eq(noteTypesTable.id, id))
         .run();
     deleteTombstoneIfExists(tx, id);
+}
+
+export function isNoteTypeExists(tx: RepTx, noteTypeId: Buffer): boolean {
+    const row = tx.select({ dummy: noteTypesTable.usn })
+        .from(noteTypesTable)
+        .where(eq(noteTypesTable.id, noteTypeId))
+        .get();
+
+    return row !== undefined;
 }

@@ -142,6 +142,7 @@ function applyPullResponse(tx: RepTx, resp: PullResponse): void {
         batchMaxUsn = Math.max(batchMaxUsn, toInt(change.usn));
         applySyncChange(tx, change);
     }
+    // 如果为空那么 batchMaxUsn 就是 0，resp.batchMaxUsn 也应该是 0
     if (batchMaxUsn != toInt(resp.batchMaxUsn)) {
         const msg = `applyPullResponse: batchMaxUsn mismatch: expected ${resp.batchMaxUsn} in ${resp.batchSeq}, got ${batchMaxUsn}`;
         Logger.error(msg);

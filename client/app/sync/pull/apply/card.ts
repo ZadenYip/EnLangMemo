@@ -1,13 +1,16 @@
 import { EntityType, SyncChange } from "@enlangmemo/sync-api";
-import { cardsTable, notesTable } from "@main/db/schema/repetition/rep.js";
+import { cardsTable, decksTable, notesTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import {
     getRemoteDeletedAt,
+    hasTombstone,
     remoteWins,
 } from "./common.js";
 import { deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";
+import { isNoteExists } from "./note.js";
+import { isDeckExists } from "./deck.js";
 
 export function applyCardUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "card") {
@@ -21,7 +24,36 @@ export function applyCardUpsert(tx: RepTx, change: SyncChange): void {
         .where(eq(cardsTable.id, id))
         .get();
     if (!row) {
-        upsertTombstone(tx, change.entityType, id, Date.now());
+        if (hasTombstone(tx, id)) {
+            return;
+        }
+        const noteId = Buffer.from(payload.noteId);
+        const deckId = Buffer.from(payload.deckId);
+
+        const noteExists = isNoteExists(tx, noteId);
+        const deckExists = isDeckExists(tx, deckId);
+        if (!noteExists || !deckExists) {
+            upsertTombstone(tx, change.entityType, id, Date.now());
+            return;
+        }
+
+        tx.insert(cardsTable).values({
+            id,
+            noteId,
+            deckId,
+            usn: toInt(change.usn),
+            updatedAt: toInt(payload.updatedAt),
+            difficulty: payload.difficulty,
+            stability: payload.stability,
+            scheduledDays: payload.scheduledDays,
+            due: toInt(payload.due),
+            lastReview: payload.lastReview !== undefined ? toInt(payload.lastReview) : null,
+            lapses: payload.lapses,
+            learningSteps: payload.learningSteps,
+            repetitions: payload.repetitions,
+            state: payload.state,
+            queue: payload.queue,
+        }).run();
         return;
     }
     if (!remoteWins(toInt(payload.updatedAt), row.updatedAt)) {

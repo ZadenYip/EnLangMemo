@@ -127,14 +127,21 @@ function collectPushBatch(
     // This cursor only lives inside the current batch. After the batch is
     // acknowledged, assigned USNs remove those rows from later usn=-1 queries.
     let cursorId = zeroUuid;
+    let cursorUnitType: EntityType = EntityType.COLLECTION;
 
     while (!queue.isEmpty()) {
         const entityType = queue.peek()!;
 
-        const result = collectByType(collector, entityType, cursorId);
+        const result = collectByType(collector, entityType, cursorUnitType, cursorId);
         cursorId = result.nextStartAfterId;
 
+        // just use for tombstone changes
+        if (result.nextStartUnitType !== undefined) {
+            cursorUnitType = result.nextStartUnitType;
+        }
+
         if (entityType === EntityType.NOTE) {
+            // This batch prevents 
             // Note changes are collected with their related card/review-log rows,
             // so keep collecting notes while this batch still has capacity.
             if (!result.sizeExceeded && result.hasMore) {
@@ -147,6 +154,8 @@ function collectPushBatch(
                 queue.pop();
                 cursorId = zeroUuid;
             }
+            // Note changes would end the batch, because it's need to prevent collector from 
+            // collecting repetitive card/review-log changes for the same note in the next batch. So break here.
             break;
         }
 
@@ -173,6 +182,7 @@ function collectPushBatch(
 function collectByType(
     collector: PushCollector,
     entityType: SyncEntityType,
+    startUnitType: EntityType,
     startAfterId: Buffer,
 ): CollectResult {
     switch (entityType) {
@@ -183,7 +193,7 @@ function collectByType(
         case EntityType.NOTE:
             return collector.collectNoteCascadeChanges(startAfterId);
         case TombstoneType:
-            return collector.collectTombstoneChanges(startAfterId);
+            return collector.collectTombstoneChanges(startUnitType, startAfterId);
         case EntityType.PROCESSING_NOTE:
             return collector.collectProcessingNoteChanges(startAfterId);
         case EntityType.NOTE_TYPE:

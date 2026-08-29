@@ -3,7 +3,7 @@ import { reviewLogsTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
-import { deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";
+import { deleteTombstoneIfExists } from "@main/db/services/repetition/helper/delete.js";
 
 export function applyReviewLogUpsert(tx: RepTx, change: SyncChange): void {
     if (change.payload.case !== "reviewLog") {
@@ -17,7 +17,21 @@ export function applyReviewLogUpsert(tx: RepTx, change: SyncChange): void {
         .where(eq(reviewLogsTable.id, id))
         .get();
     if (!row) {
-        upsertTombstone(tx, change.entityType, id, Date.now());
+        // If the review log does not exist, insert a new record
+        // don't need to check cardId existence because the review log is a historical record.
+        tx.insert(reviewLogsTable).values({
+            id,
+            cardId: Buffer.from(payload.cardId),
+            usn: toInt(change.usn),
+            reviewTime: toInt(payload.reviewTime),
+            scheduledDays: payload.scheduledDays,
+            rating: payload.rating,
+            difficulty: payload.difficulty,
+            stability: payload.stability,
+            learningSteps: payload.learningSteps,
+            state: payload.state,
+            duration: payload.duration,
+        }).run();
         return;
     }
 
