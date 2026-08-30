@@ -213,7 +213,8 @@ export const tombstonesTable = sqliteTable(
         usn: int("usn").notNull(), // PendingLocalUsn means locally deleted and pending push.
         deletedAt: int("deleted_at").notNull(), // Deletion timestamp.
         unitType: int("unit_type").notNull(), // 0=unspecified, 1=collection, 2=deck, 3=note_type, 4=note, 5=processing_note, 6=card, 7=review_log
-    }
+    },
+    (table) => [index("ix_tombstones_usn").on(table.usn, table.unitType, table.unitId)],
 );
 
 // ================== Relations ==================

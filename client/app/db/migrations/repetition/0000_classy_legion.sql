@@ -106,4 +106,4 @@ CREATE TABLE `tombstones` (
 	`unit_type` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX `ix_tombstones_usn` ON `tombstones` (`usn`);
+CREATE INDEX `ix_tombstones_usn` ON `tombstones` (`usn`,`unit_type`,`unit_id`);

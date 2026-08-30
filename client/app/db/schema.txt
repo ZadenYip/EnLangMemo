@@ -294,6 +294,10 @@ Table tombstones {
     7 对应 review_log
   ''']
 
+  indexes {
+    (usn, unit_type, unit_id) [name: 'ix_tombstones_usn', note: '同步用']
+  }
+
   Note: '功能类似 Anki 的 grave'
 }
 
