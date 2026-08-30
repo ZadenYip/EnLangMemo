@@ -1,5 +1,5 @@
 import { EntityType, SyncChange } from "@enlangmemo/sync-api";
-import { cardsTable, decksTable, notesTable } from "@main/db/schema/repetition/rep.js";
+import { cardsTable, notesTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
 import { toInt } from "../../helper/type.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
