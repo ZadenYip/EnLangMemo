@@ -99,8 +99,6 @@ export class HomeComponent implements OnInit {
      * @param deck the deck to be deleted emitted from subcomponent.
      */
     async confirmDeleteDeck(deck: Deck): Promise<void> {
-        // TODO 删除牌组会对应删除所有卡片，让用户确定。下面还没实现对应的删除逻辑只有卡片本身
-        return;
         const title = this.translateService.instant("PAGES.HOME.DECKS.DELETE_TITLE");
         const message = this.translateService.instant("PAGES.HOME.DECKS.DELETE_CONFIRM", {
             name: deck.name,
