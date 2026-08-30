@@ -45,6 +45,7 @@ export class PushCollector {
     private addChange(changes: SyncChange[]): boolean {
         let changesSize = 0;
         for (const c of changes) {
+            Logger.info(`adding change to push batch, entityType: ${c.entityType}, entityId: ${Buffer.from(c.entityId).toString("hex")}, op: ${c.op}`);
             const size = estSyncChangeSize(c);
             changesSize += size;
         }
