@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "10791bc4-4c32-4b87-8d34-d1b273d8162a",
+  "id": "7da635b5-8dce-4d85-a09a-bdf7221e4276",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -679,7 +679,9 @@
         "ix_tombstones_usn": {
           "name": "ix_tombstones_usn",
           "columns": [
-            "usn"
+            "usn",
+            "unit_type",
+            "unit_id"
           ],
           "isUnique": false
         }

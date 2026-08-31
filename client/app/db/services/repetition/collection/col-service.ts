@@ -8,6 +8,8 @@ import Logger from "electron-log/main.js";
 import { ColConfig } from "./col-service-types.js";
 import { collectionTable } from "@main/db/schema/repetition/rep.js";
 import { getColConfig } from "./col-service-helper.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
+import { reloadToken } from "@main/oauth/token-store.js";
 
 export class CollectionService implements ICollectionService {
     /**
@@ -95,6 +97,8 @@ export class CollectionService implements ICollectionService {
 
         // Reinitialize database with new collection
         reInitDatabase(config);
+        reloadToken();
+
         Logger.info(`Switched to collection: ${collectionName}`);
     }
     
@@ -111,7 +115,7 @@ export class CollectionService implements ICollectionService {
         const repDb = getRepDb();
         const collectionRecords = await repDb
         .select({
-                config: collectionTable.config
+                config: collectionTable.config,
             })
         .from(collectionTable);
         const collectionRecord = collectionRecords[0];
@@ -126,7 +130,7 @@ export class CollectionService implements ICollectionService {
 
         repDb.update(collectionTable).set({
             config: nextConfig,
-            usn: -1,
+            usn: PendingLocalUsn,
             updatedAt: Date.now(),
         }).run();
     }

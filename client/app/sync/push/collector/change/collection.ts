@@ -9,8 +9,9 @@ import {
 import { getRepDb } from "@main/db/db.js";
 import { collectionTable } from "@main/db/schema/repetition/rep.js";
 import { eq, lt } from "drizzle-orm";
-import type { RepTx } from "./rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import Logger from "electron-log/main.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 type ColChange = Pick<
     typeof collectionTable.$inferSelect,
@@ -32,7 +33,7 @@ export function getColChange(): SyncChange | null {
             config: collectionTable.config,
         })
         .from(collectionTable)
-        .where(eq(collectionTable.usn, -1))
+        .where(eq(collectionTable.usn, PendingLocalUsn))
         .get();
     if (!row) {
         return null;
@@ -56,7 +57,7 @@ function toColSyncChange(row: ColChange): SyncChange {
         entityId: row.id,
         entityType: EntityType.COLLECTION,
         op: ChangeOp.UPSERT,
-        usn: BigInt(row.usn),
+        usn: BigInt(PendingLocalUsn),
         payload: {
             case: "collection",
             value: payload,

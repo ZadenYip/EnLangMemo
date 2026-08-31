@@ -11,7 +11,7 @@
     <span>{{ "PAGES.HOME.DECKS.SETTINGS" | translate }}</span>
   </div>
 
-    @for (deck of deckOverviewList; track deck.name) {
+    @for (deck of deckService.deckOverviewList(); track deck.name) {
     <div class="deck-row">
       <a class="deck-link" [routerLink]="['/deck', deck.id, 'start']">
         {{ deck.name }}

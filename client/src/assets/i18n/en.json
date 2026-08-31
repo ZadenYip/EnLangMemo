@@ -281,6 +281,13 @@
     "PROGRESS": {
       "TITLE": "Syncing",
       "MESSAGE": "Keep the app open. Other actions are blocked until sync finishes.",
+      "PHASE_PULL_DOWNLOAD": "Downloading remote changes...",
+      "PHASE_PULL_APPLY": "Applying remote changes...",
+      "PHASE_PUSH": "Uploading local changes...",
+      "PULL_BATCHES": "Pull batches downloaded",
+      "PULL_CHANGES": "Changes downloaded",
+      "APPLY_BATCHES": "Pull batches applied",
+      "APPLY_CHANGES": "Changes applied",
       "PUSH_BATCHES": "Push batches completed",
       "PUSH_CHANGES": "Changes uploaded"
     },

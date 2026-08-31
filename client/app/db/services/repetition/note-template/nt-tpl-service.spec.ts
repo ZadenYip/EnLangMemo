@@ -11,6 +11,7 @@ import {
     SENTENCE_MINING_DEFINITION_TPL_NAME,
 } from "./nt-tpl-service-helper.js";
 import { fileURLToPath } from "node:url";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 vi.mock(import("@main/db/db.js"), async () => {
     const mod = await import("@main/db/schema/repetition/rep.js");
@@ -88,7 +89,7 @@ describe("NoteTplService", () => {
         await db.insert(noteTypesTable).values({
             id: generateUUIDV7(),
             name: SENTENCE_MINING_DEFINITION_TPL_NAME,
-            usn: -1,
+            usn: PendingLocalUsn,
             updatedAt: Date.now(),
             noteTemplate: sentenceMiningDefinitionNoteTpl(),
         });
@@ -108,7 +109,7 @@ describe("NoteTplService", () => {
         await db.insert(noteTypesTable).values({
             id: generateUUIDV7(),
             name: "ExplainPkSearch",
-            usn: -1,
+            usn: PendingLocalUsn,
             updatedAt: Date.now(),
             noteTemplate: sentenceMiningDefinitionNoteTpl(),
         });

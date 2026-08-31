@@ -12,8 +12,8 @@ import { assignCardUsn, getCardChanges, toCardSyncChange } from "./change/card.j
 import { assignReviewLogUsn, getReviewChanges, toReviewLogSyncChange } from "./change/review-log.js";
 import { assignPcsUsn, getPcsChanges, toPcsSyncChange } from "./change/processing-note.js";
 import { deleteSyncedTombstone, getTombstoneChanges, toTombstoneSyncChange } from "./change/tombstone.js";
-import type { RepTx } from "./change/rep-tx.js";
-import { toInt } from "@main/sync/helper/type.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
+import { toInt } from "@main/sync/helper/common.js";
 
 export interface CollectResult {
     /** Whether there are more rows remaining after this collection pass. */
@@ -22,6 +22,8 @@ export interface CollectResult {
     sizeExceeded: boolean;
     /** ID cursor to use as the exclusive lower bound for the next collect pass. */
     nextStartAfterId: Buffer;
+    /** Entity type cursor used by tombstone collection order. */
+    nextStartUnitType?: EntityType;
 }
 
 export class PushCollector {
@@ -43,6 +45,7 @@ export class PushCollector {
     private addChange(changes: SyncChange[]): boolean {
         let changesSize = 0;
         for (const c of changes) {
+            Logger.info(`adding change to push batch, entityType: ${c.entityType}, entityId: ${Buffer.from(c.entityId).toString("hex")}, op: ${c.op}`);
             const size = estSyncChangeSize(c);
             changesSize += size;
         }
@@ -219,9 +222,9 @@ export class PushCollector {
         return result;
     }
 
-    collectTombstoneChanges(startAfterId: Buffer): CollectResult {
+    collectTombstoneChanges(startUnitType: EntityType, startAfterId: Buffer): CollectResult {
         const limit = syncEntityLimits.tombstone;
-        const rows = getTombstoneChanges(limit + 1, startAfterId);
+        const rows = getTombstoneChanges(limit + 1, startUnitType, startAfterId);
         const result: CollectResult = {
             hasMore: rows.length > limit,
             sizeExceeded: false,
@@ -235,6 +238,7 @@ export class PushCollector {
                 result.sizeExceeded = true;
                 break;
             }
+            result.nextStartUnitType = row.unitType as EntityType;
             result.nextStartAfterId = row.unitId;
         }
 
@@ -316,11 +320,11 @@ function assignLocalUsn(tx: RepTx, originOp: ChangeOp, type: EntityType, id: Buf
         case EntityType.NOTE_TYPE:
             assignNoteTypeUsn(tx, id, usn);
             return;
-        case EntityType.NOTE:
-            assignNoteUsn(tx, id, usn);
-            return;
         case EntityType.PROCESSING_NOTE:
             assignPcsUsn(tx, id, usn);
+            return;
+        case EntityType.NOTE:
+            assignNoteUsn(tx, id, usn);
             return;
         case EntityType.CARD:
             assignCardUsn(tx, id, usn);

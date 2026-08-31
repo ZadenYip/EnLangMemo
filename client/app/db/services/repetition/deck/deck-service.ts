@@ -8,6 +8,8 @@ import { generatorParameters } from "ts-fsrs";
 import { countCardsByDeckAndQueues, countCardsByDeckQueuesAndStates } from "../cards/card-service.js";
 import { CardQueue, CardState } from "../cards/card-service-types.js";
 import { calcCanLearnToday } from "./deck-service-helper.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
+import { deleteDeckWithCascade } from "../helper/delete.js";
 
 export class DeckService {
     /**
@@ -71,7 +73,7 @@ export class DeckService {
         Logger.info("Creating new deck with name:", deckName);
         await getRepDb().insert(decksTable).values({
             id: generateUUIDV7(),
-            usn: -1,
+            usn: PendingLocalUsn,
             name: deckName,
             updatedAt: Date.now(),
             newCardsPerDay: 20,
@@ -95,7 +97,22 @@ export class DeckService {
      */
     async deleteDeck(deckId: string): Promise<void> {
         Logger.info("Deleting deck with id:", deckId);
-        await getRepDb().delete(decksTable).where(eq(decksTable.id, hexToBuffer(deckId)));
+        const targetId = hexToBuffer(deckId);
+        const deck = await getRepDb().query.decksTable.findFirst({
+            where: eq(decksTable.id, targetId),
+            columns: {
+                usn: true,
+            },
+        });
+        if (!deck) {
+            Logger.info("Deck already absent while deleting:", deckId);
+            return;
+        }
+
+
+        getRepDb().transaction((tx) => {
+            deleteDeckWithCascade(tx, targetId, Date.now());
+        });
         Logger.info("Deck deleted successfully:", deckId);
         return;
     }
@@ -146,6 +163,7 @@ export class DeckService {
             .set({
                 newCardsPerDay,
                 config: deckConfig,
+                usn: PendingLocalUsn,
                 updatedAt: Date.now(),
             })
             .where(eq(decksTable.id, hexToBuffer(deckId)));

@@ -2,7 +2,7 @@ import { getRepDb } from "@main/db/db.js";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils.js";
 import { cardsTable, decksTable, notesTable } from "@main/db/schema/repetition/rep.js";
 import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types.js";
-import type { PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
+import type { NoteField, PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 import { and, count, eq, inArray, lte, SQL } from "drizzle-orm";
 import { createEmptyCard } from "ts-fsrs";
 import { getColConfig } from "../collection/col-service-helper.js";
@@ -12,6 +12,7 @@ import { queryStudyCardsByQueue } from "./card-query.js";
 import { createEmptyCardHandler, getNextReviewDayStart as calcNextReviewDayStart } from "./card-service-helper.js";
 import { CardQueue, CardState, StudyCard, StudyCardRatingPreviews } from "./card-service-types.js";
 import { buildRatingPreviews, getFsrsScheduler } from "./card-scheduler.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 // implementation of card service methods
 export { clearFsrsSchedulerCache } from "./card-scheduler.js";
@@ -38,12 +39,12 @@ export function createCardFromPcsNote(
         .values({
             id: noteId,
             noteTypeId: hexToBuffer(note.noteTplId),
-            usn: -1,
+            usn: PendingLocalUsn,
             createdAt: now,
             updatedAt: now,
             senseId: note.senseId ?? null,
-            sortField: resolveSortField(note, noteTemplate.sortField),
-            searchFields: buildSearchFields(note),
+            sortField: resolveSortField(note.fields, noteTemplate.sortFieldId),
+            searchFields: buildSearchFields(note.fields),
             fields: note.fields,
         })
         .run();
@@ -56,7 +57,7 @@ export function createCardFromPcsNote(
             id: generateUUIDV7(),
             noteId,
             deckId,
-            usn: -1,
+            usn: PendingLocalUsn,
             updatedAt: now,
             difficulty: card.difficulty,
             stability: card.stability,
@@ -200,9 +201,9 @@ export async function getStudyCardRatingPreviews(cardId: string): Promise<StudyC
 /**
  * Resolve sort field text from processing note fields.
  */
-function resolveSortField(note: PcsNote, sortFieldId: number): string {
+export function resolveSortField(fields: NoteField[], sortFieldId: number): string {
     // TODO 清洗html标签
-    const field = note.fields.find((field) => field.id === String(sortFieldId));
+    const field = fields.find((field) => field.id === String(sortFieldId));
     if (!field) {
         throw new Error(`Field with id "${sortFieldId}" not found.`);
     }
@@ -212,9 +213,9 @@ function resolveSortField(note: PcsNote, sortFieldId: number): string {
 /**
  * Build searchable plain text from all processing note field values.
  */
-function buildSearchFields(note: PcsNote): string {
+export function buildSearchFields(fields: NoteField[]): string {
     // TODO future: 清洗html标签
-    return note.fields
+    return fields
         .map((field) => field.value.trim())
         .filter((value) => value.length > 0)
         .join(" ");

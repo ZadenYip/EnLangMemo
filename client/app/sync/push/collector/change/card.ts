@@ -4,7 +4,8 @@ import type { SyncChange } from "@enlangmemo/sync-api";
 import { getRepDb } from "@main/db/db.js";
 import { cardsTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
-import type { RepTx } from "./rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 export type CardChange = Pick<
     typeof cardsTable.$inferSelect,
@@ -46,7 +47,7 @@ export function getCardChanges(limit: number, startAfterId: Buffer): CardChange[
         })
         .from(cardsTable)
         .where(and(
-            eq(cardsTable.usn, -1),
+            eq(cardsTable.usn, PendingLocalUsn),
             gt(cardsTable.id, startAfterId),
         ))
         .orderBy(asc(cardsTable.id))

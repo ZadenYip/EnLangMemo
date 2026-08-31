@@ -11,7 +11,7 @@ export interface NoteTemplate {
     /**
      * Fixed sort field business id, unix timestamp in milliseconds, e.g. 1778079239000.
      */
-    sortField: number;
+    sortFieldId: number;
     /**
      * Fixed field definitions used by notes created from this template.
      */

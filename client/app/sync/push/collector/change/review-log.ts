@@ -3,7 +3,8 @@ import { ChangeOp, EntityType, ReviewLogPayloadSchema, SyncChange, SyncChangeSch
 import { getRepDb } from "@main/db/db.js";
 import { reviewLogsTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
-import type { RepTx } from "./rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 export type ReviewLogChange = Pick<
     typeof reviewLogsTable.$inferSelect,
@@ -38,7 +39,7 @@ export function getReviewChanges(limit: number, startAfterId: Buffer): ReviewLog
         })
         .from(reviewLogsTable)
         .where(and(
-            eq(reviewLogsTable.usn, -1),
+            eq(reviewLogsTable.usn, PendingLocalUsn),
             gt(reviewLogsTable.id, startAfterId),
         ))
         .orderBy(asc(reviewLogsTable.id))
@@ -69,7 +70,7 @@ export function getUnsyncedReviewLogsByCardId(cardId: Buffer): ReviewLogChange[]
         .from(reviewLogsTable)
         .where(and(
             eq(reviewLogsTable.cardId, cardId),
-            eq(reviewLogsTable.usn, -1),
+            eq(reviewLogsTable.usn, PendingLocalUsn),
         ))
         .orderBy(asc(reviewLogsTable.reviewTime), asc(reviewLogsTable.id))
         .all();

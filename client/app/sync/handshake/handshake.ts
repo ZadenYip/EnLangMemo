@@ -5,27 +5,20 @@ import {
     type HandshakeResponse,
 } from "@enlangmemo/sync-api"
 import { ConnectError } from "@connectrpc/connect";
-import { eq } from "drizzle-orm";
 import Logger from "electron-log/main.js";
 import { getRepDb } from "@main/db/db.js";
 import {
-    cardsTable,
     collectionTable,
-    decksTable,
-    notesTable,
-    noteTypesTable,
-    processingNotesTable,
-    reviewLogsTable,
-    tombstonesTable,
 } from "@main/db/schema/repetition/rep.js";
 import { getDeviceInfo } from "../helper/device.js"
 import { create } from "@bufbuild/protobuf";
 import { getClient } from "../index.js";
-import { mapRpcErrorCode } from "../error/rpc-error-code.js";
+import { mapRpcErrorCode } from "../error/sync-error.js";
 import { clearSyncSession, createSyncSession, getSyncSessionOrThrow } from "../session.js";
 import { hexToBuffer } from "@main/db/import/utils.js";
 import { HandshakeViewResult } from "./handshake-types.js";
 import { getColRow } from "../push/collector/change/collection.js";
+import { hasLocalChanges } from "../helper/common.js";
 
 
 export const syncProtocolVersion = 1;
@@ -87,7 +80,7 @@ export async function handshake(): Promise<HandshakeViewResult> {
             // TODO
             throw new Error("unimplemented: UPLOAD_ALL handshake status.");
         case HandshakeStatus.NEED_PULL:
-            Logger.info("handshake indicates that a pull is needed. Creating sync session.");
+            Logger.info("handshake indicates that a pull is needed. creating sync session.");
             createSyncSession(BigInt(cliSyncCursor), response);
             break;
         case HandshakeStatus.NO_REMOTE_CHANGES:
@@ -134,37 +127,4 @@ export function updateColIdIfMismatch(): boolean {
         .run();
     Logger.info("updated local collection ID to match server's collection ID due to mismatch.");
     return true;
-}
-
-/**
- * @returns true if there are local changes that need to be synchronized with the server, false otherwise.
- */
-function hasLocalChanges(): boolean {
-    // 需要检查是否有数据要同步到服务器的表
-    const syncTables = [
-        reviewLogsTable,
-        tombstonesTable,
-        cardsTable,
-        processingNotesTable,
-        notesTable,
-        noteTypesTable,
-        decksTable,
-        collectionTable,
-    ] as const;
-
-    const repDb = getRepDb();
-    for (const table of syncTables) {
-        const changedRow = repDb
-            .select({ usn: table.usn })
-            .from(table)
-            .where(eq(table.usn, -1))
-            .limit(1)
-            .get();
-
-        if (changedRow) {
-            return true;
-        }
-    }
-
-    return false;
 }

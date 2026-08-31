@@ -5,14 +5,15 @@ import Logger from "electron-log/renderer";
 import { NotifyService } from "../../shared/services/notify.service.js";
 import type { FlowDeps } from "./flow/deps.js";
 import { moveSyncPhase } from "./flow/handshake.js";
+import { DeckService } from "../deck/service.js";
 
 @Injectable({ providedIn: "root" })
 export class SyncService {
     private readonly dialog = inject(MatDialog);
-
     private readonly notifyService = inject(NotifyService);
-
     private readonly translateService = inject(TranslateService);
+
+    private readonly deckService = inject(DeckService);
 
     /** Whether a sync handshake or follow-up phase is currently running. */
     readonly syncBusy = signal(false);
@@ -38,6 +39,9 @@ export class SyncService {
         } finally {
             this.syncBusy.set(false);
         }
+        
+        // After a successful sync, reload the deck list to reflect any changes.
+        await this.deckService.reloadDecks();
     }
 
     private buildFlowDeps(): FlowDeps {

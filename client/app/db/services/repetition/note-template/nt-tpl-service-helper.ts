@@ -23,7 +23,7 @@ export function createSentenceMiningDefinitionNoteTpl(): NoteTemplate {
     const audio = createField(dateTime + 5, "Audio");
     return {
         css,
-        sortField: ctxField.id,
+        sortFieldId: ctxField.id,
         fields: [word, ctxField, phonetic, srcDefinition, tgtDefinition, audio],
         front,
         back,

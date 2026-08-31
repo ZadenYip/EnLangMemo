@@ -9,7 +9,8 @@ import type { SyncChange } from "@enlangmemo/sync-api";
 import { getRepDb } from "@main/db/db.js";
 import { decksTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
-import type { RepTx } from "./rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 type DeckChange = Pick<
     typeof decksTable.$inferSelect,
@@ -39,7 +40,7 @@ export function getDeckChanges(limit: number, startAfterId: Buffer): DeckChange[
         })
         .from(decksTable)
         .where(and(
-            eq(decksTable.usn, -1),
+            eq(decksTable.usn, PendingLocalUsn),
             gt(decksTable.id, startAfterId),
         ))
         .orderBy(asc(decksTable.id))
@@ -62,7 +63,7 @@ export function toDeckSyncChange(row: DeckChange): SyncChange {
         entityId: row.id,
         entityType: EntityType.DECK,
         op: ChangeOp.UPSERT,
-        usn: BigInt(row.usn),
+        usn: BigInt(PendingLocalUsn),
         payload: {
             case: "deck",
             value: payload,

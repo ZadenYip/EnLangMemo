@@ -5,7 +5,8 @@ import { cardsTable, notesTable } from "@main/db/schema/repetition/rep.js";
 import { and, asc, eq, gt } from "drizzle-orm";
 import { getUnsyncedReviewLogsByCardId, ReviewLogChange } from "./review-log.js";
 import { CardChange } from "./card.js";
-import type { RepTx } from "./rep-tx.js";
+import type { RepTx } from "@main/db/services/repetition/helper/type.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 type NoteChange = Pick<
     typeof notesTable.$inferSelect,
@@ -38,7 +39,7 @@ export function getNoteChanges(limit: number, startAfterId: Buffer): NoteChange[
         })
         .from(notesTable)
         .where(and(
-            eq(notesTable.usn, -1),
+            eq(notesTable.usn, PendingLocalUsn),
             gt(notesTable.id, startAfterId),
         ))
         .orderBy(asc(notesTable.id))
@@ -75,7 +76,7 @@ export function getUnsyncedNoteCascade(note: NoteChange): NoteSyncUnitChildren {
         .from(cardsTable)
         .where(and(
             eq(cardsTable.noteId, note.id),
-            eq(cardsTable.usn, -1),
+            eq(cardsTable.usn, PendingLocalUsn),
         ))
         .limit(2)
         .all();

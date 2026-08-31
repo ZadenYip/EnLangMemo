@@ -7,6 +7,7 @@ import {
 import { IDicNoteMappingService } from "./dic-nt-mapping-service-interface.js";
 import { eq } from "drizzle-orm";
 import Logger from "electron-log/main.js";
+import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 /**
  * Service for the single dictionary note mapping config.
@@ -49,7 +50,7 @@ export class DicNoteMappingService implements IDicNoteMappingService {
         if (existingRow) {
             await getRepDb().update(dicNoteMapTable).set({
                 noteTypeId,
-                usn: -1,
+                usn: PendingLocalUsn,
                 mapping: config.dicNoteMapping,
             }).where(eq(dicNoteMapTable.mapId, existingRow.mapId));
             Logger.info(`Updated dictionary note mapping config for noteTypeId ${config.noteTypeId}`);
@@ -57,7 +58,7 @@ export class DicNoteMappingService implements IDicNoteMappingService {
             await getRepDb().insert(dicNoteMapTable).values({
                 mapId: generateUUIDV7(),
                 noteTypeId,
-                usn: -1,
+                usn: PendingLocalUsn,
                 mapping: config.dicNoteMapping,
             });
             Logger.info(`Inserted new dictionary note mapping config for noteTypeId ${config.noteTypeId}`);

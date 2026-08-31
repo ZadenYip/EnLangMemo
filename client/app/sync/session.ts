@@ -3,11 +3,12 @@ import { PushQueue } from "./push/push-queue.js";
 import { create } from "@bufbuild/protobuf";
 import { getClient } from "./index.js";
 import Logger from "electron-log/main.js";
+import { hasLocalChanges } from "./helper/common.js";
 
 export type SyncSessionStatus = "HANDSHAKING" | "NO_REMOTE_CHANGES" | "PULLING" | "PUSHING" | "FINISHING" | "FINISHED" | "FAILED";
 
 // 10 seconds
-export const timeoutMs = 10_000;
+export const rpcTimeoutMs = 10_000;
 export interface SyncSession {
     status: SyncSessionStatus;
     clientColUsn: bigint;
@@ -81,6 +82,28 @@ export function getSyncSessionOrThrow(): SyncSession {
     return curSyncSession;
 }
 
+export function changeStateToPush(): void {
+    if (!curSyncSession) {
+        throw new Error("no sync session found.");
+    }
+    curSyncSession.status = "PUSHING";
+    curSyncSession.batchSeq = 1;
+}
+
+export function stateFromPullToFinishing(): void {
+    if (!curSyncSession) {
+        throw new Error("no sync session found.");
+    }
+    if (curSyncSession.status !== "PULLING") {
+        throw new Error(`sync session is not in PULLING state when trying to change to FINISHING. Current status: ${curSyncSession.status}`);
+    }
+    if (hasLocalChanges()) {
+        throw new Error("local changes exist after pull, cannot change to FINISHING state.");
+    }
+    
+    curSyncSession.status = "FINISHING";
+}
+
 export function clearSyncSession(): void {
     curSyncSession = null;
 }
@@ -98,7 +121,7 @@ export async function sendFinish(): Promise<FinishSyncResponse> {
         throw new Error("sync session is not in FINISHING state when trying to finish.");
     }
 
-    const result = await getClient().finishSync(req, { timeoutMs: timeoutMs });
+    const result = await getClient().finishSync(req, { timeoutMs: rpcTimeoutMs });
     curSyncSession.status = "FINISHED";
     return result;
 }

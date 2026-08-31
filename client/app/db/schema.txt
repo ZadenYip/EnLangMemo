@@ -280,7 +280,7 @@ Ref: review_logs.card_id > cards.id
 
 Table tombstones {
   unit_id blob [primary key, note: '对应同步实体 uuid，Knowledge Unit']
-  usn integer [not null, note: '此处为 -1 被标记为本地删除']
+  usn integer [not null, note: 'PendingLocalUsn means locally deleted and pending push']
   deleted_at integer [not null, note: '删除发生的时间戳']
   unit_type integer [not null, note: 
   '''
@@ -295,9 +295,10 @@ Table tombstones {
   ''']
 
   indexes {
-    (usn) [name: 'ix_tombstones_usn', note: '同步用']
+    (usn, unit_type, unit_id) [name: 'ix_tombstones_usn', note: '同步用']
   }
-  Note: '对应 Anki 的 grave'
+
+  Note: '功能类似 Anki 的 grave'
 }
 
 Table dic_note_map {

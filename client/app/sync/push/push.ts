@@ -1,17 +1,19 @@
 import { create } from "@bufbuild/protobuf";
 import { EntityType, PushRequestSchema } from "@enlangmemo/sync-api";
 import { getClient } from "../index.js";
-import { clearSyncSession, getSyncSessionOrThrow, resetPushQueue, timeoutMs, type SyncSession } from "../session.js";
+import { changeStateToPush, clearSyncSession, getSyncSessionOrThrow, resetPushQueue, rpcTimeoutMs, type SyncSession } from "../session.js";
 import { type CollectResult, PushCollector } from "./collector/collector.js";
 import { zeroUuid } from "./collector/sync-size/constants.js";
 import { TombstoneType, type SyncEntityType } from "./push-queue.js";
 import { ConnectError } from "@connectrpc/connect";
-import { mapRpcErrorCode } from "../error/rpc-error-code.js";
+import { mapRpcErrorCode, mapSyncRpcErr, mapSyncUnknownErr } from "../error/sync-error.js";
 import Logger from "electron-log";
 import { Observable } from "rxjs";
 import { PushBatchResult } from "./push-types.js";
+import { SyncRpcError, SyncUnknownError } from "../error/error-types.js";
 
 export function push$(): Observable<PushBatchResult> {
+    changeStateToPush();
     return new Observable<PushBatchResult>((subscriber) => {
 
         const run = async () => {
@@ -41,22 +43,20 @@ export function push$(): Observable<PushBatchResult> {
                     clearSyncSession();
                     Logger.error("push failed", error);
                     if (error instanceof ConnectError) {
+                        const syncError: SyncRpcError = mapSyncRpcErr(error);
                         Logger.error(
                             "push rpc failed",
                             mapRpcErrorCode(error.code),
                             error.rawMessage,
                         );
-                        subscriber.next({
-                            kind: "rpc_error",
-                            code: mapRpcErrorCode(error.code),
-                            message: error.rawMessage,
-                        });
-                        subscriber.complete();
+                        subscriber.error(syncError);
                         return;
                     } else {
-                        subscriber.error();
+                        const syncError: SyncUnknownError = mapSyncUnknownErr(error);
+                        Logger.error("push unknown error", error);
+                        subscriber.error(syncError);
+                        return;
                     }
-                    return;
                 }
             }
         };
@@ -76,7 +76,7 @@ async function finishPush(session: SyncSession): Promise<void> {
             batchSeq: session.batchSeq,
             finishPush: true
         }),
-        { timeoutMs: timeoutMs },
+        { timeoutMs: rpcTimeoutMs },
     );
 
     if (response.batchSeq !== session.batchSeq) {
@@ -84,7 +84,6 @@ async function finishPush(session: SyncSession): Promise<void> {
     }
 
     session.status = "FINISHING";
-    session.batchSeq += 1;
 }
 
 /**
@@ -105,7 +104,7 @@ async function pushBatch(session: SyncSession): Promise<number> {
             changes: c.changes,
             finishPush: false,
         }),
-        { timeoutMs: timeoutMs },
+        { timeoutMs: rpcTimeoutMs },
     );
 
     if (response.batchSeq !== session.batchSeq) {
@@ -127,14 +126,21 @@ function collectPushBatch(
     // This cursor only lives inside the current batch. After the batch is
     // acknowledged, assigned USNs remove those rows from later usn=-1 queries.
     let cursorId = zeroUuid;
+    let cursorUnitType: EntityType = EntityType.COLLECTION;
 
     while (!queue.isEmpty()) {
         const entityType = queue.peek()!;
 
-        const result = collectByType(collector, entityType, cursorId);
+        const result = collectByType(collector, entityType, cursorUnitType, cursorId);
         cursorId = result.nextStartAfterId;
 
+        // just use for tombstone changes
+        if (result.nextStartUnitType !== undefined) {
+            cursorUnitType = result.nextStartUnitType;
+        }
+
         if (entityType === EntityType.NOTE) {
+            // This batch prevents 
             // Note changes are collected with their related card/review-log rows,
             // so keep collecting notes while this batch still has capacity.
             if (!result.sizeExceeded && result.hasMore) {
@@ -147,6 +153,8 @@ function collectPushBatch(
                 queue.pop();
                 cursorId = zeroUuid;
             }
+            // Note changes would end the batch, because it's need to prevent collector from 
+            // collecting repetitive card/review-log changes for the same note in the next batch. So break here.
             break;
         }
 
@@ -173,6 +181,7 @@ function collectPushBatch(
 function collectByType(
     collector: PushCollector,
     entityType: SyncEntityType,
+    startUnitType: EntityType,
     startAfterId: Buffer,
 ): CollectResult {
     switch (entityType) {
@@ -183,7 +192,7 @@ function collectByType(
         case EntityType.NOTE:
             return collector.collectNoteCascadeChanges(startAfterId);
         case TombstoneType:
-            return collector.collectTombstoneChanges(startAfterId);
+            return collector.collectTombstoneChanges(startUnitType, startAfterId);
         case EntityType.PROCESSING_NOTE:
             return collector.collectProcessingNoteChanges(startAfterId);
         case EntityType.NOTE_TYPE:
