@@ -1,4 +1,3 @@
-
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
@@ -8,6 +7,7 @@ import { CollectionService } from "./col-service.js";
 import { getAccountsDir, getUserDataDir } from "@main/paths.js";
 import { getAppConfig, saveAppConfig } from "@main/db/config/config.js";
 import { reInitDatabase } from "@main/db/db.js";
+import { reloadToken } from "@main/oauth/token-store.js";
 
 
 // mock @main/main avoid error caused by importing electron modules in test environment
@@ -37,6 +37,12 @@ vi.mock(import("@main/db/db.js"), async () => {
     return {
         reInitDatabase: vi.fn(),
         initDatabase: vi.fn(),
+    };
+});
+
+vi.mock(import("@main/oauth/token-store.js"), async () => {
+    return {
+        reloadToken: vi.fn(),
     };
 });
 
@@ -171,6 +177,7 @@ describe("CollectionService", () => {
             expect(reInitDatabase).toHaveBeenCalledWith({
                 selectedAccount: collectionName,
             });
+            expect(reloadToken).toHaveBeenCalledOnce();
         });
 
         it("should throw error if collection does not exist", async () => {

@@ -4,28 +4,28 @@ import path from "node:path";
 import { create } from "@bufbuild/protobuf";
 import { ChangeOp, EntityType, NotePayloadSchema, PullResponse, PullResponseSchema, SyncChange, SyncChangeSchema } from "@enlangmemo/sync-api";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getUserDataDir } from "@main/paths.js";
 import { clearPullStore, decodePullResp, readPullResps, openPullWriterStream } from "./proto-msg-store.js";
 import { generateUUIDV7 } from "@main/db/import/utils.js";
+import { getCurAccountDir } from "@main/paths.js";
 
 vi.mock(import("@main/paths.js"), async () => ({
-    getUserDataDir: vi.fn(),
+     getCurAccountDir: vi.fn(),
 }));
 
 describe("proto-msg-store", () => {
-    let tmpUserDataDir: string;
+    let tmpCurAccountDir: string;
 
     beforeEach(() => {
         vi.clearAllMocks();
-        tmpUserDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "proto-msg-store-"));
-        vi.mocked(getUserDataDir).mockReturnValue(tmpUserDataDir);
+        tmpCurAccountDir = fs.mkdtempSync(path.join(os.tmpdir(), "proto-msg-store-"));
+        vi.mocked(getCurAccountDir).mockReturnValue(tmpCurAccountDir);
     });
 
     afterEach(() => {
         clearPullStore();
 
-        if (fs.existsSync(tmpUserDataDir)) {
-            fs.rmSync(tmpUserDataDir, { recursive: true, force: true });
+        if (fs.existsSync(tmpCurAccountDir)) {
+            fs.rmSync(tmpCurAccountDir, { recursive: true, force: true });
         }
     });
 

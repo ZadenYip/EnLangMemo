@@ -35,7 +35,7 @@ import { DeckService } from "./deck/service";
 ],
 })
 export class HomeComponent implements OnInit {
-    private readonly deckService = inject(DeckService);
+    readonly deckService = inject(DeckService);
     private static readonly maxDeckNameChars = 32;
 
     private readonly router = inject(Router);
