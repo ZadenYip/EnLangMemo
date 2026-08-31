@@ -281,6 +281,13 @@
     "PROGRESS": {
       "TITLE": "正在同步",
       "MESSAGE": "请保持应用打开，同步完成前暂时不能操作其他内容。",
+      "PHASE_PULL_DOWNLOAD": "正在下载服务器变更...",
+      "PHASE_PULL_APPLY": "正在应用服务器变更...",
+      "PHASE_PUSH": "正在上传本地变更...",
+      "PULL_BATCHES": "已下载 Pull 批次",
+      "PULL_CHANGES": "已下载变更",
+      "APPLY_BATCHES": "已应用 Pull 批次",
+      "APPLY_CHANGES": "已应用变更",
       "PUSH_BATCHES": "已完成 Push 批次",
       "PUSH_CHANGES": "已上传变更"
     },

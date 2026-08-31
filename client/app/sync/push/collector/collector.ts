@@ -13,7 +13,7 @@ import { assignReviewLogUsn, getReviewChanges, toReviewLogSyncChange } from "./c
 import { assignPcsUsn, getPcsChanges, toPcsSyncChange } from "./change/processing-note.js";
 import { deleteSyncedTombstone, getTombstoneChanges, toTombstoneSyncChange } from "./change/tombstone.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
-import { toInt } from "@main/sync/helper/type.js";
+import { toInt } from "@main/sync/helper/common.js";
 
 export interface CollectResult {
     /** Whether there are more rows remaining after this collection pass. */

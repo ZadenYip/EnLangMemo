@@ -74,6 +74,11 @@ export function loadToken(): Token | null {
     return token;
 }
 
+export function reloadToken(): Token | null {
+    token = null;
+    return loadToken();
+}
+
 export function clearToken(): void {
     const tokenPath = getTokenFilePath();
     if (existsSync(tokenPath)) {

@@ -6,7 +6,10 @@ import { PushBatchResult } from "./push/push-types.js";
 import { push$ } from "./push/push.js";
 import { finish } from "./finish/finish.js";
 import type { FinishResult } from "./finish/finish-types.js";
-import { clearSyncSession } from "./session.js";
+import { clearSyncSession, stateFromPullToFinishing } from "./session.js";
+import { applyPull$, pull$ } from "./pull/pull.js";
+import type { ApplyResult, PullResult } from "./pull/pull-types.js";
+import { hasLocalChanges } from "./helper/common.js";
 
 export class SyncIpcService implements ISyncService {
     /**
@@ -20,10 +23,28 @@ export class SyncIpcService implements ISyncService {
     public push$(): Observable<PushBatchResult> {
         return push$();
     }
-    
+
+    public pull$(): Observable<PullResult> {
+        return pull$();
+    }
+
+    public applyPull$(): Observable<ApplyResult> {
+        return applyPull$();
+    }
+
+    public async finishAfterPull(): Promise<FinishResult> {
+        stateFromPullToFinishing();
+        return await finish();
+    }
+
+    public async hasLocalChanges(): Promise<boolean> {
+        return await hasLocalChanges();
+    }
+
     public async finish(): Promise<FinishResult> {
         return await finish();
     }
+
     
     /**
      * update the collection ID if it mismatches the one on the server.

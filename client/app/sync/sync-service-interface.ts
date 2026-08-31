@@ -3,6 +3,7 @@ import { HandshakeViewResult } from "./handshake/handshake-types.js";
 import type { Observable } from "rxjs";
 import type { PushBatchResult } from "./push/push-types.js";
 import type { FinishResult } from "./finish/finish-types.js";
+import type { ApplyResult, PullResult } from "./pull/pull-types.js";
 
 export interface ISyncService {
     /**
@@ -13,6 +14,10 @@ export interface ISyncService {
      * Push local changes and emit one result for each acknowledged batch.
      */
     push$(): Observable<PushBatchResult>;
+    pull$(): Observable<PullResult>;
+    applyPull$(): Observable<ApplyResult>;
+    finishAfterPull(): Promise<FinishResult>;
+    hasLocalChanges(): Promise<boolean>;
     /**
      * finish the sync session
      */
@@ -31,6 +36,10 @@ export const SyncServiceIPCDescriptor = {
     properties: {
         handshake: ProxyPropertyType.Function,
         push$: ProxyPropertyType.Function$,
+        pull$: ProxyPropertyType.Function$,
+        applyPull$: ProxyPropertyType.Function$,
+        finishAfterPull: ProxyPropertyType.Function,
+        hasLocalChanges: ProxyPropertyType.Function,
         finish: ProxyPropertyType.Function,
         correctColId: ProxyPropertyType.Function,
         clearSession: ProxyPropertyType.Function,

@@ -4,7 +4,7 @@ import type { NoteField } from "@main/db/services/repetition/processing-note/pcs
 import { and, eq, lt } from "drizzle-orm";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import { resolveSortField } from "@main/db/services/repetition/cards/card-service.js";
-import { toInt } from "@main/sync/helper/type.js";
+import { toInt } from "@main/sync/helper/common.js";
 
 export function remoteWins(remoteUpdatedAt: number, localUpdatedAt: number): boolean {
     return remoteUpdatedAt >= localUpdatedAt;

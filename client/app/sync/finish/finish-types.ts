@@ -1,10 +1,3 @@
-import type { SyncRpcErrorCode } from "../sync-service-types.js";
+import type { SyncError } from "../error/error-types.js";
 
-
-export type FinishResult = {
-    kind: "success";
-} | {
-    kind: "rpc_error";
-    code: SyncRpcErrorCode;
-    message: string;
-}
+export type FinishResult = { kind: "success" } | SyncError;

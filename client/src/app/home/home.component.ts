@@ -15,6 +15,7 @@ import { NotifyService } from "../shared/services/notify.service";
 import { SettingsDialogService } from "../shared/services/settings-dialog.service";
 import { DeckConfigComponent } from "./sub/deck-config/config.component";
 import { DeckSettingsComponent } from "./sub/settings/settings.component";
+import { DeckService } from "./deck/service";
 
 @Component({
     selector: "app-home",
@@ -34,6 +35,7 @@ import { DeckSettingsComponent } from "./sub/settings/settings.component";
 ],
 })
 export class HomeComponent implements OnInit {
+    private readonly deckService = inject(DeckService);
     private static readonly maxDeckNameChars = 32;
 
     private readonly router = inject(Router);
@@ -45,7 +47,6 @@ export class HomeComponent implements OnInit {
     /** Settings dialog service for default-sized dialogs. */
     private readonly settingsDialog = inject(SettingsDialogService);
 
-    deckOverviewList: Deck[] = [];
     
     /** Pending deck name to create. */
     pendingDeckName = "";
@@ -56,20 +57,8 @@ export class HomeComponent implements OnInit {
         return this.loadDecks();
     }
 
-    /**
-     * Loads the list of decks for the current collection.
-     */
     private async loadDecks(): Promise<void> {
-        try {
-            this.deckOverviewList = await window.service.deck.listDecks();
-        } catch (error) {
-            Logger.error("Failed to load decks on home page", error);
-            this.deckOverviewList = [];
-            return;
-        }
-        Logger.info("Decks loaded for home page", {
-            deckOverviewList: this.deckOverviewList,
-        });
+        await this.deckService.reloadDecks();
     }
 
     

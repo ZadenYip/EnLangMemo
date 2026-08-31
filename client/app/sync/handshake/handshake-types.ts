@@ -1,5 +1,5 @@
 import { HandshakeStatus } from "@enlangmemo/sync-api";
-import { SyncRpcErrorCode } from "../sync-service-types.js";
+import { SyncRpcErrorCode } from "../error/error-types.js";
 
 export type HandshakeViewResult =
     | { kind: "status"; status: HandshakeStatus; hasLocalChanges: boolean }

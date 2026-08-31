@@ -1,17 +1,19 @@
 import { create } from "@bufbuild/protobuf";
 import { EntityType, PushRequestSchema } from "@enlangmemo/sync-api";
 import { getClient } from "../index.js";
-import { clearSyncSession, getSyncSessionOrThrow, resetPushQueue, rpcTimeoutMs, type SyncSession } from "../session.js";
+import { changeStateToPush, clearSyncSession, getSyncSessionOrThrow, resetPushQueue, rpcTimeoutMs, type SyncSession } from "../session.js";
 import { type CollectResult, PushCollector } from "./collector/collector.js";
 import { zeroUuid } from "./collector/sync-size/constants.js";
 import { TombstoneType, type SyncEntityType } from "./push-queue.js";
 import { ConnectError } from "@connectrpc/connect";
-import { mapRpcErrorCode } from "../error/rpc-error-code.js";
+import { mapRpcErrorCode, mapSyncRpcErr, mapSyncUnknownErr } from "../error/sync-error.js";
 import Logger from "electron-log";
 import { Observable } from "rxjs";
 import { PushBatchResult } from "./push-types.js";
+import { SyncRpcError, SyncUnknownError } from "../error/error-types.js";
 
 export function push$(): Observable<PushBatchResult> {
+    changeStateToPush();
     return new Observable<PushBatchResult>((subscriber) => {
 
         const run = async () => {
@@ -41,22 +43,20 @@ export function push$(): Observable<PushBatchResult> {
                     clearSyncSession();
                     Logger.error("push failed", error);
                     if (error instanceof ConnectError) {
+                        const syncError: SyncRpcError = mapSyncRpcErr(error);
                         Logger.error(
                             "push rpc failed",
                             mapRpcErrorCode(error.code),
                             error.rawMessage,
                         );
-                        subscriber.next({
-                            kind: "rpc_error",
-                            code: mapRpcErrorCode(error.code),
-                            message: error.rawMessage,
-                        });
-                        subscriber.complete();
+                        subscriber.error(syncError);
                         return;
                     } else {
-                        subscriber.error();
+                        const syncError: SyncUnknownError = mapSyncUnknownErr(error);
+                        Logger.error("push unknown error", error);
+                        subscriber.error(syncError);
+                        return;
                     }
-                    return;
                 }
             }
         };
@@ -84,7 +84,6 @@ async function finishPush(session: SyncSession): Promise<void> {
     }
 
     session.status = "FINISHING";
-    session.batchSeq += 1;
 }
 
 /**

@@ -3,6 +3,7 @@ import { PushQueue } from "./push/push-queue.js";
 import { create } from "@bufbuild/protobuf";
 import { getClient } from "./index.js";
 import Logger from "electron-log/main.js";
+import { hasLocalChanges } from "./helper/common.js";
 
 export type SyncSessionStatus = "HANDSHAKING" | "NO_REMOTE_CHANGES" | "PULLING" | "PUSHING" | "FINISHING" | "FINISHED" | "FAILED";
 
@@ -79,6 +80,28 @@ export function getSyncSessionOrThrow(): SyncSession {
         throw new Error("no sync session found.");
     }
     return curSyncSession;
+}
+
+export function changeStateToPush(): void {
+    if (!curSyncSession) {
+        throw new Error("no sync session found.");
+    }
+    curSyncSession.status = "PUSHING";
+    curSyncSession.batchSeq = 1;
+}
+
+export function stateFromPullToFinishing(): void {
+    if (!curSyncSession) {
+        throw new Error("no sync session found.");
+    }
+    if (curSyncSession.status !== "PULLING") {
+        throw new Error(`sync session is not in PULLING state when trying to change to FINISHING. Current status: ${curSyncSession.status}`);
+    }
+    if (hasLocalChanges()) {
+        throw new Error("local changes exist after pull, cannot change to FINISHING state.");
+    }
+    
+    curSyncSession.status = "FINISHING";
 }
 
 export function clearSyncSession(): void {

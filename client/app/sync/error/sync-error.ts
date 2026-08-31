@@ -1,8 +1,10 @@
-import { Code } from "@connectrpc/connect";
-import type { SyncRpcErrorCode } from "../sync-service-types.js";
+import { Code, ConnectError } from "@connectrpc/connect";
+import type { SyncRpcError, SyncRpcErrorCode, SyncUnknownError } from "./error-types.js";
+
+
 /**
  * map a ConnectRPC Code to a SyncRpcErrorCode, so that can be transported with ipc
- * @param code 
+ * @param code
  * @returns SyncRpcErrorCode mapped from the given Code.
  */
 export function mapRpcErrorCode(code: Code): SyncRpcErrorCode {
@@ -26,4 +28,26 @@ export function mapRpcErrorCode(code: Code): SyncRpcErrorCode {
         default:
             return "unknown";
     }
+}
+
+export function mapSyncRpcErr(
+    error: ConnectError,
+): SyncRpcError {
+    const syncError: SyncRpcError = {
+        kind: "rpc_error",
+        code: mapRpcErrorCode(error.code),
+        message: error.message,
+    };
+    return syncError;
+}
+
+// TODO refactor: unify all ipc unknown errors
+export function mapSyncUnknownErr(
+    error: unknown,
+): SyncUnknownError {
+    const unknownErr: SyncUnknownError = {
+        kind: "unknown_error",
+        message: String(error),
+    };
+    return unknownErr;
 }

@@ -2,9 +2,10 @@ import { HandshakeStatus } from "@enlangmemo/sync-api/gen/enlangmemo/sync/v1/han
 import type { HandshakeViewResult } from "../../../../../app/sync/handshake/handshake-types.js";
 import { confirmAndCorrectCollectionId } from "./collection-id.js";
 import type { FlowDeps } from "./deps.js";
-import { notifyRpcError } from "./error.js";
 import { runPushFlow } from "./push.js";
+import { runPullFlow } from "./pull.js";
 import Logger from "electron-log/renderer.js";
+import { notifyRpcError, notifySyncUnexpectedError } from "./notify.js";
 
 /**
  * handleHskResult（handleHandshakeResult）
@@ -28,12 +29,11 @@ export async function moveSyncPhase(result: HandshakeViewResult, deps: FlowDeps)
             await runPushFlow(deps);
             return;
         case HandshakeStatus.NEED_PULL:
-            deps.notify.open(deps.translate.instant("SYNC.MESSAGES.SYNCING"));
-            Logger.info("next sync phase placeholder triggered.");
+            await runPullFlow(deps);
             return;
         case HandshakeStatus.UPLOAD_ALL:
             Logger.error("upload-all sync path is not implemented yet.");
-            deps.notify.open(deps.translate.instant("SYNC.MESSAGES.UNEXPECTED_ERROR"));
+            notifySyncUnexpectedError(deps);
             return;
         case HandshakeStatus.LOCKED_BY_OTHER_CLIENT:
             deps.notify.open(deps.translate.instant("SYNC.MESSAGES.LOCKED_BY_OTHER_CLIENT"));
@@ -54,7 +54,7 @@ export async function moveSyncPhase(result: HandshakeViewResult, deps: FlowDeps)
             await confirmAndCorrectCollectionId(deps);
             return;
         default:
-            Logger.error("Unknown handshake status", result.status);
-            deps.notify.open(deps.translate.instant("SYNC.MESSAGES.UNEXPECTED_ERROR"));
+            Logger.error("unknown handshake status", result.status);
+            notifySyncUnexpectedError(deps);
     }
 }

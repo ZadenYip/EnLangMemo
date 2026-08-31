@@ -9,6 +9,7 @@ import { ColConfig } from "./col-service-types.js";
 import { collectionTable } from "@main/db/schema/repetition/rep.js";
 import { getColConfig } from "./col-service-helper.js";
 import { PendingLocalUsn } from "@main/sync/helper/usn.js";
+import { reloadToken } from "@main/oauth/token-store.js";
 
 export class CollectionService implements ICollectionService {
     /**
@@ -96,6 +97,8 @@ export class CollectionService implements ICollectionService {
 
         // Reinitialize database with new collection
         reInitDatabase(config);
+        reloadToken();
+
         Logger.info(`Switched to collection: ${collectionName}`);
     }
     

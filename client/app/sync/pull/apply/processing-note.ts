@@ -1,7 +1,7 @@
 import { SyncChange } from "@enlangmemo/sync-api";
 import { processingNotesTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
-import { toInt } from "../../helper/type.js";
+import { toInt } from "@main/sync/helper/common.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import { hasTombstone, parseJson, remoteWins } from "./common.js";
 import { deleteTombstoneIfExists, upsertTombstone } from "@main/db/services/repetition/helper/delete.js";

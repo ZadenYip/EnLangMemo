@@ -1,12 +1,12 @@
 import { PullResponse, PullResponseSchema } from "@enlangmemo/sync-api";
 import { fromBinary, toBinary } from "@bufbuild/protobuf";
 import { createHash } from "crypto";
-import { getUserDataDir } from "@main/paths.js";
+import { getCurAccountDir, } from "@main/paths.js";
 import path from "path/win32";
 import { createReadStream, createWriteStream, existsSync, mkdirSync, ReadStream, renameSync, rmSync, WriteStream } from "fs";
 import Logger from "electron-log/main.js";
 import { finished } from "stream/promises";
-import { once } from "stream";
+import { once } from "events";
 
 const BIN_FILE_NAME = "pull-responses.bin";
 const PULL_DIR_NAME = "pull";
@@ -15,8 +15,8 @@ let stream: WriteStream | null = null;
 
 export function openPullWriterStream(): void {
     Logger.info("openPullWriterStream called");
-    const userDataDir = getUserDataDir();
-    const pullDir = path.join(userDataDir, PULL_DIR_NAME);
+    const curAccountDir = getCurAccountDir();
+    const pullDir = path.join(curAccountDir, PULL_DIR_NAME);
     if (!existsSync(pullDir)) {
         mkdirSync(pullDir, { recursive: true });
     }
@@ -104,8 +104,8 @@ async function* readFrames(readStream: ReadStream): AsyncGenerator<PullResponse>
 
 
 function protoMsgPath(tmp?: boolean): string {
-    const userDataDir = getUserDataDir();
-    const pullDir = path.join(userDataDir, PULL_DIR_NAME);
+    const curAccountDir = getCurAccountDir();
+    const pullDir = path.join(curAccountDir, PULL_DIR_NAME);
     return path.join(pullDir, BIN_FILE_NAME + (tmp ? ".tmp" : ""));
 }
 
@@ -115,7 +115,7 @@ export function clearPullStore(): void {
         stream.destroy();
         stream = null;
     }
-    const pullDir = path.join(getUserDataDir(), PULL_DIR_NAME);
+    const pullDir = path.join(getCurAccountDir(), PULL_DIR_NAME);
     if (existsSync(pullDir)) {
         rmSync(pullDir, { recursive: true, force: true });
     }

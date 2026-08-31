@@ -9,7 +9,7 @@ import {
 import { getSyncSessionOrThrow, rpcTimeoutMs } from "../session.js";
 import { getClient } from "../index.js";
 import { ConnectError } from "@connectrpc/connect";
-import { mapRpcErrorCode } from "../error/rpc-error-code.js";
+import { mapSyncRpcErr, mapSyncUnknownErr } from "../error/sync-error.js";
 import {
     clearPullStore,
     decodePullResp,
@@ -20,7 +20,7 @@ import { Observable } from "rxjs";
 import { ApplyResult, PullResult } from "./pull-types.js";
 import Logger from "electron-log/main.js";
 import { RepTx } from "@main/db/services/repetition/helper/type.js";
-import { toInt } from "../helper/type.js";
+import { toInt } from "../helper/common.js";
 import { getRepDb } from "@main/db/db.js";
 import { applyCardDelete, applyCardUpsert } from "./apply/card.js";
 import { applyCollectionUpsert as applyColUpsert } from "./apply/collection.js";
@@ -48,7 +48,7 @@ export function pull$(): Observable<PullResult> {
                     resp = await getClient().pull(req, {
                         timeoutMs: rpcTimeoutMs,
                     });
-                    decodePullResp(resp);
+                    await decodePullResp(resp);
                     session.batchSeq += 1;
                     const result: PullResult = {
                         kind: "success",
@@ -63,19 +63,15 @@ export function pull$(): Observable<PullResult> {
                 } catch (error) {
                     if (error instanceof ConnectError) {
                         clearPullStore();
-                        const failureResult: PullResult = {
-                            kind: "rpc_error",
-                            code: mapRpcErrorCode(error.code),
-                            message: error.message,
-                        };
-                        subscriber.next(failureResult);
-                        subscriber.complete();
+                        const syncError = mapSyncRpcErr(error);
                         Logger.error(
-                            `pull RPC error: ${failureResult.code} - ${failureResult.message}`,
+                            `pull RPC error: ${syncError.code} - ${syncError.message}`,
                         );
+                        subscriber.error(syncError);
                         break;
                     } else {
-                        subscriber.error(error);
+                        const unknownError = mapSyncUnknownErr(error);
+                        subscriber.error(unknownError);
                         Logger.error(`pull unexpected error: ${error}`);
                         throw error;
                     }
@@ -123,7 +119,8 @@ export function applyPull$(): Observable<ApplyResult> {
                 });
                 subscriber.complete();
             } catch (error) {
-                subscriber.error();
+                const unknownError = mapSyncUnknownErr(error);
+                subscriber.error(unknownError);
                 Logger.error(`applyPullChanges unexpected error: ${error}`);
                 throw error;
             }
@@ -142,7 +139,7 @@ function applyPullResponse(tx: RepTx, resp: PullResponse): void {
         batchMaxUsn = Math.max(batchMaxUsn, toInt(change.usn));
         applySyncChange(tx, change);
     }
-    // 如果为空那么 batchMaxUsn 就是 0，resp.batchMaxUsn 也应该是 0
+    // 如果为 batch 空那么 batchMaxUsn 就是 0，resp.batchMaxUsn 也应该是 0
     if (batchMaxUsn != toInt(resp.batchMaxUsn)) {
         const msg = `applyPullResponse: batchMaxUsn mismatch: expected ${resp.batchMaxUsn} in ${resp.batchSeq}, got ${batchMaxUsn}`;
         Logger.error(msg);
