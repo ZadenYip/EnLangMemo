@@ -7,7 +7,6 @@ import * as rep_schema from "./schema/repetition/rep.js";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { AppConfig } from "./config/config.js";
 import { getAccountDir } from "@main/paths.js";
-import { ColConfig } from "./services/repetition/collection/col-service-types.js";
 import { noteTypesTable } from "./schema/repetition/rep.js";
 import { generateUUIDV7 } from "./import/utils.js";
 import {
@@ -18,6 +17,7 @@ import {
 import Logger from "electron-log/main.js";
 import { fileURLToPath } from "url";
 import { PendingLocalUsn } from "@main/sync/helper/usn.js";
+import type { ColConfig } from "./services/repetition/collection/col-service-types.js";
 
 export const dictionarySchema = dic_schema;
 export const repetitionSchema = rep_schema;
@@ -75,11 +75,11 @@ function collectionInit(): void {
 
     // IANA time zone string, e.g. "Asia/Shanghai"
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const collectionConfig = {
+    // Default collection config used by scheduler review-day boundaries.
+    const colConfig: ColConfig = {
         timeZone,
         dailyResetTime: 4,
-        lastRolloverAt: zeroTime,
-    } as ColConfig;
+    };
 
     repDb.insert(rep_schema.collectionTable).values(
         {
@@ -90,7 +90,7 @@ function collectionInit(): void {
             usn: usn,
             createdAt: nowTime,
             updatedAt: nowTime,
-            config: collectionConfig
+            config: colConfig,
         }
     ).run();
 

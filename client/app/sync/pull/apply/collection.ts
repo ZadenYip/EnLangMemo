@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { toInt } from "@main/sync/helper/common.js";
 import type { RepTx } from "@main/db/services/repetition/helper/type.js";
 import { parseJson, remoteWins } from "./common.js";
+import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types.js";
 
 
 
@@ -26,6 +27,9 @@ export function applyCollectionUpsert(tx: RepTx, change: SyncChange): void {
     if (!remoteWins(toInt(payload.updatedAt), row.updatedAt)) {
         return;
     }
+    
+    const colConfig = parseJson(payload.configJson) as ColConfig;
+
     tx.update(collectionTable)
         .set({
             // The schema version is managed separately and should not be overwritten by a sync change.
@@ -33,7 +37,7 @@ export function applyCollectionUpsert(tx: RepTx, change: SyncChange): void {
             usn: toInt(change.usn),
             createdAt: toInt(payload.createdAt),
             updatedAt: toInt(payload.updatedAt),
-            config: parseJson(payload.configJson),
+            config: colConfig,
         })
         .where(eq(collectionTable.id, id))
         .run();

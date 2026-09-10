@@ -86,25 +86,7 @@ Table collection {
   usn integer [not null]
   created_at integer [not null]
   updated_at integer [not null]
-  config jsonb [not null, note: 
-  '''
-    app\db\services\repetition\collection\col-service-types.d.ts
-    配置
-export interface CollectionConfig {
-    /**
-    * IANA 
-    */
-    timeZone: string;
-    /**
-     * 复习时间重置 1 表示 1:00（24小时制）重置
-     */
-    dailyResetTime: number;
-    /**
-     * epoch 时间戳，单位为毫秒，上次 scheduler 重置的时间
-     */
-    lastRolloverAt: number;
-}
-  ''']
+  config jsonb [not null, note: "CollectionConfig，包含 IANA 时区和每日复习重置小时等全局配置"]
   Note: '本地有且只有一行'
 }
 
@@ -112,6 +94,7 @@ Table decks {
   id blob [primary key, not null, note: 'UUIDv7']
   usn integer [not null]
   name text [not null]
+  reset_time_at integer [not null, default: 0, note: "牌组上次每日计数重置时间戳"]
   updated_at integer [not null]
   new_cards_per_day integer [not null, default: 20, note: "一天能学多少张新卡"]
   new_learned_today integer [not null, default: 0, note: "今天新卡学了多少个"]
@@ -122,11 +105,9 @@ Table decks {
   牌组的配置
   export interface DeckConfig {
     /**
-     * The maximum number of new cards can be learned per day in this deck.
-     * -1 means no limit
+     * Persisted FSRS scheduler parameters for this deck.
      */
-    newCardsPerDay: number;
-    // TODO FSRS algorithm parameters
+    fsrsParams: FSRSParameters;
   }
   ''']
 }

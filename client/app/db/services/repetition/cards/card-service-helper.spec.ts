@@ -6,7 +6,6 @@ import { getNextReviewDayStart, toAssignedReviewDateRstTimestamp, toCard } from 
 const shanghaiConfig: ColConfig = {
     timeZone: "Asia/Shanghai",
     dailyResetTime: 4,
-    lastRolloverAt: 0,
 };
 
 function fromShanghaiLocalTime(localDateTime: string): Date {

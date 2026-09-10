@@ -9,8 +9,8 @@
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types.js";
-import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types.js";
 import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types.js";
+import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types.js";
 import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types.js";
 import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 

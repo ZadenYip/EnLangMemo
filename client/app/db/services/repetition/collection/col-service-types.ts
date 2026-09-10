@@ -3,15 +3,11 @@
  */
 export interface ColConfig {
     /**
-     * IANA
+     * IANA time zone used by scheduler review-day boundaries.
      */
     timeZone: string;
     /**
-     * review reset time, 1 means 1:00 (24-hour format) reset
+     * Review reset hour in 24h format; 4 means 04:00.
      */
     dailyResetTime: number;
-    /**
-     * epoch timestamp, in milliseconds, the time of the last scheduler reset
-     */
-    lastRolloverAt: number;
 }

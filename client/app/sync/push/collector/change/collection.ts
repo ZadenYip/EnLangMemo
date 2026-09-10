@@ -46,11 +46,13 @@ export function getColChange(): SyncChange | null {
  * toCollectionSyncChange
  */
 function toColSyncChange(row: ColChange): SyncChange {
+    const configJson = JSON.stringify(row.config);
+
     const payload = create(CollectionPayloadSchema, {
         sqliteSchemaVersion: row.sqliteSchemaVersion,
         createdAt: BigInt(row.createdAt),
         updatedAt: BigInt(row.updatedAt),
-        configJson: JSON.stringify(row.config),
+        configJson,
     });
 
     return create(SyncChangeSchema, {
