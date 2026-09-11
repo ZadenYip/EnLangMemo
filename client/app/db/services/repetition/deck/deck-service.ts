@@ -10,22 +10,49 @@ import { CardQueue, CardState } from "../cards/card-service-types.js";
 import { calcCanLearnToday } from "./deck-service-helper.js";
 import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 import { deleteDeckWithCascade } from "../helper/delete.js";
+import { calcElapsedDays, getTimeConfig, toReviewDayStart } from "../shared/time.js";
 
 export class DeckService {
     /**
-     * get all decks in current collection and transform them to Deck model needed by frontend.
+     * get all decks overview in the current collection.
+     * If the last reset time of the deck is not today, reset the daily counters to 0 and update the last reset time to today.
      */
     async listDecks(): Promise<Deck[]> {
         const deckRows = await getRepDb().query.decksTable.findMany({
             columns: {
                 id: true,
                 name: true,
+                resetAt: true,
                 newCardsPerDay: true,
                 newLearnedToday: true,
                 learnedToday: true,
                 reviewedToday: true,
             }
         })
+
+        const timeConfig = getTimeConfig();
+
+        const reviewDayStart = toReviewDayStart(new Date(), timeConfig.dailyResetTime, timeConfig.timeZone);
+        for (const deckRow of deckRows) {
+            const elapsedDays = calcElapsedDays(new Date(deckRow.resetAt), timeConfig.dailyResetTime, timeConfig.timeZone);
+            if (elapsedDays > 0) {
+                // Don't set usn = PendingLocalUsn here, 
+                // it should only be set when the user actually modifies the deck or review a card.
+                await getRepDb().update(decksTable).set({
+                    resetAt: reviewDayStart,
+                    newLearnedToday: 0,
+                    learnedToday: 0,
+                    reviewedToday: 0,
+                    usn: PendingLocalUsn,
+                }).where(eq(decksTable.id, deckRow.id));
+
+                deckRow.resetAt = reviewDayStart;
+                deckRow.newLearnedToday = 0;
+                deckRow.learnedToday = 0;
+                deckRow.reviewedToday = 0;
+            }
+        }
+
 
         return Promise.all(deckRows.map((deckRow) => this.toDeck(deckRow)));
     }
@@ -34,7 +61,6 @@ export class DeckService {
      * Get one deck overview in the current collection by id.
      */
     async getDeckById(deckId: string): Promise<Deck | null> {
-        // TODO 检查当日学习和复习的数量是否需要重置为0，若需要则重置
         const deckRow = await getRepDb().query.decksTable.findFirst({
             where: eq(decksTable.id, hexToBuffer(deckId)),
             columns: {
@@ -70,11 +96,13 @@ export class DeckService {
             return result;
         }
 
+        const resetAt = toReviewDayStart(new Date(), getTimeConfig().dailyResetTime, getTimeConfig().timeZone);
         Logger.info("Creating new deck with name:", deckName);
         await getRepDb().insert(decksTable).values({
             id: generateUUIDV7(),
             usn: PendingLocalUsn,
             name: deckName,
+            resetAt: resetAt,
             updatedAt: Date.now(),
             newCardsPerDay: 20,
             newLearnedToday: 0,

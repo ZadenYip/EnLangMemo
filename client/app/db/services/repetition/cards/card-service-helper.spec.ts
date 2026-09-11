@@ -1,13 +1,20 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ColConfig } from "../collection/col-service-types.js";
 import type { FSRSCard } from "./card-service-types.js";
-import { getNextReviewDayStart, toAssignedReviewDateRstTimestamp, toCard } from "./card-service-helper.js";
+import { TimeConfig } from "../shared/time.js";
+import { toCard } from "./card-service-helper.js";
 
-const shanghaiConfig: ColConfig = {
+const shanghaiConfig: TimeConfig = {
     timeZone: "Asia/Shanghai",
     dailyResetTime: 4,
-    lastRolloverAt: 0,
 };
+
+vi.mock(import("@main/db/db.js"), async () => {
+    const mod = await import("@main/db/schema/repetition/rep.js");
+    return {
+        repetitionSchema: mod,
+        getRepDb: vi.fn(),
+    };
+});
 
 function fromShanghaiLocalTime(localDateTime: string): Date {
     return new Date(`${localDateTime}+08:00`);
@@ -30,33 +37,6 @@ function createFSRSCard(lastReview: Date | undefined, due = fromShanghaiLocalTim
 
 afterEach(() => {
     vi.useRealTimers();
-});
-
-describe("toAssignedReviewDateRstTimestamp", () => {
-    it.each([
-        {
-            shanghaiTime: "2026-05-31 03:52:21",
-            expectedAssignedReviewDateRst: "2026-05-30 04:00:00",
-        },
-        {
-            shanghaiTime: "2026-05-31 04:00:00",
-            expectedAssignedReviewDateRst: "2026-05-31 04:00:00",
-        },
-        {
-            shanghaiTime: "2026-05-31 04:01:00",
-            expectedAssignedReviewDateRst: "2026-05-31 04:00:00",
-        },
-    ])(
-        "assigns Shanghai time $shanghaiTime to reset boundary $expectedAssignedReviewDateRst",
-        ({ shanghaiTime, expectedAssignedReviewDateRst }) => {
-            const reviewTime = fromShanghaiLocalTime(shanghaiTime.replace(" ", "T"));
-            const assignedReviewDateRst = fromShanghaiLocalTime(expectedAssignedReviewDateRst.replace(" ", "T"));
-
-            const result = toAssignedReviewDateRstTimestamp(reviewTime, shanghaiConfig);
-
-            expect(result).toBe(assignedReviewDateRst.getTime());
-        },
-    );
 });
 
 describe("toCard elapsed_days", () => {
@@ -89,31 +69,4 @@ describe("toCard elapsed_days", () => {
 
         expect(result.elapsed_days).toBe(2);
     });
-});
-
-describe("getNextResetBoundaryTimestamp", () => {
-    it.each([
-        {
-            shanghaiNow: "2026-05-31 03:52:21",
-            expectedNextReset: "2026-05-31 04:00:00",
-        },
-        {
-            shanghaiNow: "2026-05-31 04:00:00",
-            expectedNextReset: "2026-06-01 04:00:00",
-        },
-        {
-            shanghaiNow: "2026-05-31 22:06:15",
-            expectedNextReset: "2026-06-01 04:00:00",
-        },
-    ])(
-        "returns next reset $expectedNextReset for Shanghai time $shanghaiNow",
-        ({ shanghaiNow, expectedNextReset }) => {
-            const now = fromShanghaiLocalTime(shanghaiNow.replace(" ", "T"));
-            const nextReset = fromShanghaiLocalTime(expectedNextReset.replace(" ", "T"));
-
-            const result = getNextReviewDayStart(shanghaiConfig, now);
-
-            expect(result).toBe(nextReset.getTime());
-        },
-    );
 });

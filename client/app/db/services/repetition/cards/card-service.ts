@@ -5,11 +5,11 @@ import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt
 import type { NoteField, PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 import { and, count, eq, inArray, lte, SQL } from "drizzle-orm";
 import { createEmptyCard } from "ts-fsrs";
-import { getColConfig } from "../collection/col-service-helper.js";
 import { resolveNewCardLimit } from "../deck/deck-service-helper.js";
+import { getNextReviewDayStart, getTimeConfig } from "../shared/time.js";
 import { mergeStudyCardsByDue, toFSRSCard } from "./card-mapper.js";
 import { queryStudyCardsByQueue } from "./card-query.js";
-import { createEmptyCardHandler, getNextReviewDayStart as calcNextReviewDayStart } from "./card-service-helper.js";
+import { createEmptyCardHandler } from "./card-service-helper.js";
 import { CardQueue, CardState, StudyCard, StudyCardRatingPreviews } from "./card-service-types.js";
 import { buildRatingPreviews, getFsrsScheduler } from "./card-scheduler.js";
 import { PendingLocalUsn } from "@main/sync/helper/usn.js";
@@ -136,8 +136,8 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
         return [];
     }
 
-    const collectionConfig = await getColConfig();
-    const todayDueUpperBound = calcNextReviewDayStart(collectionConfig);
+    const timeConfig = getTimeConfig();
+    const todayDueUpperBound = getNextReviewDayStart(timeConfig);
     const newCardLimit = resolveNewCardLimit(deck, limit);
     const [learningCards, reviewCards, newCards] = await Promise.all([
         queryStudyCardsByQueue(deckIdBuffer, CardQueue.LEARNING, limit, todayDueUpperBound),
@@ -153,14 +153,6 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
         ],
         limit,
     );
-}
-
-/**
- * Get the next review-day start timestamp for the current collection.
- */
-export async function getNextReviewDayStart(): Promise<number> {
-    const collectionConfig = await getColConfig();
-    return calcNextReviewDayStart(collectionConfig);
 }
 
 /**
@@ -192,10 +184,10 @@ export async function getStudyCardRatingPreviews(cardId: string): Promise<StudyC
         return null;
     }
 
-    const collectionConfig = await getColConfig();
+    const timeConfig = getTimeConfig();
     const deckId = bufferToHex(cardRow.card.deckId);
     const scheduler = getFsrsScheduler(deckId, cardRow.deckConfig.fsrsParams);
-    return buildRatingPreviews(toFSRSCard(cardRow.card), collectionConfig, scheduler);
+    return buildRatingPreviews(toFSRSCard(cardRow.card), timeConfig, scheduler);
 }
 
 /**

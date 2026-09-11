@@ -9,8 +9,8 @@
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt-tpl-service-types.js";
-import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types.js";
 import type { DeckConfig } from "@main/db/services/repetition/deck/deck-service-types.js";
+import type { ColConfig } from "@main/db/services/repetition/collection/col-service-types.js";
 import type { DicNoteMapping } from "@main/db/services/repetition/dic-note-mapping/dic-nt-mapping-types.js";
 import { NoteField } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 
@@ -50,6 +50,14 @@ export const collectionTable = sqliteTable("collection", {
     createdAt: int("created_at").notNull(),
     updatedAt: int("updated_at").notNull(),
     /**
+     * IANA time zone used by scheduler review-day boundaries.
+     */
+    timeZone: text("time_zone").notNull(),
+    /**
+     * Review reset hour in 24h format; 4 means 04:00.
+     */
+    dailyResetTime: int("daily_reset_time").notNull(),
+    /**
      * see app/db/services/repetition/collection/col-service-types.ts
      * CollectionConfig
      */
@@ -63,6 +71,11 @@ export const decksTable = sqliteTable("decks", {
     id: blob("id", { mode: "buffer" }).primaryKey(),
     usn: int("usn").notNull(),
     name: text("name").notNull(),
+    /**
+     * Review-day start boundary timestamp used for daily counter rollover.
+     * This is derived from TimeConfig, e.g. 04:00, not the actual job trigger time.
+     */
+    resetAt: int("reset_at").notNull().default(1),
     updatedAt: int("updated_at").notNull(),
     newCardsPerDay: int("new_cards_per_day").notNull().default(20),
     newLearnedToday: int("new_learned_today").notNull().default(0),

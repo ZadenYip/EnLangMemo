@@ -1,17 +1,4 @@
 /**
- * Collection Config
+ * Collection extension config reserved for future non-time settings.
  */
-export interface ColConfig {
-    /**
-     * IANA
-     */
-    timeZone: string;
-    /**
-     * review reset time, 1 means 1:00 (24-hour format) reset
-     */
-    dailyResetTime: number;
-    /**
-     * epoch timestamp, in milliseconds, the time of the last scheduler reset
-     */
-    lastRolloverAt: number;
-}
+export type ColConfig = Record<string, unknown>;
