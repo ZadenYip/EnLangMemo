@@ -36,6 +36,8 @@ export class DeckService {
         for (const deckRow of deckRows) {
             const elapsedDays = calcElapsedDays(new Date(deckRow.resetAt), timeConfig.dailyResetTime, timeConfig.timeZone);
             if (elapsedDays > 0) {
+                // Don't set usn = PendingLocalUsn here, 
+                // it should only be set when the user actually modifies the deck or review a card.
                 await getRepDb().update(decksTable).set({
                     resetAt: reviewDayStart,
                     newLearnedToday: 0,

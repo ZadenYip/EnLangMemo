@@ -32,6 +32,7 @@ export function getDeckChanges(limit: number, startAfterId: Buffer): DeckChange[
             id: decksTable.id,
             usn: decksTable.usn,
             name: decksTable.name,
+            resetAt: decksTable.resetAt,
             updatedAt: decksTable.updatedAt,
             newCardsPerDay: decksTable.newCardsPerDay,
             newLearnedToday: decksTable.newLearnedToday,
