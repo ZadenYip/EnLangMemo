@@ -1,6 +1,6 @@
 import { Card, IPreview, RecordLog, RecordLogItem, ReviewLog, State } from "ts-fsrs";
 import { CardQueue, FSRSCard, FSRSIPreview, FSRSRecordLog, FSRSRecordLogItem, FSRSReviewLog } from "./card-service-types.js";
-import { calcElapsedDays, toReviewDayStart } from "../shared/time.js";
+import { calcElapsedDays } from "../shared/time.js";
 import type { TimeConfig } from "../shared/time.js";
 
 export function createEmptyCardHandler(card: Card): FSRSCard {
@@ -51,20 +51,6 @@ export function toCardQueue(card: FSRSCard): CardQueue {
         return CardQueue.REVIEW;
     }
     return CardQueue.LEARNING;
-}
-
-/**
- * Get the next review-day start after the given timestamp.
- * This is used as the upper due bound for "today's" learning/review cards.
- * Example when dailyResetTime = 4:
- * - 2026-05-31 03:52 -> 2026-05-31 04:00.
- * - 2026-05-31 22:06 -> 2026-06-01 04:00.
- * - 2026-05-31 04:00 -> 2026-06-01 04:00.
- * @returns Epoch timestamp in milliseconds for the next review-day start.
- */
-export function getNextReviewDayStart(config: TimeConfig, now = new Date()): number {
-    const oneDayInMs = 86_400_000;
-    return toReviewDayStart(new Date(now.getTime() + oneDayInMs), config.dailyResetTime, config.timeZone);
 }
 
 export function repeatHandler(preview: IPreview): FSRSIPreview {

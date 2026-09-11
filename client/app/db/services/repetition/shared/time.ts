@@ -105,4 +105,18 @@ export function getTimeZoneDateTimeParts(date: Date, timeZone: string) {
         second: Number(parts.find((part) => part.type === "second")!.value),
     };
 }
+/**
+ * Get the next review-day start after the given timestamp.
+ * This is used as the upper due bound for "today's" learning/review cards.
+ * Example when dailyResetTime = 4:
+ * - 2026-05-31 03:52 -> 2026-05-31 04:00.
+ * - 2026-05-31 22:06 -> 2026-06-01 04:00.
+ * - 2026-05-31 04:00 -> 2026-06-01 04:00.
+ * @returns Epoch timestamp in milliseconds for the next review-day start.
+ */
+
+export function getNextReviewDayStart(config: TimeConfig, now = new Date()): number {
+    const oneDayInMs = 86400000;
+    return toReviewDayStart(new Date(now.getTime() + oneDayInMs), config.dailyResetTime, config.timeZone);
+}
 

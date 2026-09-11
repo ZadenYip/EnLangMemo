@@ -6,10 +6,10 @@ import type { NoteField, PcsNote } from "@main/db/services/repetition/processing
 import { and, count, eq, inArray, lte, SQL } from "drizzle-orm";
 import { createEmptyCard } from "ts-fsrs";
 import { resolveNewCardLimit } from "../deck/deck-service-helper.js";
-import { getTimeConfig } from "../shared/time.js";
+import { getNextReviewDayStart, getTimeConfig } from "../shared/time.js";
 import { mergeStudyCardsByDue, toFSRSCard } from "./card-mapper.js";
 import { queryStudyCardsByQueue } from "./card-query.js";
-import { createEmptyCardHandler, getNextReviewDayStart as calcNextReviewDayStart } from "./card-service-helper.js";
+import { createEmptyCardHandler } from "./card-service-helper.js";
 import { CardQueue, CardState, StudyCard, StudyCardRatingPreviews } from "./card-service-types.js";
 import { buildRatingPreviews, getFsrsScheduler } from "./card-scheduler.js";
 import { PendingLocalUsn } from "@main/sync/helper/usn.js";
@@ -137,7 +137,7 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
     }
 
     const timeConfig = getTimeConfig();
-    const todayDueUpperBound = calcNextReviewDayStart(timeConfig);
+    const todayDueUpperBound = getNextReviewDayStart(timeConfig);
     const newCardLimit = resolveNewCardLimit(deck, limit);
     const [learningCards, reviewCards, newCards] = await Promise.all([
         queryStudyCardsByQueue(deckIdBuffer, CardQueue.LEARNING, limit, todayDueUpperBound),
@@ -153,14 +153,6 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
         ],
         limit,
     );
-}
-
-/**
- * Get the next review-day start timestamp for the current collection.
- */
-export async function getNextReviewDayStart(): Promise<number> {
-    const timeConfig = getTimeConfig();
-    return calcNextReviewDayStart(timeConfig);
 }
 
 /**

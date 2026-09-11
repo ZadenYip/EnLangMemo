@@ -1,6 +1,7 @@
 import { ICardService } from "./card-service-interface.js";
-import { clearFsrsSchedulerCache, getNextReviewDayStart, getStudyCardRatingPreviews, getStudyCards, reviewCard } from "./card-service.js";
+import { clearFsrsSchedulerCache, getStudyCardRatingPreviews, getStudyCards, reviewCard } from "./card-service.js";
 import { CardReviewRating, CardReviewResult, StudyCard, StudyCardRatingPreviews } from "./card-service-types.js";
+import { getNextReviewDayStart, getTimeConfig } from "../shared/time.js";
 
 /**
  * IPC-facing card service facade.
@@ -17,7 +18,9 @@ export class CardIpcService implements ICardService {
      * Get the next review-day start timestamp for the current collection.
      */
     getNextReviewDayStart(): Promise<number> {
-        return getNextReviewDayStart();
+        const timeConfig = getTimeConfig();
+        const nextReviewDayStart = getNextReviewDayStart(timeConfig);
+        return Promise.resolve(nextReviewDayStart);
     }
 
     /**
