@@ -5,8 +5,8 @@ import type { NoteTemplate } from "@main/db/services/repetition/note-template/nt
 import type { NoteField, PcsNote } from "@main/db/services/repetition/processing-note/pcs-note-types.js";
 import { and, count, eq, inArray, lte, SQL } from "drizzle-orm";
 import { createEmptyCard } from "ts-fsrs";
-import { getColConfig } from "../collection/col-service-helper.js";
 import { resolveNewCardLimit } from "../deck/deck-service-helper.js";
+import { getTimeConfig } from "../shared/time.js";
 import { mergeStudyCardsByDue, toFSRSCard } from "./card-mapper.js";
 import { queryStudyCardsByQueue } from "./card-query.js";
 import { createEmptyCardHandler, getNextReviewDayStart as calcNextReviewDayStart } from "./card-service-helper.js";
@@ -136,8 +136,8 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
         return [];
     }
 
-    const collectionConfig = await getColConfig();
-    const todayDueUpperBound = calcNextReviewDayStart(collectionConfig);
+    const timeConfig = getTimeConfig();
+    const todayDueUpperBound = calcNextReviewDayStart(timeConfig);
     const newCardLimit = resolveNewCardLimit(deck, limit);
     const [learningCards, reviewCards, newCards] = await Promise.all([
         queryStudyCardsByQueue(deckIdBuffer, CardQueue.LEARNING, limit, todayDueUpperBound),
@@ -159,8 +159,8 @@ export async function getStudyCards(deckId: string, limit: number): Promise<Stud
  * Get the next review-day start timestamp for the current collection.
  */
 export async function getNextReviewDayStart(): Promise<number> {
-    const collectionConfig = await getColConfig();
-    return calcNextReviewDayStart(collectionConfig);
+    const timeConfig = getTimeConfig();
+    return calcNextReviewDayStart(timeConfig);
 }
 
 /**
@@ -192,10 +192,10 @@ export async function getStudyCardRatingPreviews(cardId: string): Promise<StudyC
         return null;
     }
 
-    const collectionConfig = await getColConfig();
+    const timeConfig = getTimeConfig();
     const deckId = bufferToHex(cardRow.card.deckId);
     const scheduler = getFsrsScheduler(deckId, cardRow.deckConfig.fsrsParams);
-    return buildRatingPreviews(toFSRSCard(cardRow.card), collectionConfig, scheduler);
+    return buildRatingPreviews(toFSRSCard(cardRow.card), timeConfig, scheduler);
 }
 
 /**

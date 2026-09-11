@@ -113,15 +113,11 @@ export class CollectionService implements ICollectionService {
      */
     async changeColReviewRstTime(resetTime: number): Promise<void> {
         const repDb = getRepDb();
-        const colConfig = await getColConfig();
 
         Logger.info(`Changed collection daily reset time to ${resetTime}:00`);
 
         repDb.update(collectionTable).set({
-            config: {
-                ...colConfig,
-                dailyResetTime: resetTime,
-            },
+            dailyResetTime: resetTime,
             usn: PendingLocalUsn,
             updatedAt: Date.now(),
         }).run();

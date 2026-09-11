@@ -4,11 +4,12 @@ import { utf8ByteLength } from "./sync-change-size.js";
 
 /**
  * Fixed decoded size for a deck UPSERT change, excluding name and configJson.
- * entityId(UUID) + usn(int64) + updatedAt(int64) + newCardsPerDay(int32)
+ * entityId(UUID) + usn(int64) + resetAt(int64) + updatedAt(int64) + newCardsPerDay(int32)
  * + newLearnedToday(int32) + learnedToday(int32) + reviewedToday(int32)
  */
 const deckFixedSize =
     uuidSize +
+    int64Size +
     int64Size +
     int64Size +
     int32Size +

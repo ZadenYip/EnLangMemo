@@ -86,7 +86,9 @@ Table collection {
   usn integer [not null]
   created_at integer [not null]
   updated_at integer [not null]
-  config jsonb [not null, note: "CollectionConfig，包含 IANA 时区和每日复习重置小时等全局配置"]
+  time_zone text [not null, note: "IANA 时区，用于 scheduler 复习日边界"]
+  daily_reset_time integer [not null, default: 4, note: "复习日重置小时，4 表示 04:00（24 小时制）重置"]
+  config jsonb [not null, note: "CollectionConfig，保留给未来非时间类全局配置扩展"]
   Note: '本地有且只有一行'
 }
 

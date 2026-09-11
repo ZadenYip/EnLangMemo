@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7da635b5-8dce-4d85-a09a-bdf7221e4276",
+  "id": "51b8c7dc-c00d-45de-9fa9-343e4bf4a8d1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cards": {
@@ -197,6 +197,21 @@
           "notNull": true,
           "autoincrement": false
         },
+        "time_zone": {
+          "name": "time_zone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "daily_reset_time": {
+          "name": "daily_reset_time",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 4
+        },
         "config": {
           "name": "config",
           "type": "jsonb",
@@ -234,6 +249,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "reset_at": {
+          "name": "reset_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
         },
         "updated_at": {
           "name": "updated_at",

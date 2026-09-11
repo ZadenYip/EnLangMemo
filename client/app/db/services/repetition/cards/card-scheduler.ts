@@ -1,5 +1,5 @@
 import { FSRS, fsrs, FSRSParameters, Grade } from "ts-fsrs";
-import { ColConfig } from "../collection/col-service-types.js";
+import type { TimeConfig } from "../shared/time.js";
 import { repeatHandler, toCard } from "./card-service-helper.js";
 import { CardRating, CardReviewRating, FSRSCard, StudyCardRatingPreviews } from "./card-service-types.js";
 
@@ -41,9 +41,9 @@ export function getFsrsScheduler(deckId: string, fsrsParams: Partial<FSRSParamet
 /**
  * Build all FSRS rating previews for one study card.
  */
-export function buildRatingPreviews(card: FSRSCard, collectionConfig: ColConfig, scheduler: FSRS): StudyCardRatingPreviews {
+export function buildRatingPreviews(card: FSRSCard, timeConfig: TimeConfig, scheduler: FSRS): StudyCardRatingPreviews {
     const previewTime = new Date();
-    const preview = scheduler.repeat(toCard(card, collectionConfig), previewTime, repeatHandler);
+    const preview = scheduler.repeat(toCard(card, timeConfig), previewTime, repeatHandler);
 
     return {
         [CardRating.AGAIN]: ratingPreview(preview[CardRating.AGAIN].card, previewTime),

@@ -1,8 +1,8 @@
 import { getRepDb } from "@main/db/db.js";
 import { bufferToHex, generateUUIDV7, hexToBuffer } from "@main/db/import/utils.js";
-import { cardsTable, collectionTable, decksTable, reviewLogsTable } from "@main/db/schema/repetition/rep.js";
+import { cardsTable, decksTable, reviewLogsTable } from "@main/db/schema/repetition/rep.js";
 import { eq } from "drizzle-orm";
-import { ColConfig } from "../collection/col-service-types.js";
+import { getTimeConfig, type TimeConfig } from "../shared/time.js";
 import { toFSRSCard } from "./card-mapper.js";
 import { nextHandler, toCard, toCardQueue } from "./card-service-helper.js";
 import { CardQueue, CardReviewRating, CardReviewResult, CardState, FSRSCard, FSRSRecordLogItem, ReviewedCardState } from "./card-service-types.js";
@@ -47,8 +47,8 @@ export async function reviewCard(cardId: string, rating: CardReviewRating, durat
             return { state: "deck-not-found" };
         }
 
-        const collectionConfig = getCollectionConfigInTx(tx);
-        const outcome = buildReviewOutcome(cardRow, deckRow, collectionConfig, rating);
+        const timeConfig = getTimeConfig();
+        const outcome = buildReviewOutcome(cardRow, deckRow, timeConfig, rating);
         const nextDeckStats = resolveDeckReviewStats(deckRow, cardRow);
 
         updateReviewedCardInTx(tx, cardRow, outcome);
@@ -78,33 +78,18 @@ function getReviewDeckInTx(tx: RepTx, deckId: Buffer): ReviewDeckRow | undefined
 }
 
 /**
- * Read the collection config inside the current transaction.
- */
-function getCollectionConfigInTx(tx: RepTx): ColConfig {
-    const collectionRecord = tx.select({
-        config: collectionTable.config,
-    })
-        .from(collectionTable)
-        .get();
-    if (!collectionRecord) {
-        throw new Error("Collection config not found.");
-    }
-    return collectionRecord.config;
-}
-
-/**
  * Build the next card scheduling result and review log data for one rating.
  */
 function buildReviewOutcome(
     cardRow: ReviewCardRow,
     deckRow: ReviewDeckRow,
-    collectionConfig: ColConfig,
+    timeConfig: TimeConfig,
     rating: CardReviewRating,
 ): ReviewOutcome {
     /** Review timestamp shared by card and review-log updates. */
     const now = new Date();
     const deckId = bufferToHex(cardRow.deckId);
-    const srcCard = toCard(toFSRSCard(cardRow), collectionConfig);
+    const srcCard = toCard(toFSRSCard(cardRow), timeConfig);
     const scheduler = getFsrsScheduler(deckId, deckRow.config.fsrsParams);
     
     const recordLogItem = scheduler.next(srcCard, now, toFsrsGrade(rating), nextHandler);

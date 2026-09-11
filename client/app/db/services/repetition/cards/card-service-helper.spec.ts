@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ColConfig } from "../collection/col-service-types.js";
 import type { FSRSCard } from "./card-service-types.js";
-import { getNextReviewDayStart, toAssignedReviewDateRstTimestamp, toCard } from "./card-service-helper.js";
+import { TimeConfig, toReviewDayStart } from "../shared/time.js";
+import { getNextReviewDayStart, toCard } from "./card-service-helper.js";
 
-const shanghaiConfig: ColConfig = {
+const shanghaiConfig: TimeConfig = {
     timeZone: "Asia/Shanghai",
     dailyResetTime: 4,
 };
@@ -51,7 +51,7 @@ describe("toAssignedReviewDateRstTimestamp", () => {
             const reviewTime = fromShanghaiLocalTime(shanghaiTime.replace(" ", "T"));
             const assignedReviewDateRst = fromShanghaiLocalTime(expectedAssignedReviewDateRst.replace(" ", "T"));
 
-            const result = toAssignedReviewDateRstTimestamp(reviewTime, shanghaiConfig);
+            const result = toReviewDayStart(reviewTime, shanghaiConfig.dailyResetTime, shanghaiConfig.timeZone);
 
             expect(result).toBe(assignedReviewDateRst.getTime());
         },

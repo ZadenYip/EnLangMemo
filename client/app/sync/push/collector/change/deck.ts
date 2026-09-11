@@ -17,6 +17,7 @@ type DeckChange = Pick<
     | "id"
     | "usn"
     | "name"
+    | "resetAt"
     | "updatedAt"
     | "newCardsPerDay"
     | "newLearnedToday"
@@ -51,6 +52,7 @@ export function getDeckChanges(limit: number, startAfterId: Buffer): DeckChange[
 export function toDeckSyncChange(row: DeckChange): SyncChange {
     const payload = create(DeckPayloadSchema, {
         name: row.name,
+        resetAt: BigInt(row.resetAt),
         updatedAt: BigInt(row.updatedAt),
         newCardsPerDay: row.newCardsPerDay,
         newLearnedToday: row.newLearnedToday,

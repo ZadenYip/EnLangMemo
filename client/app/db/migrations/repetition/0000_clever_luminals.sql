@@ -27,6 +27,8 @@ CREATE TABLE `collection` (
 	`usn` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
+	`time_zone` text NOT NULL,
+	`daily_reset_time` integer DEFAULT 4 NOT NULL,
 	`config` jsonb NOT NULL
 );
 --> statement-breakpoint
@@ -34,6 +36,7 @@ CREATE TABLE `decks` (
 	`id` blob PRIMARY KEY NOT NULL,
 	`usn` integer NOT NULL,
 	`name` text NOT NULL,
+	`reset_at` integer DEFAULT 1 NOT NULL,
 	`updated_at` integer NOT NULL,
 	`new_cards_per_day` integer DEFAULT 20 NOT NULL,
 	`new_learned_today` integer DEFAULT 0 NOT NULL,

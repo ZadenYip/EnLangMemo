@@ -27,7 +27,7 @@ export function applyCollectionUpsert(tx: RepTx, change: SyncChange): void {
     if (!remoteWins(toInt(payload.updatedAt), row.updatedAt)) {
         return;
     }
-    
+
     const colConfig = parseJson(payload.configJson) as ColConfig;
 
     tx.update(collectionTable)
@@ -37,6 +37,8 @@ export function applyCollectionUpsert(tx: RepTx, change: SyncChange): void {
             usn: toInt(change.usn),
             createdAt: toInt(payload.createdAt),
             updatedAt: toInt(payload.updatedAt),
+            dailyResetTime: payload.dailyResetTime,
+            timeZone: payload.timeZone,
             config: colConfig,
         })
         .where(eq(collectionTable.id, id))

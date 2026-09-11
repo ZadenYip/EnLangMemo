@@ -75,11 +75,8 @@ function collectionInit(): void {
 
     // IANA time zone string, e.g. "Asia/Shanghai"
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // Default collection config used by scheduler review-day boundaries.
-    const colConfig: ColConfig = {
-        timeZone,
-        dailyResetTime: 4,
-    };
+    // Empty collection extension config reserved for future non-time settings.
+    const colConfig: ColConfig = {};
 
     repDb.insert(rep_schema.collectionTable).values(
         {
@@ -90,6 +87,8 @@ function collectionInit(): void {
             usn: usn,
             createdAt: nowTime,
             updatedAt: nowTime,
+            timeZone,
+            dailyResetTime: 4,
             config: colConfig,
         }
     ).run();

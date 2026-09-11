@@ -15,7 +15,7 @@ import { PendingLocalUsn } from "@main/sync/helper/usn.js";
 
 type ColChange = Pick<
     typeof collectionTable.$inferSelect,
-    "id" | "sqliteSchemaVersion" | "createdAt" | "updatedAt" | "usn" | "config"
+    "id" | "sqliteSchemaVersion" | "createdAt" | "updatedAt" | "usn" | "dailyResetTime" | "timeZone" | "config"
 >;
 
 /**
@@ -30,6 +30,8 @@ export function getColChange(): SyncChange | null {
             createdAt: collectionTable.createdAt,
             updatedAt: collectionTable.updatedAt,
             usn: collectionTable.usn,
+            dailyResetTime: collectionTable.dailyResetTime,
+            timeZone: collectionTable.timeZone,
             config: collectionTable.config,
         })
         .from(collectionTable)
@@ -52,6 +54,8 @@ function toColSyncChange(row: ColChange): SyncChange {
         sqliteSchemaVersion: row.sqliteSchemaVersion,
         createdAt: BigInt(row.createdAt),
         updatedAt: BigInt(row.updatedAt),
+        dailyResetTime: row.dailyResetTime,
+        timeZone: row.timeZone,
         configJson,
     });
 

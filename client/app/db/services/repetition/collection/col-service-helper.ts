@@ -1,6 +1,6 @@
 import { getRepDb } from "@main/db/db.js";
 import { collectionTable } from "@main/db/schema/repetition/rep.js";
-import { ColConfig } from "./col-service-types.js";
+import type { ColConfig } from "./col-service-types.js";
 
 /**
  * Read the current collection config from the repetition database.
